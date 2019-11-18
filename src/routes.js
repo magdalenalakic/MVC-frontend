@@ -25,27 +25,15 @@ import Notifications from "views/Notifications.jsx";
 import Upgrade from "views/Upgrade.jsx";
 import Login from "login.js";
 import Registracija from "registracija";
+import KlinickiCentar from "views/KlinickiCentar.jsx";
 
 const dashboardRoutes = [
+  
   {
-    path: "/login",
-    name: "Dashboard",
+    path: "/klinickiCentar",
+    name: "KlinickiCentar",
     icon: "pe-7s-graph",
-    component: Login,
-    layout: "/"
-  },
-  {
-    path: "/registration",
-    name: "Dashboard",
-    icon: "pe-7s-graph",
-    component: Registracija,
-    layout: "/"
-  },
-  {
-    path: "/dashboard",
-    name: "Dashboard",
-    icon: "pe-7s-graph",
-    component: Dashboard,
+    component: KlinickiCentar,
     layout: "/admin"
   },
   {
