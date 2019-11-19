@@ -16,7 +16,7 @@
 
 */
 import Dashboard from "views/Dashboard.jsx";
-import UserProfile from "views/UserProfile.jsx";
+import IzmenaProfila from "views/IzmenaProfila";
 import TableList from "views/TableList.jsx";
 import Typography from "views/Typography.jsx";
 import Icons from "views/Icons.jsx";
@@ -26,21 +26,28 @@ import Upgrade from "views/Upgrade.jsx";
 import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
+import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
 
 const dashboardRoutes = [
-  
+  {
+    path: "/pocetnaStranica",
+    name: "Pocetna Strana Lekara",
+    icon: "pe-7s-graph",
+    component: PocetnaStranicaLekara,
+    layout: "/admin"
+  },
   {
     path: "/klinickiCentar",
-    name: "KlinickiCentar",
+    name: "Klinicki Centar",
     icon: "pe-7s-graph",
     component: KlinickiCentar,
     layout: "/admin"
   },
   {
     path: "/user",
-    name: "User Profile",
+    name: "Izmena profila",
     icon: "pe-7s-user",
-    component: UserProfile,
+    component: IzmenaProfila,
     layout: "/admin"
   },
   {
@@ -79,7 +86,7 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    upgrade: true,
+    // upgrade: true,
     path: "/upgrade",
     name: "Upgrade to PRO",
     icon: "pe-7s-rocket",

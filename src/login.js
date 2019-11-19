@@ -44,7 +44,7 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-      .post("http://localhost:8021/api/pacijenti/login", {
+      .post("http://localhost:8020/api/pacijenti/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
       })
