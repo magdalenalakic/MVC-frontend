@@ -1,4 +1,3 @@
-
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import NotificationSystem from "react-notification-system";
@@ -12,18 +11,17 @@ import { style } from "variables/Variables.jsx";
 
 import routes from "routes.js";
 
-
 // import image from "assets/img/sidebar-3.jpg";
 
-
-
 // zakomentarisane iskacuce poruke kao notifikacije  u bojama  !
-
 
 class Admin extends Component {
   constructor(props) {
     super(props);
+
+    console.log(this.props);
     this.state = {
+      uloga: props.uloga,
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -31,6 +29,7 @@ class Admin extends Component {
       hasImage: true,
       fixedClasses: "dropdown show-dropdown open"
     };
+    console.log(this.state.uloga);
   }
   handleNotificationClick = position => {
     var color = Math.floor(Math.random() * 4 + 1);
@@ -164,9 +163,13 @@ class Admin extends Component {
     return (
       <div className="wrapper">
         <NotificationSystem ref="notificationSystem" style={style} />
-        <Sidebar {...this.props} routes={routes} image={this.state.image}
-        color={this.state.color}
-        hasImage={this.state.hasImage}/>
+        <Sidebar
+          {...this.props}
+          routes={routes}
+          image={this.state.image}
+          color={this.state.color}
+          hasImage={this.state.hasImage}
+        />
         <div id="main-panel" className="main-panel" ref="mainPanel">
           <AdminNavbar
             {...this.props}

@@ -15,7 +15,7 @@ light green: #A3C4BC
   justify-content: center;
   align-items: center;
   /* background-color: #258ea6; */
-  background-image: url("https://wallpaperplay.com/walls/full/0/1/9/13968.jpg")
+  background-image: url("https://wallpaperplay.com/walls/full/0/1/9/13968.jpg");
 }
 .regForm {
   width: 100%;
@@ -23,7 +23,7 @@ light green: #A3C4BC
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #258ea6;
+  background-image: url("https://wallpaperplay.com/walls/full/0/1/9/13968.jpg");
 }
 
 .form-regForm,
@@ -82,37 +82,32 @@ input.error {
   display: relative;
 }
 
-.ime,
-.prezime,
 .grad,
 .drzava,
-.telefon,
-.brojOsiguranika
-{
+.telefon {
   width: 49%;
 }
 
 .ime,
 .prezime,
-.email,
-.korisnickoIme,
-.lozinka,
 .adresa,
 .grad,
 .drzava,
+.email,
 .telefon,
-.potvrdaLozinke,
-.brojOsiguranika {
+.brojOsiguranika,
+.lozinka,
+.potvrdaLozinke {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
-.korisnickoIme,
-.lozinka, 
-.potvrdaLozinke,
 .adresa,
-.email {
+.email,
+.lozinka,
+.potvrdaLozinke,
+.brojOsiguranika {
   width: 100%;
 }
 

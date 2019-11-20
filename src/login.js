@@ -21,13 +21,9 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      //   email: null,
       email: null,
       lozinka: null,
-      //   pacijent: {
-      //     ki: korisnickoIme,
-      //     l: lozinka
-      //   },
+      uloga: null,
       redirectToReferrer: false,
       redirectToRegistration: false,
       errorF: false,
@@ -46,12 +42,16 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-      .post("http://localhost:8023/api/pacijenti/login", {
+      .post("http://localhost:8028/api/korisnici/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
       })
       .then(response => {
-        console.log(response);
+        console.log(response.data);
+        this.setState({
+          uloga: response.data.uloga
+        });
+        console.log(this.state.uloga);
         this.setState({
           redirectToReferrer: true
         });
@@ -154,14 +154,21 @@ class Login extends Component {
   render() {
     const { formErrors } = this.state;
     const errorF = this.state.errorF;
+    const email = this.state.email;
+    const uloga = this.state.uloga;
     const redirectToReferrer = this.state.redirectToReferrer;
     const redirectToRegistration = this.state.redirectToRegistration;
     if (redirectToReferrer === true) {
       return (
         <BrowserRouter>
           <Switch>
-          {/* treba pored admin layot {...props} */}
-            <Route path="/admin" render={props => <AdminLayout {...props} ime={this.props.ime}/>} />
+            {/* treba pored admin layot {...props} */}
+            <Route
+              path="/admin"
+              render={props => (
+                <AdminLayout {...props} email={email} uloga={uloga} />
+              )}
+            />
             <Redirect from="/" to="/admin/PocetnaStranica" />
           </Switch>
         </BrowserRouter>
