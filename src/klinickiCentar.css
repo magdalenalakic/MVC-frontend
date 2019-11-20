@@ -1,0 +1,15 @@
+.opisKlinickogCentra, .opisKC, .adresaKC, .listaKlinikaKC {
+    font-size: 0.8em;
+    margin-bottom: 0.25em;
+    color: #222;
+    font-weight: 900;
+  }
+
+  .slikaKC {
+    width: 4.5cm;
+    height: 4.5cm;
+  }
+
+  .slikaKCdiv{
+      text-align: center ;
+  }

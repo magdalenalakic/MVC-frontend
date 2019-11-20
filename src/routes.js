@@ -27,20 +27,38 @@ import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
+import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
+import Sifrarnik from "views/Sifrarnik.jsx";
 
 const dashboardRoutes = [
+  //za admina KC
+  {    
+    path: "/klinickiCentar",
+    name: "Klinicki Centar",
+    icon: "pe-7s-graph",
+    component: KlinickiCentar,
+    layout: "/admin"
+  },
+  {    
+    path: "/listaZahteva",
+    name: "Zahtevi za registraciju",
+    icon: "pe-7s-graph",
+    component: ListaZahtevaAdminKC,
+    layout: "/admin"
+  },
+  {    
+    path: "/sifrarnik",
+    name: "Šifrarnik",
+    icon: "pe-7s-graph",
+    component: Sifrarnik,
+    layout: "/admin"
+  },
+  //za lekara 
   {
     path: "/pocetnaStranica",
     name: "Pocetna Strana Lekara",
     icon: "pe-7s-graph",
     component: PocetnaStranicaLekara,
-    layout: "/admin"
-  },
-  {
-    path: "/klinickiCentar",
-    name: "Klinicki Centar",
-    icon: "pe-7s-graph",
-    component: KlinickiCentar,
     layout: "/admin"
   },
   {
