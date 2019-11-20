@@ -35,8 +35,30 @@ import {
   responsiveBar,
   legendBar
 } from "variables/Variables.jsx";
+import slikaLekar from "assets/img/images.jpg";
+import Login from "login.js";
 
-class Dashboard extends Component {
+
+class PocetnaStranicaLekara extends React.Component {
+  // constructor(){
+  //   super();
+  //   this.state = {
+  //     data : [],
+  //   }
+
+  // }
+  // componentDidMount(){
+  //   fetch().
+  //   then((Response)=>Response.json()).
+  //   then((findresponse)=>{
+  //     console.log(findresponse)
+
+  //   })
+  // }
+  // componentDidMount() {
+  //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
+  //   console.log(this.props);
+  // }
   createLegend(json) {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
@@ -48,6 +70,7 @@ class Dashboard extends Component {
     return legend;
   }
   render() {
+    console.log(this.props);
     return (
       <div className="content">
         <Grid fluid>
@@ -61,6 +84,7 @@ class Dashboard extends Component {
                  statsIconText="Lista pacijenata"
               />
             </Col>
+            {/* <h1>{this.state}</h1> */}
             <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-wallet text-success" />}
@@ -77,6 +101,15 @@ class Dashboard extends Component {
                 // statsValue="23"
                 // statsIcon={<i className="fa fa-clock-o" />}
                  statsIconText="Profil korisnika"
+              />
+            </Col>
+            <Col lg={3} sm={6}>
+              <StatsCard
+                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                // statsText="Profil korisnika"
+                // statsValue="23"
+                // statsIcon={<i className="fa fa-clock-o" />}
+                 statsIconText="Zahtev za odmor/odsustvo"
               />
             </Col>
             <Col lg={3} sm={6}>
@@ -104,7 +137,9 @@ class Dashboard extends Component {
                       options={optionsSales}
                       responsiveOptions={responsiveSales}
                     /> */}
-                    <p>dasddsadsadsadsadsadd</p>
+                    <p>
+                    
+                    </p>
                   </div>
                  }
                 // legend={
@@ -114,19 +149,60 @@ class Dashboard extends Component {
             </Col>
             
             <Col md={4}>
-              <UserCard
-                bgImage="https://sumadinac.rs/wp-content/uploads/2017/07/stetoskop-doktor-lekar.jpg "
-                // avatar={avatar} // navedena slika
-                avatar = "https://opusteno.rs/slike/2017/03/zadovoljan-lekar-32511/zadovoljan-lekar-sp.jpg"
-                name="Ime i prezime"
-                email="email lekara"
-                description={
-                  <span>
-                    Moze ovdje neki 
-                    <br />
-                    njegov opis ako ga ima
-                  </span>
+            <Card
+                // statsIcon="fa fa-clock-o"
+                title="O lekaru"
+                // category="Ime"
+                content={
+                  <div id="a">
+                    <div className="slikaKCdiv">
+                      <h2> 
+                        <img className="slikaLekar" src={slikaLekar}></img>
+                      </h2>
+                    </div>
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Ime:</p>
+                        <label className="adresaKC">ucitati data</label>
+                      </h2>
+                    </div>
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Prezime:</p>
+                        <label className="adresaKC">ucitati data</label>
+                      </h2>
+                    </div>
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Klinika:</p>
+                        <label className="adresaKC">ucitati data</label>
+                      </h2>
+                    </div>
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Opis posla:</p>
+                        <label className="opisKC">ucitati data</label>
+                      </h2>
+                    </div>
+                    
+                    
+                    
+                  </div>
                 }
+                
+                // category="opis ... naziv adresa i opis  "
+                // stats="Campaign sent 2 days ago"
+                // content={
+                //   <div
+                //     id="chartPreferences"
+                //     className="ct-chart ct-perfect-fourth"
+                //   >
+                //     <ChartistGraph data={dataPie} type="Pie" />
+                //   </div>
+                // }
+                // legend={
+                //   <div className="legend">{this.createLegend(legendPie)}</div>
+                // }
               />
             </Col>
           </Row>
@@ -177,4 +253,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default PocetnaStranicaLekara;

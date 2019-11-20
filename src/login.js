@@ -5,6 +5,7 @@ import AdminLayout from "layouts/Admin.jsx";
 import axios from "axios";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Registracija from "registracija.js";
+import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -33,7 +34,8 @@ class Login extends Component {
       formErrors: {
         log: "",
         email: "",
-        lozinka: ""
+        lozinka: "",
+        uloga: ""
       }
     };
   }
@@ -44,7 +46,7 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-      .post("http://localhost:8020/api/pacijenti/login", {
+      .post("http://localhost:8023/api/pacijenti/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
       })
@@ -158,8 +160,9 @@ class Login extends Component {
       return (
         <BrowserRouter>
           <Switch>
-            <Route path="/admin" render={props => <AdminLayout {...props} />} />
-            <Redirect from="/" to="/admin/dashboard" />
+          {/* treba pored admin layot {...props} */}
+            <Route path="/admin" render={props => <AdminLayout {...props} ime={this.props.ime}/>} />
+            <Redirect from="/" to="/admin/PocetnaStranica" />
           </Switch>
         </BrowserRouter>
       );
