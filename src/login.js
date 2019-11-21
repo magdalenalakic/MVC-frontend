@@ -5,6 +5,8 @@ import AdminLayout from "layouts/Admin.jsx";
 import axios from "axios";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Registracija from "registracija.js";
+import Lekar from "views/Lekar.jsx";
+import KlinickiCentar from "views/KlinickiCentar.jsx";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -20,20 +22,17 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      //   email: null,
       email: null,
       lozinka: null,
-      //   pacijent: {
-      //     ki: korisnickoIme,
-      //     l: lozinka
-      //   },
+      uloga: null,
       redirectToReferrer: false,
       redirectToRegistration: false,
       errorF: false,
       formErrors: {
         log: "",
         email: "",
-        lozinka: ""
+        lozinka: "",
+        uloga: ""
       }
     };
   }
@@ -44,12 +43,19 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-      .post("http://localhost:8020/api/pacijenti/login", {
+      .post("http://localhost:8028/api/korisnici/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
       })
       .then(response => {
-        console.log(response);
+        console.log(response.data);
+        this.setState({
+          uloga: response.data.uloga
+        });
+        this.setState({
+          email: response.data.email
+        });
+        console.log(this.state.uloga);
         this.setState({
           redirectToReferrer: true
         });
@@ -152,18 +158,63 @@ class Login extends Component {
   render() {
     const { formErrors } = this.state;
     const errorF = this.state.errorF;
+    const email = this.state.email;
+    const uloga = this.state.uloga;
     const redirectToReferrer = this.state.redirectToReferrer;
     const redirectToRegistration = this.state.redirectToRegistration;
-    if (redirectToReferrer === true) {
+
+    if( uloga === "ADMINISTRATORKC"){
       return (
         <BrowserRouter>
           <Switch>
-            <Route path="/admin" render={props => <AdminLayout {...props} />} />
-            <Redirect from="/" to="/admin/dashboard" />
+            <Route
+              path="/admin"
+              render={props => (
+                <KlinickiCentar {...props} email={email} uloga={uloga} />
+              )}
+            />
+            <Redirect from="/" to="/admin/klinickiCentar" />
           </Switch>
         </BrowserRouter>
       );
     }
+    if(uloga === "ADMINISTRATORK"){
+      
+    }
+    if(uloga === "LEKAR"){
+      // return (
+      //   <BrowserRouter>
+      //     <Switch>
+      //       <Route
+      //         path="/admin"
+      //         render={props => (
+      //           <Lekar {...props} email={email} uloga={uloga} />
+      //         )}
+      //       />
+      //       <Redirect from="/" to="/admin/pocetnaStranica" />
+      //     </Switch>
+      //   </BrowserRouter>
+      // );
+    }
+    if(uloga === "MEDICINSKASESTRA"){
+      
+    }
+    if(uloga === "PACIJENT"){
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/admin"
+              render={props => (
+                <Lekar {...props} email={email} uloga={uloga} />
+              )}
+            />
+            <Redirect from="/" to="/admin/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    
     if (redirectToRegistration === true) {
       return (
         <BrowserRouter>

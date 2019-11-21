@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import ChartistGraph from "react-chartist";
 import { Route, Switch } from "react-router-dom";
+import { Grid, Row, Col, Table } from "react-bootstrap";
 import NotificationSystem from "react-notification-system";
 
 import AdminNavbar from "components/Navbars/AdminNavbar";
@@ -9,13 +11,27 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.jsx";
 
 import { style } from "variables/Variables.jsx";
 
-import routes from "routes.js";
+import routes from "routesLekar.js";
+import { Card } from "components/Card/Card.jsx";
+import { StatsCard } from "components/StatsCard/StatsCard.jsx";
+import { Tasks } from "components/Tasks/Tasks.jsx";
+import {
+  dataPie,
+  legendPie,
+  dataSales,
+  optionsSales,
+  responsiveSales,
+  legendSales,
+  dataBar,
+  optionsBar,
+  responsiveBar,
+  legendBar
+} from "variables/Variables.jsx";
+import "klinickiCentar.css";
+import UserCard from "components/UserCard/UserCard";
+import slikaKC from "assets/img/klinickiCentar.jpg";
 
-// import image from "assets/img/sidebar-3.jpg";
-
-// zakomentarisane iskacuce poruke kao notifikacije  u bojama  !
-
-class Admin extends Component {
+class Lekar extends Component {
   constructor(props) {
     super(props);
 
@@ -31,6 +47,27 @@ class Admin extends Component {
     };
     console.log(this.state.uloga);
   }
+
+  getRoutes = routes => {
+    return routes.map((prop, key) => {
+      if (prop.layout === "/admin") {
+        return (
+          <Route
+            path={prop.layout + prop.path}
+            render={props => (
+              <prop.component
+                {...props}
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+            key={key}
+          />
+        );
+      } else {
+        return null;
+      }
+    });
+  };
   handleNotificationClick = position => {
     var color = Math.floor(Math.random() * 4 + 1);
     var level;
@@ -62,26 +99,6 @@ class Admin extends Component {
     //   position: position,
     //   autoDismiss: 15
     // });
-  };
-  getRoutes = routes => {
-    return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
-        return (
-          <Route
-            path={prop.layout + prop.path}
-            render={props => (
-              <prop.component
-                {...props}
-                handleClick={this.handleNotificationClick}
-              />
-            )}
-            key={key}
-          />
-        );
-      } else {
-        return null;
-      }
-    });
   };
   getBrandText = path => {
     for (let i = 0; i < routes.length; i++) {
@@ -161,8 +178,9 @@ class Admin extends Component {
   }
   render() {
     return (
+      
       <div className="wrapper">
-        <NotificationSystem ref="notificationSystem" style={style} />
+        {/* <NotificationSystem ref="notificationSystem" style={style} /> */}
         <Sidebar
           {...this.props}
           routes={routes}
@@ -174,24 +192,16 @@ class Admin extends Component {
           <AdminNavbar
             {...this.props}
             brandText={this.getBrandText(this.props.location.pathname)}
+            // brandText="JU JU JUJU"
           />
+
           <Switch>{this.getRoutes(routes)}</Switch>
           <Footer />
-
-          {/* <FixedPlugin
-            handleImageClick={this.handleImageClick}
-            handleColorClick={this.handleColorClick}
-            handleHasImage={this.handleHasImage}
-            bgColor={this.state["color"]}
-            bgImage={this.state["image"]}
-            mini={this.state["mini"]}
-            handleFixedClick={this.handleFixedClick}
-            fixedClasses={this.state.fixedClasses}
-          /> */}
         </div>
       </div>
+      
     );
   }
 }
 
-export default Admin;
+export default Lekar;

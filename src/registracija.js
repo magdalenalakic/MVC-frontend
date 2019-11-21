@@ -49,7 +49,7 @@ class Registracija extends Component {
     if (formValid(this.state.formErrors)) {
       console.log(`Ime: ${this.state.ime}`);
       axios
-        .post("http://localhost:8021/api/pacijenti/register", {
+        .post("http://localhost:8028/api/pacijenti/register", {
           lozinka: this.state.lozinka,
           ime: this.state.ime,
           prezime: this.state.prezime,

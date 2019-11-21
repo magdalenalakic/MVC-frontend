@@ -1,7 +1,18 @@
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
+import { Route, Switch } from "react-router-dom";
 import { Grid, Row, Col, Table } from "react-bootstrap";
+import NotificationSystem from "react-notification-system";
 
+import AdminNavbar from "components/Navbars/AdminNavbar";
+import Footer from "components/Footer/Footer";
+import Sidebar from "components/Sidebar/Sidebar";
+import axios from "axios";
+import FixedPlugin from "components/FixedPlugin/FixedPlugin.jsx";
+
+import { style } from "variables/Variables.jsx";
+
+import routes from "routesAdminKC.js";
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
@@ -22,212 +33,186 @@ import UserCard from "components/UserCard/UserCard";
 import slikaKC from "assets/img/klinickiCentar.jpg";
 
 class KlinickiCentar extends Component {
+  constructor(props) {
+    super(props);
 
-  // createLegend(json) {
-  //   var legend = [];
-  //   for (var i = 0; i < json["names"].length; i++) {
-  //     var type = "fa fa-circle text-" + json["types"][i];
-  //     legend.push(<i className={type} key={i} />);
-  //     legend.push(" ");
-  //     legend.push(json["names"][i]);
-  //   }
-  //   return legend;
+    console.log(this.props);
+    this.state = {
+      uloga: props.uloga,
+      email: props.email,
+      listaKlinika:[],
+      _notificationSystem: null,
+      // image: image,
+      image: "https://wallpaperaccess.com/full/20601.jpg",
+      color: "black",
+      hasImage: true,
+      fixedClasses: "dropdown show-dropdown open"
+    };
+    console.log(this.state.uloga);
+    console.log(this.state.email);
+    // axios.get("http://localhost:8028/api/administratoriKC/listaKlinika/" + this.state.email)
+    // .then(response => {
+    //   console.log(response.data);
+    //   // this.setState({
+    //   //   listaKlinika: response.data
+    //   // });
+     
+    // })
 
-  // }
+  }
+
+  getRoutes = routes => {
+    return routes.map((prop, key) => {
+      if (prop.layout === "/admin") {
+        return (
+          <Route
+            path={prop.layout + prop.path}
+            render={props => (
+              <prop.component
+                {...props}
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+            key={key}
+          />
+        );
+      } else {
+        return null;
+      }
+    });
+  };
+  handleNotificationClick = position => {
+    var color = Math.floor(Math.random() * 4 + 1);
+    var level;
+    switch (color) {
+      case 1:
+        level = "success";
+        break;
+      case 2:
+        level = "warning";
+        break;
+      case 3:
+        level = "error";
+        break;
+      case 4:
+        level = "info";
+        break;
+      default:
+        break;
+    }
+    // this.state._notificationSystem.addNotification({
+    //   title: <span data-notify="icon" className="pe-7s-gift" />,
+    //   message: (
+    //     <div>
+    //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
+    //       every web developer.
+    //     </div>
+    //   ),
+    //   level: level,
+    //   position: position,
+    //   autoDismiss: 15
+    // });
+  };
+  getBrandText = path => {
+    for (let i = 0; i < routes.length; i++) {
+      if (
+        this.props.location.pathname.indexOf(
+          routes[i].layout + routes[i].path
+        ) !== -1
+      ) {
+        return routes[i].name;
+      }
+    }
+    return "Brand";
+  };
+  handleImageClick = image => {
+    this.setState({ image: image });
+  };
+  handleColorClick = color => {
+    this.setState({ color: color });
+  };
+  handleHasImage = hasImage => {
+    this.setState({ hasImage: hasImage });
+  };
+  handleFixedClick = () => {
+    if (this.state.fixedClasses === "dropdown") {
+      this.setState({ fixedClasses: "dropdown show-dropdown open" });
+    } else {
+      this.setState({ fixedClasses: "dropdown" });
+    }
+  };
+  componentDidMount() {
+    // this.setState({ _notificationSystem: this.refs.notificationSystem });
+    // var _notificationSystem = this.refs.notificationSystem;
+    // var color = Math.floor(Math.random() * 4 + 1);
+    // var level;
+    // switch (color) {
+    //   case 1:
+    //     level = "success";
+    //     break;
+    //   case 2:
+    //     level = "warning";
+    //     break;
+    //   case 3:
+    //     level = "error";
+    //     break;
+    //   case 4:
+    //     level = "info";
+    //     break;
+    //   default:
+    //     break;
+    // }
+    // _notificationSystem.addNotification({
+    //   title: <span data-notify="icon" className="pe-7s-gift" />,
+    //   message: (
+    //     <div>
+    //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
+    //       every web developer.
+    //     </div>
+    //   ),
+    //   level: level,
+    //   position: "tr",
+    //   autoDismiss: 15
+    // });
+  }
+  componentDidUpdate(e) {
+    if (
+      window.innerWidth < 993 &&
+      e.history.location.pathname !== e.location.pathname &&
+      document.documentElement.className.indexOf("nav-open") !== -1
+    ) {
+      document.documentElement.classList.toggle("nav-open");
+    }
+    if (e.history.action === "PUSH") {
+      document.documentElement.scrollTop = 0;
+      document.scrollingElement.scrollTop = 0;
+      this.refs.mainPanel.scrollTop = 0;
+    }
+  }
   render() {
     return (
-      <div className="content">
-        <Grid fluid>
-          <Row>
-            <Col md={8}>
-              <Row>
-                <Card
-                  title="Lista klinika"
-                  // category="Here is a subtitle for this table"
-                  ctTableFullWidth
-                  ctTableResponsive
-                  content={
-                    <Table striped hover>
-                      <thead>
-                        <tr>
-                          {/* {thArray.map((prop, key) => {
-                            return <th key={key}>{prop}</th>;
-                          })} */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* {tdArray.map((prop, key) => {
-                          return (
-                            <tr key={key}>
-                              {prop.map((prop, key) => {
-                                return <td key={key}>{prop}</td>;
-                              })}
-                            </tr>
-                          );
-                        })} */}
-                      </tbody>
-                    </Table>
-                  }
-                />
-                
-              
-              </Row>
-              <Row>
-               <Card
-                  title="Lista administratora klinickog centra"
-                  // category="Here is a subtitle for this table"
-                  ctTableFullWidth
-                  ctTableResponsive
-                  content={
-                    <Table striped hover>
-                      <thead>
-                        <tr>
-                          {/* {thArray.map((prop, key) => {
-                            return <th key={key}>{prop}</th>;
-                          })} */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* {tdArray.map((prop, key) => {
-                          return (
-                            <tr key={key}>
-                              {prop.map((prop, key) => {
-                                return <td key={key}>{prop}</td>;
-                              })}
-                            </tr>
-                          );
-                        })} */}
-                      </tbody>
-                    </Table>
-                  }
-                />
-              </Row>
-              <Row>
-                <Card
-                    title="Lista administratora klinika"
-                    // category="Here is a subtitle for this table"
-                    ctTableFullWidth
-                    ctTableResponsive
-                    content={
-                      <Table striped hover>
-                        <thead>
-                          <tr>
-                            {/* {thArray.map((prop, key) => {
-                              return <th key={key}>{prop}</th>;
-                            })} */}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {/* {tdArray.map((prop, key) => {
-                            return (
-                              <tr key={key}>
-                                {prop.map((prop, key) => {
-                                  return <td key={key}>{prop}</td>;
-                                })}
-                              </tr>
-                            );
-                          })} */}
-                        </tbody>
-                      </Table>
-                    }
-                  />
-              </Row>
-              
-            </Col>
-            <Col md={4}>
-              <Card
-                // statsIcon="fa fa-clock-o"
-                title="O klinickom centru"
-                category="OVDE NAZIV"
-                content={
-                  <div id="opisKlinickogCentra">
-                    <div className="slikaKCdiv">
-                      <h2>
-                        
-                        <img className="slikaKC" src={slikaKC}></img>
-                      </h2>
-                    </div>
-                    
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Adresa</p>
-                        <label className="adresaKC">treba iz baze uneti adresu</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Opis</p>
-                        <label className="opisKC">treba iz baze uneti opis</label>
-                      </h2>
-                    </div>
-                    
-                    
-                    
-                  </div>
-                }
-                
-                // category="opis ... naziv adresa i opis  "
-                // stats="Campaign sent 2 days ago"
-                // content={
-                //   <div
-                //     id="chartPreferences"
-                //     className="ct-chart ct-perfect-fourth"
-                //   >
-                //     <ChartistGraph data={dataPie} type="Pie" />
-                //   </div>
-                // }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendPie)}</div>
-                // }
-              />
+      
+      <div className="wrapper">
+        {/* <NotificationSystem ref="notificationSystem" style={style} /> */}
+        <Sidebar
+          {...this.props}
+          routes={routes}
+          image={this.state.image}
+          color={this.state.color}
+          hasImage={this.state.hasImage}
+        />
+        <div id="main-panel" className="main-panel" ref="mainPanel">
+          <AdminNavbar
+            {...this.props}
+            brandText={this.getBrandText(this.props.location.pathname)}
+            // brandText="JU JU JUJU"
+          />
 
-
-            </Col>
-          
-          </Row>
-
-          {/* <Row>
-            <Col md={6}>
-              <Card
-                id="chartActivity"
-                title="2014 Sales"
-                category="All products including Taxes"
-                stats="Data information certified"
-                statsIcon="fa fa-check"
-                content={
-                  <div className="ct-chart">
-                    <ChartistGraph
-                      data={dataBar}
-                      type="Bar"
-                      options={optionsBar}
-                      responsiveOptions={responsiveBar}
-                    />
-                  </div>
-                }
-                legend={
-                  <div className="legend">{this.createLegend(legendBar)}</div>
-                }
-              />
-            </Col>
-
-            <Col md={6}>
-              <Card
-                title="Tasks"
-                category="Backend development"
-                stats="Updated 3 minutes ago"
-                statsIcon="fa fa-history"
-                content={
-                  <div className="table-full-width">
-                    <table className="table">
-                      <Tasks />
-                    </table>
-                  </div>
-                }
-              />
-            </Col>
-          </Row> */}
-        </Grid>
+          <Switch>{this.getRoutes(routes)}</Switch>
+          <Footer />
+        </div>
       </div>
+      
     );
   }
 }

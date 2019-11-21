@@ -20,6 +20,11 @@ import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
 import Login from "login";
 
 class AdminNavbarLinks extends Component {
+
+  handleClick = e => {
+    e.preventDefault();
+    
+  };
   render() {
     const notification = (
       <div>
@@ -70,7 +75,7 @@ class AdminNavbarLinks extends Component {
             <MenuItem divider />
             <MenuItem eventKey={2.5}>Separated link</MenuItem>
           </NavDropdown>*/}
-          <NavItem eventKey={3} href="#" >
+          <NavItem eventKey={3} href="http://localhost:3000/login" >
             Log out
           </NavItem> 
         </Nav>
