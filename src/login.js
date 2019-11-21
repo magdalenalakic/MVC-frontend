@@ -5,12 +5,9 @@ import AdminLayout from "layouts/Admin.jsx";
 import axios from "axios";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Registracija from "registracija.js";
-<<<<<<< HEAD
-import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
-=======
+
 import Lekar from "views/Lekar.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
->>>>>>> C_1_ProfilAdministratoraKC
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -47,7 +44,7 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-      .post("http://localhost:8028/api/korisnici/login", {
+      .post("http://localhost:8020/api/korisnici/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
       })
@@ -56,12 +53,11 @@ class Login extends Component {
         this.setState({
           uloga: response.data.uloga
         });
-<<<<<<< HEAD
-=======
+
         this.setState({
           email: response.data.email
         });
->>>>>>> C_1_ProfilAdministratoraKC
+
         console.log(this.state.uloga);
         this.setState({
           redirectToReferrer: true
@@ -174,16 +170,7 @@ class Login extends Component {
       return (
         <BrowserRouter>
           <Switch>
-<<<<<<< HEAD
-            {/* treba pored admin layot {...props} */}
-            <Route
-              path="/admin"
-              render={props => (
-                <AdminLayout {...props} email={email} uloga={uloga} />
-              )}
-            />
-            <Redirect from="/" to="/admin/PocetnaStranica" />
-=======
+
             <Route
               path="/admin"
               render={props => (
@@ -199,24 +186,6 @@ class Login extends Component {
       
     }
     if(uloga === "LEKAR"){
-      // return (
-      //   <BrowserRouter>
-      //     <Switch>
-      //       <Route
-      //         path="/admin"
-      //         render={props => (
-      //           <Lekar {...props} email={email} uloga={uloga} />
-      //         )}
-      //       />
-      //       <Redirect from="/" to="/admin/pocetnaStranica" />
-      //     </Switch>
-      //   </BrowserRouter>
-      // );
-    }
-    if(uloga === "MEDICINSKASESTRA"){
-      
-    }
-    if(uloga === "PACIJENT"){
       return (
         <BrowserRouter>
           <Switch>
@@ -227,10 +196,28 @@ class Login extends Component {
               )}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
->>>>>>> C_1_ProfilAdministratoraKC
           </Switch>
         </BrowserRouter>
       );
+    }
+    if(uloga === "MEDICINSKASESTRA"){
+      
+    }
+    if(uloga === "PACIJENT"){
+      // return (
+      //   <BrowserRouter>
+      //     <Switch>
+      //       <Route
+      //         path="/admin"
+      //         render={props => (
+      //           <Lekar {...props} email={email} uloga={uloga} />
+      //         )}
+      //       />
+      //       <Redirect from="/" to="/admin/pocetnaStranica" />
+
+      //     </Switch>
+      //   </BrowserRouter>
+      // );
     }
     
     if (redirectToRegistration === true) {

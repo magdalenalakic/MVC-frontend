@@ -40,7 +40,7 @@ class KlinickiCentar extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
-      listaKlinika:[],
+      // listaKlinika:[],
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -50,16 +50,10 @@ class KlinickiCentar extends Component {
     };
     console.log(this.state.uloga);
     console.log(this.state.email);
-    // axios.get("http://localhost:8028/api/administratoriKC/listaKlinika/" + this.state.email)
-    // .then(response => {
-    //   console.log(response.data);
-    //   // this.setState({
-    //   //   listaKlinika: response.data
-    //   // });
-     
-    // })
+  
 
   }
+
 
   getRoutes = routes => {
     return routes.map((prop, key) => {
@@ -141,40 +135,7 @@ class KlinickiCentar extends Component {
       this.setState({ fixedClasses: "dropdown" });
     }
   };
-  componentDidMount() {
-    // this.setState({ _notificationSystem: this.refs.notificationSystem });
-    // var _notificationSystem = this.refs.notificationSystem;
-    // var color = Math.floor(Math.random() * 4 + 1);
-    // var level;
-    // switch (color) {
-    //   case 1:
-    //     level = "success";
-    //     break;
-    //   case 2:
-    //     level = "warning";
-    //     break;
-    //   case 3:
-    //     level = "error";
-    //     break;
-    //   case 4:
-    //     level = "info";
-    //     break;
-    //   default:
-    //     break;
-    // }
-    // _notificationSystem.addNotification({
-    //   title: <span data-notify="icon" className="pe-7s-gift" />,
-    //   message: (
-    //     <div>
-    //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-    //       every web developer.
-    //     </div>
-    //   ),
-    //   level: level,
-    //   position: "tr",
-    //   autoDismiss: 15
-    // });
-  }
+ 
   componentDidUpdate(e) {
     if (
       window.innerWidth < 993 &&
@@ -190,6 +151,7 @@ class KlinickiCentar extends Component {
     }
   }
   render() {
+    // const {listaKlinika} = this.state.listaKlinika
     return (
       
       <div className="wrapper">

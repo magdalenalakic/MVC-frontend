@@ -5,6 +5,7 @@ import { Grid, Row, Col, Table } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
+import axios from "axios";
 import {
   dataPie,
   legendPie,
@@ -22,8 +23,30 @@ import UserCard from "components/UserCard/UserCard";
 import slikaKC from "assets/img/klinickiCentar.jpg";
 
 class KlinickiCentarPocetna extends Component {
+  constructor(props) {
+    super(props);
 
+    console.log(this.props);
+    this.state = {
+      uloga: props.uloga,
+      email: props.email,
+      // listaKlinika:[]
+    };
+    console.log(this.state.uloga);
+    console.log(this.state.email);
+
+  }
+  // componentDidMount() {
+  //   axios.get("http://localhost:8028/api/administratoriKC/listaKlinika/"+ this.state.email)
+  //   .then(response => {
+  //     console.log(response)
+  //   })
+  //   .catch(error => {
+  //     console.log(error)
+  //   })
+  // }
   render() {
+    // const {listaKlinika} = this.state.listaKlinika
     return (
       
         <div className="content">
@@ -58,6 +81,10 @@ class KlinickiCentarPocetna extends Component {
                 })} */}
               </tbody>
             </Table>
+            // {/* <div>
+            //   Lista klinika:
+            //     {listaKlinika}
+            // </div> */}
           }
         />
         
