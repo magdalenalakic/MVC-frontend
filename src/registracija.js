@@ -3,15 +3,26 @@ import ReactDOM from "react-dom";
 import "./registracija.css";
 import AdminLayout from "layouts/Admin.jsx";
 import axios from "axios";
+import Login from "login.js";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 );
 
-const formValid = formErrors => {
+const formValid = ({ formErrors, ...rest }) => {
   let valid = true;
-  Object.values(formErrors).forEach(val => val.length > 0 && (valid = false));
+
+  // validate form errors being empty
+  Object.values(formErrors).forEach(val => {
+    val.length > 0 && (valid = false);
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
   return valid;
 };
 
@@ -30,6 +41,8 @@ class Registracija extends Component {
       lozinka: null,
       potvrdaLozinke: null,
       registrovan: false,
+      praznaPolja: false,
+      poklapanjeLozinke: true,
       formErrors: {
         ime: "",
         prezime: "",
@@ -46,46 +59,58 @@ class Registracija extends Component {
   }
   handleSumbit = e => {
     e.preventDefault();
-    if (formValid(this.state.formErrors)) {
-      console.log(`Ime: ${this.state.ime}`);
-      axios
-        .post("http://localhost:8029/api/pacijenti/signup", {
-          email: this.state.email
-        })
-        .then(response => {
-          this.render(<div>Potvrdite registraciju putem maila. </div>);
-          axios
-            .post("http://localhost:8029/api/pacijenti/register", {
-              lozinka: this.state.lozinka,
-              ime: this.state.ime,
-              prezime: this.state.prezime,
-              adresa: this.state.adresa,
-              grad: this.state.grad,
-              drzava: this.state.drzava,
-              email: this.state.email,
-              telefon: this.state.telefon,
-              lbo: this.state.brojOsiguranika
-            })
-            .then(response => {
-              console.log("slanje mejla");
-              console.log(response);
-            })
-            .catch(error => {
-              console.log(error.response);
+    if (formValid(this.state)) {
+      if (this.state.lozinka != this.state.potvrdaLozinke) {
+        this.setState({
+          poklapanjeLozinke: false
+        });
+      } else {
+        console.log(`Ime: ${this.state.ime}`);
+        axios
+          .post("http://localhost:8029/api/pacijenti/signup", {
+            email: this.state.email
+          })
+          .then(response => {
+            this.setState({
+              redirectToReferrer: true
             });
 
-          console.log(response);
-          this.setState({
-            redirectToReferrer: true
+            // this.render(<div>Potvrdite registraciju putem maila. </div>);
+            axios
+              .post("http://localhost:8029/api/pacijenti/register", {
+                lozinka: this.state.lozinka,
+                ime: this.state.ime,
+                prezime: this.state.prezime,
+                adresa: this.state.adresa,
+                grad: this.state.grad,
+                drzava: this.state.drzava,
+                email: this.state.email,
+                telefon: this.state.telefon,
+                lbo: this.state.brojOsiguranika
+              })
+              .then(response => {
+                console.log("slanje mejla");
+                console.log(response);
+              })
+              .catch(error => {
+                console.log(error.response);
+              });
+
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error.response);
           });
-        })
-        .catch(error => {
-          console.log(error.response);
+        this.setState({
+          registrovan: true
         });
-      this.setState({
-        registrovan: true
-      });
+      }
     } else {
+      console.log(this.state);
+      this.setState({
+        praznaPolja: true
+      });
+
       console.error("FORM invalid");
     }
   };
@@ -97,43 +122,94 @@ class Registracija extends Component {
 
     switch (name) {
       case "ime":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.ime =
           value.length < 3 && value.length > 0 ? "min 3 karaktera  " : "";
         break;
       case "prezime":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.prezime =
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
       case "adresa":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.adresa =
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
       case "grad":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.grad =
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
       case "drzava":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.drzava =
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
       case "email":
-        formErrors.email =
-          value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
+        formErrors.email = emailRegex.test(value)
+          ? ""
+          : "neispravna email adresa";
         break;
       case "telefon":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.telefon =
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
       case "brojOsiguranika":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.brojOsiguranika =
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
 
       case "lozinka":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.lozinka =
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
       case "potvrdaLozinke":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
         formErrors.potvrdaLozinke =
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
@@ -144,12 +220,17 @@ class Registracija extends Component {
   render() {
     const { formErrors } = this.state;
     const registrovan = this.state.registrovan;
+    const praznaPolja = this.state.praznaPolja;
+    const poklapanjeLozinke = this.state.poklapanjeLozinke;
     if (registrovan === true) {
       return (
         <BrowserRouter>
           <Switch>
-            {/* <Route path="/admin" render={props => <AdminLayout {...props} />} />
-            <Redirect from="/" to="/admin/dashboard" /> */}
+            <Route
+              path="/login"
+              render={props => <Login waitToapprove={true} {...props} />}
+            />
+            <Redirect from="/" to="/login" />
           </Switch>
         </BrowserRouter>
       );
@@ -162,7 +243,7 @@ class Registracija extends Component {
             <h1>Registracija</h1>
             <form onSubmit={this.handleSumbit} noValidate>
               <div className="ime">
-                <label htmlFor="ime">Ime: </label>
+                <label htmlFor="ime">Ime:* </label>
                 <input
                   type="text"
                   name="ime"
@@ -175,7 +256,7 @@ class Registracija extends Component {
                 )}
               </div>
               <div className="prezime">
-                <label htmlFor="prezime">Prezime: </label>
+                <label htmlFor="prezime">Prezime:* </label>
                 <input
                   type="text"
                   name="prezime"
@@ -188,7 +269,7 @@ class Registracija extends Component {
                 )}
               </div>
               <div className="adresa">
-                <label htmlFor="adresa">Adresa: </label>
+                <label htmlFor="adresa">Adresa:* </label>
                 <input
                   type="text"
                   name="adresa"
@@ -201,7 +282,7 @@ class Registracija extends Component {
                 )}
               </div>
               <div className="grad">
-                <label htmlFor="grad">Grad: </label>
+                <label htmlFor="grad">Grad:* </label>
                 <input
                   type="text"
                   name="grad"
@@ -214,7 +295,7 @@ class Registracija extends Component {
                 )}
               </div>
               <div className="drzava">
-                <label htmlFor="drzava">Drzava: </label>
+                <label htmlFor="drzava">Drzava:* </label>
                 <input
                   type="text"
                   name="drzava"
@@ -227,7 +308,7 @@ class Registracija extends Component {
                 )}
               </div>
               <div className="email">
-                <label htmlFor="email">E-mail: </label>
+                <label htmlFor="email">E-mail:* </label>
                 <input
                   type="email"
                   name="email"
@@ -240,7 +321,7 @@ class Registracija extends Component {
                 )}
               </div>
               <div className="telefon">
-                <label htmlFor="telefon">Telefon: </label>
+                <label htmlFor="telefon">Telefon:* </label>
                 <input
                   type="number"
                   name="telefon"
@@ -253,7 +334,7 @@ class Registracija extends Component {
                 )}
               </div>
               <div className="brojOsiguranika">
-                <label htmlFor="brojOsiguranika">Broj osiguranika: </label>
+                <label htmlFor="brojOsiguranika">Broj osiguranika:* </label>
                 <input
                   type="number"
                   name="brojOsiguranika"
@@ -269,7 +350,7 @@ class Registracija extends Component {
               </div>
 
               <div className="lozinka">
-                <label htmlFor="lozinka">Lozinka: </label>
+                <label htmlFor="lozinka">Lozinka:* </label>
                 <input
                   type="password"
                   name="lozinka"
@@ -282,7 +363,7 @@ class Registracija extends Component {
                 )}
               </div>
               <div className="potvrdaLozinke">
-                <label htmlFor="potvrdaLozinke">Potvrdi lozinku: </label>
+                <label htmlFor="potvrdaLozinke">Potvrdi lozinku:* </label>
                 <input
                   type="password"
                   name="potvrdaLozinke"
@@ -295,8 +376,16 @@ class Registracija extends Component {
                     {formErrors.potvrdaLozinke}
                   </span>
                 )}
+                {poklapanjeLozinke === false && (
+                  <span className="errorMessage">Lozinke se ne poklapaju</span>
+                )}
               </div>
               <div className="createAccount">
+                {praznaPolja === true && (
+                  <span className="errorMessage">
+                    Popunite sva polja oznacena zvezdicom.
+                  </span>
+                )}
                 <button type="submit">Registruj se</button>
               </div>
             </form>

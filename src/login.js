@@ -21,6 +21,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      waitToapprove: props.waitToapprove,
       email: null,
       lozinka: null,
       uloga: null,
@@ -156,6 +157,7 @@ class Login extends Component {
     const errorF = this.state.errorF;
     const email = this.state.email;
     const uloga = this.state.uloga;
+    const waitToapprove = this.state.waitToapprove;
     const redirectToReferrer = this.state.redirectToReferrer;
     const redirectToRegistration = this.state.redirectToRegistration;
     if (redirectToReferrer === true) {
@@ -193,6 +195,11 @@ class Login extends Component {
         <div className="logForm">
           <div className="form-logForm">
             <h1>Uloguj se</h1>
+            {waitToapprove === true && (
+              <span className="errorMessage">
+                Sacekajte potvrdu registracije.
+              </span>
+            )}
             <form onSubmit={this.handleSumbit} noValidate>
               <div className="email">
                 <label htmlFor="email">E-mail: </label>
