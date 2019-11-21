@@ -49,18 +49,31 @@ class Registracija extends Component {
     if (formValid(this.state.formErrors)) {
       console.log(`Ime: ${this.state.ime}`);
       axios
-        .post("http://localhost:8028/api/pacijenti/register", {
-          lozinka: this.state.lozinka,
-          ime: this.state.ime,
-          prezime: this.state.prezime,
-          adresa: this.state.adresa,
-          grad: this.state.grad,
-          drzava: this.state.drzava,
-          email: this.state.email,
-          telefon: this.state.telefon,
-          lbo: this.state.brojOsiguranika
+        .post("http://localhost:8029/api/pacijenti/signup", {
+          email: this.state.email
         })
         .then(response => {
+          this.render(<div>Potvrdite registraciju putem maila. </div>);
+          axios
+            .post("http://localhost:8029/api/pacijenti/register", {
+              lozinka: this.state.lozinka,
+              ime: this.state.ime,
+              prezime: this.state.prezime,
+              adresa: this.state.adresa,
+              grad: this.state.grad,
+              drzava: this.state.drzava,
+              email: this.state.email,
+              telefon: this.state.telefon,
+              lbo: this.state.brojOsiguranika
+            })
+            .then(response => {
+              console.log("slanje mejla");
+              console.log(response);
+            })
+            .catch(error => {
+              console.log(error.response);
+            });
+
           console.log(response);
           this.setState({
             redirectToReferrer: true
@@ -135,8 +148,8 @@ class Registracija extends Component {
       return (
         <BrowserRouter>
           <Switch>
-            <Route path="/admin" render={props => <AdminLayout {...props} />} />
-            <Redirect from="/" to="/admin/dashboard" />
+            {/* <Route path="/admin" render={props => <AdminLayout {...props} />} />
+            <Redirect from="/" to="/admin/dashboard" /> */}
           </Switch>
         </BrowserRouter>
       );
