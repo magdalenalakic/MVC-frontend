@@ -206,7 +206,7 @@ class PocetnaStranicaLekara extends React.Component {
               />
             </Col>
           </Row>
-
+{/* 
           <Row>
             <Col md={6}>
               <Card
@@ -246,7 +246,7 @@ class PocetnaStranicaLekara extends React.Component {
                 }
               />
             </Col>
-          </Row>
+          </Row> */}
         </Grid>
       </div>
     );

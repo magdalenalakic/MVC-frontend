@@ -7,12 +7,11 @@ import NotificationSystem from "react-notification-system";
 import AdminNavbar from "components/Navbars/AdminNavbar";
 import Footer from "components/Footer/Footer";
 import Sidebar from "components/Sidebar/Sidebar";
-import axios from "axios";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.jsx";
 
 import { style } from "variables/Variables.jsx";
 
-import routes from "routesAdminKC.js";
+import routes from "routesLekar.js";
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
@@ -32,15 +31,13 @@ import "klinickiCentar.css";
 import UserCard from "components/UserCard/UserCard";
 import slikaKC from "assets/img/klinickiCentar.jpg";
 
-class KlinickiCentar extends Component {
+class Lekar extends Component {
   constructor(props) {
     super(props);
 
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
-      email: props.email,
-      listaKlinika:[],
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -49,16 +46,6 @@ class KlinickiCentar extends Component {
       fixedClasses: "dropdown show-dropdown open"
     };
     console.log(this.state.uloga);
-    console.log(this.state.email);
-    // axios.get("http://localhost:8028/api/administratoriKC/listaKlinika/" + this.state.email)
-    // .then(response => {
-    //   console.log(response.data);
-    //   // this.setState({
-    //   //   listaKlinika: response.data
-    //   // });
-     
-    // })
-
   }
 
   getRoutes = routes => {
@@ -217,4 +204,4 @@ class KlinickiCentar extends Component {
   }
 }
 
-export default KlinickiCentar;
+export default Lekar;
