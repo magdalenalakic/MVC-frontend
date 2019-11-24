@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Registracija from "registracija.js";
 
 import Lekar from "views/Lekar.jsx";
+import Pacijent from "views/Pacijent.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
 
 const emailRegex = RegExp(
@@ -166,11 +167,10 @@ class Login extends Component {
     const redirectToReferrer = this.state.redirectToReferrer;
     const redirectToRegistration = this.state.redirectToRegistration;
 
-    if( uloga === "ADMINISTRATORKC"){
+    if (uloga === "ADMINISTRATORKC") {
       return (
         <BrowserRouter>
           <Switch>
-
             <Route
               path="/admin"
               render={props => (
@@ -182,17 +182,31 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    if(uloga === "ADMINISTRATORK"){
-      
+    if (uloga === "ADMINISTRATORK") {
     }
-    if(uloga === "LEKAR"){
+    if (uloga === "LEKAR") {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/admin"
+              render={props => <Lekar {...props} email={email} uloga={uloga} />}
+            />
+            <Redirect from="/" to="/admin/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    if (uloga === "MEDICINSKASESTRA") {
+    }
+    if (uloga === "PACIJENT") {
       return (
         <BrowserRouter>
           <Switch>
             <Route
               path="/admin"
               render={props => (
-                <Lekar {...props} email={email} uloga={uloga} />
+                <Pacijent {...props} email={email} uloga={uloga} />
               )}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
@@ -200,26 +214,7 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    if(uloga === "MEDICINSKASESTRA"){
-      
-    }
-    if(uloga === "PACIJENT"){
-      // return (
-      //   <BrowserRouter>
-      //     <Switch>
-      //       <Route
-      //         path="/admin"
-      //         render={props => (
-      //           <Lekar {...props} email={email} uloga={uloga} />
-      //         )}
-      //       />
-      //       <Redirect from="/" to="/admin/pocetnaStranica" />
 
-      //     </Switch>
-      //   </BrowserRouter>
-      // );
-    }
-    
     if (redirectToRegistration === true) {
       return (
         <BrowserRouter>
