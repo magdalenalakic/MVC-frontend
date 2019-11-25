@@ -41,8 +41,6 @@ class izmenaProfila extends Component {
   componentWillMount(){
     console.log("wmount")
     const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
-    // console.log('Email: ' + this.state.email);
-    // console.log('url: ' + url);
     axios.get(url)
       .then(Response => {
         console.log("Preuzet lekar: ");
@@ -69,27 +67,10 @@ class izmenaProfila extends Component {
   }
   handleChange = e => {
     e.preventDefault();
-    const { name, value } = e.target;
-    this.setState.ime = e.value;
- 
-    console.log(this.state.ime);
+    this.setState({[e.target.name]: e.target.value});
+    console.log(this.state)
     console.log("On change !!!")
-    // let formErrors = { ...this.state.formErrors };
 
-    // switch (name) {
-    //   case "email":
-    //     formErrors.email =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera  " : "";
-    //     break;
-    //   case "lozinka":
-    //     formErrors.lozinka =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    // }
-    // if (formErrors.email.length > 0 && formErrors.lozinka.length > 0) {
-    //   formErrors.log = "";
-    // }
-    // this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   };
   
   handleSumbit = e => {
@@ -128,9 +109,6 @@ class izmenaProfila extends Component {
       })
       .catch(error => {
         console.log("Izmena nije uspela! ")
-        //   console.log(error.response);
-        // formErrors.log = "Pogresni kredencijali";
-        // this.setState({ formErrors }, () => console.log(this.state));
       });
   };
 
@@ -140,10 +118,7 @@ class izmenaProfila extends Component {
     const ime = this.state.ime;
     const prezime = this.state.prezime;
     const telefon = this.state.telefon;
-    // console.log("Prije izmjene : ");
-    // console.log(this.state.ime);
-    // console.log(this.state.prezime);
-    // console.log(this.state.telefon);
+
 
     return (
       <div className="content">
@@ -156,15 +131,14 @@ class izmenaProfila extends Component {
                   <form onSubmit={this.handleSumbit} className="formaIzmenaProfilaLekara">
                      <div className="ime">
                         <label htmlFor="ime">Ime: </label>
-                         {/* <input value={this.state.inputValue} onChange={this.updateInputValue}/> */}
                         <input
                           type="text"
                           name="ime"
                           
-                          // defaultValue={ime}
+                          defaultValue={ime}
                           // placeholder={this.state.ime}
                           // noValidate
-                          // onChange={this.updateInputValue}
+                          onChange={this.handleChange}
                         />
                       </div>
                       <div className="prezime">
@@ -172,10 +146,10 @@ class izmenaProfila extends Component {
                         <input
                           type="text"
                           name="prezime"
-                          // defaultValue={prezime}
+                          defaultValue={prezime}
                           // placeholder="prezime"
                           // noValidate
-                          // onChange={this.handleChange}
+                          onChange={this.handleChange}
                         />
                       </div>
                       <div className="email">
@@ -183,7 +157,8 @@ class izmenaProfila extends Component {
                         <input
                           type="email"
                           name="email"
-                          // defaultValue={email}
+                          value={email}
+                          disabled="disabled"
                           // placeholder="email"
                           // noValidate
                           // onChange={this.handleChange}
@@ -214,10 +189,10 @@ class izmenaProfila extends Component {
                         <input
                           type="text"
                           name="telefon"
-                          // defaultValue={this.state.telefon}
+                          defaultValue={this.state.telefon}
                           // placeholder="telefon"
                           // noValidate
-                          // onChange={this.handleChange}
+                          onChange={this.handleChange}
                         />
                
                       {/* <div className="">
