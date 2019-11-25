@@ -1,4 +1,3 @@
-
 import React, { Component } from "react";
 import {
   Grid,
@@ -21,12 +20,131 @@ import "login.js";
 import { log } from "util";
 import Login from "login";
 import slikaLekar from "assets/img/images.jpg"
+import axios from "axios";
 
 class izmenaProfila extends Component {
   constructor(props){
-    super(props)
+    super(props);
+    console.log("IZMENA PROFILA LEKARA LEKARA");
+    this.state = {
+      email: props.email,
+      uloga: props.uloga, 
+      ime: "",
+      telefon: "",
+      prezime: "",
+
+    }
+
   }
+
+
+  componentWillMount(){
+    console.log("wmount")
+    const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
+    // console.log('Email: ' + this.state.email);
+    // console.log('url: ' + url);
+    axios.get(url)
+      .then(Response => {
+        console.log("Preuzet lekar: ");
+        console.log(Response.data);
+      
+        this.setState({
+          email: Response.data.email
+        });
+        this.setState({
+          ime: Response.data.ime
+        });
+
+        this.setState({
+          prezime: Response.data.prezime
+        });
+        this.setState({
+          telefon: Response.data.telefon
+        });
+      })
+      
+      .catch(error => {
+        console.log("Lekar  nije preuzet")
+      })
+  }
+  handleChange = e => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    this.setState.ime = e.value;
+ 
+    console.log(this.state.ime);
+    console.log("On change !!!")
+    // let formErrors = { ...this.state.formErrors };
+
+    // switch (name) {
+    //   case "email":
+    //     formErrors.email =
+    //       value.length < 3 && value.length > 0 ? "min 3 karaktera  " : "";
+    //     break;
+    //   case "lozinka":
+    //     formErrors.lozinka =
+    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
+    //     break;
+    // }
+    // if (formErrors.email.length > 0 && formErrors.lozinka.length > 0) {
+    //   formErrors.log = "";
+    // }
+    // this.setState({ formErrors, [name]: value }, () => console.log(this.state));
+  };
+  
+  handleSumbit = e => {
+    e.preventDefault();
+    console.log("KLIK SUBMITTT")
+    // let formErrors = { ...this.state.formErrors };
+      console.log("Izmjena : ---------------")  
+      console.log(this.state.ime);
+      console.log(this.state.prezime);
+    axios
+      .put("http://localhost:8025/api/lekari/update", {
+        ime: this.state.ime,
+        prezime: this.state.prezime,
+        telefon: this.state.telefon,
+        email: this.state.email
+      })
+      .then(response => {
+        console.log(response.data);
+ 
+      
+        this.setState({
+          ime: response.data.ime
+        });
+
+        this.setState({
+          prezime: response.data.prezime
+        });
+
+        this.setState({
+          telefon: response.data.telefon
+        });
+
+        // this.setState({
+        //   redirectToReferrer: true
+        // });
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ")
+        //   console.log(error.response);
+        // formErrors.log = "Pogresni kredencijali";
+        // this.setState({ formErrors }, () => console.log(this.state));
+      });
+  };
+
   render() {
+    const email = this.state.email;
+    const uloga = this.state.uloga;
+    const ime = this.state.ime;
+    const prezime = this.state.prezime;
+    const telefon = this.state.telefon;
+    // console.log("Prije izmjene : ");
+    // console.log(this.state.ime);
+    // console.log(this.state.prezime);
+    // console.log(this.state.telefon);
+
     return (
       <div className="content">
         <Grid fluid>
@@ -35,15 +153,18 @@ class izmenaProfila extends Component {
               <Card
                 title="Izmena podataka"
                 content={
-                  <form className="formaIzmenaProfilaLekara">
+                  <form onSubmit={this.handleSumbit} className="formaIzmenaProfilaLekara">
                      <div className="ime">
                         <label htmlFor="ime">Ime: </label>
+                         {/* <input value={this.state.inputValue} onChange={this.updateInputValue}/> */}
                         <input
                           type="text"
                           name="ime"
-                          placeholder="Ime"
+                          
+                          // defaultValue={ime}
+                          // placeholder={this.state.ime}
                           // noValidate
-                          // onChange={this.handleChange}
+                          // onChange={this.updateInputValue}
                         />
                       </div>
                       <div className="prezime">
@@ -51,7 +172,8 @@ class izmenaProfila extends Component {
                         <input
                           type="text"
                           name="prezime"
-                          placeholder="prezime"
+                          // defaultValue={prezime}
+                          // placeholder="prezime"
                           // noValidate
                           // onChange={this.handleChange}
                         />
@@ -61,7 +183,8 @@ class izmenaProfila extends Component {
                         <input
                           type="email"
                           name="email"
-                          placeholder="email"
+                          // defaultValue={email}
+                          // placeholder="email"
                           // noValidate
                           // onChange={this.handleChange}
                         />
@@ -89,9 +212,10 @@ class izmenaProfila extends Component {
                       <div className="telefon">
                         <label htmlFor="telefon">Broj telefona: </label>
                         <input
-                          type="number"
+                          type="text"
                           name="telefon"
-                          placeholder="telefon"
+                          // defaultValue={this.state.telefon}
+                          // placeholder="telefon"
                           // noValidate
                           // onChange={this.handleChange}
                         />
