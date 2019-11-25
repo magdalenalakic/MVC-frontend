@@ -1,20 +1,4 @@
-/*!
 
-=========================================================
-* Light Bootstrap Dashboard React - v1.3.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
@@ -37,64 +21,10 @@ import {
 } from "variables/Variables.jsx";
 import slikaLekar from "assets/img/images.jpg";
 import Login from "login.js";
-import axios from "axios";
-
-class PocetnaStranicaLekara extends React.Component {
-  constructor(props){
-    super(props);
-    console.log("POCETNA STRANICA LEKARA");
-    this.state = {
-      email: props.email,
-      uloga: props.uloga, 
-      ime: "",
-      telefon: "",
-      prezime: "",
-    }
-  }
-  // componentDidMount(){
-  //   fetch().
-  //   then((Response)=>Response.json()).
-  //   then((findresponse)=>{
-  //     console.log(findresponse)
-
-  //   })
-  // // }
-  // componentDidMount() {
-  //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
-  //   console.log(this.state);
-  // }
 
 
-  componentWillMount(){
-    console.log("wmount")
-    const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
-    // console.log('Email: ' + this.state.email);
-    // console.log('url: ' + url);
-    axios.get(url)
-      .then(Response => {
-        console.log("Preuzet lekar: ");
-        console.log(Response.data);
-        this.setState({
-          email: Response.data.email
-        });
-        this.setState({
-          ime: Response.data.ime
-        });
-
-        this.setState({
-          prezime: Response.data.prezime
-        });
-        this.setState({
-          telefon: Response.data.telefon
-        });
-      })
-      
-      .catch(error => {
-        console.log("Lekar  nije preuzet")
-      })
-  }
-
-
+class PocetnaStranicaMedSestre extends React.Component {
+  
   createLegend(json) {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
@@ -105,24 +35,14 @@ class PocetnaStranicaLekara extends React.Component {
     }
     return legend;
   }
+  
   render() {
-    // console.log("Ispisi  props u pocetna stranica lekara: "); 
-    // console.log(this.props);
-    const email = this.state.email;
-    const uloga = this.state.uloga;
-    const ime = this.state.ime;
-    const prezime = this.state.prezime;
-    const telefon = this.state.telefon;
-    // console.log("Render ps email: " + email);
-    // console.log("Render ps uloga: " + uloga);
-    // console.log("Render ps ime: " + ime);
-    // console.log("Render ps prezime: " + prezime);
-    // console.log("Render ps telefon: " + telefon)
+    console.log(this.props);
     return (
       <div className="content">
         <Grid fluid>
           <Row>
-            <Col lg={3} sm={6}>
+            {/* <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-server text-warning" />}
                 // statsText="Lista pacijenata"
@@ -130,9 +50,9 @@ class PocetnaStranicaLekara extends React.Component {
                 // statsIcon={<i className="fa fa-refresh" />}
                  statsIconText="Lista pacijenata"
               />
-            </Col>
+            </Col> */}
             {/* <h1>{this.state}</h1> */}
-            <Col lg={3} sm={6}>
+            {/* <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-wallet text-success" />}
                 // statsText="Pocetak pregleda"
@@ -167,7 +87,7 @@ class PocetnaStranicaLekara extends React.Component {
                 // statsIcon={<i className="fa fa-refresh" />}
                  statsIconText="Zakazivanje pregleda i operacija"
               />
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             <Col md={8}>
@@ -210,19 +130,19 @@ class PocetnaStranicaLekara extends React.Component {
                     <div className="typo-line">
                       <h2>
                         <p className="category">Ime:</p>
-                        <label className="adresaKC"> {this.state.ime} </label>
+                        <label className="adresaKC">ucitati data</label>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
                         <p className="category">Prezime:</p>
-                        <label className="adresaKC">{this.state.prezime} </label>
+                        <label className="adresaKC">ucitati data</label>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
-                        <p className="category">Telefon:</p>
-                <label className="adresaKC">{this.state.telefon}</label>
+                        <p className="category">Klinika:</p>
+                        <label className="adresaKC">ucitati data</label>
                       </h2>
                     </div>
                     <div className="typo-line">
@@ -237,67 +157,15 @@ class PocetnaStranicaLekara extends React.Component {
                   </div>
                 }
                 
-                // category="opis ... naziv adresa i opis  "
-                // stats="Campaign sent 2 days ago"
-                // content={
-                //   <div
-                //     id="chartPreferences"
-                //     className="ct-chart ct-perfect-fourth"
-                //   >
-                //     <ChartistGraph data={dataPie} type="Pie" />
-                //   </div>
-                // }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendPie)}</div>
-                // }
+                
               />
             </Col>
           </Row>
-{/* 
-          <Row>
-            <Col md={6}>
-              <Card
-                id="chartActivity"
-                title="2014 Sales"
-                category="All products including Taxes"
-                stats="Data information certified"
-                statsIcon="fa fa-check"
-                content={
-                  <div className="ct-chart">
-                    <ChartistGraph
-                      data={dataBar}
-                      type="Bar"
-                      options={optionsBar}
-                      responsiveOptions={responsiveBar}
-                    />
-                  </div>
-                }
-                legend={
-                  <div className="legend">{this.createLegend(legendBar)}</div>
-                }
-              />
-            </Col>
 
-            <Col md={6}>
-              <Card
-                title="Tasks"
-                category="Backend development"
-                stats="Updated 3 minutes ago"
-                statsIcon="fa fa-history"
-                content={
-                  <div className="table-full-width">
-                    <table className="table">
-                      <Tasks />
-                    </table>
-                  </div>
-                }
-              />
-            </Col>
-          </Row> */}
         </Grid>
       </div>
     );
   }
 }
 
-export default PocetnaStranicaLekara;
+export default PocetnaStranicaMedSestre;
