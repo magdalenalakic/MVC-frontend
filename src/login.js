@@ -8,6 +8,7 @@ import Registracija from "registracija.js";
 
 import Lekar from "views/Lekar.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
+import MedicinskaSestra from "views/MedicinskaSestra.jsx";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -44,7 +45,7 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-      .post("http://localhost:8020/api/korisnici/login", {
+      .post("http://localhost:8028/api/korisnici/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
       })
@@ -201,7 +202,20 @@ class Login extends Component {
       );
     }
     if(uloga === "MEDICINSKASESTRA"){
-      
+      return (
+        <BrowserRouter>
+          <Switch>
+
+            <Route
+              path="/admin"
+              render={props => (
+                <MedicinskaSestra {...props} email={email} uloga={uloga} />
+              )}
+            />
+            <Redirect from="/" to="/admin/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
     }
     if(uloga === "PACIJENT"){
       // return (

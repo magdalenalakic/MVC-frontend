@@ -1,41 +1,44 @@
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import { Route, Switch } from "react-router-dom";
-import { Grid, Row, Col, Table } from "react-bootstrap";
-import NotificationSystem from "react-notification-system";
-
 import AdminNavbar from "components/Navbars/AdminNavbar";
 import Footer from "components/Footer/Footer";
 import Sidebar from "components/Sidebar/Sidebar";
-import axios from "axios";
-import FixedPlugin from "components/FixedPlugin/FixedPlugin.jsx";
-
-import { style } from "variables/Variables.jsx";
-
-import routes from "routesAdminKC.js";
-import { Card } from "components/Card/Card.jsx";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
+import routes from "routesMedSestra.js";
 import "klinickiCentar.css";
-import UserCard from "components/UserCard/UserCard";
-import slikaKC from "assets/img/klinickiCentar.jpg";
 
-class KlinickiCentar extends Component {
+// import ChartistGraph from "react-chartist";
+// import { Grid, Row, Col, Table } from "react-bootstrap";
+// import NotificationSystem from "react-notification-system";
+
+
+// import axios from "axios";
+// import FixedPlugin from "components/FixedPlugin/FixedPlugin.jsx";
+
+// import { style } from "variables/Variables.jsx";
+
+// import { Card } from "components/Card/Card.jsx";
+// import { StatsCard } from "components/StatsCard/StatsCard.jsx";
+// import { Tasks } from "components/Tasks/Tasks.jsx";
+// import {
+//   dataPie,
+//   legendPie,
+//   dataSales,
+//   optionsSales,
+//   responsiveSales,
+//   legendSales,
+//   dataBar,
+//   optionsBar,
+//   responsiveBar,
+//   legendBar
+// } from "variables/Variables.jsx";
+
+// import UserCard from "components/UserCard/UserCard";
+// import slikaKC from "assets/img/klinickiCentar.jpg";
+
+class MedicinskaSestra extends Component {
   constructor(props) {
     super(props);
-    console.log("KLINICKI CENTAR");
+
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
@@ -48,11 +51,10 @@ class KlinickiCentar extends Component {
       hasImage: true,
       fixedClasses: "dropdown show-dropdown open"
     };
-    
+    console.log("MEDICINSKA SESTRA")
     console.log(this.state.uloga);
     console.log(this.state.email);
   
-
   }
 
 
@@ -66,8 +68,6 @@ class KlinickiCentar extends Component {
               <prop.component
                 {...props}
                 handleClick={this.handleNotificationClick}
-                uloga ={this.state.uloga}
-                email = {this.state.email}
               />
             )}
             key={key}
@@ -170,7 +170,6 @@ class KlinickiCentar extends Component {
           <AdminNavbar
             {...this.props}
             brandText={this.getBrandText(this.props.location.pathname)}
-            // brandText="JU JU JUJU"
           />
 
           <Switch>{this.getRoutes(routes)}</Switch>
@@ -182,4 +181,4 @@ class KlinickiCentar extends Component {
   }
 }
 
-export default KlinickiCentar;
+export default MedicinskaSestra;
