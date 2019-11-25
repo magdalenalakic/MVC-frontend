@@ -41,19 +41,19 @@ class Sidebar extends Component {
           )}
         <div className="logo">
           <a
-            href=""
+            href="/"
             className="simple-text logo-mini"
           >
-            <div className="logo-img">
+          <div className="logo-img">
               {/* <img src={logo} alt="logo_image" /> */}
               <img src={logo} alt="logo_image" />
-            </div>
+          </div>
           </a>
           <a
-            href=""
+            href="/"
             className="simple-text logo-normal"
-          >
-            Klinicki centar
+          >          
+          Klinicki centar 
           </a>
         </div>
         <div className="sidebar-wrapper">
