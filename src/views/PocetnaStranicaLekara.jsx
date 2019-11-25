@@ -37,16 +37,20 @@ import {
 } from "variables/Variables.jsx";
 import slikaLekar from "assets/img/images.jpg";
 import Login from "login.js";
-
+import axios from "axios";
 
 class PocetnaStranicaLekara extends React.Component {
-  // constructor(){
-  //   super();
-  //   this.state = {
-  //     data : [],
-  //   }
-
-  // }
+  constructor(props){
+    super(props);
+    console.log("POCETNA STRANICA LEKARA");
+    this.state = {
+      email: props.email,
+      uloga: props.uloga, 
+      ime: "",
+      telefon: "",
+      prezime: "",
+    }
+  }
   // componentDidMount(){
   //   fetch().
   //   then((Response)=>Response.json()).
@@ -54,11 +58,43 @@ class PocetnaStranicaLekara extends React.Component {
   //     console.log(findresponse)
 
   //   })
-  // }
+  // // }
   // componentDidMount() {
   //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
-  //   console.log(this.props);
+  //   console.log(this.state);
   // }
+
+
+  componentWillMount(){
+    console.log("wmount")
+    const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
+    // console.log('Email: ' + this.state.email);
+    // console.log('url: ' + url);
+    axios.get(url)
+      .then(Response => {
+        console.log("Preuzet lekar: ");
+        console.log(Response.data);
+        this.setState({
+          email: Response.data.email
+        });
+        this.setState({
+          ime: Response.data.ime
+        });
+
+        this.setState({
+          prezime: Response.data.prezime
+        });
+        this.setState({
+          telefon: Response.data.telefon
+        });
+      })
+      
+      .catch(error => {
+        console.log("Lekar  nije preuzet")
+      })
+  }
+
+
   createLegend(json) {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
@@ -70,7 +106,18 @@ class PocetnaStranicaLekara extends React.Component {
     return legend;
   }
   render() {
-    console.log(this.props);
+    // console.log("Ispisi  props u pocetna stranica lekara: "); 
+    // console.log(this.props);
+    const email = this.state.email;
+    const uloga = this.state.uloga;
+    const ime = this.state.ime;
+    const prezime = this.state.prezime;
+    const telefon = this.state.telefon;
+    // console.log("Render ps email: " + email);
+    // console.log("Render ps uloga: " + uloga);
+    // console.log("Render ps ime: " + ime);
+    // console.log("Render ps prezime: " + prezime);
+    // console.log("Render ps telefon: " + telefon)
     return (
       <div className="content">
         <Grid fluid>
@@ -163,19 +210,19 @@ class PocetnaStranicaLekara extends React.Component {
                     <div className="typo-line">
                       <h2>
                         <p className="category">Ime:</p>
-                        <label className="adresaKC">ucitati data</label>
+                        <label className="adresaKC"> {this.state.ime} </label>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
                         <p className="category">Prezime:</p>
-                        <label className="adresaKC">ucitati data</label>
+                        <label className="adresaKC">{this.state.prezime} </label>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
-                        <p className="category">Klinika:</p>
-                        <label className="adresaKC">ucitati data</label>
+                        <p className="category">Telefon:</p>
+                <label className="adresaKC">{this.state.telefon}</label>
                       </h2>
                     </div>
                     <div className="typo-line">
