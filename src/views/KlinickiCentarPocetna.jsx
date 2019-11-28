@@ -45,9 +45,9 @@ class KlinickiCentarPocetna extends Component {
 
   componentWillMount() {
     console.log("--------pocetak");
-    const url1 =
-      "http://localhost:8025/api/administratoriKC/listaKlinika/" +
-      this.state.email;
+
+    const url1 = 'http://localhost:8025/api/administratoriKC/listaKlinika/' + this.state.email; 
+
     console.log(url1);
     axios
       .get(url1)
@@ -63,26 +63,25 @@ class KlinickiCentarPocetna extends Component {
         console.log(error);
       });
 
-    console.log("--------pocetak2");
-    const url2 =
-      "http://localhost:8025/api/administratoriKC/listaAdministratoraKlinika/" +
-      this.state.email;
-    console.log(url2);
-    axios
-      .get(url2)
-      .then(response => {
-        console.log("url 22222");
-        console.log(response);
-        this.setState({
-          listaAdministratoraKlinika: response.data
-        });
-      })
-      .catch(error => {
-        console.log("nije uspeo url2");
-        console.log(error);
-      });
+
+      console.log("--------pocetak2");
+      const url2 = 'http://localhost:8025/api/administratoriKC/listaAdministratoraKlinika/' + this.state.email; 
+      console.log(url2);
+      axios.get(url2)
+        .then(response => {
+          console.log("url 22222");
+          console.log(response);
+          this.setState({
+            listaAdministratoraKlinika: response.data
+          });
+        })
+        .catch(error => {
+            console.log("nije uspeo url2");
+            console.log(error);
+        })
     console.log("--------pocetak3");
-    const url3 = "http://localhost:8025/api/administratoriKC/svi";
+    const url3 = 'http://localhost:8025/api/administratoriKC/svi'; 
+
     console.log(url3);
     axios
       .get(url3)
@@ -94,16 +93,15 @@ class KlinickiCentarPocetna extends Component {
         });
       })
       .catch(error => {
-        console.log("nije uspeo url3");
-        console.log(error);
-      });
-    console.log("--------pocetak4");
-    const url4 =
-      "http://localhost:8025/api/administratoriKC/klinickiCentar/" +
-      this.state.email;
-    console.log(url4);
-    axios
-      .get(url4)
+
+          console.log("nije uspeo url3");
+          console.log(error);
+      })
+  console.log("--------pocetak4");
+  const url4 = 'http://localhost:8025/api/administratoriKC/klinickiCentar/' + this.state.email; 
+  console.log(url4);
+    axios.get(url4)
+
       .then(response => {
         console.log("url 44444");
         console.log(response);
