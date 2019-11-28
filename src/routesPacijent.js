@@ -29,9 +29,10 @@ import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranaPacijenta from "views/PocetnaStranaPacijenta.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
+import ListaKlinika from "views/ListaKlinika.jsx";
 
 const dashboardRoutes = [
-  //za lekara
+  //za pacijenta
   {
     path: "/pocetnaStranica",
     name: "Pocetna Strana",
@@ -44,6 +45,13 @@ const dashboardRoutes = [
     name: "Izmena profila",
     icon: "pe-7s-user",
     component: IzmenaProfilaPacijent,
+    layout: "/admin"
+  },
+  {
+    path: "/klinike",
+    name: "Klinike",
+    icon: "pe-7s-user",
+    component: ListaKlinika,
     layout: "/admin"
   }
 ];
