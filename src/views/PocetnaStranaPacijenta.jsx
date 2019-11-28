@@ -57,9 +57,7 @@ class PocetnaStranaPacijenta extends React.Component {
       lozinka: ""
     };
     console.log(this.state.email);
-    console.log(this.state.uloga);
   }
-
   componentWillMount() {
     console.log("treba get zahtev da se iskuca");
     const email = this.state.email;
@@ -67,6 +65,7 @@ class PocetnaStranaPacijenta extends React.Component {
 
     axios
       .get("http://localhost:8025/api/pacijenti/findPacijentEmail/" + email)
+
       .then(Response => {
         console.log("URL 111");
         console.log(Response);
@@ -87,6 +86,7 @@ class PocetnaStranaPacijenta extends React.Component {
         console.log(error);
       });
   }
+
   // componentDidMount() {
   //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
   //   console.log(this.props);
