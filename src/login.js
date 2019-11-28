@@ -47,7 +47,7 @@ class Login extends Component {
 
     axios
 
-      .post("http://localhost:8028/api/korisnici/login", {
+      .post("http://localhost:8025/api/korisnici/login", {
 
         email: this.state.email,
         lozinka: this.state.lozinka

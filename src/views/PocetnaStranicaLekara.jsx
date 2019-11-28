@@ -17,7 +17,7 @@
 */
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
-import { Grid, Row, Col } from "react-bootstrap";
+import { Grid, Row, Col, Table } from "react-bootstrap";
 
 import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
@@ -49,7 +49,9 @@ class PocetnaStranicaLekara extends React.Component {
       ime: "",
       telefon: "",
       prezime: "",
-    }
+      listaPacijenata:[],
+    };
+    this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
   }
   // componentDidMount(){
   //   fetch().
@@ -92,6 +94,23 @@ class PocetnaStranicaLekara extends React.Component {
       .catch(error => {
         console.log("Lekar  nije preuzet")
       })
+
+      console.log("------***********--pocetak");
+      const url1 = 'http://localhost:8025/api/lekari/listaPacijenataLekara/' + this.state.email; 
+      console.log(url1);
+      axios.get(url1)
+        .then(response => {
+          console.log("URL 111");
+          console.log(response);
+          this.setState({
+            listaPacijenata: response.data
+          });
+        })
+        .catch(error => {
+            console.log("nije uspeo url1");
+            console.log(error);
+        })
+
   }
 
 
@@ -105,6 +124,29 @@ class PocetnaStranicaLekara extends React.Component {
     }
     return legend;
   }
+
+
+  listaPacijenataLekara(){
+    let res=[];
+    let lista = this.state.listaPacijenata;
+    for(var i=0; i< lista.length;i++){
+      res.push(
+        <tr key = {i}>
+          {/* <td key={lista[i].id}>{lista[i].id}</td>
+          <td key={lista[i].naziv}>{lista[i].ime}</td>
+          <td key={lista[i].adresa}>{lista[i].prezime}</td>
+          <td key={lista[i].opis}>{lista[i].email}</td> */}
+          <td key={lista[i].id}>{lista[i].id}</td>
+          <td>{lista[i].ime}</td>
+          <td>{lista[i].prezime}</td>
+          <td >{lista[i].email}</td>
+         {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
+        </tr>
+      )
+    }
+    return res;
+  }
+
   render() {
     // console.log("Ispisi  props u pocetna stranica lekara: "); 
     // console.log(this.props);
@@ -128,7 +170,7 @@ class PocetnaStranicaLekara extends React.Component {
                 // statsText="Lista pacijenata"
                 // statsValue="105GB"
                 // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Lista pacijenata"
+                 statsIconText="Kalendar"
               />
             </Col>
             {/* <h1>{this.state}</h1> */}
@@ -141,7 +183,7 @@ class PocetnaStranicaLekara extends React.Component {
                  statsIconText="Pocetak pregleda"
               />
             </Col>
-            <Col lg={3} sm={6}>
+            {/* <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
                 // statsText="Profil korisnika"
@@ -149,7 +191,7 @@ class PocetnaStranicaLekara extends React.Component {
                 // statsIcon={<i className="fa fa-clock-o" />}
                  statsIconText="Profil korisnika"
               />
-            </Col>
+            </Col> */}
             <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
@@ -173,21 +215,32 @@ class PocetnaStranicaLekara extends React.Component {
             <Col md={8}>
               <Card
               
-                title="Kalendar"
+                title="Lista pacijenata"
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
+                ctTableFullWidth
+                ctTableResponsive
                  content={
-                  <div className="ct-chart">
-                    {/* <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    /> */}
-                    <p>
+                  <Table striped hover>
+                  <thead>
+                    <tr>
+                      {/*                             
+                      {listaKlinika.map((prop, key) => {
+                        return <th key={key}>{prop}</th>;
+                      })} */}
+                      <th id="Id">Id</th>
+                      <th id="Ime">Ime</th>
+                      <th id="Prezime"> Prezime</th>
+                      <th id="Email">Email</th>
+                  
+                    </tr>
+                   
+                  </thead>
+                  <tbody>
+                      {this.listaPacijenataLekara()}
                     
-                    </p>
-                  </div>
+                  </tbody>
+                </Table>
                  }
                 // legend={
                 //   <div className="legend">{this.createLegend(legendSales)}</div>

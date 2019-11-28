@@ -48,7 +48,7 @@ class KlinickiCentarPocetna extends Component {
   
   componentWillMount(){
     console.log("--------pocetak");
-    const url1 = 'http://localhost:8028/api/administratoriKC/listaKlinika/' + this.state.email; 
+    const url1 = 'http://localhost:8025/api/administratoriKC/listaKlinika/' + this.state.email; 
     console.log(url1);
     axios.get(url1)
       .then(response => {
@@ -64,7 +64,7 @@ class KlinickiCentarPocetna extends Component {
       })
 
       console.log("--------pocetak2");
-      const url2 = 'http://localhost:8028/api/administratoriKC/listaAdministratoraKlinika/' + this.state.email; 
+      const url2 = 'http://localhost:8025/api/administratoriKC/listaAdministratoraKlinika/' + this.state.email; 
       console.log(url2);
       axios.get(url2)
         .then(response => {
@@ -79,7 +79,7 @@ class KlinickiCentarPocetna extends Component {
             console.log(error);
         })
     console.log("--------pocetak3");
-    const url3 = 'http://localhost:8028/api/administratoriKC/svi'; 
+    const url3 = 'http://localhost:8025/api/administratoriKC/svi'; 
     console.log(url3);
     axios.get(url3)
       .then(response => {
@@ -94,7 +94,7 @@ class KlinickiCentarPocetna extends Component {
           console.log(error);
       })
   console.log("--------pocetak4");
-  const url4 = 'http://localhost:8028/api/administratoriKC/klinickiCentar/' + this.state.email; 
+  const url4 = 'http://localhost:8025/api/administratoriKC/klinickiCentar/' + this.state.email; 
   console.log(url4);
     axios.get(url4)
       .then(response => {
