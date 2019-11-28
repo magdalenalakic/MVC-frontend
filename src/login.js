@@ -31,6 +31,7 @@ class Login extends Component {
       redirectToReferrer: false,
       redirectToRegistration: false,
       errorF: false,
+      waitToapprove: props.waitToapprove,
       formErrors: {
         log: "",
         email: "",
@@ -47,8 +48,7 @@ class Login extends Component {
 
     axios
 
-      .post("http://localhost:8028/api/korisnici/login", {
-
+      .post("http://localhost:8025/api/korisnici/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
       })
@@ -201,10 +201,9 @@ class Login extends Component {
       );
     }
     if (uloga === "MEDICINSKASESTRA") {
-       return (
+      return (
         <BrowserRouter>
           <Switch>
-
             <Route
               path="/admin"
               render={props => (
@@ -231,6 +230,7 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
+
     if (redirectToRegistration === true) {
       return (
         <BrowserRouter>
@@ -250,6 +250,12 @@ class Login extends Component {
         <div className="logForm">
           <div className="form-logForm">
             <h1>Uloguj se</h1>
+            {this.state.waitToapprove === true && (
+              <span className="errorMessage">
+                Bicete obavesteni o potvrdi registracije putem mejla u najkracem
+                mogucem roku.
+              </span>
+            )}
             <form onSubmit={this.handleSumbit} noValidate>
               <div className="email">
                 <label htmlFor="email">E-mail: </label>

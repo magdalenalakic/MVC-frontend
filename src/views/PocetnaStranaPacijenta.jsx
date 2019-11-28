@@ -23,6 +23,7 @@ import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
+import axios from "axios";
 import {
   dataPie,
   legendPie,
@@ -42,6 +43,7 @@ class PocetnaStranaPacijenta extends React.Component {
   constructor(props) {
     super(props);
     console.log(this.props);
+    console.log(props.email);
     this.state = {
       email: props.email,
       uloga: props.uloga,
@@ -50,15 +52,29 @@ class PocetnaStranaPacijenta extends React.Component {
       adresa: "",
       grad: "",
       drzava: "",
-      email: "",
       telefon: "",
       brojOsiguranika: "",
       lozinka: ""
     };
+    console.log(this.state.email);
+    console.log(this.state.uloga);
   }
 
   componentWillMount() {
     console.log("treba get zahtev da se iskuca");
+    const email = this.state.email;
+    console.log(email);
+
+    axios
+      .get("http://localhost:8025/api/pacijenti/findPacijentEmail/" + email)
+      .then(response => {
+        console.log("URL 111");
+        console.log(response);
+      })
+      .catch(error => {
+        console.log("nije uspeo url1");
+        console.log(error);
+      });
   }
   // componentDidMount() {
   //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
