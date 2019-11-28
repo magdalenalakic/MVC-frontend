@@ -16,7 +16,7 @@
 
 */
 import Dashboard from "views/Dashboard.jsx";
-import IzmenaProfila from "views/IzmenaProfila";
+import IzmenaProfilaPacijent from "views/IzmenaProfilaPacijent.jsx";
 import TableList from "views/TableList.jsx";
 import Typography from "views/Typography.jsx";
 import Icons from "views/Icons.jsx";
@@ -43,7 +43,7 @@ const dashboardRoutes = [
     path: "/user",
     name: "Izmena profila",
     icon: "pe-7s-user",
-    component: IzmenaProfila,
+    component: IzmenaProfilaPacijent,
     layout: "/admin"
   }
 ];
