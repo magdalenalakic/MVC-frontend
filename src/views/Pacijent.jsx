@@ -60,7 +60,7 @@ class Pacijent extends Component {
                 {...props}
                 handleClick={this.handleNotificationClick}
                 uloga={this.state.uloga}
-                email={this.state.uloga}
+                email={this.state.email}
               />
             )}
             key={key}

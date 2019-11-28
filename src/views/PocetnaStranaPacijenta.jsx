@@ -23,6 +23,7 @@ import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
+import axios from "axios";
 import {
   dataPie,
   legendPie,
@@ -55,10 +56,24 @@ class PocetnaStranaPacijenta extends React.Component {
       brojOsiguranika: "",
       lozinka: ""
     };
+    console.log(this.state.email);
   }
 
   componentWillMount() {
     console.log("treba get zahtev da se iskuca");
+    const email = this.state.email;
+    console.log(email);
+
+    axios
+      .get("http://localhost:8025/api/pacijenti/findPacijentEmail/" + email)
+      .then(response => {
+        console.log("URL 111");
+        console.log(response);
+      })
+      .catch(error => {
+        console.log("nije uspeo url1");
+        console.log(error);
+      });
   }
   // componentDidMount() {
   //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
