@@ -9,6 +9,7 @@ import Registracija from "registracija.js";
 import Lekar from "views/Lekar.jsx";
 import Pacijent from "views/Pacijent.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
+import MedicinskaSestra from "views/MedicinskaSestra.jsx";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -206,9 +207,9 @@ class Login extends Component {
           <Switch>
             <Route
               path="/admin"
-              render={props => (
+              render={props => 
                 <MedicinskaSestra {...props} email={email} uloga={uloga} />
-              )}
+              }
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
           </Switch>

@@ -140,6 +140,8 @@ class PocetnaStranicaLekara extends React.Component {
           <td>{lista[i].ime}</td>
           <td>{lista[i].prezime}</td>
           <td >{lista[i].email}</td>
+          <td><a href="#">Prikazi profil</a></td>
+          {/* <td><link to="/admin/login">Prikazi profil</link></td> */}
          {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
         </tr>
       )
@@ -232,7 +234,7 @@ class PocetnaStranicaLekara extends React.Component {
                       <th id="Ime">Ime</th>
                       <th id="Prezime"> Prezime</th>
                       <th id="Email">Email</th>
-                  
+                      <th id="profilPacijenta"> # </th>
                     </tr>
                    
                   </thead>
