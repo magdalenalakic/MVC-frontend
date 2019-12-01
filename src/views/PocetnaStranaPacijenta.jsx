@@ -23,6 +23,7 @@ import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
+import axios from "axios";
 import {
   dataPie,
   legendPie,
@@ -42,6 +43,7 @@ class PocetnaStranaPacijenta extends React.Component {
   constructor(props) {
     super(props);
     console.log(this.props);
+    console.log(props.email);
     this.state = {
       email: props.email,
       uloga: props.uloga,
@@ -50,16 +52,41 @@ class PocetnaStranaPacijenta extends React.Component {
       adresa: "",
       grad: "",
       drzava: "",
-      email: "",
       telefon: "",
       brojOsiguranika: "",
       lozinka: ""
     };
+    console.log(this.state.email);
   }
-
   componentWillMount() {
     console.log("treba get zahtev da se iskuca");
+    const email = this.state.email;
+    console.log(email);
+
+    axios
+      .get("http://localhost:8025/api/pacijenti/findPacijentEmail/" + email)
+
+      .then(Response => {
+        console.log("URL 111");
+        console.log(Response);
+        this.setState({
+          email: Response.data.email,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
+          telefon: Response.data.telefon,
+          adresa: Response.data.adresa,
+          grad: Response.data.grad,
+          drzava: Response.data.drzava,
+          lbo: Response.data.lbo
+        });
+        console.log(this.state);
+      })
+      .catch(error => {
+        console.log("nije uspeo url1");
+        console.log(error);
+      });
   }
+
   // componentDidMount() {
   //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
   //   console.log(this.props);
@@ -75,6 +102,15 @@ class PocetnaStranaPacijenta extends React.Component {
     return legend;
   }
   render() {
+    const email = this.state.email;
+    const uloga = this.state.uloga;
+    const ime = this.state.ime;
+    const prezime = this.state.prezime;
+    const telefon = this.state.telefon;
+    const adresa = this.state.adresa;
+    const grad = this.state.grad;
+    const drzava = this.state.drzava;
+    const lbo = this.state.lbo;
     console.log(this.props);
     return (
       <div className="content">
@@ -86,7 +122,7 @@ class PocetnaStranaPacijenta extends React.Component {
                 // statsText="Lista pacijenata"
                 // statsValue="105GB"
                 // statsIcon={<i className="fa fa-refresh" />}
-                statsIconText="Lista pacijenata"
+                statsIconText="Zahtev za pregled"
               />
             </Col>
             {/* <h1>{this.state}</h1> */}
@@ -96,7 +132,7 @@ class PocetnaStranaPacijenta extends React.Component {
                 // statsText="Pocetak pregleda"
                 // statsValue="$1,345"
                 // statsIcon={<i className="fa fa-calendar-o" />}
-                statsIconText="Pocetak pregleda"
+                statsIconText="Pregled zdravstvenog kartona"
               />
             </Col>
             <Col lg={3} sm={6}>
@@ -105,7 +141,7 @@ class PocetnaStranaPacijenta extends React.Component {
                 // statsText="Profil korisnika"
                 // statsValue="23"
                 // statsIcon={<i className="fa fa-clock-o" />}
-                statsIconText="Profil korisnika"
+                statsIconText="Istorija pregleda/operacija"
               />
             </Col>
             <Col lg={3} sm={6}>
@@ -114,23 +150,23 @@ class PocetnaStranaPacijenta extends React.Component {
                 // statsText="Profil korisnika"
                 // statsValue="23"
                 // statsIcon={<i className="fa fa-clock-o" />}
-                statsIconText="Zahtev za odmor/odsustvo"
+                statsIconText="Brzo zakazivanje pregleda"
               />
             </Col>
-            <Col lg={3} sm={6}>
+            {/* <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="fa fa-twitter text-info" />}
                 statsText=""
                 // statsValue="+45"
                 // statsIcon={<i className="fa fa-refresh" />}
-                statsIconText="Zakazivanje pregleda i operacija"
+                statsIconText="Vidi klinike"
               />
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             <Col md={8}>
               <Card
-                title="Kalendar"
+                title=""
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
                 content={
@@ -168,25 +204,20 @@ class PocetnaStranaPacijenta extends React.Component {
                     <div className="typo-line">
                       <h2>
                         <p className="category">Ime:</p>
-                        <label className="adresaKC">ucitati data</label>
+                        <label className="adresaKC">{ime}</label>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
                         <p className="category">Prezime:</p>
-                        <label className="adresaKC">ucitati data</label>
+                        <label className="adresaKC">{prezime}</label>
                       </h2>
                     </div>
+
                     <div className="typo-line">
                       <h2>
-                        <p className="category">Klinika:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Opis posla:</p>
-                        <label className="opisKC">ucitati data</label>
+                        <p className="category">Telefon:</p>
+                        <label className="telefon">{telefon}</label>
                       </h2>
                     </div>
                   </div>

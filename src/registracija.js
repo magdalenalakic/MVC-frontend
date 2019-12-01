@@ -67,7 +67,8 @@ class Registracija extends Component {
       } else {
         console.log(`Ime: ${this.state.ime}`);
         axios
-          .post("http://localhost:8021/api/pacijenti/signup", {
+
+          .post("http://localhost:8025/api/pacijenti/signup", {
             email: this.state.email
           })
           .then(response => {
@@ -77,7 +78,8 @@ class Registracija extends Component {
 
             // this.render(<div>Potvrdite registraciju putem maila. </div>);
             axios
-              .post("http://localhost:8021/api/pacijenti/register", {
+
+              .post("http://localhost:8025/api/pacijenti/register", {
                 lozinka: this.state.lozinka,
                 ime: this.state.ime,
                 prezime: this.state.prezime,
