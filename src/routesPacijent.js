@@ -16,7 +16,7 @@
 
 */
 import Dashboard from "views/Dashboard.jsx";
-import IzmenaProfila from "views/IzmenaProfila";
+import IzmenaProfilaPacijent from "views/IzmenaProfilaPacijent.jsx";
 import TableList from "views/TableList.jsx";
 import Typography from "views/Typography.jsx";
 import Icons from "views/Icons.jsx";
@@ -26,25 +26,32 @@ import Upgrade from "views/Upgrade.jsx";
 import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
-import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
+import PocetnaStranaPacijenta from "views/PocetnaStranaPacijenta.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
+import ListaKlinika from "views/ListaKlinika.jsx";
 
 const dashboardRoutes = [
- 
-  //za lekara 
+  //za pacijenta
   {
     path: "/pocetnaStranica",
-    name: "Pocetna Strana Lekara",
+    name: "Pocetna Strana",
     icon: "pe-7s-graph",
-    component: PocetnaStranicaLekara,
+    component: PocetnaStranaPacijenta,
     layout: "/admin"
   },
   {
-    path: "/izmenaProfilaLekara",
+    path: "/user",
     name: "Izmena profila",
     icon: "pe-7s-user",
-    component: IzmenaProfila,
+    component: IzmenaProfilaPacijent,
+    layout: "/admin"
+  },
+  {
+    path: "/klinike",
+    name: "Klinike",
+    icon: "pe-7s-user",
+    component: ListaKlinika,
     layout: "/admin"
   }
 ];

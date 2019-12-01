@@ -17,12 +17,13 @@
 */
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
-import { Grid, Row, Col, Table } from "react-bootstrap";
+import { Grid, Row, Col } from "react-bootstrap";
 
 import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
+import axios from "axios";
 import {
   dataPie,
   legendPie,
@@ -35,85 +36,61 @@ import {
   responsiveBar,
   legendBar
 } from "variables/Variables.jsx";
-import slikaLekar from "assets/img/images.jpg";
+import slikaPacijent from "assets/img/pacijentImage.jpg";
 import Login from "login.js";
-import axios from "axios";
 
-class PocetnaStranicaLekara extends React.Component {
-  constructor(props){
+class PocetnaStranaPacijenta extends React.Component {
+  constructor(props) {
     super(props);
-    console.log("POCETNA STRANICA LEKARA");
+    console.log(this.props);
+    console.log(props.email);
     this.state = {
       email: props.email,
-      uloga: props.uloga, 
+      uloga: props.uloga,
       ime: "",
-      telefon: "",
       prezime: "",
-      listaPacijenata:[],
+      adresa: "",
+      grad: "",
+      drzava: "",
+      telefon: "",
+      brojOsiguranika: "",
+      lozinka: ""
     };
-    this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
+    console.log(this.state.email);
   }
-  // componentDidMount(){
-  //   fetch().
-  //   then((Response)=>Response.json()).
-  //   then((findresponse)=>{
-  //     console.log(findresponse)
+  componentWillMount() {
+    console.log("treba get zahtev da se iskuca");
+    const email = this.state.email;
+    console.log(email);
 
-  //   })
-  // // }
+    axios
+      .get("http://localhost:8025/api/pacijenti/findPacijentEmail/" + email)
+
+      .then(Response => {
+        console.log("URL 111");
+        console.log(Response);
+        this.setState({
+          email: Response.data.email,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
+          telefon: Response.data.telefon,
+          adresa: Response.data.adresa,
+          grad: Response.data.grad,
+          drzava: Response.data.drzava,
+          lbo: Response.data.lbo
+        });
+        console.log(this.state);
+      })
+      .catch(error => {
+        console.log("nije uspeo url1");
+        console.log(error);
+      });
+  }
+
   // componentDidMount() {
   //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
-  //   console.log(this.state);
+  //   console.log(this.props);
   // }
-
-
-  componentWillMount(){
-    console.log("wmount")
-    const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
-    // console.log('Email: ' + this.state.email);
-    // console.log('url: ' + url);
-    axios.get(url)
-      .then(Response => {
-        console.log("Preuzet lekar: ");
-        console.log(Response.data);
-        this.setState({
-          email: Response.data.email
-        });
-        this.setState({
-          ime: Response.data.ime
-        });
-
-        this.setState({
-          prezime: Response.data.prezime
-        });
-        this.setState({
-          telefon: Response.data.telefon
-        });
-      })
-      
-      .catch(error => {
-        console.log("Lekar  nije preuzet")
-      })
-
-      console.log("------***********--pocetak");
-      const url1 = 'http://localhost:8025/api/lekari/listaPacijenataLekara/' + this.state.email; 
-      console.log(url1);
-      axios.get(url1)
-        .then(response => {
-          console.log("URL 111");
-          console.log(response);
-          this.setState({
-            listaPacijenata: response.data
-          });
-        })
-        .catch(error => {
-            console.log("nije uspeo url1");
-            console.log(error);
-        })
-
-  }
-
-
   createLegend(json) {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
@@ -124,44 +101,17 @@ class PocetnaStranicaLekara extends React.Component {
     }
     return legend;
   }
-
-
-  listaPacijenataLekara(){
-    let res=[];
-    let lista = this.state.listaPacijenata;
-    for(var i=0; i< lista.length;i++){
-      res.push(
-        <tr key = {i}>
-          {/* <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].naziv}>{lista[i].ime}</td>
-          <td key={lista[i].adresa}>{lista[i].prezime}</td>
-          <td key={lista[i].opis}>{lista[i].email}</td> */}
-          <td key={lista[i].id}>{lista[i].id}</td>
-          <td>{lista[i].ime}</td>
-          <td>{lista[i].prezime}</td>
-          <td >{lista[i].email}</td>
-          <td><a href="#">Prikazi profil</a></td>
-          {/* <td><link to="/admin/login">Prikazi profil</link></td> */}
-         {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
-        </tr>
-      )
-    }
-    return res;
-  }
-
   render() {
-    // console.log("Ispisi  props u pocetna stranica lekara: "); 
-    // console.log(this.props);
     const email = this.state.email;
     const uloga = this.state.uloga;
     const ime = this.state.ime;
     const prezime = this.state.prezime;
     const telefon = this.state.telefon;
-    // console.log("Render ps email: " + email);
-    // console.log("Render ps uloga: " + uloga);
-    // console.log("Render ps ime: " + ime);
-    // console.log("Render ps prezime: " + prezime);
-    // console.log("Render ps telefon: " + telefon)
+    const adresa = this.state.adresa;
+    const grad = this.state.grad;
+    const drzava = this.state.drzava;
+    const lbo = this.state.lbo;
+    console.log(this.props);
     return (
       <div className="content">
         <Grid fluid>
@@ -172,7 +122,7 @@ class PocetnaStranicaLekara extends React.Component {
                 // statsText="Lista pacijenata"
                 // statsValue="105GB"
                 // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Kalendar"
+                statsIconText="Zahtev za pregled"
               />
             </Col>
             {/* <h1>{this.state}</h1> */}
@@ -182,116 +132,97 @@ class PocetnaStranicaLekara extends React.Component {
                 // statsText="Pocetak pregleda"
                 // statsValue="$1,345"
                 // statsIcon={<i className="fa fa-calendar-o" />}
-                 statsIconText="Pocetak pregleda"
+                statsIconText="Pregled zdravstvenog kartona"
+              />
+            </Col>
+            <Col lg={3} sm={6}>
+              <StatsCard
+                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                // statsText="Profil korisnika"
+                // statsValue="23"
+                // statsIcon={<i className="fa fa-clock-o" />}
+                statsIconText="Istorija pregleda/operacija"
+              />
+            </Col>
+            <Col lg={3} sm={6}>
+              <StatsCard
+                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                // statsText="Profil korisnika"
+                // statsValue="23"
+                // statsIcon={<i className="fa fa-clock-o" />}
+                statsIconText="Brzo zakazivanje pregleda"
               />
             </Col>
             {/* <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Profil korisnika"
-              />
-            </Col> */}
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Zahtev za odmor/odsustvo"
-              />
-            </Col>
-            <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="fa fa-twitter text-info" />}
                 statsText=""
                 // statsValue="+45"
                 // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Zakazivanje pregleda i operacija"
+                statsIconText="Vidi klinike"
               />
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             <Col md={8}>
               <Card
-              
-                title="Lista pacijenata"
+                title=""
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
-                ctTableFullWidth
-                ctTableResponsive
-                 content={
-                  <Table striped hover>
-                  <thead>
-                    <tr>
-                      {/*                             
-                      {listaKlinika.map((prop, key) => {
-                        return <th key={key}>{prop}</th>;
-                      })} */}
-                      <th id="Id">Id</th>
-                      <th id="Ime">Ime</th>
-                      <th id="Prezime"> Prezime</th>
-                      <th id="Email">Email</th>
-                      <th id="profilPacijenta"> # </th>
-                    </tr>
-                   
-                  </thead>
-                  <tbody>
-                      {this.listaPacijenataLekara()}
-                    
-                  </tbody>
-                </Table>
-                 }
+                content={
+                  <div className="ct-chart">
+                    {/* <ChartistGraph
+                      data={dataSales}
+                      type="Line"
+                      options={optionsSales}
+                      responsiveOptions={responsiveSales}
+                    /> */}
+                    <p></p>
+                  </div>
+                }
                 // legend={
                 //   <div className="legend">{this.createLegend(legendSales)}</div>
                 // }
               />
             </Col>
-            
+
             <Col md={4}>
-            <Card
+              <Card
                 // statsIcon="fa fa-clock-o"
-                title="O lekaru"
+                title="O pacijentu"
                 // category="Ime"
                 content={
                   <div id="a">
                     <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
+                      <h2>
+                        <img
+                          className="slikaPacijent"
+                          src={slikaPacijent}
+                        ></img>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
                         <p className="category">Ime:</p>
-                        <label className="adresaKC"> {this.state.ime} </label>
+                        <label className="adresaKC">{ime}</label>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
                         <p className="category">Prezime:</p>
-                        <label className="adresaKC">{this.state.prezime} </label>
+                        <label className="adresaKC">{prezime}</label>
                       </h2>
                     </div>
+
                     <div className="typo-line">
                       <h2>
                         <p className="category">Telefon:</p>
-                <label className="adresaKC">{this.state.telefon}</label>
+                        <label className="telefon">{telefon}</label>
                       </h2>
                     </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Opis posla:</p>
-                        <label className="opisKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    
-                    
-                    
                   </div>
                 }
-                
+
                 // category="opis ... naziv adresa i opis  "
                 // stats="Campaign sent 2 days ago"
                 // content={
@@ -308,7 +239,7 @@ class PocetnaStranicaLekara extends React.Component {
               />
             </Col>
           </Row>
-{/* 
+          {/* 
           <Row>
             <Col md={6}>
               <Card
@@ -355,4 +286,4 @@ class PocetnaStranicaLekara extends React.Component {
   }
 }
 
-export default PocetnaStranicaLekara;
+export default PocetnaStranaPacijenta;

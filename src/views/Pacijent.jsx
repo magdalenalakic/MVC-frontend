@@ -7,12 +7,11 @@ import NotificationSystem from "react-notification-system";
 import AdminNavbar from "components/Navbars/AdminNavbar";
 import Footer from "components/Footer/Footer";
 import Sidebar from "components/Sidebar/Sidebar";
-import axios from "axios";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.jsx";
 
 import { style } from "variables/Variables.jsx";
 
-import routes from "routesAdminKC.js";
+import routes from "routesPacijent.js";
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
@@ -32,15 +31,14 @@ import "klinickiCentar.css";
 import UserCard from "components/UserCard/UserCard";
 import slikaKC from "assets/img/klinickiCentar.jpg";
 
-class KlinickiCentar extends Component {
+class Pacijent extends Component {
   constructor(props) {
     super(props);
-    console.log("KLINICKI CENTAR");
+
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
       email: props.email,
-      // listaKlinika:[],
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -48,13 +46,8 @@ class KlinickiCentar extends Component {
       hasImage: true,
       fixedClasses: "dropdown show-dropdown open"
     };
-    
     console.log(this.state.uloga);
-    console.log(this.state.email);
-  
-
   }
-
 
   getRoutes = routes => {
     return routes.map((prop, key) => {
@@ -66,8 +59,8 @@ class KlinickiCentar extends Component {
               <prop.component
                 {...props}
                 handleClick={this.handleNotificationClick}
-                uloga ={this.state.uloga}
-                email = {this.state.email}
+                uloga={this.state.uloga}
+                email={this.state.email}
               />
             )}
             key={key}
@@ -138,7 +131,40 @@ class KlinickiCentar extends Component {
       this.setState({ fixedClasses: "dropdown" });
     }
   };
- 
+  componentDidMount() {
+    // this.setState({ _notificationSystem: this.refs.notificationSystem });
+    // var _notificationSystem = this.refs.notificationSystem;
+    // var color = Math.floor(Math.random() * 4 + 1);
+    // var level;
+    // switch (color) {
+    //   case 1:
+    //     level = "success";
+    //     break;
+    //   case 2:
+    //     level = "warning";
+    //     break;
+    //   case 3:
+    //     level = "error";
+    //     break;
+    //   case 4:
+    //     level = "info";
+    //     break;
+    //   default:
+    //     break;
+    // }
+    // _notificationSystem.addNotification({
+    //   title: <span data-notify="icon" className="pe-7s-gift" />,
+    //   message: (
+    //     <div>
+    //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
+    //       every web developer.
+    //     </div>
+    //   ),
+    //   level: level,
+    //   position: "tr",
+    //   autoDismiss: 15
+    // });
+  }
   componentDidUpdate(e) {
     if (
       window.innerWidth < 993 &&
@@ -154,9 +180,9 @@ class KlinickiCentar extends Component {
     }
   }
   render() {
-    // const {listaKlinika} = this.state.listaKlinika
+    const email = this.state.email;
+    const uloga = this.state.uloga;
     return (
-      
       <div className="wrapper">
         {/* <NotificationSystem ref="notificationSystem" style={style} /> */}
         <Sidebar
@@ -165,6 +191,8 @@ class KlinickiCentar extends Component {
           image={this.state.image}
           color={this.state.color}
           hasImage={this.state.hasImage}
+          email={email}
+          uloga={uloga}
         />
         <div id="main-panel" className="main-panel" ref="mainPanel">
           <AdminNavbar
@@ -177,9 +205,8 @@ class KlinickiCentar extends Component {
           <Footer />
         </div>
       </div>
-      
     );
   }
 }
 
-export default KlinickiCentar;
+export default Pacijent;

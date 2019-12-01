@@ -5,8 +5,11 @@ import AdminLayout from "layouts/Admin.jsx";
 import axios from "axios";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Registracija from "registracija.js";
+
 import Lekar from "views/Lekar.jsx";
+import Pacijent from "views/Pacijent.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
+import MedicinskaSestra from "views/MedicinskaSestra.jsx";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -28,6 +31,7 @@ class Login extends Component {
       redirectToReferrer: false,
       redirectToRegistration: false,
       errorF: false,
+      waitToapprove: props.waitToapprove,
       formErrors: {
         log: "",
         email: "",
@@ -43,7 +47,9 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-      .post("http://localhost:8028/api/korisnici/login", {
+
+      .post("http://localhost:8025/api/korisnici/login", {
+
         email: this.state.email,
         lozinka: this.state.lozinka
       })
@@ -52,9 +58,11 @@ class Login extends Component {
         this.setState({
           uloga: response.data.uloga
         });
+
         this.setState({
           email: response.data.email
         });
+
         console.log(this.state.uloga);
         this.setState({
           redirectToReferrer: true
@@ -163,7 +171,7 @@ class Login extends Component {
     const redirectToReferrer = this.state.redirectToReferrer;
     const redirectToRegistration = this.state.redirectToRegistration;
 
-    if( uloga === "ADMINISTRATORKC"){
+    if (uloga === "ADMINISTRATORKC") {
       return (
         <BrowserRouter>
           <Switch>
@@ -178,35 +186,44 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    if(uloga === "ADMINISTRATORK"){
-      
+    if (uloga === "ADMINISTRATORK") {
     }
-    if(uloga === "LEKAR"){
-      // return (
-      //   <BrowserRouter>
-      //     <Switch>
-      //       <Route
-      //         path="/admin"
-      //         render={props => (
-      //           <Lekar {...props} email={email} uloga={uloga} />
-      //         )}
-      //       />
-      //       <Redirect from="/" to="/admin/pocetnaStranica" />
-      //     </Switch>
-      //   </BrowserRouter>
-      // );
+    if (uloga === "LEKAR") {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/admin"
+              render={props => <Lekar {...props} email={email} uloga={uloga} />}
+            />
+            <Redirect from="/" to="/admin/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
     }
-    if(uloga === "MEDICINSKASESTRA"){
-      
+    if (uloga === "MEDICINSKASESTRA") {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/admin"
+              render={props => 
+                <MedicinskaSestra {...props} email={email} uloga={uloga} />
+              }
+            />
+            <Redirect from="/" to="/admin/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
     }
-    if(uloga === "PACIJENT"){
+    if (uloga === "PACIJENT") {
       return (
         <BrowserRouter>
           <Switch>
             <Route
               path="/admin"
               render={props => (
-                <Lekar {...props} email={email} uloga={uloga} />
+                <Pacijent {...props} email={email} uloga={uloga} />
               )}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
@@ -214,7 +231,7 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    
+
     if (redirectToRegistration === true) {
       return (
         <BrowserRouter>
@@ -234,6 +251,12 @@ class Login extends Component {
         <div className="logForm">
           <div className="form-logForm">
             <h1>Uloguj se</h1>
+            {this.state.waitToapprove === true && (
+              <span className="errorMessage">
+                Bicete obavesteni o potvrdi registracije putem mejla u najkracem
+                mogucem roku.
+              </span>
+            )}
             <form onSubmit={this.handleSumbit} noValidate>
               <div className="email">
                 <label htmlFor="email">E-mail: </label>

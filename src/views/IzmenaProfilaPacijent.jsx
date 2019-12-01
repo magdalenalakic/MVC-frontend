@@ -19,33 +19,37 @@ import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
 import { log } from "util";
 import Login from "login";
-import slikaLekar from "assets/img/images.jpg"
+import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
 
-class izmenaProfila extends Component {
-  constructor(props){
+class IzmenaProfilaPacijent extends Component {
+  constructor(props) {
     super(props);
-    console.log("IZMENA PROFILA LEKARA LEKARA");
+    console.log("IZMENA PROFILA Pacijent");
     this.state = {
       email: props.email,
-      uloga: props.uloga, 
+      uloga: props.uloga,
       ime: "",
       telefon: "",
       prezime: "",
-
-    }
-
+      lbo: "",
+      lozinka: "",
+      adresa: "",
+      grad: "",
+      drzava: ""
+    };
   }
 
-
-  componentWillMount(){
-    console.log("wmount")
-    const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
-    axios.get(url)
+  componentWillMount() {
+    const url =
+      "http://localhost:8025/api/pacijenti/findPacijentEmail/" +
+      this.state.email;
+    axios
+      .get(url)
       .then(Response => {
-        console.log("Preuzet lekar: ");
+        console.log("Preuzet pacijent: ");
         console.log(Response.data);
-      
+
         this.setState({
           email: Response.data.email
         });
@@ -57,40 +61,46 @@ class izmenaProfila extends Component {
           prezime: Response.data.prezime
         });
         this.setState({
-          telefon: Response.data.telefon
+          telefon: Response.data.telefon,
+          adresa: Response.data.adresa,
+          grad: Response.data.grad,
+          drzava: Response.data.drzava,
+          lbo: Response.data.lbo
         });
       })
-      
+
       .catch(error => {
-        console.log("Lekar  nije preuzet")
-      })
+        console.log("Pacijent  nije preuzet");
+      });
   }
   handleChange = e => {
     e.preventDefault();
-    this.setState({[e.target.name]: e.target.value});
-    console.log(this.state)
-    console.log("On change !!!")
-
+    this.setState({ [e.target.name]: e.target.value });
+    console.log(this.state);
+    console.log("On change !!!");
   };
-  
+
   handleSumbit = e => {
     e.preventDefault();
-    console.log("KLIK SUBMITTT")
+    console.log("KLIK SUBMITTT");
     // let formErrors = { ...this.state.formErrors };
-      console.log("Izmjena : ---------------")  
-      console.log(this.state.ime);
-      console.log(this.state.prezime);
+    console.log("Izmjena : ---------------");
+    console.log(this.state.ime);
+    console.log(this.state.prezime);
     axios
-      .put("http://localhost:8025/api/lekari/update", {
+      .put("http://localhost:8025/api/pacijenti/update", {
         ime: this.state.ime,
         prezime: this.state.prezime,
         telefon: this.state.telefon,
-        email: this.state.email
+        email: this.state.email,
+        adresa: this.state.adresa,
+        grad: this.state.grad,
+        drzava: this.state.drzava,
+        lbo: this.state.lbo
       })
       .then(response => {
         console.log(response.data);
- 
-      
+
         this.setState({
           ime: response.data.ime
         });
@@ -100,7 +110,11 @@ class izmenaProfila extends Component {
         });
 
         this.setState({
-          telefon: response.data.telefon
+          telefon: response.data.telefon,
+          adresa: response.data.adresa,
+          grad: response.data.grad,
+          drzava: response.data.drzava,
+          lbo: response.data.lbo
         });
 
         // this.setState({
@@ -108,7 +122,7 @@ class izmenaProfila extends Component {
         // });
       })
       .catch(error => {
-        console.log("Izmena nije uspela! ")
+        console.log("Izmena nije uspela! ");
       });
   };
 
@@ -118,7 +132,10 @@ class izmenaProfila extends Component {
     const ime = this.state.ime;
     const prezime = this.state.prezime;
     const telefon = this.state.telefon;
-
+    const adresa = this.state.adresa;
+    const grad = this.state.grad;
+    const drzava = this.state.drzava;
+    const lbo = this.state.lbo;
 
     return (
       <div className="content">
@@ -128,43 +145,34 @@ class izmenaProfila extends Component {
               <Card
                 title="Izmena podataka"
                 content={
-                  <form onSubmit={this.handleSumbit} className="formaIzmenaProfilaLekara">
-                     <div className="ime">
-                        <label htmlFor="ime">Ime: </label>
-                        <input
-                          type="text"
-                          name="ime"
-                          
-                          defaultValue={ime}
-                          // placeholder={this.state.ime}
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                      <div className="prezime">
-                        <label htmlFor="prezime">Prezime: </label>
-                        <input
-                          type="text"
-                          name="prezime"
-                          defaultValue={prezime}
-                          // placeholder="prezime"
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                      <div className="email">
-                        <label htmlFor="email">Email: </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={email}
-                          disabled="disabled"
-                          // placeholder="email"
-                          // noValidate
-                          // onChange={this.handleChange}
-                        />
-                      </div>
-                      {/* <div className="klinikaK">
+                  <form
+                    onSubmit={this.handleSumbit}
+                    className="formaIzmenaProfilaPacijent"
+                  >
+                    <div className="ime">
+                      <label htmlFor="ime">Ime: </label>
+                      <input
+                        type="text"
+                        name="ime"
+                        defaultValue={ime}
+                        // placeholder={this.state.ime}
+                        // noValidate
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                    <div className="prezime">
+                      <label htmlFor="prezime">Prezime: </label>
+                      <input
+                        type="text"
+                        name="prezime"
+                        defaultValue={prezime}
+                        // placeholder="prezime"
+                        // noValidate
+                        onChange={this.handleChange}
+                      />
+                    </div>
+
+                    {/* <div className="klinikaK">
                         <label htmlFor="klinikaK">klinika: </label>
                         <input
                           type="text"
@@ -174,7 +182,7 @@ class izmenaProfila extends Component {
                           // onChange={this.handleChange}
                         />
                       </div> */}
-                      {/* <div className="klinika">
+                    {/* <div className="klinika">
                         <label htmlFor="klinika">Klinika: </label>
                         <input
                           type="text"
@@ -184,17 +192,50 @@ class izmenaProfila extends Component {
                           // onChange={this.handleChange}
                         />
                       </div> */}
-                      <div className="telefon">
-                        <label htmlFor="telefon">Broj telefona: </label>
-                        <input
-                          type="text"
-                          name="telefon"
-                          defaultValue={this.state.telefon}
-                          // placeholder="telefon"
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-               
+                    <div className="adresa">
+                      <label htmlFor="adresa">Adresa: </label>
+                      <input
+                        type="text"
+                        name="adresa"
+                        defaultValue={adresa}
+                        // placeholder={this.state.adresa}
+                        // noValidate
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                    <div className="grad">
+                      <label htmlFor="grad">Grad: </label>
+                      <input
+                        type="text"
+                        name="grad"
+                        defaultValue={grad}
+                        // placeholder={this.state.grad}
+                        // noValidate
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                    <div className="drzava">
+                      <label htmlFor="drzava">Drzava: </label>
+                      <input
+                        type="text"
+                        name="drzava"
+                        defaultValue={drzava}
+                        // placeholder={this.state.drzava}
+                        // noValidate
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                    <div className="telefon">
+                      <label htmlFor="telefon">Broj telefona: </label>
+                      <input
+                        type="text"
+                        name="telefon"
+                        defaultValue={this.state.telefon}
+                        // placeholder="telefon"
+                        // noValidate
+                        onChange={this.handleChange}
+                      />
+
                       {/* <div className="">
                         <label htmlFor="">: </label>
                         <input
@@ -204,10 +245,10 @@ class izmenaProfila extends Component {
                           // noValidate
                           // onChange={this.handleChange}
                         />*/}
-                      </div> 
-                      <div className="izmeniPodatkeLekar">
-                         <button type="submit">Izmeni podatke</button>
-                      </div>
+                    </div>
+                    <div className="izmeniPodatkePacijent">
+                      <button type="submit">Izmeni podatke</button>
+                    </div>
                   </form>
                   // <form className="formUserProfile">
                   //   <FormInputs
@@ -277,36 +318,36 @@ class izmenaProfila extends Component {
               />
             </Col>
             <Col md={4}>
-            <Card
+              <Card
                 // statsIcon="fa fa-clock-o"
-                title="O lekaru"
+                title="O Pacijentu"
                 // category="Ime"
                 content={
                   <div id="a">
                     <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
+                      <h2>
+                        <img
+                          className="slikaPacijent"
+                          src={slikaPacijent}
+                        ></img>
                       </h2>
                     </div>
-                    
+
                     <div className="typo-line">
                       <h2>
-                        <p className="category">Klinika:</p>
-                        <label className="adresaKC">ucitati data</label>
+                        <p className="category">Email: </p>
+                        <label className="adresaKC">{email}</label>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
-                        <p className="category">Opis posla:</p>
-                        <label className="opisKC">ucitati data</label>
+                        <p className="category">LBO: </p>
+                        <label className="opisKC">{lbo}</label>
                       </h2>
                     </div>
-                    
-                    
-                    
                   </div>
                 }
-                
+
                 // category="opis ... naziv adresa i opis  "
                 // stats="Campaign sent 2 days ago"
                 // content={
@@ -329,4 +370,4 @@ class izmenaProfila extends Component {
   }
 }
 
-export default izmenaProfila;
+export default IzmenaProfilaPacijent;
