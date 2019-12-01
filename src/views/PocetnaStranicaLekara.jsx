@@ -23,6 +23,9 @@ import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
+import ProfilPacijenta from "views/ProfilPacijenta.jsx"
+
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import {
   dataPie,
   legendPie,
@@ -43,6 +46,7 @@ class PocetnaStranicaLekara extends React.Component {
   constructor(props){
     super(props);
     console.log("POCETNA STRANICA LEKARA");
+    console.log(props);
     this.state = {
       email: props.email,
       uloga: props.uloga, 
@@ -50,22 +54,25 @@ class PocetnaStranicaLekara extends React.Component {
       telefon: "",
       prezime: "",
       listaPacijenata:[],
+      redirectToProfilPacijenta: false,
+      emailPacijenta: "",
     };
     this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
   }
-  // componentDidMount(){
-  //   fetch().
-  //   then((Response)=>Response.json()).
-  //   then((findresponse)=>{
-  //     console.log(findresponse)
 
-  //   })
-  // // }
-  // componentDidMount() {
-  //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
-  //   console.log(this.state);
-  // }
-
+  handleClick = e => {
+    e.preventDefault();
+    console.log("CLICK *** ");  
+    console.log("PPPPPPPPPPPP: " + e.telefon);
+    // this.props.onClick(this.props.value);
+    // console.log(e.lista.email);
+    console.log("prikaz profila pacijenta");
+    this.setState({
+      redirectToProfilPacijenta: true,
+      emailPacijenta: this.state.emailPacijenta,
+  
+    });
+  };
 
   componentWillMount(){
     console.log("wmount")
@@ -130,7 +137,11 @@ class PocetnaStranicaLekara extends React.Component {
     let res=[];
     let lista = this.state.listaPacijenata;
     for(var i=0; i< lista.length;i++){
+      console.log( "Pacijent : "  + lista[i].email);
+      this.state.emailPacijenta = lista[i].email;
+      console.log(this.state.emailPacijenta);
       res.push(
+       
         <tr key = {i}>
           {/* <td key={lista[i].id}>{lista[i].id}</td>
           <td key={lista[i].naziv}>{lista[i].ime}</td>
@@ -139,11 +150,12 @@ class PocetnaStranicaLekara extends React.Component {
           <td key={lista[i].id}>{lista[i].id}</td>
           <td>{lista[i].ime}</td>
           <td>{lista[i].prezime}</td>
-          <td >{lista[i].email}</td>
-          <td><a href="#">Prikazi profil</a></td>
+          <td key={lista[i].email}>{lista[i].email}</td>
+          <td onClick={this.handleClick} ><button> Prikazi profil </button></td>
           {/* <td><link to="/admin/login">Prikazi profil</link></td> */}
          {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
-        </tr>
+     
+         </tr>
       )
     }
     return res;
@@ -152,6 +164,8 @@ class PocetnaStranicaLekara extends React.Component {
   render() {
     // console.log("Ispisi  props u pocetna stranica lekara: "); 
     // console.log(this.props);
+    const emailPacijenta = this.state.emailPacijenta;
+    const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
     const email = this.state.email;
     const uloga = this.state.uloga;
     const ime = this.state.ime;
@@ -162,6 +176,21 @@ class PocetnaStranicaLekara extends React.Component {
     // console.log("Render ps ime: " + ime);
     // console.log("Render ps prezime: " + prezime);
     // console.log("Render ps telefon: " + telefon)
+    if (redirectToProfilPacijenta === true) {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/profilPacijenta"
+              render={props => <ProfilPacijenta {...props} emailPacijenta={emailPacijenta} />}
+            />
+            <Redirect from="/" to="/profilPacijenta" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+
+    
     return (
       <div className="content">
         <Grid fluid>
@@ -234,7 +263,7 @@ class PocetnaStranicaLekara extends React.Component {
                       <th id="Ime">Ime</th>
                       <th id="Prezime"> Prezime</th>
                       <th id="Email">Email</th>
-                      <th id="profilPacijenta"> # </th>
+                  
                     </tr>
                    
                   </thead>
