@@ -1,5 +1,5 @@
-
 import KlinickiCentarPocetna from "views/KlinickiCentarPocetna.jsx";
+import IzmenaProfilaAdminaKC from "views/IzmenaProfilaAdminaKC.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
 
@@ -10,6 +10,13 @@ const dashboardRoutes = [
     name: "Klinicki Centar",
     icon: "pe-7s-graph",
     component: KlinickiCentarPocetna,
+    layout: "/admin"
+  },
+  {    
+    path: "/profilAdmina",
+    name: "Profil",
+    icon: "pe-7s-graph",
+    component: IzmenaProfilaAdminaKC,
     layout: "/admin"
   },
   {    
