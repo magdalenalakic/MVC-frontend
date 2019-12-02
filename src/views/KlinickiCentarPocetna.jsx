@@ -21,6 +21,7 @@ import {
 import "klinickiCentar.css";
 import UserCard from "components/UserCard/UserCard";
 import slikaKC from "assets/img/klinickiCentar.jpg";
+import Button from "components/CustomButton/CustomButton.jsx";
 
 class KlinickiCentarPocetna extends Component {
   constructor(props) {
@@ -120,12 +121,13 @@ class KlinickiCentarPocetna extends Component {
     let lista = this.state.listaKlinika;
     for (var i = 0; i < lista.length; i++) {
       res.push(
-        <tr key={i}>
+        <tr key = {i}>
           <td key={lista[i].id}>{lista[i].id}</td>
           <td key={lista[i].naziv}>{lista[i].naziv}</td>
           <td key={lista[i].adresa}>{lista[i].adresa}</td>
           <td key={lista[i].opis}>{lista[i].opis}</td>
           <td key={lista[i].ocena}>{lista[i].ocena}</td>
+          <td ><Button type="submit">Izmeni podatke</Button></td>
         </tr>
       );
     }
@@ -136,11 +138,12 @@ class KlinickiCentarPocetna extends Component {
     let lista = this.state.listaAdministratoraKlinika;
     for (var i = 0; i < lista.length; i++) {
       res.push(
-        <tr key={i}>
+        <tr key = {i}>
           <td key={lista[i].id}>{lista[i].id}</td>
           <td key={lista[i].ime}>{lista[i].ime}</td>
           <td key={lista[i].prezime}>{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
+          <td ><Button type="submit">Izmeni podatke</Button></td>
         </tr>
       );
     }
@@ -151,11 +154,12 @@ class KlinickiCentarPocetna extends Component {
     let lista = this.state.listaAdministratoraKC;
     for (var i = 0; i < lista.length; i++) {
       res.push(
-        <tr key={i}>
+        <tr key = {i}>
           <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].ime}>{lista[i].ime}</td>
-          <td key="C">{lista[i].prezime}</td>
+          <td >{lista[i].ime}</td>
+          <td >{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
+          <td ><Button type="submit">Izmeni podatke</Button></td>
         </tr>
       );
     }
@@ -174,9 +178,12 @@ class KlinickiCentarPocetna extends Component {
                 <Card
                   title="Lista klinika"
                   // category="Here is a subtitle for this table"
+                  
                   ctTableFullWidth
                   ctTableResponsive
                   content={
+                    <div>
+                    <Button type="submit">Dodaj kliniku</Button>
                     <Table striped hover>
                       <thead>
                         <tr>
@@ -193,6 +200,7 @@ class KlinickiCentarPocetna extends Component {
                       </thead>
                       <tbody>{this.listaKlinikaUKC()}</tbody>
                     </Table>
+                    </div>
                   }
                 />
               </Row>

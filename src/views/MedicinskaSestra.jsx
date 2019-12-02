@@ -43,7 +43,7 @@ class MedicinskaSestra extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
-      // listaKlinika:[],
+      
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -68,6 +68,9 @@ class MedicinskaSestra extends Component {
               <prop.component
                 {...props}
                 handleClick={this.handleNotificationClick}
+                uloga={this.state.uloga}
+                email={this.state.email}
+
               />
             )}
             key={key}

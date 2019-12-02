@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { Grid, Row, Col, Table } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
+import Button from "components/CustomButton/CustomButton.jsx";
 import "klinickiCentar.css";
+
 import axios from "axios";
 
 class Sifrarnik extends Component {
@@ -31,8 +33,10 @@ class Sifrarnik extends Component {
       res.push(
         <tr key = {i}>
           <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].naziv}>{lista[i].naziv}</td>
           <td key={lista[i].sifra}>{lista[i].sifra}</td>
+          <td key={lista[i].naziv}>{lista[i].naziv}</td>
+          <td ><Button type="submit">Izmeni</Button></td>
+         
         </tr>
       )
     }
@@ -45,8 +49,10 @@ class Sifrarnik extends Component {
       res.push(
         <tr key = {i}>
           <td key={lista[i].id}>{lista[i].id}</td>
+          <td key={lista[i].oznaka}>{lista[i].oznaka}</td>
           <td key={lista[i].naziv}>{lista[i].naziv}</td>
           <td key={lista[i].opis}>{lista[i].opis}</td>
+          <td ><Button type="submit">Izmeni</Button></td>
         </tr>
       )
     }
@@ -55,7 +61,7 @@ class Sifrarnik extends Component {
   
   componentWillMount(){
     console.log("--------pocetak");
-    const url1 = 'http://localhost:8028/api/administratoriKC/listaLekova/' + this.state.email; 
+    const url1 = 'http://localhost:8025/api/administratoriKC/listaLekova/' + this.state.email; 
     console.log(url1);
     axios.get(url1)
       .then(response => {
@@ -70,7 +76,7 @@ class Sifrarnik extends Component {
           console.log(error);
       })
   console.log("--------pocetak");
-  const url2 = 'http://localhost:8028/api/administratoriKC/listaDijagnoza/' + this.state.email; 
+  const url2 = 'http://localhost:8025/api/administratoriKC/listaDijagnoza/' + this.state.email; 
   console.log(url2);
   axios.get(url2)
       .then(response => {
@@ -101,8 +107,9 @@ class Sifrarnik extends Component {
                       <thead>
                         <tr>
                           <th id="IdLeka">Id</th>
-                          <th id="NazivLeka">Naziv</th>
                           <th id="SifraLeka">Sifra</th>
+                          <th id="NazivLeka">Naziv</th>
+                          
                           {/* {thArray.map((prop, key) => {
                             return <th key={key}>{prop}</th>;
                           })} */}
@@ -137,6 +144,7 @@ class Sifrarnik extends Component {
                       <thead>
                         <tr>
                           <th id="Idijagnoze">Id</th>
+                          <th id="OznakaDijagnoze">Oznaka</th>
                           <th id="NazivDijagnoze">Naziv</th>
                           <th id="OpisDijagnoze">Opis</th>
                           {/* {thArray.map((prop, key) => {

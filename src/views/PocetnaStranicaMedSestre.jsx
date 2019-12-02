@@ -21,20 +21,34 @@ import {
 } from "variables/Variables.jsx";
 import slikaLekar from "assets/img/images.jpg";
 import Login from "login.js";
+import axios from "axios";
 
 
 class PocetnaStranicaMedSestre extends React.Component {
-  
-  createLegend(json) {
-    var legend = [];
-    for (var i = 0; i < json["names"].length; i++) {
-      var type = "fa fa-circle text-" + json["types"][i];
-      legend.push(<i className={type} key={i} />);
-      legend.push(" ");
-      legend.push(json["names"][i]);
-    }
-    return legend;
+  constructor(props) {
+    super(props);
+    console.log("ADMINISTRATOR KLINICKOG CENTRA");
+    console.log(this.props);
+    this.state = {
+      uloga: props.uloga,
+      email: props.email
+      
+    };
+   
+
+    console.log(this.state.uloga);
+    console.log(this.state.email);
   }
+  // createLegend(json) {
+  //   var legend = [];
+  //   for (var i = 0; i < json["names"].length; i++) {
+  //     var type = "fa fa-circle text-" + json["types"][i];
+  //     legend.push(<i className={type} key={i} />);
+  //     legend.push(" ");
+  //     legend.push(json["names"][i]);
+  //   }
+  //   return legend;
+  // }
   
   render() {
     console.log(this.props);
@@ -42,7 +56,7 @@ class PocetnaStranicaMedSestre extends React.Component {
       <div className="content">
         <Grid fluid>
           <Row>
-            {/* <Col lg={3} sm={6}>
+            <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-server text-warning" />}
                 // statsText="Lista pacijenata"
@@ -50,17 +64,8 @@ class PocetnaStranicaMedSestre extends React.Component {
                 // statsIcon={<i className="fa fa-refresh" />}
                  statsIconText="Lista pacijenata"
               />
-            </Col> */}
-            {/* <h1>{this.state}</h1> */}
-            {/* <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-wallet text-success" />}
-                // statsText="Pocetak pregleda"
-                // statsValue="$1,345"
-                // statsIcon={<i className="fa fa-calendar-o" />}
-                 statsIconText="Pocetak pregleda"
-              />
             </Col>
+            
             <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
@@ -85,12 +90,12 @@ class PocetnaStranicaMedSestre extends React.Component {
                 statsText=""
                 // statsValue="+45"
                 // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Zakazivanje pregleda i operacija"
+                 statsIconText="Overa recepata"
               />
-            </Col> */}
+            </Col> 
           </Row>
           <Row>
-            <Col md={8}>
+            <Col >
               <Card
               
                 title="Kalendar"
@@ -115,7 +120,7 @@ class PocetnaStranicaMedSestre extends React.Component {
               />
             </Col>
             
-            <Col md={4}>
+            {/* <Col md={4}>
             <Card
                 // statsIcon="fa fa-clock-o"
                 title="O lekaru"
@@ -159,7 +164,7 @@ class PocetnaStranicaMedSestre extends React.Component {
                 
                 
               />
-            </Col>
+            </Col> */}
           </Row>
 
         </Grid>

@@ -9,36 +9,40 @@ import {
 } from "react-bootstrap";
 
 import { Card } from "components/Card/Card.jsx";
+import { FormInputs } from "components/FormInputs/FormInputs.jsx";
+import { UserCard } from "components/UserCard/UserCard.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
-
+import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
+import { log } from "util";
+import Login from "login";
+import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
 // import Dialog from 'react-bootstrap-dialog';
 
-class IzmenaProfilaMedSestre extends Component {
+class IzmenaProfilaAdminaKC extends Component {
   constructor(props) {
     super(props);
-    console.log("IZMENA PROFILA Med sestre");
+    console.log("IZMENA PROFILA Admina KC");
     this.state = {
       email: props.email,
       uloga: props.uloga,
       ime: "",
       prezime: "",
-      lozinka: "", 
-      brTelefona: ""
+      lozinka: "" 
     };
   }
 
   componentWillMount() {
     const url =
-      "http://localhost:8025/api/medicinskaSestra/medicinskaSestra/" + this.state.email;
+      "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC/" + this.state.email;
     axios
       .get(url)
       .then(Response => {
-        console.log("Preuzeta med sestra: ");
+        console.log("Preuzet admin: ");
         console.log(Response.data);
 
         this.setState({
@@ -53,12 +57,9 @@ class IzmenaProfilaMedSestre extends Component {
         this.setState({
           lozinka: Response.data.lozinka
         });
-        this.setState({
-            brTelefona: Response.data.brTelefona
-        });
       })
       .catch(error => {
-        console.log("Med sestra nije preuzeta");
+        console.log("Admin KC nije preuzet");
       });
   }
   handleChange = e => {
@@ -75,33 +76,33 @@ class IzmenaProfilaMedSestre extends Component {
     console.log("Izmena : ---------------");
     console.log(this.state.ime);
     console.log(this.state.prezime);
-    // axios
-    //   .put("http://localhost:8025/api/administratoriKC/izmena", {
-    //     ime: this.state.ime,
-    //     prezime: this.state.prezime,
-    //     email: this.state.email,
-    //     adresa: this.state.lozinka
-    //   })
-    //   .then(response => {
-    //     console.log(response.data);
+    axios
+      .put("http://localhost:8025/api/administratoriKC/izmena", {
+        ime: this.state.ime,
+        prezime: this.state.prezime,
+        email: this.state.email,
+        adresa: this.state.lozinka
+      })
+      .then(response => {
+        console.log(response.data);
 
-    //     this.setState({
-    //       ime: response.data.ime
-    //     });
+        this.setState({
+          ime: response.data.ime
+        });
 
-    //     this.setState({
-    //       prezime: response.data.prezime
-    //     });
+        this.setState({
+          prezime: response.data.prezime
+        });
 
-    //     this.setState({
-    //       lozinka: response.data.lozinka
-    //     });
+        this.setState({
+          lozinka: response.data.lozinka
+        });
         
 
-    //   })
-    //   .catch(error => {
-    //     console.log("Izmena nije uspela! ");
-    //   });
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ");
+      });
   };
 
   render() {
@@ -110,7 +111,6 @@ class IzmenaProfilaMedSestre extends Component {
     const ime = this.state.ime;
     const prezime = this.state.prezime;
     const lozinka = this.state.lozinka;
-    const brTelefona = this.state.brTelefona;
  
 
     return (
@@ -123,7 +123,7 @@ class IzmenaProfilaMedSestre extends Component {
                 content={
                   <form
                     onSubmit={this.handleSumbit}
-                    className="formaIzmenaProfilaMedSestre"
+                    className="formaIzmenaProfilaAdminaKC"
                   >
                     <div className="ime">
                       <label htmlFor="ime">Ime: </label>
@@ -160,19 +160,8 @@ class IzmenaProfilaMedSestre extends Component {
                         onChange={this.handleChange}
                       />
                     </div>
-                    <div className="brTelefona">
-                      <label htmlFor="brTelefona">Br. Telefona: </label>
-                      <input
-                        type="text"
-                        name="brTelefona"
-                        defaultValue={brTelefona}
-                        // placeholder={this.state.adresa}
-                        // noValidate
-                        onChange={this.handleChange}
-                      />
-                    </div>
 
-                    <div className="izmeniPodatkeMedSestri">
+                    <div className="izmeniPodatkeAdminKC">
                       <Button type="submit">Izmeni podatke</Button>
                     </div>
                   </form>
@@ -183,7 +172,7 @@ class IzmenaProfilaMedSestre extends Component {
             <Col md={4}>
               <Card
                 // statsIcon="fa fa-clock-o"
-                title="O Medicinskoj sestri"
+                title="O Adminu"
                 // category="Ime"
                 content={
                   <div id="a">
@@ -220,12 +209,6 @@ class IzmenaProfilaMedSestre extends Component {
                         <label className="lozinkaAdminaKC">{lozinka}</label>
                       </h2>
                     </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Br. telefona: </p>
-                        <label className="lozinkaAdminaKC">{brTelefona}</label>
-                      </h2>
-                    </div>
                   </div>
                 }
 
@@ -238,4 +221,4 @@ class IzmenaProfilaMedSestre extends Component {
   }
 }
 
-export default IzmenaProfilaMedSestre;
+export default IzmenaProfilaAdminaKC;

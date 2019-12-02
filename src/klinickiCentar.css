@@ -13,3 +13,16 @@
   .slikaKCdiv{
       text-align: center ;
   }
+
+  #button{
+    background-color:#519e8a;
+    color: rgb(0, 0, 0);
+    border: 2px solid rgb(124, 117, 117);
+    width: 650px;
+    margin-top: 1em;
+    padding: 8px 0px;
+    font-size: 1em;
+    font-weight: lighter;
+    letter-spacing: 1px;
+    margin-bottom: 0.25em;
+  }
