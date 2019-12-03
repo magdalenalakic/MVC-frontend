@@ -30,6 +30,7 @@ import PocetnaStranaPacijenta from "views/PocetnaStranaPacijenta.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
 import ListaKlinika from "views/ListaKlinika.jsx";
+import ZdravstveniKarton from "views/ZdravstveniKarton.jsx";
 
 const dashboardRoutes = [
   //za pacijenta
@@ -52,6 +53,13 @@ const dashboardRoutes = [
     name: "Klinike",
     icon: "pe-7s-user",
     component: ListaKlinika,
+    layout: "/admin"
+  },
+  {
+    path: "/zdravstveniKarton",
+    name: "Zdravstveni karton",
+    icon: "pe-7s-user",
+    component: ZdravstveniKarton,
     layout: "/admin"
   }
 ];
