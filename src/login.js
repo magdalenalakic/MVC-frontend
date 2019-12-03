@@ -10,6 +10,7 @@ import Lekar from "views/Lekar.jsx";
 import Pacijent from "views/Pacijent.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
 import MedicinskaSestra from "views/MedicinskaSestra.jsx";
+import AdministatorKlinike from "views/AdministatorKlinike.jsx";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -187,6 +188,17 @@ class Login extends Component {
       );
     }
     if (uloga === "ADMINISTRATORK") {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/admin"
+              render={props => <AdministatorKlinike {...props} email={email} uloga={uloga} />}
+            />
+            <Redirect from="/" to="/admin/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
     }
     if (uloga === "LEKAR") {
       return (
