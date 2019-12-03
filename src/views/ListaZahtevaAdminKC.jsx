@@ -23,8 +23,6 @@ import slikaKC from "assets/img/klinickiCentar.jpg";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 
-
-
 class ListaZahtevaAdminKC extends Component {
   constructor(props) {
     super(props);
@@ -36,13 +34,16 @@ class ListaZahtevaAdminKC extends Component {
       selected: null,
       listaZahtevaZaRegistraciju: []
     };
-    this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(this);
-
+    this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(
+      this
+    );
   }
   componentWillMount() {
     console.log("--------pocetak");
 
-    const url1 = 'http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/' + this.state.email; 
+    const url1 =
+      "http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/" +
+      this.state.email;
 
     console.log(url1);
     axios
@@ -58,77 +59,88 @@ class ListaZahtevaAdminKC extends Component {
         console.log("nije uspeo url1");
         console.log(error);
       });
-    }
+  }
 
-    handleChange = e => {
-      e.preventDefault();
-      //this.setState({ [e.target.name]: e.target.value });
-      console.log(this.state);
-      console.log("On click !!!");
-    };
-  odobrenClick = e => {
-      
-      e.preventDefault();
-      console.log("ODOBRENO");
-      this.setState({ [e.target.name]: e.target.value });
-      console.log(this.state);
-      console.log("On click !!!");
-      // console.log(param.i)
-     
-      // this.setState({
-      //   redirectToRegistration: true
-      // });
-      // axios
-      // .post("http://localhost:8025/api/administratoriKC/potvrda", {
-
-      //   // lbo: this.state.email,
-      // })
-      // .then(response => {
-      //   console.log(response.data);
-      //   // this.setState({
-      //   //   uloga: response.data.uloga
-      //   // });
-
-      //   // this.setState({
-      //   //   email: response.data.email
-      //   // });
-
-      //   // console.log(this.state.uloga);
-      //   // this.setState({
-      //   //   redirectToReferrer: true
-      //   // });
-      // })
-      // .catch(error => {
-      //   //   console.log(error.response);
-      //   formErrors.log = "Pogresni kredencijali";
-      //   // this.setState({ formErrors }, () => console.log(this.state));
-      // });
+  handleChange = e => {
+    e.preventDefault();
+    //this.setState({ [e.target.name]: e.target.value });
+    console.log(this.state);
+    console.log("On click !!!");
   };
+  odobrenClick = e => {
+    e.preventDefault();
+    console.log("ODOBRENO");
+    this.setState({ [e.target.name]: e.target.value });
+    console.log(this.state);
+    console.log("On click !!!");
+    // console.log(param.i)
 
+    // this.setState({
+    //   redirectToRegistration: true
+    // });
+    // axios
+    // .post("http://localhost:8025/api/administratoriKC/potvrda", {
+
+    //   // lbo: this.state.email,
+    // })
+    // .then(response => {
+    //   console.log(response.data);
+    //   // this.setState({
+    //   //   uloga: response.data.uloga
+    //   // });
+
+    //   // this.setState({
+    //   //   email: response.data.email
+    //   // });
+
+    //   // console.log(this.state.uloga);
+    //   // this.setState({
+    //   //   redirectToReferrer: true
+    //   // });
+    // })
+    // .catch(error => {
+    //   //   console.log(error.response);
+    //   formErrors.log = "Pogresni kredencijali";
+    //   // this.setState({ formErrors }, () => console.log(this.state));
+    // });
+  };
+  handleOdobren = e => {
+    e.preventDefault();
+    console.log(e.target.id);
+  };
   listaZahtevaZaRegistraciju() {
     let res = [];
     let lista = this.state.listaZahtevaZaRegistraciju;
-    
+
     for (var i = 0; i < lista.length; i++) {
-     
       // this.setState({
       //   lboKlik : lista[i].lbo
       // });
       // console.log(this.state.lboKlik);
       res.push(
-        <tr key = {i} >
-          <td >{lista[i].id}</td>
-          <td >{lista[i].lbo}</td>
-          <td >{lista[i].ime}</td>
-          <td >{lista[i].prezime}</td>
-          <td >{lista[i].email}</td>
-          <td >{lista[i].adresa}</td>
-          <td >{lista[i].grad}</td>
-          <td >{lista[i].drzava}</td>
-          <td >{lista[i].telefon}</td>
-          
-          <td ><Button className="OdobrenZahtev"  onChange={this.handleChange}>Odobri</Button></td>
-          <td ><Button className="OdbijenZahtev">Odbij</Button></td>
+        <tr key={i}>
+          <td>{lista[i].id}</td>
+          <td>{lista[i].lbo}</td>
+          <td>{lista[i].ime}</td>
+          <td>{lista[i].prezime}</td>
+          <td>{lista[i].email}</td>
+          <td>{lista[i].adresa}</td>
+          <td>{lista[i].grad}</td>
+          <td>{lista[i].drzava}</td>
+          <td>{lista[i].telefon}</td>
+
+          <td>
+            <Button
+              className="OdobrenZahtev"
+              id={lista[i].email}
+              onClick={e => this.handleOdobren(e)}
+            >
+              Odobri
+            </Button>
+          </td>
+          <td>
+            <Button className="OdbijenZahtev">Odbij</Button>
+          </td>
         </tr>
       );
     }
@@ -148,7 +160,7 @@ class ListaZahtevaAdminKC extends Component {
                   ctTableFullWidth
                   ctTableResponsive
                   content={
-                    <Table striped hover >
+                    <Table striped hover>
                       <thead>
                         <tr>
                           <th id="IdPacijenta">Id</th>
@@ -166,26 +178,13 @@ class ListaZahtevaAdminKC extends Component {
                           })} */}
                         </tr>
                       </thead>
-                      <tbody>
-                        {this.listaZahtevaZaRegistraciju()}
-                        
-                      </tbody>
-                      
+                      <tbody>{this.listaZahtevaZaRegistraciju()}</tbody>
                     </Table>
-                   }
+                  }
                 />
-                
-              
               </Row>
-             
-              
-              
             </Col>
-           
-          
           </Row>
-
-         
         </Grid>
       </div>
     );
