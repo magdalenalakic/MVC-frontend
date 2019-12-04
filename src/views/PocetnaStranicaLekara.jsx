@@ -24,6 +24,8 @@ import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
 import ProfilPacijenta from "views/ProfilPacijenta.jsx"
+import Button from "components/CustomButton/CustomButton.jsx";
+import Dialog from 'react-bootstrap-dialog';
 
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import {
@@ -63,15 +65,17 @@ class PocetnaStranicaLekara extends React.Component {
   handleClick = e => {
     e.preventDefault();
     console.log("CLICK *** ");  
-    console.log("PPPPPPPPPPPP: " + e.telefon);
+    console.log("PPPPPPPPPPPP: " + e.target.id);
     // this.props.onClick(this.props.value);
     // console.log(e.lista.email);
     console.log("prikaz profila pacijenta");
     this.setState({
       redirectToProfilPacijenta: true,
-      emailPacijenta: this.state.emailPacijenta,
+      emailPacijenta: e.target.id,
   
     });
+    console.log("----------------------------------------------------");
+    console.log(this.state.emailPacijenta);
   };
 
   componentWillMount(){
@@ -138,7 +142,7 @@ class PocetnaStranicaLekara extends React.Component {
     let lista = this.state.listaPacijenata;
     for(var i=0; i< lista.length;i++){
       console.log( "Pacijent : "  + lista[i].email);
-      this.state.emailPacijenta = lista[i].email;
+     // this.state.emailPacijenta = lista[i].email;
       console.log(this.state.emailPacijenta);
       res.push(
        
@@ -151,7 +155,9 @@ class PocetnaStranicaLekara extends React.Component {
           <td>{lista[i].ime}</td>
           <td>{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
-          <td onClick={this.handleClick} ><button> Prikazi profil </button></td>
+          <td ><Button className="OdobrenZahtev"
+              id={lista[i].email}
+              onClick={e => this.handleClick(e)}> Prikazi profil </Button></td>
           {/* <td><link to="/admin/login">Prikazi profil</link></td> */}
          {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
      

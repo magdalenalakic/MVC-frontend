@@ -1,27 +1,10 @@
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import { Grid, Row, Col, Table } from "react-bootstrap";
-
 import { Card } from "components/Card/Card.jsx";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
 import "klinickiCentar.css";
-import UserCard from "components/UserCard/UserCard";
-import slikaKC from "assets/img/klinickiCentar.jpg";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
+import Dialog from 'react-bootstrap-dialog';
 
 class ListaZahtevaAdminKC extends Component {
   constructor(props) {
@@ -31,16 +14,18 @@ class ListaZahtevaAdminKC extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
-      selected: null,
+      razlogOdbijanja: "",
+      za: "",
       listaZahtevaZaRegistraciju: []
     };
-    this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(
-      this
-    );
+    
+    this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(this);
+    this.handleOdobren = this.handleOdobren.bind(this);
+    this.handleOdbijen = this.handleOdbijen.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
-  componentWillMount() {
-    console.log("--------pocetak");
 
+  ucitajPonovo(){
     const url1 =
       "http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/" +
       this.state.email;
@@ -60,63 +45,107 @@ class ListaZahtevaAdminKC extends Component {
         console.log(error);
       });
   }
-
+  componentWillMount() {
+    console.log("--------pocetak");
+    this.ucitajPonovo();
+    
+  }
   handleChange = e => {
     e.preventDefault();
-    //this.setState({ [e.target.name]: e.target.value });
-    console.log(this.state);
-    console.log("On click !!!");
-  };
-  odobrenClick = e => {
-    e.preventDefault();
-    console.log("ODOBRENO");
+    
     this.setState({ [e.target.name]: e.target.value });
     console.log(this.state);
-    console.log("On click !!!");
-    // console.log(param.i)
-
-    // this.setState({
-    //   redirectToRegistration: true
-    // });
-    // axios
-    // .post("http://localhost:8025/api/administratoriKC/potvrda", {
-
-    //   // lbo: this.state.email,
-    // })
-    // .then(response => {
-    //   console.log(response.data);
-    //   // this.setState({
-    //   //   uloga: response.data.uloga
-    //   // });
-
-    //   // this.setState({
-    //   //   email: response.data.email
-    //   // });
-
-    //   // console.log(this.state.uloga);
-    //   // this.setState({
-    //   //   redirectToReferrer: true
-    //   // });
-    // })
-    // .catch(error => {
-    //   //   console.log(error.response);
-    //   formErrors.log = "Pogresni kredencijali";
-    //   // this.setState({ formErrors }, () => console.log(this.state));
-    // });
+    console.log("On change !!!");
   };
+ 
   handleOdobren = e => {
     e.preventDefault();
     console.log(e.target.id);
+    const url2 = "http://localhost:8025/api/administratoriKC/potvrda/" + e.target.id;
+    axios
+    .post(url2, {})
+    .then(response => {
+      console.log("ODOBRENOOOO");
+      console.log(response);
+      this.ucitajPonovo();
+    })
+    .catch(error => {
+        console.log(error.response);
+    });
+
   };
+  handleOdbijen = e => {
+    
+    e.preventDefault();
+    let za = e.target.id;
+    this.setState({
+      za : za
+    })
+    console.log("--------------------------------");
+
+    this.dialog.show({
+      title: 'Odbijanje zahteva za registraciju',
+      body: [
+        <form className="formaZaSlanjeRazlogaOdbijanja">
+          <div >
+            <label htmlFor="za">Za: </label>
+            <input
+              type="text"
+              name="za"
+              value = {za}
+              // defaultValue= {za}
+              // placeholder={this.state.ime}
+              // noValidate
+              // onChange={this.handleChange}
+            />
+          </div>
+          <div >
+            <label htmlFor="razlogOdbijanja">Razlog odbijanja: </label>
+            <input
+              type="text"
+              name="razlogOdbijanja"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+      </form>
+      ],
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.OKAction(() => {
+          console.log('OK je kliknuto!');
+          console.log("Poslat razlog : ---------------");
+          console.log(this.state.za);
+          console.log(this.state.razlogOdbijanja);
+          const url3 = "http://localhost:8025/api/administratoriKC/odbijanje/" + this.state.za + "/" + this.state.razlogOdbijanja;
+          axios
+            .post(url3, {})
+            .then(response => {
+              console.log("Odbijanje uspelo! ");
+              console.log(response.data);
+              this.ucitajPonovo();
+
+            })
+            .catch(error => {
+              console.log("Odbijanje nije uspelo! ");
+            });
+        })
+      ],
+      bsSize: 'medium',
+      onHide: (dialog) => {
+        dialog.hide()
+        console.log('closed by clicking background.')
+      }
+    })
+    
+  }
+
   listaZahtevaZaRegistraciju() {
     let res = [];
     let lista = this.state.listaZahtevaZaRegistraciju;
 
     for (var i = 0; i < lista.length; i++) {
-      // this.setState({
-      //   lboKlik : lista[i].lbo
-      // });
-      // console.log(this.state.lboKlik);
+      
       res.push(
         <tr key={i}>
           <td>{lista[i].id}</td>
@@ -130,16 +159,15 @@ class ListaZahtevaAdminKC extends Component {
           <td>{lista[i].telefon}</td>
 
           <td>
-            <Button
-              className="OdobrenZahtev"
-              id={lista[i].email}
-              onClick={e => this.handleOdobren(e)}
-            >
+            <Button className="OdobrenZahtev" id={lista[i].email} onClick={e => this.handleOdobren(e)}>
               Odobri
             </Button>
           </td>
           <td>
-            <Button className="OdbijenZahtev">Odbij</Button>
+            <Button  id={lista[i].email} className="OdbijenZahtev" onClick={e => this.handleOdbijen(e)}>
+            Odbij
+            </Button>
+            <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
           </td>
         </tr>
       );
