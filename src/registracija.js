@@ -66,15 +66,15 @@ class Registracija extends Component {
         });
       } else {
         console.log(`Ime: ${this.state.ime}`);
-        axios
+        // axios
 
-          .post("http://localhost:8025/api/pacijenti/signup", {
-            email: this.state.email
-          })
-          .then(response => {
-            this.setState({
-              redirectToReferrer: true
-            });
+        //   .post("http://localhost:8025/api/pacijenti/signup", {
+        //     email: this.state.email
+        //   })
+        //   .then(response => {
+        //     this.setState({
+        //       redirectToReferrer: true
+        //     });
 
             // this.render(<div>Potvrdite registraciju putem maila. </div>);
             axios
@@ -93,19 +93,23 @@ class Registracija extends Component {
               .then(response => {
                 console.log("slanje mejla");
                 console.log(response);
+                this.render(<div>Potvrdite registraciju putem maila. </div>);
               })
               .catch(error => {
                 console.log(error.response);
               });
+              this.setState({
+                    registrovan: true
+                  });
 
-            console.log(response);
-          })
-          .catch(error => {
-            console.log(error.response);
-          });
-        this.setState({
-          registrovan: true
-        });
+            // console.log(response);
+          // )}
+          // .catch(error => {
+          //   console.log(error.response);
+          // });
+      //   this.setState({
+      //     registrovan: true
+      //   });
       }
     } else {
       console.log(this.state);
