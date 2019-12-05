@@ -29,9 +29,10 @@ class IzmenaKlinike extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga, 
-      ime: "",
-      telefon: "",
-      prezime: "",
+      naziv: "",
+      adresa: "",
+      opis: "",
+      ocena: "",
 
     }
 
@@ -40,7 +41,7 @@ class IzmenaKlinike extends Component {
 
   componentWillMount(){
     // console.log("wmount!!!!")
-    // const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
+    // const url = 'http://localhost:8025/api/klinike/getAdminKlinikeByEmail/' + this.state.email;
     // axios.get(url)
     //   .then(Response => {
     //     console.log("Preuzet admin klinike: ");
@@ -163,6 +164,17 @@ class IzmenaKlinike extends Component {
                           onChange={this.handleChange}
                         />
                       </div>
+                      <div className="prezime">
+                        <label htmlFor="prezime">Ocena: </label>
+                        <input
+                          type="text"
+                          name="prezime"
+                          defaultValue={prezime}
+                          // placeholder="prezime"
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
                      
                       {/* <div className="klinikaK">
                         <label htmlFor="klinikaK">klinika: </label>
@@ -200,11 +212,7 @@ class IzmenaKlinike extends Component {
                 // category="Ime"
                 content={
                   <div id="a">
-                    <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
-                      </h2>
-                    </div>
+                 
                     
                     <div className="typo-line">
                       <h2>

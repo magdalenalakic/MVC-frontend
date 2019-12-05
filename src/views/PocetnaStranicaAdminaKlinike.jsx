@@ -37,11 +37,17 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       ime: "",
       telefon: "",
       prezime: "",
+      id: null,
+      naziv: "",
+      adresa: "",
+      opis: "",
+      ocena: "",
       listaPacijenata:[],
      // redirectToProfilPacijenta: false,
       
     };
    // this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
+
   }
 
 //   handleClick = e => {
@@ -60,26 +66,38 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
 
   componentWillMount(){
     console.log("wmount")
+    console.log("Preuzimanje admina klinike.....")
     const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    // console.log('Email: ' + this.state.email);
-    // console.log('url: ' + url);
     axios.get(url)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);
-        this.setState({
-          email: Response.data.email
-        });
-        this.setState({
-          ime: Response.data.ime
-        });
 
         this.setState({
-          prezime: Response.data.prezime
+          email: Response.data.email,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
+          telefon: Response.data.telefon,
+          id: Response.data.id,
         });
-        this.setState({
-          telefon: Response.data.telefon
-        });
+
+        console.log("ucitaj mi kliniku");
+        const urlKlinike = 'http://localhost:8025/api/klinike/' + this.state.id;    
+        axios.get(urlKlinike)
+          .then(klinika => {
+            console.log("Preuzeta klinika");
+            console.log(klinika.data);
+   
+            this.setState({
+              naziv: klinika.data.naziv,
+              adresa: klinika.data.adresa,
+              opis: klinika.data.opis,
+              ocena: klinika .data.ocena,
+             
+            });
+       
+          })
+      
       })
       
       .catch(error => {
@@ -87,23 +105,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       })
 
       //za kliniku ovdje
-
-    //   console.log("------***********--pocetak");
-    //   const url1 = 'http://localhost:8025/api/lekari/listaPacijenataLekara/' + this.state.email; 
-    //   console.log(url1);
-    //   axios.get(url1)
-    //     .then(response => {
-    //       console.log("URL 111");
-    //       console.log(response);
-    //       this.setState({
-    //         listaPacijenata: response.data
-    //       });
-    //     })
-    //     .catch(error => {
-    //         console.log("nije uspeo url1");
-    //         console.log(error);
-    //     })
-
+    
   }
 
 
@@ -157,6 +159,13 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     const ime = this.state.ime;
     const prezime = this.state.prezime;
     const telefon = this.state.telefon;
+    const id = this.state.id;
+    const naziv = this.state.naziv;
+    const adresa = this.state.adresa;
+    const opis = this.state.opis;
+    const ocena = this.state.ocena;
+    // console.log(nazivKlinike);
+    // console.log(telefon);
     // console.log("Render ps email: " + email);
     // console.log("Render ps uloga: " + uloga);
     // console.log("Render ps ime: " + ime);
@@ -181,86 +190,22 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     return (
       <div className="content">
         <Grid fluid>
+     
           <Row>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                // statsText="Lista pacijenata"
-                // statsValue="105GB"
-                // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Pregledi"
-              />
-            </Col>
-            {/* <h1>{this.state}</h1> */}
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-wallet text-success" />}
-                // statsText="Pocetak pregleda"
-                // statsValue="$1,345"
-                // statsIcon={<i className="fa fa-calendar-o" />}
-                 statsIconText="Lekari"
-              />
-            </Col>
-            {/* <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Profil korisnika"
-              />
-            </Col> */}
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Sale"
-              />
-            </Col>
-            {/* <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="fa fa-twitter text-info" />}
-                statsText=""
-                // statsValue="+45"
-                // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Zakazivanje pregleda i operacija"
-              />
-            </Col> */}
-          </Row>
-          <Row>
-            <Col md={8}>
-              <Card
-              
-                title="Naziv klinike"
-                // category="24 Hours performance"
-                // stats="Updated 3 minutes ago"
-                ctTableFullWidth
-                ctTableResponsive
-                 content={
-                  <Table striped hover>
-             
-                </Table>
-                 }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendSales)}</div>
-                // }
-              />
-            </Col>
+         
             
             <Col md={4}>
             <Card
                 // statsIcon="fa fa-clock-o"
-                title="O administratoru klinike"
+                title="Administator klinike"
                 // category="Ime"
                 content={
                   <div id="a">
-                    <div className="slikaKCdiv">
+                    {/* <div className="slikaKCdiv">
                       <h2> 
                         <img className="slikaLekar" src={slikaLekar}></img>
                       </h2>
-                    </div>
+                    </div> */}
                     <div className="typo-line">
                       <h2>
                         <p className="category">Ime:</p>
@@ -300,6 +245,99 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                 // }
               />
             </Col>
+            <Col md={5}>
+              <Card
+              
+                title="Klinika"
+                // category="24 Hours performance"
+                // stats="Updated 3 minutes ago"
+             //   ctTableFullWidth
+               // ctTableResponsive
+                content={
+                  <div id="a">
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Naziv klinike:</p>
+                        <label className="adresaKC"> {this.state.naziv} </label>
+                      </h2>
+                    </div>
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Adresa:</p>
+                        <label className="adresaKC"> {this.state.adresa} </label>
+                      </h2>
+                    </div>
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Opis:</p>
+                        <label className="adresaKC">{this.state.opis} </label>
+                      </h2>
+                    </div>
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Ocena:</p>
+                        <label className="adresaKC">{this.state.ocena}</label>
+                      </h2>
+                    </div>
+                    
+                    
+                    
+                  </div>
+                }
+                // legend={
+                //   <div className="legend">{this.createLegend(legendSales)}</div>
+                // }
+              />
+            </Col>
+            <Row>
+            <Col md={3}>
+              <StatsCard
+                
+                bigIcon={<i className="pe-7s-server text-warning" />}
+                // statsText="Lista pacijenata"
+                // statsValue="105GB"
+                // statsIcon={<i className="fa fa-refresh" />}
+                 statsIconText="Pregledi"
+              />
+          </Col>
+            {/* <h1>{this.state}</h1> */}
+          <Col md={3}>
+              <StatsCard
+                bigIcon={<i className="pe-7s-wallet text-success" />}
+                // statsText="Pocetak pregleda"
+                // statsValue="$1,345"
+                // statsIcon={<i className="fa fa-calendar-o" />}
+                 statsIconText="Lekari"
+              />
+            </Col>
+            {/* <Col lg={3} sm={6}>
+              <StatsCard
+                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                // statsText="Profil korisnika"
+                // statsValue="23"
+                // statsIcon={<i className="fa fa-clock-o" />}
+                 statsIconText="Profil korisnika"
+              />
+            </Col> */}
+            <Col md={3}>
+              <StatsCard
+                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                // statsText="Profil korisnika"
+                // statsValue="23"
+                // statsIcon={<i className="fa fa-clock-o" />}
+                 statsIconText="Sale"
+              />
+            </Col>
+            {/* <Col lg={3} sm={6}>
+              <StatsCard
+                bigIcon={<i className="fa fa-twitter text-info" />}
+                statsText=""
+                // statsValue="+45"
+                // statsIcon={<i className="fa fa-refresh" />}
+                 statsIconText="Zakazivanje pregleda i operacija"
+              />
+            </Col> */}
+          </Row>
           </Row>
 {/* 
           <Row>
