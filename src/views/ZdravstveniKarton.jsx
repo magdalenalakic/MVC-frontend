@@ -7,18 +7,18 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
-
+import { Table } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
-import "izmenaProfila.css";
+// import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
 import avatar from "assets/img/faces/face-3.jpg";
-import "login.js";
+
 import { log } from "util";
-import Login from "login";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
 
@@ -30,7 +30,10 @@ class ZdravstveniKarton extends Component {
       uloga: props.uloga,
       visina: "",
       tezina: "",
-      lbo: ""
+      krvnaGrupa: "",
+      lbo: "",
+      ime: "",
+      prezime: ""
     };
   }
 
@@ -48,8 +51,28 @@ class ZdravstveniKarton extends Component {
         });
         this.setState({
           visina: Response.data.visina,
-          lbo: Response.data.pacijent.lbo
+          krvnaGrupa: Response.data.krvnaGrupa
         });
+        axios
+          .get(
+            "http://localhost:8025/api/pacijenti/findPacijentEmail/" +
+              Response.data.pacijent.email
+          )
+
+          .then(Response => {
+            console.log("URL 111");
+            console.log(Response);
+            this.setState({
+              ime: Response.data.ime,
+              prezime: Response.data.prezime,
+              lbo: Response.data.lbo
+            });
+            console.log(this.state);
+          })
+          .catch(error => {
+            console.log("nije uspeo url1");
+            console.log(error);
+          });
       })
 
       .catch(error => {
@@ -119,6 +142,9 @@ class ZdravstveniKarton extends Component {
     const grad = this.state.grad;
     const drzava = this.state.drzava;
     const lbo = this.state.lbo;
+    const visina = this.state.visina;
+    const tezina = this.state.tezina;
+    const krvnaGrupa = this.state.krvnaGrupa;
 
     return (
       <div className="content">
@@ -126,180 +152,114 @@ class ZdravstveniKarton extends Component {
           <Row>
             <Col md={8}>
               <Card
-                title="Izmena podataka"
+                title="Zdravstveni karton"
                 content={
-                  <form
-                    onSubmit={this.handleSumbit}
-                    className="formaIzmenaProfilaPacijent"
-                  >
-                    <div className="ime">
-                      <label htmlFor="ime">Ime: </label>
-                      <input
-                        type="text"
-                        name="ime"
-                        defaultValue={ime}
-                        // placeholder={this.state.ime}
-                        // noValidate
-                        onChange={this.handleChange}
-                      />
-                    </div>
-                    <div className="prezime">
-                      <label htmlFor="prezime">Prezime: </label>
-                      <input
-                        type="text"
-                        name="prezime"
-                        defaultValue={prezime}
-                        // placeholder="prezime"
-                        // noValidate
-                        onChange={this.handleChange}
-                      />
-                    </div>
-
-                    {/* <div className="klinikaK">
-                        <label htmlFor="klinikaK">klinika: </label>
-                        <input
-                          type="text"
-                          name="klinikaK"
-                          placeholder="klinikaK"
-                          // noValidate
-                          // onChange={this.handleChange}
-                        />
-                      </div> */}
-                    {/* <div className="klinika">
-                        <label htmlFor="klinika">Klinika: </label>
-                        <input
-                          type="text"
-                          name="klinika"
-                          placeholder="klinika"
-                          // noValidate
-                          // onChange={this.handleChange}
-                        />
-                      </div> */}
-                    <div className="adresa">
-                      <label htmlFor="adresa">Adresa: </label>
-                      <input
-                        type="text"
-                        name="adresa"
-                        defaultValue={adresa}
-                        // placeholder={this.state.adresa}
-                        // noValidate
-                        onChange={this.handleChange}
-                      />
-                    </div>
-                    <div className="grad">
-                      <label htmlFor="grad">Grad: </label>
-                      <input
-                        type="text"
-                        name="grad"
-                        defaultValue={grad}
-                        // placeholder={this.state.grad}
-                        // noValidate
-                        onChange={this.handleChange}
-                      />
-                    </div>
-                    <div className="drzava">
-                      <label htmlFor="drzava">Drzava: </label>
-                      <input
-                        type="text"
-                        name="drzava"
-                        defaultValue={drzava}
-                        // placeholder={this.state.drzava}
-                        // noValidate
-                        onChange={this.handleChange}
-                      />
-                    </div>
-                    <div className="telefon">
-                      <label htmlFor="telefon">Broj telefona: </label>
-                      <input
-                        type="text"
-                        name="telefon"
-                        defaultValue={this.state.telefon}
-                        // placeholder="telefon"
-                        // noValidate
-                        onChange={this.handleChange}
-                      />
-
-                      {/* <div className="">
-                        <label htmlFor="">: </label>
-                        <input
-                          type="text"
-                          name=""
-                          placeholder=""
-                          // noValidate
-                          // onChange={this.handleChange}
-                        />*/}
-                    </div>
-                    <div className="izmeniPodatkePacijent">
-                      <button type="submit">Izmeni podatke</button>
-                    </div>
-                  </form>
-                  // <form className="formUserProfile">
-                  //   <FormInputs
-                  //     ncols={["col-md-100", "col-md-10"]}
-                  //     properties={[
-                  //       {
-                  //         // label: "Klinika (disabled)",
-                  //         label: "Klinika ",
-                  //         type: "text",
-                  //         bsClass: "form-control",
-                  //         placeholder: "Company",
-                  //         defaultValue: "staviti ime od klinike",
-                  //         disabled: true
-                  //       },
-                  //       {
-                  //         label: "Email adresa",
-                  //         type: "email",
-                  //         bsClass: "form-control",
-                  //         placeholder: "Email",
-                  //         defaultValue: "Emai"
-                  //       }
-                  //     ]}
-                  //   />
-                  //    <FormInputs
-                  //     ncols={["col-md-10", "col-md-10"]}
-                  //     properties={[
-                  //       {
-                  //         label: "Ime",
-                  //         type: "text",
-                  //         bsClass: "form-control",
-                  //         placeholder: "First name",
-                  //         defaultValue: "ime"
-                  //       },
-                  //       {
-                  //         label: "Prezime",
-                  //         type: "text",
-                  //         bsClass: "form-control",
-                  //         placeholder: "Last name",
-                  //         defaultValue: "Neko prezime"
-                  //       }
-                  //     ]}
-                  //   />
-                  //   <FormInputs
-                  //     ncols={["col-md-10000"]}
-                  //     properties={[
-                  //       {
-                  //         label: "Adress",
-                  //         type: "text",
-                  //         bsClass: "form-control",
-                  //         placeholder: "Home Adress",
-                  //         defaultValue:
-                  //           "Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                  //       }
-                  //     ]}
-                  //   />
-
-                  //   <Row>
-                  //     <Col md={12}>
-                  //     </Col>
-                  //   </Row>
-                  //   <Button bsStyle="info" pullRight fill type="submit">
-                  //     Izmeni profil
-                  //   </Button>
-                  //   <div className="clearfix" />
-                  // </form>
+                  <div>
+                    <Table striped hover>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <label>Ime: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="ime"
+                              defaultValue={ime}
+                              disabled="disabled"
+                              // placeholder={this.state.ime}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Prezime: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="prezime"
+                              defaultValue={prezime}
+                              disabled="disabled"
+                              // placeholder={this.state.prezime}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Jedinstveni broj osiguranika: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="lbo"
+                              defaultValue={lbo}
+                              disabled="disabled"
+                              // placeholder={this.state.lbo}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Visina: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="visina"
+                              defaultValue={visina}
+                              disabled="disabled"
+                              // placeholder={this.state.visina}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Tezina: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="tezina"
+                              defaultValue={tezina}
+                              disabled="disabled"
+                              // placeholder={this.state.tezina}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Krvna grupa: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="krvnaGrupa"
+                              defaultValue={krvnaGrupa}
+                              disabled="disabled"
+                              // placeholder={this.state.krvnaGrupa}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </div>
                 }
               />
             </Col>
+
             <Col md={4}>
               <Card
                 // statsIcon="fa fa-clock-o"
@@ -330,20 +290,6 @@ class ZdravstveniKarton extends Component {
                     </div>
                   </div>
                 }
-
-                // category="opis ... naziv adresa i opis  "
-                // stats="Campaign sent 2 days ago"
-                // content={
-                //   <div
-                //     id="chartPreferences"
-                //     className="ct-chart ct-perfect-fourth"
-                //   >
-                //     <ChartistGraph data={dataPie} type="Pie" />
-                //   </div>
-                // }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendPie)}</div>
-                // }
               />
             </Col>
           </Row>

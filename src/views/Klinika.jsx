@@ -29,6 +29,15 @@ class Klinika extends Component {
     }
     return legend;
   }
+  sortByText(a, b, order = ASC) {
+    const diff = a.text.toLowerCase().localeCompare(b.text.toLowerCase());
+
+    if (order === ASC) {
+      return diff;
+    }
+
+    return -1 * diff;
+  }
   render() {
     return (
       <div className="content">
