@@ -7,6 +7,7 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
@@ -154,102 +155,106 @@ class ZdravstveniKarton extends Component {
                 title="Zdravstveni karton"
                 content={
                   <div>
-                    <tr>
-                      <td>
-                        <label>Ime: </label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          name="ime"
-                          defaultValue={ime}
-                          disabled="disabled"
-                          // placeholder={this.state.ime}
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Prezime: </label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          name="prezime"
-                          defaultValue={prezime}
-                          disabled="disabled"
-                          // placeholder={this.state.prezime}
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Jedinstveni broj osiguranika: </label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          name="lbo"
-                          defaultValue={lbo}
-                          disabled="disabled"
-                          // placeholder={this.state.lbo}
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Visina: </label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          name="visina"
-                          defaultValue={visina}
-                          disabled="disabled"
-                          // placeholder={this.state.visina}
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Tezina: </label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          name="tezina"
-                          defaultValue={tezina}
-                          disabled="disabled"
-                          // placeholder={this.state.tezina}
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Krvna grupa: </label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          name="krvnaGrupa"
-                          defaultValue={krvnaGrupa}
-                          disabled="disabled"
-                          // placeholder={this.state.krvnaGrupa}
-                          // noValidate
-                          onChange={this.handleChange}
-                        />
-                      </td>
-                    </tr>
+                    <Table striped hover>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <label>Ime: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="ime"
+                              defaultValue={ime}
+                              disabled="disabled"
+                              // placeholder={this.state.ime}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Prezime: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="prezime"
+                              defaultValue={prezime}
+                              disabled="disabled"
+                              // placeholder={this.state.prezime}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Jedinstveni broj osiguranika: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="lbo"
+                              defaultValue={lbo}
+                              disabled="disabled"
+                              // placeholder={this.state.lbo}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Visina: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="visina"
+                              defaultValue={visina}
+                              disabled="disabled"
+                              // placeholder={this.state.visina}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Tezina: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="tezina"
+                              defaultValue={tezina}
+                              disabled="disabled"
+                              // placeholder={this.state.tezina}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Krvna grupa: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="krvnaGrupa"
+                              defaultValue={krvnaGrupa}
+                              disabled="disabled"
+                              // placeholder={this.state.krvnaGrupa}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
                   </div>
                 }
               />

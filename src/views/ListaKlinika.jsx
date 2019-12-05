@@ -8,6 +8,7 @@ import {
   FormControl
 } from "react-bootstrap";
 import { Table } from "react-bootstrap";
+import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
@@ -31,6 +32,7 @@ class ListaKlinika extends Component {
       listaKlinika: []
     };
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
+    this.sortMyArray = this.sortMyArray.bind(this);
   }
 
   componentWillMount() {
@@ -105,6 +107,7 @@ class ListaKlinika extends Component {
   listaKlinikaUKC() {
     let res = [];
     let lista = this.state.listaKlinika;
+
     for (var i = 0; i < lista.length; i++) {
       res.push(
         <tr key={i}>
@@ -118,6 +121,33 @@ class ListaKlinika extends Component {
     }
     return res;
   }
+  sortMyArray(sortBy) {
+    console.log("sort funkcija");
+    console.log(sortBy);
+    const lista = this.state.listaKlinika;
+    if (sortBy === "naziv") {
+      console.log("naziv");
+      this.setState({
+        listaKlinika: lista.sort((a, b) => a.naziv.localeCompare(b.naziv))
+      });
+    } else if (sortBy === "opis") {
+      console.log("opis");
+      this.setState({
+        listaKlinika: lista.sort((a, b) => a.opis.localeCompare(b.opis))
+      });
+    } else if (sortBy === "adresa") {
+      console.log("adresa");
+      this.setState({
+        listaKlinika: lista.sort((a, b) => a.adresa.localeCompare(b.adresa))
+      });
+    } else if (sortBy === "ocena") {
+      console.log("ocena");
+
+      this.setState({
+        listaKlinika: lista.sort((a, b) => b.ocena - a.ocena)
+      });
+    }
+  }
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;
@@ -128,6 +158,7 @@ class ListaKlinika extends Component {
     const grad = this.state.grad;
     const drzava = this.state.drzava;
     const lbo = this.state.lbo;
+    const lista = this.state.listaKlinika;
 
     return (
       <div className="content">
@@ -141,14 +172,36 @@ class ListaKlinika extends Component {
                     onSubmit={this.handleSumbit}
                     className="formaIzmenaProfilaPacijent"
                   >
+                    <NavDropdown
+                      onSelect={e => {
+                        this.sortMyArray(e);
+                      }}
+                      title="Sortiraj"
+                      id="nav-item dropdown"
+                    >
+                      <MenuItem eventKey={"naziv"}>Naziv</MenuItem>
+                      <MenuItem eventKey={"opis"}>Opis</MenuItem>
+                      <MenuItem eventKey={"adresa"}>Adresa</MenuItem>
+                      <MenuItem eventKey={"ocena"}>Ocena</MenuItem>
+                    </NavDropdown>
                     <Card
-                      title="Lista klinika"
                       // category="Here is a subtitle for this table"
                       ctTableFullWidth
                       ctTableResponsive
                       content={
                         <Table striped hover>
-                          <thead>
+                          <thead className="thead-dark">
+                            {/* <select
+                              onChange={e => {
+                                this.sortMyArray(e.target.value);
+                              }}
+                            >
+                              <option value="naziv">Naziv</option>
+                              <option value="opis">Opis</option>
+                              <option value="adresa">Adresa</option>
+                              <option value="ocena">Ocena</option>
+                            </select> */}
+
                             <tr>
                               {/*                             
                             {listaKlinika.map((prop, key) => {
