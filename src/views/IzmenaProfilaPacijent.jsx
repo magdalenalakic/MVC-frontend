@@ -7,11 +7,11 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
-import Button from "components/CustomButton/CustomButton.jsx";
 import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
@@ -247,7 +247,9 @@ class IzmenaProfilaPacijent extends Component {
                         />*/}
                     </div>
                     <div className="izmeniPodatkePacijent">
-                      <button type="submit">Izmeni podatke</button>
+                      <Button variant="outline-primary" type="submit">
+                        Izmeni podatke
+                      </Button>
                     </div>
                   </form>
                   // <form className="formUserProfile">
