@@ -77,9 +77,13 @@ class ListaZahtevaAdminKC extends Component {
   handleOdbijen = e => {
     
     e.preventDefault();
-    let za = e.target.id;
+    let zaKoga = e.target.id;
+    let raz = "Bez razloga";
     this.setState({
-      za : za
+      za : zaKoga
+    })
+    this.setState({
+      razlogOdbijanja : raz
     })
     console.log("--------------------------------");
 
@@ -87,21 +91,21 @@ class ListaZahtevaAdminKC extends Component {
       title: 'Odbijanje zahteva za registraciju',
       body: [
         <form className="formaZaSlanjeRazlogaOdbijanja">
-          <div >
-            <label htmlFor="za">Za: </label>
-            <input
+          <div className="za">
+            <label className="zaLabel" htmlFor="za">Za: </label>
+            <input className="zaLabel"
               type="text"
               name="za"
-              value = {za}
+              value = {zaKoga}
               // defaultValue= {za}
               // placeholder={this.state.ime}
               // noValidate
               // onChange={this.handleChange}
             />
           </div>
-          <div >
-            <label htmlFor="razlogOdbijanja">Razlog odbijanja: </label>
-            <input
+          <div className="razlogOdbijanja" >
+            <label className="razlogOdbijanjaLabel" htmlFor="razlogOdbijanja">Razlog odbijanja: </label>
+            <input className="razlogOdbijanjaLabel"
               type="text"
               name="razlogOdbijanja"
               defaultValue=""
