@@ -62,6 +62,7 @@ class AdministatorKlinike extends Component {
               <prop.component
                 {...props}
                 handleClick={this.handleNotificationClick}
+                id = {this.state.id}
                 uloga = {this.state.uloga}
                 email = {this.state.email}
               />

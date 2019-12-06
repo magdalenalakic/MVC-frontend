@@ -28,96 +28,108 @@ class IzmenaKlinike extends Component {
     console.log("IZMENA KLINIKE");
     this.state = {
       email: props.email,
-      uloga: props.uloga, 
-      ime: "",
-      telefon: "",
-      prezime: "",
-
+      idKlinike: "",
+      naziv: "",
+      adresa: "",
+      opis: "",
+      ocena: "",
+      id: "",
     }
 
   }
 
 
   componentWillMount(){
-    // console.log("wmount!!!!")
-    // const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    // axios.get(url)
-    //   .then(Response => {
-    //     console.log("Preuzet admin klinike: ");
-    //     console.log(Response.data);
-      
-    //     this.setState({
-    //       email: Response.data.email
-    //     });
-    //     this.setState({
-    //       ime: Response.data.ime
-    //     });
+    console.log("wmount")
+    console.log("Preuzimanje admina klinike.....")
+    const url1 = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
+    axios.get(url1)
+      .then(Response => {
+        console.log("Preuzet admin klinike: ");
+        console.log(Response.data);
 
-    //     this.setState({
-    //       prezime: Response.data.prezime
-    //     });
-    //     this.setState({
-    //       telefon: Response.data.telefon
-    //     });
-    //   })
+        this.setState({
+          email: Response.data.email,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
+          telefon: Response.data.telefon,
+          idKlinike: Response.data.idKlinike,
+        });
+        console.log("wmount!!!!");
+        const url = 'http://localhost:8025/api/klinike/' + this.state.idKlinike;
+        axios.get(url)
+          .then(Response => {
+            console.log("Preuzeta klinike: ");
+            console.log(Response.data);
+          
+            this.setState({
+              id: Response.data.id,
+              naziv: Response.data.naziv,
+              adresa: Response.data.adresa,
+              ocena: Response.data.ocena,
+              opis: Response.data.opis,
+            });
+    
+          })
+          
+          .catch(error => {
+            console.log("klinika nije preuzeta")
+          })
+    })
       
-    //   .catch(error => {
-    //     console.log("Admin klinike nije preuzet")
-    //   })
+    .catch(error => {
+        console.log("Administrator klinike  nije preuzet")
+    })
+
+   
   }
   handleChange = e => {
-    // e.preventDefault();
-    // this.setState({[e.target.name]: e.target.value});
-    // console.log(this.state)
-    // console.log("On change !!!")
+    e.preventDefault();
+    this.setState({[e.target.name]: e.target.value});
+    console.log(this.state)
+    console.log("On change !!!")
 
   };
   
   handleSumbit = e => {
-    // e.preventDefault();
-    // console.log("KLIK SUBMITTT")
-    // // let formErrors = { ...this.state.formErrors };
-    //   console.log("Izmjena : ---------------")  
-    //   console.log(this.state.ime);
-    //   console.log(this.state.prezime);
-    // axios
-    //   .put("http://localhost:8025/api/adminKlinike/update", {
-    //     ime: this.state.ime,
-    //     prezime: this.state.prezime,
-    //     telefon: this.state.telefon,
-    //     email: this.state.email
-    //   })
-    //   .then(response => {
-    //     console.log(response.data);
- 
-      
-    //     this.setState({
-    //       ime: response.data.ime
-    //     });
-
-    //     this.setState({
-    //       prezime: response.data.prezime
-    //     });
-
-    //     this.setState({
-    //       telefon: response.data.telefon
-    //     });
-
-    //     // this.setState({
-    //     //   redirectToReferrer: true
-    //     // });
-    //   })
-    //   .catch(error => {
-    //     console.log("Izmena nije uspela! ")
-    //   });
+    e.preventDefault();
+    console.log("KLIK SUBMITTT")
+    // let formErrors = { ...this.state.formErrors };
+      console.log("Izmjena klinike: ---------------")  
+      console.log(this.state.naziv);
+      console.log(this.state.idKlinike);
+      console.log(this.state.id);
+    axios
+      .put("http://localhost:8025/api/klinike/update", {
+        id: this.state.id,
+        naziv: this.state.naziv,
+        adresa: this.state.adresa,
+        ocena: this.state.ocena,
+        opis: this.state.opis
+      })
+      .then(response => {
+        console.log(response.data);
+        this.setState({
+          id: response.data.id,
+          naziv: response.data.naziv,
+          adresa: response.data.adresa,
+          ocena: response.data.ocena,
+          opis: response.data.opis
+        });
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ")
+      });
   };
 
   render() {
-    const email = this.state.email;
-    const uloga = this.state.uloga;
-    const ime = this.state.ime;
-    const prezime = this.state.prezime;
-    const telefon = this.state.telefon;
+    const idKlinike = this.state.idKlinike;
+    const id = this.state.id;
+    const naziv = this.state.naziv;
+    const adresa = this.state.adresa;
+    const opis = this.state.opis;
+    const ocena = this.state.ocena;
+ 
 
 
     return (
@@ -130,34 +142,45 @@ class IzmenaKlinike extends Component {
                 content={
                   <form onSubmit={this.handleSumbit} className="formaIzmenaProfilaLekara">
                      <div className="ime">
-                        <label htmlFor="ime">Naziv: </label>
+                        <label htmlFor="naziv">Naziv: </label>
                         <input
                           type="text"
-                          name="ime"
+                          name="naziv"
                           
-                          defaultValue={ime}
+                          defaultValue={naziv}
                           // placeholder={this.state.ime}
                           // noValidate
                           onChange={this.handleChange}
                         />
                       </div>
-                      <div className="prezime">
-                        <label htmlFor="prezime">Adresa: </label>
+                      <div className="ime">
+                        <label htmlFor="adresa">Adresa: </label>
                         <input
                           type="text"
-                          name="prezime"
-                          defaultValue={prezime}
+                          name="adresa"
+                          defaultValue={adresa}
                           // placeholder="prezime"
                           // noValidate
                           onChange={this.handleChange}
                         />
                       </div>
-                      <div className="prezime">
-                        <label htmlFor="prezime">Opis: </label>
+                      <div className="ime">
+                        <label htmlFor="opis">Opis: </label>
                         <input
                           type="text"
-                          name="prezime"
-                          defaultValue={prezime}
+                          name="opis"
+                          defaultValue={opis}
+                          // placeholder="prezime"
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="ime">
+                        <label htmlFor="ocena">Ocena: </label>
+                        <input
+                          type="text"
+                          name="ocena"
+                          defaultValue={ocena}
                           // placeholder="prezime"
                           // noValidate
                           onChange={this.handleChange}
@@ -200,33 +223,34 @@ class IzmenaKlinike extends Component {
                 // category="Ime"
                 content={
                   <div id="a">
-                    <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
-                      </h2>
-                    </div>
+                 
                     
                     <div className="typo-line">
                       <h2>
                         <p className="category">Naziv:</p>
-                        <label className="adresaKC">ucitati data</label>
+                <label className="adresaKC">{this.state.naziv}</label>
                       </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
                         <p className="category">Adresa:</p>
-                        <label className="opisKC">ucitati data</label>
+                        <label className="opisKC">{this.state.adresa}</label>
                       </h2>
                     </div>
                     
                     <div className="typo-line">
                       <h2>
                         <p className="category">Opis:</p>
-                        <label className="opisKC">ucitati data</label>
+                        <label className="opisKC">{this.state.opis}</label>
                       </h2>
                     </div>
                     
-                    
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Ocena::</p>
+                        <label className="opisKC">{this.state.ocena}</label>
+                      </h2>
+                    </div>
                     
                   </div>
                 }

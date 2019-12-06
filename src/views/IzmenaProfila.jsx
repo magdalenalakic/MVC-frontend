@@ -289,16 +289,22 @@ class izmenaProfila extends Component {
                       </h2>
                     </div>
                     
-                    <div className="typo-line">
+                    {/* <div className="typo-line">
                       <h2>
                         <p className="category">Klinika:</p>
                         <label className="adresaKC">ucitati data</label>
                       </h2>
+                    </div> */}
+                    <div className="typo-line">
+                      <h2>
+                        <p className="category">Ime:</p>
+                  <label className="opisKC">{this.state.ime}</label>
+                      </h2>
                     </div>
                     <div className="typo-line">
                       <h2>
-                        <p className="category">Opis posla:</p>
-                        <label className="opisKC">ucitati data</label>
+                        <p className="category">Prezime:</p>
+                  <label className="opisKC">{this.state.prezime}</label>
                       </h2>
                     </div>
                     
