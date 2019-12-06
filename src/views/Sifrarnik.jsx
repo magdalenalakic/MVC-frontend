@@ -3,6 +3,7 @@ import { Grid, Row, Col, Table } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import "klinickiCentar.css";
+import Dialog from 'react-bootstrap-dialog';
 
 import axios from "axios";
 
@@ -14,12 +15,22 @@ class Sifrarnik extends Component {
       uloga: props.uloga,
       email: props.email,
       listaLekova:[],
-      listaDijagnoza:[]
+      listaDijagnoza:[],
+      lekNaziv: "",
+      lekSifra: "",
+      dijagnozaOznaka: "",
+      dijagnozaOpis: "",
+      dijagnozaNaziv: ""
       
-     
     };
     this.listaLekovaUKC = this.listaLekovaUKC.bind(this);
     this.listaDijagnozaUKC = this.listaDijagnozaUKC.bind(this);
+    this.dodajLek = this.dodajLek.bind(this);
+    this.dodajDijagnozu = this.dodajDijagnozu.bind(this);
+    this.izmeniLek = this.izmeniLek.bind(this);
+    this.obrisiLek = this.obrisiLek.bind(this);
+    this.izmeniDijagnozu = this.izmeniDijagnozu.bind(this);
+    this.obrisiDijagnozu = this.obrisiDijagnozu.bind(this);
     
     console.log(this.state.uloga);
     console.log(this.state.email);
@@ -35,7 +46,14 @@ class Sifrarnik extends Component {
           <td key={lista[i].id}>{lista[i].id}</td>
           <td key={lista[i].sifra}>{lista[i].sifra}</td>
           <td key={lista[i].naziv}>{lista[i].naziv}</td>
-          <td ><Button type="submit">Izmeni</Button></td>
+          <td >
+          <Button id={lista[i].id} onClick={e => this.izmeniLek(e)}>Izmeni</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td>
+          <td >
+          <Button id={lista[i].id} onClick={e => this.obrisiLek(e)}>Obrisi</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td>
          
         </tr>
       )
@@ -52,15 +70,21 @@ class Sifrarnik extends Component {
           <td key={lista[i].oznaka}>{lista[i].oznaka}</td>
           <td key={lista[i].naziv}>{lista[i].naziv}</td>
           <td key={lista[i].opis}>{lista[i].opis}</td>
-          <td ><Button type="submit">Izmeni</Button></td>
+          <td >
+          <Button id={lista[i].id} onClick={e => this.izmeniDijagnozu(e)}>Izmeni</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td>
+          <td >
+          <Button id={lista[i].id} onClick={e => this.obrisiDijagnozu(e)}>Obrisi</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td>
         </tr>
       )
     }
     return res;
   }
-  
-  componentWillMount(){
-    console.log("--------pocetak");
+  listaLekova(){
+    console.log("--------lista lekova");
     const url1 = 'http://localhost:8025/api/administratoriKC/listaLekova/' + this.state.email; 
     console.log(url1);
     axios.get(url1)
@@ -75,7 +99,10 @@ class Sifrarnik extends Component {
           console.log("nije uspeo url lekova");
           console.log(error);
       })
-  console.log("--------pocetak");
+  }
+
+  listaDijagnoza(){
+    console.log("--------lista dijagnoza");
   const url2 = 'http://localhost:8025/api/administratoriKC/listaDijagnoza/' + this.state.email; 
   console.log(url2);
   axios.get(url2)
@@ -92,6 +119,397 @@ class Sifrarnik extends Component {
       })
   }
 
+  componentWillMount(){
+    this.listaLekova();
+    this.listaDijagnoza();
+  }
+
+  handleChange = e => {
+    e.preventDefault();
+    
+    this.setState({ [e.target.name]: e.target.value });
+    console.log(this.state);
+    console.log("On change !!!");
+  };
+  dodajLek = e => {
+    e.preventDefault();
+
+    console.log("--------------------------------");
+    this.dialog.show({
+      title: 'Dodavanje novog leka',
+      body: [
+      <form className="formaZaDodavanjeNovogLeka">
+         
+          <div className="lekNaziv" >
+            <label className="lekNazivLabel" htmlFor="lekNaziv">Naziv: </label>
+            <input className="lekNazivLabel"
+              type="text"
+              name="lekNaziv"
+              defaultValue = "" 
+              // defaultValue= {za}
+              // placeholder={this.state.ime}
+              // noValidate
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="lekSifra" >
+            <label className="lekSifraLabel" htmlFor="lekSifra">Sifra: </label>
+            <input
+              className="lekSifraLabel"
+              type="text"
+              name="lekSifra"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+
+      </form> 
+      ],
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.OKAction(() => {
+          
+          console.log('OK je kliknuto!');
+          const url3 = "http://localhost:8025/api/administratoriKC/dodavanjeLeka";
+          axios
+            .post(url3, {
+              naziv : this.state.lekNaziv,
+              sifra : this.state.lekSifra
+              
+            })
+            .then(response => {
+              console.log("Dodavanje leka uspelo! ");
+              console.log(response.data);
+              this.listaLekova();
+
+            })
+            .catch(error => {
+              console.log("Dodavanje novog leka nije uspelo! ");
+            });
+        })
+      ],
+      bsSize: 'medium',
+      onHide: (dialog) => {
+        dialog.hide()
+        console.log('closed by clicking background.')
+      }
+    })
+    
+  }
+  dodajDijagnozu = e => {
+    e.preventDefault();
+    console.log("--------------------------------");
+    this.dialog.show({
+      title: 'Dodavanje nove dijagnoze',
+      body: [
+      <form className="formaZaDodavanjeNoveDijagnoze">
+         
+          <div className="dijagnozaNaziv" >
+            <label className="dijagnozaNazivLabel" htmlFor="dijagnozaNaziv">Naziv: </label>
+            <input className="dijagnozaNazivLabel"
+              type="text"
+              name="dijagnozaNaziv"
+              defaultValue = "" 
+              // defaultValue= {za}
+              // placeholder={this.state.ime}
+              // noValidate
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="dijagnozaOznaka" >
+            <label className="dijagnozaOznakaLabel" htmlFor="dijagnozaOznaka">Oznaka: </label>
+            <input
+              className="dijagnozaOznakaLabel"
+              type="text"
+              name="dijagnozaOznaka"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="dijagnozaOpis" >
+            <label className="dijagnozaOpisLabel" htmlFor="dijagnozaOpis">Opis (latinski naziv): </label>
+            <input
+              className="dijagnozaOpisLabel"
+              type="text"
+              name="dijagnozaOpis"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+
+      </form> 
+      ],
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.OKAction(() => {
+          
+          console.log('OK je kliknuto!');
+          const url3 = "http://localhost:8025/api/administratoriKC/dodavanjeDijagnoze";
+          axios
+            .post(url3, {
+              naziv : this.state.dijagnozaNaziv,
+              oznaka : this.state.dijagnozaOznaka,
+              opis : this.state.dijagnozaOpis
+              
+            })
+            .then(response => {
+              console.log("Dodavanje dijagnoze uspelo! ");
+              console.log(response.data);
+              this.listaDijagnoza();
+
+            })
+            .catch(error => {
+              console.log("Dodavanje nove dijagnoze nije uspelo! ");
+            });
+        })
+      ],
+      bsSize: 'medium',
+      onHide: (dialog) => {
+        dialog.hide()
+        console.log('closed by clicking background.')
+      }
+    })
+  }
+  izmeniLek = e => {
+    e.preventDefault();
+    console.log("izmena leka");
+    console.log(e.target.id);
+    console.log("--------------------------------");
+    
+    const url7 = "http://localhost:8025/api/administratoriKC/getLek/" + e.target.id;
+    axios
+      .get(url7)
+      .then(response => {
+              console.log("Preuzimanje leka uspelo! ");
+              console.log(response.data);
+              // this.listaLekova();
+              this.setState({
+                lekNaziv : response.data.naziv,
+                lekSifra : response.data.sifra
+              })
+              this.dialog.show({
+              title: 'Izmena leka',
+              body: [
+              <form className="formaZaIzmenuNovogLeka">
+                
+                  <div className="lekNaziv" >
+                    <label className="lekNazivLabel" htmlFor="lekNaziv">Naziv: </label>
+                    <input className="lekNazivLabel"
+                      type="text"
+                      name="lekNaziv"
+                      defaultValue = {response.data.naziv} 
+                      // defaultValue= {za}
+                      // placeholder={this.state.ime}
+                      // noValidate
+                      onChange={this.handleChange}
+                    />
+                  </div>
+                  <div className="lekSifra" >
+                    <label className="lekSifraLabel" htmlFor="lekSifra">Sifra: </label>
+                    <input
+                      className="lekSifraLabel"
+                      type="text"
+                      name="lekSifra"
+                      defaultValue={response.data.sifra}
+                      onChange={this.handleChange}
+                    />
+                  </div>
+
+              </form> 
+              ],
+              actions: [
+                Dialog.CancelAction(),
+                Dialog.OKAction(() => {
+                  
+                  console.log('OK je kliknuto!');
+                  const url3 = "http://localhost:8025/api/administratoriKC/izmenaLeka";
+                  axios
+                    .put(url3, {
+                      id : response.data.id,
+                      naziv : this.state.lekNaziv,
+                      sifra : this.state.lekSifra
+                      
+                    })
+                    .then(response2 => {
+                      console.log("Izmena leka uspela! ");
+                      console.log(response2.data);
+                      this.listaLekova();
+
+                    })
+                    .catch(error => {
+                      console.log("Izmena leka nije uspela! ");
+                    });
+                })
+              ],
+              bsSize: 'medium',
+              onHide: (dialog) => {
+                dialog.hide()
+                console.log('closed by clicking background.')
+              }
+            })
+
+      })
+      .catch(error => {
+          console.log("Preuzimanje leka nije uspelo! ");
+       });
+
+    
+  }
+  obrisiLek = e => {
+    e.preventDefault();
+    console.log("brisanje leka");
+    console.log(e.target.id);
+    // const url7 = "http://localhost:8025/api/administratoriKC/getLek/" + e.target.id;
+    // axios
+    //   .get(url7)
+    //   .then(response => {
+    //           console.log("Preuzimanje leka uspelo! ");
+    //           console.log(response.data);
+    //           // this.listaLekova();
+
+    //   })
+    //   .catch(error => {
+    //       console.log("Preuzimanje leka nije uspelo! ");
+    //    });
+
+    console.log("--------------------------------");
+    const url6 = "http://localhost:8025/api/administratoriKC/brisanjeLeka";
+          axios
+            .post(url6, {
+              id : e.target.id
+              
+            })
+            .then(response => {
+              console.log("Brisanje leka uspelo! ");
+              console.log(response.data);
+              this.listaLekova();
+
+            })
+            .catch(error => {
+              console.log("Brisanje leka nije uspelo! ");
+            });
+
+  }
+  izmeniDijagnozu = e => {
+    e.preventDefault();
+    console.log("izmena dijagnoze");
+    console.log(e.target.id);
+    console.log("--------------------------------");
+    const url7 = "http://localhost:8025/api/administratoriKC/getDijagnoza/" + e.target.id;
+    axios
+      .get(url7)
+      .then(response => {
+              console.log("Preuzimanje dijagnoze uspelo! ");
+              console.log(response.data);
+              // this.listaLekova();
+              this.setState({
+                dijagnozaNaziv : response.data.naziv,
+                dijagnozaOznaka : response.data.oznaka,
+                dijagnozaOpis : response.data.opis
+              })
+              this.dialog.show({
+              title: 'Izmena dijagnoze',
+              body: [
+              <form className="formaZaIzmenuDijagnoze">
+                
+                <div className="dijagnozaNaziv" >
+                  <label className="dijagnozaNazivLabel" htmlFor="dijagnozaNaziv">Naziv: </label>
+                  <input className="dijagnozaNazivLabel"
+                    type="text"
+                    name="dijagnozaNaziv"
+                    defaultValue= {response.data.naziv}
+                    // placeholder={this.state.ime}
+                    // noValidate
+                    onChange={this.handleChange}
+                  />
+                </div>
+                <div className="dijagnozaOznaka" >
+                  <label className="dijagnozaOznakaLabel" htmlFor="dijagnozaOznaka">Oznaka: </label>
+                  <input
+                    className="dijagnozaOznakaLabel"
+                    type="text"
+                    name="dijagnozaOznaka"
+                    defaultValue={response.data.oznaka}
+                    onChange={this.handleChange}
+                  />
+                </div>
+                <div className="dijagnozaOpis" >
+                  <label className="dijagnozaOpisLabel" htmlFor="dijagnozaOpis">Opis (latinski naziv): </label>
+                  <input
+                    className="dijagnozaOpisLabel"
+                    type="text"
+                    name="dijagnozaOpis"
+                    defaultValue={response.data.opis}
+                    onChange={this.handleChange}
+                  />
+                </div>
+
+                 
+
+              </form> 
+              ],
+              actions: [
+                Dialog.CancelAction(),
+                Dialog.OKAction(() => {
+                  
+                  console.log('OK je kliknuto!');
+                  const url3 = "http://localhost:8025/api/administratoriKC/izmenaDijagnoze";
+                  axios
+                    .put(url3, {
+                      id : response.data.id,
+                      naziv : this.state.dijagnozaNaziv,
+                      oznaka : this.state.dijagnozaOznaka,
+                      opis : this.state.dijagnozaOpis
+                      
+                    })
+                    .then(response2 => {
+                      console.log("Izmena dijagnoze uspela! ");
+                      console.log(response2.data);
+                      this.listaDijagnoza();
+
+                    })
+                    .catch(error => {
+                      console.log("Izmena dijagnoze nije uspela! ");
+                    });
+                })
+              ],
+              bsSize: 'medium',
+              onHide: (dialog) => {
+                dialog.hide()
+                console.log('closed by clicking background.')
+              }
+            })
+
+      })
+      .catch(error => {
+          console.log("Preuzimanje dijagnoze nije uspelo! ");
+       });
+
+    
+  }
+  obrisiDijagnozu = e => {
+    e.preventDefault();
+    console.log("brisanje dijagnoze");
+    console.log(e.target.id);
+    console.log("--------------------------------");
+    const url5 = "http://localhost:8025/api/administratoriKC/brisanjeDijagnoze";
+          axios
+            .post(url5, {
+              id : e.target.id
+              
+            })
+            .then(response => {
+              console.log("Brisanje dijagnoze uspelo! ");
+              console.log(response.data);
+              this.listaDijagnoza();
+
+            })
+            .catch(error => {
+              console.log("Brisanje dijagnoze nije uspelo! ");
+            });
+
+  }
+
   render() {
     return (
       <div className="content">
@@ -103,6 +521,10 @@ class Sifrarnik extends Component {
                   ctTableFullWidth
                   ctTableResponsive
                   content={
+                    <div>
+                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLek(e)}>Dodaj lek</Button>
+                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+                    
                     <Table striped hover>
                       <thead>
                         <tr>
@@ -128,6 +550,7 @@ class Sifrarnik extends Component {
                         })} */}
                       </tbody>
                     </Table>
+                    </div>
                   }
                 />
 
@@ -140,6 +563,10 @@ class Sifrarnik extends Component {
                   ctTableFullWidth
                   ctTableResponsive
                   content={
+                    <div>
+                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajDijagnozu(e)}>Dodaj dijagnozu</Button>
+                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+                    
                     <Table striped hover>
                       <thead>
                         <tr>
@@ -147,24 +574,15 @@ class Sifrarnik extends Component {
                           <th id="OznakaDijagnoze">Oznaka</th>
                           <th id="NazivDijagnoze">Naziv</th>
                           <th id="OpisDijagnoze">Opis</th>
-                          {/* {thArray.map((prop, key) => {
-                            return <th key={key}>{prop}</th>;
-                          })} */}
+                          
                         </tr>
                       </thead>
                       <tbody>
                        {this.listaDijagnozaUKC()}
-                        {/* {tdArray.map((prop, key) => {
-                          return (
-                            <tr key={key}>
-                              {prop.map((prop, key) => {
-                                return <td key={key}>{prop}</td>;
-                              })}
-                            </tr>
-                          );
-                        })} */}
+                        
                       </tbody>
                     </Table>
+                    </div>
                   }
                 />
           </Row>
