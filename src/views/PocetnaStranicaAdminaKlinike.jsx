@@ -37,7 +37,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       ime: "",
       telefon: "",
       prezime: "",
-      id: null,
+      idKlinike: "",
       naziv: "",
       adresa: "",
       opis: "",
@@ -78,11 +78,12 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           ime: Response.data.ime,
           prezime: Response.data.prezime,
           telefon: Response.data.telefon,
-          id: Response.data.id,
+          idKlinike: Response.data.idKlinike,
         });
-
+        console.log("Id klinike: " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
-        const urlKlinike = 'http://localhost:8025/api/klinike/' + this.state.id;    
+        const urlKlinike = 'http://localhost:8025/api/klinike/' + this.state.idKlinike;    
+        console.log(urlKlinike);
         axios.get(urlKlinike)
           .then(klinika => {
             console.log("Preuzeta klinika");
@@ -159,7 +160,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     const ime = this.state.ime;
     const prezime = this.state.prezime;
     const telefon = this.state.telefon;
-    const id = this.state.id;
+    const idKlinike = this.state.idKlinike;
     const naziv = this.state.naziv;
     const adresa = this.state.adresa;
     const opis = this.state.opis;

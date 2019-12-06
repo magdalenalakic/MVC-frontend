@@ -1,6 +1,7 @@
 import Dashboard from "views/Dashboard.jsx";
 import izmenaProfilaAdminaKlinike from "views/IzmenaProfilaAdminaKlinike.jsx";
 import izmenaKlinike from "views/IzmenaKlinike.jsx"
+import listaLekara from "views/ListaLekara.jsx"
 import TableList from "views/TableList.jsx";
 import Typography from "views/Typography.jsx";
 import Icons from "views/Icons.jsx";
@@ -36,6 +37,13 @@ const dashboardRoutes = [
     name: "Izmena  klinike",
     icon: "pe-7s-user",
     component: izmenaKlinike,
+    layout: "/admin"
+  },
+  {
+    path: "/lekari",
+    name: "Lista Lekara",
+    icon: "pe-7s-user",
+    component: listaLekara,
     layout: "/admin"
   },
 ];
