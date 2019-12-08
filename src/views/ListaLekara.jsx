@@ -213,7 +213,7 @@ listaLekara() {
             <Col>
               <Row>
                 <Card
-                  title="Lista zahteva za registraciju od korisnika"
+                  title="Lista lekara"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
                   ctTableResponsive

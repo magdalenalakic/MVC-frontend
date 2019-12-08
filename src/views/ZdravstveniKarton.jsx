@@ -56,7 +56,7 @@ class ZdravstveniKarton extends Component {
         axios
           .get(
             "http://localhost:8025/api/pacijenti/findPacijentEmail/" +
-              Response.data.pacijent.email
+            this.state.email
           )
 
           .then(Response => {
