@@ -24,6 +24,15 @@ import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
 import axios from "axios";
+
+import { render } from "react-dom";
+import events from "events.js";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import "react-big-calendar/lib/css/react-big-calendar.css"; 
+
+import moment from 'moment';
+ 
+
 import {
   dataPie,
   legendPie,
@@ -38,6 +47,8 @@ import {
 } from "variables/Variables.jsx";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import Login from "login.js";
+
+const localizer = momentLocalizer(moment);
 
 class PocetnaStranaPacijenta extends React.Component {
   constructor(props) {
@@ -102,6 +113,7 @@ class PocetnaStranaPacijenta extends React.Component {
     return legend;
   }
   render() {
+    
     const email = this.state.email;
     const uloga = this.state.uloga;
     const ime = this.state.ime;
@@ -164,21 +176,22 @@ class PocetnaStranaPacijenta extends React.Component {
             </Col> */}
           </Row>
           <Row>
-            <Col md={8}>
+            <Col md={8} >
               <Card
                 title=""
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
                 content={
-                  <div className="ct-chart">
-                    {/* <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    /> */}
-                    <p></p>
-                  </div>
+              
+                     <div style={{ height: 500 }}  className="ct-chart">
+                       <Calendar
+                        localizer={localizer}
+                        events={events }
+                        views={["month"]}
+                        defaultDate={new Date()}
+                    />
+                    </div>
+                 
                 }
                 // legend={
                 //   <div className="legend">{this.createLegend(legendSales)}</div>

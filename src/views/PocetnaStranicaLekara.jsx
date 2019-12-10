@@ -27,6 +27,7 @@ import ProfilPacijenta from "views/ProfilPacijenta.jsx"
 import Button from "components/CustomButton/CustomButton.jsx";
 import Dialog from 'react-bootstrap-dialog';
 
+
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import {
   dataPie,
@@ -208,6 +209,13 @@ class PocetnaStranicaLekara extends React.Component {
                 // statsValue="105GB"
                 // statsIcon={<i className="fa fa-refresh" />}
                  statsIconText="Kalendar"
+                
+                //  <BigCalendar
+                //    events={events}
+                //    views={["month"]}
+                //    defaultDate={new Date(2018, 3, 1)}
+                //  />
+             
               />
             </Col>
             {/* <h1>{this.state}</h1> */}
