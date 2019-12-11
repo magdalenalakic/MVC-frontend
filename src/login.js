@@ -50,7 +50,6 @@ class Login extends Component {
     axios
 
       .post("http://localhost:8025/api/korisnici/login", {
-
         email: this.state.email,
         lozinka: this.state.lozinka
       })
@@ -101,54 +100,7 @@ class Login extends Component {
     if (formErrors.email.length > 0 && formErrors.lozinka.length > 0) {
       formErrors.log = "";
     }
-    this.setState({ formErrors, [name]: value }, () => console.log(this.state));
 
-    // switch (name) {
-    //   case "ime":
-    //     formErrors.ime =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera  " : "";
-    //     break;
-    //   case "prezime":
-    //     formErrors.prezime =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "adresa":
-    //     formErrors.adresa =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "grad":
-    //     formErrors.grad =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "drzava":
-    //     formErrors.drzava =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "email":
-    //     formErrors.email =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "telefon":
-    //     formErrors.telefon =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "brojOsiguranika":
-    //     formErrors.brojOsiguranika =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "korisnickoIme":
-    //     formErrors.korisnickoIme =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "lozinka":
-    //     formErrors.lozinka =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "potvrdaLozinke":
-    //     formErrors.potvrdaLozinke =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    // }
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   };
   componentDidMount() {
@@ -193,7 +145,9 @@ class Login extends Component {
           <Switch>
             <Route
               path="/admin"
-              render={props => <AdministatorKlinike {...props} email={email} uloga={uloga} />}
+              render={props => (
+                <AdministatorKlinike {...props} email={email} uloga={uloga} />
+              )}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
           </Switch>
@@ -219,9 +173,9 @@ class Login extends Component {
           <Switch>
             <Route
               path="/admin"
-              render={props => 
+              render={props => (
                 <MedicinskaSestra {...props} email={email} uloga={uloga} />
-              }
+              )}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
           </Switch>
