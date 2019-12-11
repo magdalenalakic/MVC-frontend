@@ -31,7 +31,11 @@ class KlinickiCentarPocetna extends Component {
       emailNAK: "",
       lozinkaNAK: "",
       telefonNAK: null,
-      klinikaNAK: null
+      klinikaNAK: null,
+      imeNAKC: "",
+      prezimeNAKC: "",
+      emailNAKC: "",
+      lozinkaNAKC: ""
 
 
     };
@@ -41,7 +45,10 @@ class KlinickiCentarPocetna extends Component {
 
     this.dodajKliniku = this.dodajKliniku.bind(this);
     this.dodajAdminaKlinike = this.dodajAdminaKlinike.bind(this);
+    this.dodajAdminaKC = this.dodajAdminaKC.bind(this);
+
     this.handleChange = this.handleChange.bind(this);
+    
 
     console.log(this.state.uloga);
     console.log(this.state.email);
@@ -184,7 +191,7 @@ class KlinickiCentarPocetna extends Component {
       );
     }
     return res;
-  }
+  };
   handleChange = e => {
     e.preventDefault();
     
@@ -352,7 +359,7 @@ class KlinickiCentarPocetna extends Component {
       }
     })
     
-  }
+  };
 
   dodajAdminaKlinike = e => {
     e.preventDefault();
@@ -463,7 +470,97 @@ class KlinickiCentarPocetna extends Component {
       }
     })
     
-  }
+  };
+
+  dodajAdminaKC = e => {
+    e.preventDefault();
+
+    console.log("--------------------------------");
+    
+    this.dialog.show({
+      title: 'Dodavanje novog administratora klinickog centra',
+      body: [
+         <form className="formaZaDodavanjeNovogAdministratoraKC">
+         {/* <h3>Podaci o klinici</h3> */}
+          <div className="imeNAK" >
+            <label className="imeNAKLabela" htmlFor="imeNAK">Ime: </label>
+            <input className="imeNAKInput"
+              type="text"
+              name="imeNAKC"
+              defaultValue = "" 
+              // defaultValue= {za}
+              // placeholder={this.state.ime}
+              // noValidate
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="prezimeNAK" >
+            <label className="prezimeNAKLabel" htmlFor="prezimeNAK">Prezime: </label>
+            <input
+              className="prezimeNAKInput"
+              type="text"
+              name="prezimeNAKC"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="emailNAK" >
+            <label className="emailNAKLabel" htmlFor="emailNAK">Email: </label>
+            <input className="emailNAKInput"
+              type="text"
+              name="emailNAKC"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="lozinkaNAK" >
+            <label className="lozinkaNAKLabel" htmlFor="lozinkaNAK">Lozinka: </label>
+            <input className="lozinkaNAKInput"
+              type="text"
+              name="lozinkaNAKC"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+         
+      </form> 
+      ],
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.OKAction(() => {
+          
+          console.log('OK je kliknuto!');
+          console.log("Poslat razlog : ---------------");
+          // console.log(this.state.za);
+          // console.log(this.state.razlogOdbijanja);
+          const url4 = "http://localhost:8025/api/administratoriKC/dodavanjeAdminaKC";
+          axios
+            .post(url4, {
+              ime : this.state.imeNAKC,
+              prezime : this.state.prezimeNAKC,
+              email : this.state.emailNAKC,
+              lozinka : this.state.lozinkaNAKC
+
+              
+            })
+            .then(response => {
+              console.log("Dodavanje uspelo! ");
+              console.log(response.data);
+              this.listaAdministratora();
+
+            })
+            .catch(error => {
+              console.log("Dodavanje novog administratora klinickog centra nije uspelo! ");
+            });
+        })
+      ],
+      bsSize: 'medium',
+      onHide: (dialog) => {
+        dialog.hide()
+        console.log('closed by clicking background.')
+      }
+    })
+  };
 
   render() {
     const kc = this.state.kCentar;
@@ -541,6 +638,9 @@ class KlinickiCentarPocetna extends Component {
                   ctTableFullWidth
                   ctTableResponsive
                   content={
+                    <div>
+                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajAdminaKC(e)}>Dodaj administratora </Button>
+                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
                     <Table striped hover>
                       <thead>
                         <tr>
@@ -548,24 +648,15 @@ class KlinickiCentarPocetna extends Component {
                           <th id="ImeAdminaKC">Ime</th>
                           <th id="PrezimeAdminaKC"> Prezime</th>
                           <th id="EmailAdminaKC">Email</th>
-                          {/* {thArray.map((prop, key) => {
-                              return <th key={key}>{prop}</th>;
-                            })} */}
+                          
                         </tr>
                       </thead>
                       <tbody>
                         {this.listaAdminaUKC()}
-                        {/* {tdArray.map((prop, key) => {
-                            return (
-                              <tr key={key}>
-                                {prop.map((prop, key) => {
-                                  return <td key={key}>{prop}</td>;
-                                })}
-                              </tr>
-                            );
-                          })} */}
+                        
                       </tbody>
                     </Table>
+                    </div>
                   }
                 />
               </Row>

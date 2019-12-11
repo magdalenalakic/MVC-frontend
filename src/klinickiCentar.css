@@ -122,3 +122,8 @@
   height: 80%;
   margin: 3px;
 }
+
+.TabelaListePacijenata, .SortListePacijenata{
+  width: 100%;
+  margin: 3px;
+}
