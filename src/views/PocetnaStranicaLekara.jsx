@@ -1,20 +1,4 @@
-/*!
 
-=========================================================
-* Light Bootstrap Dashboard React - v1.3.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col, Table } from "react-bootstrap";
@@ -44,7 +28,15 @@ import {
 import slikaLekar from "assets/img/images.jpg";
 import Login from "login.js";
 import axios from "axios";
+import { render } from "react-dom";
+import events from "events.js";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import "react-big-calendar/lib/css/react-big-calendar.css"; 
 
+import moment from 'moment';
+ 
+
+const localizer = momentLocalizer(moment);
 class PocetnaStranicaLekara extends React.Component {
   constructor(props){
     super(props);
@@ -257,7 +249,7 @@ class PocetnaStranicaLekara extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col md={8}>
+            <Col md={18}>
               <Card
               
                 title="Lista pacijenata"
@@ -293,7 +285,7 @@ class PocetnaStranicaLekara extends React.Component {
               />
             </Col>
             
-            <Col md={4}>
+            {/* <Col md={4}>
             <Card
                 // statsIcon="fa fa-clock-o"
                 title="O lekaru"
@@ -349,8 +341,32 @@ class PocetnaStranicaLekara extends React.Component {
                 //   <div className="legend">{this.createLegend(legendPie)}</div>
                 // }
               />
-            </Col>
+            </Col> */}
           </Row>
+          <Row>
+            <Col md={14} >
+              <Card
+                title=""
+                // category="24 Hours performance"
+                // stats="Updated 3 minutes ago"
+                content={
+              
+                     <div style={{ height: 500 }}  className="ct-chart">
+                       <Calendar
+                        localizer={localizer}
+                        events={events }
+                        views={["month"]}
+                        defaultDate={new Date()}
+                    />
+                    </div>
+                 
+                }
+                // legend={
+                //   <div className="legend">{this.createLegend(legendSales)}</div>
+                // }
+              />
+            </Col>
+            </Row>
 {/* 
           <Row>
             <Col md={6}>

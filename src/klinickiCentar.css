@@ -101,6 +101,17 @@
 .dijagnozaOpisLabel,
 .razlogOdbijanjaLabel,
 .zaLabel
+.lekarImeLabel,
+.lekarPrezimeLabel,
+.lekarTelefonLabel,
+.prezimeLekara, 
+.telefonLekara,
+.imeLekara,
+.lozinkaLekara,
+.emailLekara,
+.lekarMailLabel,
+.lekarKlinika,
+.lekarKlinikaLabel
 {
   width: 100%;
   height: 80%;
@@ -115,8 +126,10 @@
 .emailNAKInput,
 .lozinkaNAKInput,
 .klinikaNAKInput,
-.telefonNAKInput
-
+.telefonNAKInput,
+.lekarImeLabel,
+.lekarLozinka,
+.lekarLozinkaLabel
 {
   width: 100%;
   height: 80%;
