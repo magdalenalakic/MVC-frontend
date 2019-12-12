@@ -183,7 +183,7 @@ class PocetnaStranaPacijenta extends React.Component {
                 // stats="Updated 3 minutes ago"
                 content={
               
-                     <div style={{ height: 500 }}  className="ct-chart">
+                     <div style={{ height: 400 }}  className="ct-chart">
                        <Calendar
                         localizer={localizer}
                         events={events }
