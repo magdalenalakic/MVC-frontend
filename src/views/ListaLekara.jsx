@@ -222,18 +222,15 @@ componentWillMount(){
               onChange={this.handleChange}
             />
           </div>
-          {/* <div className="lekarKlinika" >
+          <div className="lekarKlinika" >
             <label className="lekarKlinikaLabel" htmlFor="lekarKlinika">Klinika: </label>
             <input className="lekarKlinikaLabel"
               type="select"
               name="lekarKlinika"
               defaultValue=""
-              // onChange={this.handleChange}
-              onChange={this.onDropdownSelected}label="Multiple Select" multiple>
-                 {this.createSelectItems()}
-               
-            </input>
-          </div> */}
+              onChange={this.handleChange}
+            />
+          </div>
       </form> 
       ],
       actions: [
