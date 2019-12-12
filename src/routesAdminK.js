@@ -12,6 +12,7 @@ import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranicaAdminaKlinike from "views/PocetnaStranicaAdminaKlinike";
+import izmenaProfila from "views/IzmenaProfila";
 
 
 
@@ -46,6 +47,13 @@ const dashboardRoutes = [
     component: listaLekara,
     layout: "/admin"
   },
+  // {
+  //   path: "/izmenaProfilaLekara",
+  //   name: "Pocetna Strana Admina ",
+  //   icon: "pe-7s-graph",
+  //   component: izmenaProfila,
+  //   layout: "/admin"
+  // },
 ];
 
 export default dashboardRoutes;

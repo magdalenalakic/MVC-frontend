@@ -43,11 +43,11 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       opis: "",
       ocena: "",
       listaPacijenata:[],
-     // redirectToProfilPacijenta: false,
+      redirectToListaLekara: false
       
     };
    // this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
-
+   this.handleListaLekara = this.handleListaLekara.bind(this);
   }
 
 //   handleClick = e => {
@@ -109,7 +109,22 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     
   }
 
-
+  handleListaLekara() {
+    // this.setState({
+    //   redirectToListaLekara: true
+    // });
+    console.log("REDIREKCIJA NA LISTU LEKARA");
+    this.setState({
+      redirectToListaLekara: true
+    });
+ 
+    
+  }
+  renderRedirect = () => {
+    if(this.state.redirectToListaLekara){
+      return <Redirect from="/" to="/admin/lekari"/>;
+    }
+  };
   createLegend(json) {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
@@ -154,7 +169,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     // console.log("Ispisi  props u pocetna stranica lekara: "); 
     // console.log(this.props);
 
-    // const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
+    const redirectToListaLekara = this.state.redirectToListaLekara;
     const email = this.state.email;
     const uloga = this.state.uloga;
     const ime = this.state.ime;
@@ -303,6 +318,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           </Col>
             {/* <h1>{this.state}</h1> */}
           <Col md={3}>
+              {this.renderRedirect()}
+              <div onClick={this.handleListaLekara}>
               <StatsCard
                 bigIcon={<i className="pe-7s-wallet text-success" />}
                 // statsText="Pocetak pregleda"
@@ -310,6 +327,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                 // statsIcon={<i className="fa fa-calendar-o" />}
                  statsIconText="Lekari"
               />
+              </div>
             </Col>
             {/* <Col lg={3} sm={6}>
               <StatsCard
