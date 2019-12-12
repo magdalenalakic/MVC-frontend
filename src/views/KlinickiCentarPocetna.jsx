@@ -31,7 +31,7 @@ class KlinickiCentarPocetna extends Component {
       emailNAK: "",
       lozinkaNAK: "",
       telefonNAK: "",
-      klinikaNAK: "",
+      klinikaNAK: 0,
       imeNAKC: "",
       prezimeNAKC: "",
       emailNAKC: "",
@@ -48,6 +48,7 @@ class KlinickiCentarPocetna extends Component {
     this.dodajKliniku = this.dodajKliniku.bind(this);
     this.dodajAdminaKlinike = this.dodajAdminaKlinike.bind(this);
     this.dodajAdminaKC = this.dodajAdminaKC.bind(this);
+    this.getKlinikaValue = this.getKlinikaValue.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
     
@@ -55,7 +56,10 @@ class KlinickiCentarPocetna extends Component {
     console.log(this.state.uloga);
     console.log(this.state.email);
   }
-
+  getKlinikaValue(){
+    console.log('get klinika value');
+    return this.state.klinikaNAK;
+  }
   listaKlinika(){
     console.log("--------lista klinika u KC");
 
@@ -140,16 +144,7 @@ class KlinickiCentarPocetna extends Component {
     this.podaciOKC();
       
   }
-  listaKlinikaIzbor(){
-    let res = [];
-    let lista = this.state.listaKlinika;
-    for (var i = 0; i < lista.length; i++) {
-      res.push(
-         <MenuItem eventKey={lista[i].id}>{lista[i].naziv}</MenuItem>
-      );
-    }
-    return res;
-  }
+  
   listaKlinikaUKC() {
     let res = [];
     let lista = this.state.listaKlinika;
@@ -371,27 +366,42 @@ class KlinickiCentarPocetna extends Component {
     })
     
   };
+  listaKlinikaIzbor(){
+    let res = [];
+    
+    let lista = this.state.listaKlinika;
 
+    for (var i = 0; i < lista.length; i++) {
+      res.push(
+        <option value={lista[i].id} >{lista[i].naziv}</option>
+         //<MenuItem eventKey={lista[i].id}>{lista[i].naziv}</MenuItem>
+      );
+    }
+    return res;
+  }
   proslediKliniku(klinika) {
     
     console.log("prosledjena klinika");
 
-    console.log(klinika);
+    console.log(klinika.target.value);
     console.log("-------------------------" + this.state.klinikaNAK);
-        this.setState({
-            klinikaNAK : klinika
-        });
-
-    console.log("-------------------------" + this.state.klinikaNAK);
+    this.setState({
+      klinikaNAK : klinika.target.value
+      
+    },() => console.log(this.state));
+   
 
 
   };
 
   dodajAdminaKlinike = e => {
     e.preventDefault();
-
+    // this.setState({
+    //   klinikaNAK : this.state.klinikaNAK
+    // });
     console.log("--------------------------------");
-    
+    const klin = this.state.klinikaNAK;
+    console.log(klin);
     this.dialog.show({
       title: 'Dodavanje novog administratora klinike',
       body: [
@@ -447,26 +457,33 @@ class KlinickiCentarPocetna extends Component {
             />
           </div>
           <div className="klinikaNAK" >
-          <NavDropdown
+          {/* <NavDropdown
             margin-left="3px"
-            // readOnly={e => {this.proslediKliniku(e)}}
-            // onClick={e => {this.proslediKliniku(e)}}
-            // onChange={e => {this.proslediKliniku(e)}}
             onSelect={e => {this.proslediKliniku(e)}}
             className="SortListePacijenata"
             title="Izaberi kliniku"
-            id="nav-item dropdown">{this.listaKlinikaIzbor()}           
-          </NavDropdown>
-            <label className="klinikaNAKLabela" htmlFor="klinikaNAK">Klinika: </label>
-            <label className="klinikaNAKInput" htmlFor="klinikaNAK">{this.state.klinikaNAK}</label>
-            <input className="klinikaNAKInput"
+            id="nav-item dropdown">
+            {this.listaKlinikaIzbor()}           
+          </NavDropdown> */}
+          <label className="klinikaNAKLabela" htmlFor="klinikaNAK">Klinika: </label> 
+          <div>
+            <select name="odabirKlinike"  onChange={e => {this.proslediKliniku(e)}}>
+            {this.listaKlinikaIzbor()} 
+            
+            </select>
+          </div>
+
+
+            
+            {/* <label className="klinikaNAKInput" htmlFor="klinikaNAK">{this.state.klinikaNAK}</label> */}
+            {/* <input className="klinikaNAKInput"
               type="text"
               name="klinikaNAK"
               // defaultValue=""
-              // value={this.state.klinikaNAK}
+              value={this.getKlinikaValue()}
               disabled="disabled"
-              onChange={this.handleChange}
-            />
+              // onChange={this.handleChange}
+            /> */}
           </div>
           
       </form> 

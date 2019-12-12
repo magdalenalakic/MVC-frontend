@@ -79,7 +79,8 @@
 .dijagnozaOpis,
 .razlogOdbijanja,
 .za,
-.formaPolje
+.formaPolje,
+.pretraga
 {
   width: 100%;
   height: 80%;
@@ -121,7 +122,9 @@
 .emailLekara,
 .lekarMailLabel,
 .lekarKlinika,
-.lekarKlinikaLabel
+.lekarKlinikaLabel,
+.pretraga
+
 {
   width: 100%;
   height: 80%;
@@ -139,7 +142,8 @@
 .telefonNAKInput,
 .lekarImeLabel,
 .lekarLozinka,
-.lekarLozinkaLabel
+.lekarLozinkaLabel,
+.pretraga
 {
   width: 100%;
   height: 80%;
@@ -149,4 +153,9 @@
 .TabelaListePacijenata, .SortListePacijenata{
   width: 100%;
   margin: 3px;
+}
+
+.TabelaListePacijenata{
+  width: 100%;
+  /* margin: 3px; */
 }
