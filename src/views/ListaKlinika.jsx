@@ -275,8 +275,7 @@ class ListaKlinika extends Component {
         var adresa = lista[i].adresa;
         var opis = lista[i].opis;
         var ocena = lista[i].ocena;
-        if (
-          naziv.toLowerCase().includes(pretraga.toLowerCase()) ||
+        if (naziv.toLowerCase().includes(pretraga.toLowerCase()) ||
           adresa.toLowerCase().includes(pretraga.toLowerCase()) ||
           opis.toLowerCase().includes(pretraga.toLowerCase())
         ) {
@@ -454,7 +453,6 @@ class ListaKlinika extends Component {
                   <input
                     placeholder="Pretrazi"
                     type="text"
-                    placeholder="Search"
                     aria-label="Search"
                     name="pretraziPolje"
                     onChange={this.handleChange}

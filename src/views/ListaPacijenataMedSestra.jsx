@@ -45,9 +45,13 @@ class ListaPacijenataMedSestra extends Component {
       lozinkaP: "",
       prezimeP: "",
       telefonP:"",
+      pretraziPolje: "",
+      tezina: "",
+      visina: "",
+      krvnaGrupa: ""
     };
     this.listaPacijenata = this.listaPacijenata.bind(this);
-    this.handlePrikazProfila = this.handlePrikazProfila.bind(this);
+    this.handlePrikazZK = this.handlePrikazZK.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
   };
   componentWillMount() {
@@ -73,7 +77,7 @@ class ListaPacijenataMedSestra extends Component {
 
   handleChange = e => {
       e.preventDefault();
-      //this.setState({ [e.target.name]: e.target.value });
+      this.setState({ [e.target.name]: e.target.value });
       console.log(this.state);
       console.log("On click !!!");
   };
@@ -117,196 +121,312 @@ class ListaPacijenataMedSestra extends Component {
       // });
   };
 
-  handlePrikazProfila = e => {
+  handlePrikazZK = e => {
     e.preventDefault();
     console.log("CLICK  **** otvori mi dijalog na klik ");  
     console.log( e.target.id);
-    const url2 = "http://localhost:8025/api/pacijenti/findPacijentEmail/" + e.target.id;
+    const url2 =
+      "http://localhost:8025/api/pacijenti/findZK/" + e.target.id;
     axios
       .get(url2)
-      .then(response => {
-              console.log("Preuzimanje pacijenta uspelo! ");
-              console.log(response.data);
-              
-              // this.setState({
-              //   dijagnozaNaziv : response.data.naziv,
-              //   dijagnozaOznaka : response.data.oznaka,
-              //   dijagnozaOpis : response.data.opis
-              // })
-            //   this.dialog.show({
-            //   title: 'Izmena dijagnoze',
-            //   body: [
-            //   <form className="formaZaIzmenuDijagnoze">
-                
-            //     <div className="dijagnozaNaziv" >
-            //       <label className="dijagnozaNazivLabel" htmlFor="dijagnozaNaziv">Naziv: </label>
-            //       <input className="dijagnozaNazivLabel"
-            //         type="text"
-            //         name="dijagnozaNaziv"
-            //         defaultValue= {response.data.naziv}
-            //         // placeholder={this.state.ime}
-            //         // noValidate
-            //         onChange={this.handleChange}
-            //       />
-            //     </div>
-            //     <div className="dijagnozaOznaka" >
-            //       <label className="dijagnozaOznakaLabel" htmlFor="dijagnozaOznaka">Oznaka: </label>
-            //       <input
-            //         className="dijagnozaOznakaLabel"
-            //         type="text"
-            //         name="dijagnozaOznaka"
-            //         defaultValue={response.data.oznaka}
-            //         onChange={this.handleChange}
-            //       />
-            //     </div>
-            //     <div className="dijagnozaOpis" >
-            //       <label className="dijagnozaOpisLabel" htmlFor="dijagnozaOpis">Opis (latinski naziv): </label>
-            //       <input
-            //         className="dijagnozaOpisLabel"
-            //         type="text"
-            //         name="dijagnozaOpis"
-            //         defaultValue={response.data.opis}
-            //         onChange={this.handleChange}
-            //       />
-            //     </div>
+      .then(Response => {
+        console.log("Preuzet pacijent: ");
+        console.log(Response.data);
 
-                 
+        this.setState({
+          tezina: Response.data.tezina
+        });
+        this.setState({
+          visina: Response.data.visina,
+          krvnaGrupa: Response.data.krvnaGrupa
+        });
+        this.dialog.show({
+          // title: 'Dodavanje nove klinike',
+          body: [
+            <Card
+                title="Zdravstveni karton"
+                content={
+                  <div>
+                    <Table striped hover>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <label>Ime: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="ime"
+                              defaultValue={this.state.ime}
+                              disabled="disabled"
+                              // placeholder={this.state.ime}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Prezime: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="prezime"
+                              defaultValue={this.state.prezime}
+                              disabled="disabled"
+                              // placeholder={this.state.prezime}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Jedinstveni broj osiguranika: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="lbo"
+                              defaultValue={this.state.lbo}
+                              disabled="disabled"
+                              // placeholder={this.state.lbo}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Visina: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="visina"
+                              defaultValue={this.state.visina}
+                              disabled="disabled"
+                              // placeholder={this.state.visina}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Tezina: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="tezina"
+                              defaultValue={this.state.tezina}
+                              disabled="disabled"
+                              // placeholder={this.state.tezina}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label>Krvna grupa: </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="krvnaGrupa"
+                              defaultValue={this.state.krvnaGrupa}
+                              disabled="disabled"
+                              // placeholder={this.state.krvnaGrupa}
+                              // noValidate
+                              onChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </div>
+                }
+              />
+          ],
+          // actions: [
+          //   Dialog.CancelAction(),
+          //   Dialog.OKAction()
+          // ],
+          bsSize: 'medium',
+          onHide: (dialog) => {
+            dialog.hide()
+            console.log('closed by clicking background.')
+          }
+        });
+        // axios
+        //   .get(
+        //     "http://localhost:8025/api/pacijenti/findPacijentEmail/" +
+        //     this.state.email
+        //   )
 
-            //   </form> 
-            //   ],
-            //   actions: [
-            //     Dialog.CancelAction(),
-            //     Dialog.OKAction(() => {
-                  
-            //       console.log('OK je kliknuto!');
-            //       const url3 = "http://localhost:8025/api/administratoriKC/izmenaDijagnoze";
-            //       axios
-            //         .put(url3, {
-            //           id : response.data.id,
-            //           naziv : this.state.dijagnozaNaziv,
-            //           oznaka : this.state.dijagnozaOznaka,
-            //           opis : this.state.dijagnozaOpis
-                      
-            //         })
-            //         .then(response2 => {
-            //           console.log("Izmena dijagnoze uspela! ");
-            //           console.log(response2.data);
-            //           this.listaDijagnoza();
-
-            //         })
-            //         .catch(error => {
-            //           console.log("Izmena dijagnoze nije uspela! ");
-            //         });
-            //     })
-            //   ],
-            //   bsSize: 'medium',
-            //   onHide: (dialog) => {
-            //     dialog.hide()
-            //     console.log('closed by clicking background.')
-            //   }
-            // })
-
+        //   .then(Response => {
+        //     console.log("URL 111");
+        //     console.log(Response);
+        //     this.setState({
+        //       ime: Response.data.ime,
+        //       prezime: Response.data.prezime,
+        //       lbo: Response.data.lbo
+        //     });
+        //     console.log(this.state);
+        //   })
+        //   .catch(error => {
+        //     console.log("nije uspeo url1");
+        //     console.log(error);
+        //   });
       })
+
       .catch(error => {
-          console.log("Preuzimanje pacijenta nije uspelo! ");
-       });
+        console.log("Pacijent  nije preuzet");
+      });
+
+
+    // const url2 = "http://localhost:8025/api/pacijenti/findPacijentEmail/" + e.target.id;
+    // axios
+    //   .get(url2)
+    //   .then(response => {
+    //           console.log("Preuzimanje pacijenta uspelo! ");
+    //           console.log(response.data);
+            
+
+    //   })
+    //   .catch(error => {
+    //       console.log("Preuzimanje pacijenta nije uspelo! ");
+    //    });
     
     
   };
 
   listaPacijenata() {
     let res = [];
-    let lista = this.state.listaPacijenata;
     
-    for (var i = 0; i < lista.length; i++) {
-     
-      // this.setState({
-      //   lboKlik : lista[i].lbo
-      // });
-      // console.log(this.state.lboKlik);
-      res.push(
-        <tr key = {i} >
-          <td >{lista[i].id}</td>
-          <td >{lista[i].lbo}</td>
-          <td >{lista[i].ime}</td>
-          <td >{lista[i].prezime}</td>
-          <td >{lista[i].email}</td>
-          <td >{lista[i].adresa}</td>
-          <td >{lista[i].grad}</td>
-          <td >{lista[i].drzava}</td>
-          <td >{lista[i].telefon}</td>
-          <td ><Button className="OdobrenZahtev"
-              id={lista[i].email}
-              onClick={e => this.handlePrikazProfila(e)}> Profil</Button>
-              <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
-          </td>
-          <td ><Button className="OdobrenZahtev"
-              id={lista[i].email}
-              // onClick={e => this.handlePrikazProfila(e)}
-              > ZK </Button>
-              {/* <Dialog ref={(el) => { this.dialog = el }} ></Dialog> */}
-          </td>
-          {/* <td ><Button className="OdobrenZahtev"  onChange={this.handleChange}>Odobri</Button></td>
-          <td ><Button className="OdbijenZahtev">Odbij</Button></td> */}
-        </tr>
-      );
+    const pretraga = this.state.pretraziPolje;
+    console.log(pretraga);
+    if (pretraga == "" || pretraga == undefined){
+      let lista = this.state.listaPacijenata;
+      for (var i = 0; i < lista.length; i++) {
+        res.push(
+          <tr key = {i} >
+            <td >{lista[i].id}</td>
+            <td >{lista[i].lbo}</td>
+            <td >{lista[i].ime}</td>
+            <td >{lista[i].prezime}</td>
+            <td >{lista[i].email}</td>
+            <td >{lista[i].adresa}</td>
+            <td >{lista[i].grad}</td>
+            <td >{lista[i].drzava}</td>
+            <td >{lista[i].telefon}</td>
+            
+            <td ><Button className="OdobrenZahtev"
+                id={lista[i].email}
+                 onClick={e => this.handlePrikazZK(e)}
+                > ZK </Button>
+                <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+            </td>
+            
+          </tr>
+        );
+      }
+    }else{
+      console.log(pretraga);
+      let lista = this.state.listaPacijenata;
+      for (var i = 0; i < lista.length; i++) {
+        var lbo = lista[i].lbo;
+        var ime = lista[i].ime;
+        var prezime = lista[i].prezime;
+
+        if(lbo.toLowerCase().includes(pretraga.toLowerCase()) || 
+        ime.toLowerCase().includes(pretraga.toLowerCase()) ||
+        prezime.toLowerCase().includes(pretraga.toLowerCase()) ){
+          res.push(
+            <tr key = {i} >
+              <td >{lista[i].id}</td>
+              <td >{lista[i].lbo}</td>
+              <td >{lista[i].ime}</td>
+              <td >{lista[i].prezime}</td>
+              <td >{lista[i].email}</td>
+              <td >{lista[i].adresa}</td>
+              <td >{lista[i].grad}</td>
+              <td >{lista[i].drzava}</td>
+              <td >{lista[i].telefon}</td>
+              
+              <td ><Button className="OdobrenZahtev"
+                  id={lista[i].email}
+                  onClick={e => this.handlePrikazZK(e)}
+                  > ZK </Button>
+                  {/* <Dialog ref={(el) => { this.dialog = el }} ></Dialog> */}
+              </td>
+            
+            </tr>
+          );
+        }
+      }
     }
+    
     return res;
   };
 
   sortMyArray(sortBy) {
     console.log("sort funkcija");
-    console.log(sortBy);
+    
+    console.log(sortBy.target.value);
     const lista = this.state.listaPacijenata;
-    if (sortBy === "lbo") {
+    if (sortBy.target.value === "lbo") {
       console.log("lbo");
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.lbo - b.lbo)
       });
-    } else if (sortBy === "ime") {
+    } else if (sortBy.target.value === "ime") {
       console.log("ime");
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.ime.localeCompare(b.ime))
       });
-    } else if (sortBy === "prezime") {
+    } else if (sortBy.target.value === "prezime") {
       console.log("prezime");
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.prezime.localeCompare(b.prezime))
       });
-    } else if (sortBy === "email") {
+    } else if (sortBy.target.value === "email") {
       console.log("email");
 
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.email.localeCompare(b.email))
       });
-    } else if (sortBy === "adresa") {
+    } else if (sortBy.target.value === "adresa") {
       console.log("adresa");
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.adresa.localeCompare(b.adresa))
       });
-    } else if (sortBy === "grad") {
+    } else if (sortBy.target.value === "grad") {
       console.log("grad");
       this.setState({
         listaPacijenata: lista.sort((a, b) =>  a.grad.localeCompare(b.grad))
       });
-    } else if (sortBy === "drzava") {
+    } else if (sortBy.target.value === "drzava") {
       console.log("drzava");
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.drzava.localeCompare(b.drzava))
       });
-    } else if (sortBy === "telefon") {
+    } else if (sortBy.target.value === "telefon") {
       console.log("telefon");
 
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.telefon - b.telefon)
       });
-    } else if (sortBy === "idOpadajuce") {
+    } else if (sortBy.target.value === "idOpadajuce") {
       console.log("idOpadajuce");
 
       this.setState({
         listaPacijenata: lista.sort((a, b) => b.id - a.id)
       });
-    } else if (sortBy === "idRastuce") {
+    } else if (sortBy.target.value === "idRastuce") {
       console.log("idRastuce");
 
       this.setState({
@@ -314,6 +434,7 @@ class ListaPacijenataMedSestra extends Component {
       });
     }
   }
+
 
   render() {
     return (
@@ -332,7 +453,33 @@ class ListaPacijenataMedSestra extends Component {
                     onSubmit={this.handleSumbit}
                     className="formaIzmenaProfilaPacijent"
                     >
-                    <NavDropdown
+                    <div className="pretraga">
+                      <input
+                        className="pretraga"
+                        placeholder="Pretrazi"
+                        type="text"
+                        aria-label="Search"
+                        name="pretraziPolje"
+                        margin= "2px"
+                        onChange={this.handleChange}
+                      />
+                      
+                    </div>
+                    <div className="pretraga">
+                      <select onChange={e => {this.sortMyArray(e) }}>
+                        <option value={"idRastuce"} >Id (rastuce)</option>
+                        <option value={"idOpadajuce"} >Id (opadajuce)</option>
+                        <option value={"lbo"}>LBO</option>
+                        <option value={"ime"}>Ime</option>
+                        <option value={"prezime"}>Prezime</option>
+                        <option value={"email"}>Email</option>
+                        <option value={"adresa"}>Adresa</option>
+                        <option value={"grad"}>Grad</option>
+                        <option value={"drzava"}>Drzava</option>
+                        <option value={"telefon"}>Telefon</option>
+                      </select>
+                    </div>
+                    {/* <NavDropdown
                       onSelect={e => {
                         this.sortMyArray(e);
                       }}
@@ -351,15 +498,15 @@ class ListaPacijenataMedSestra extends Component {
                       <MenuItem eventKey={"grad"}>Grad</MenuItem>
                       <MenuItem eventKey={"drzava"}>Drzava</MenuItem>
                       <MenuItem eventKey={"telefon"}>Telefon</MenuItem>
-                    </NavDropdown>
+                    </NavDropdown> */}
 
                     <Card 
                       // category="Here is a subtitle for this table"
                       ctTableFullWidth
-                      ctTableResponsive
-                      className="TabelaListePacijenata"
+                      // ctTableResponsive
+                      className="pretraga"
                       content={
-                        <Table striped hover >
+                        <Table className="TabelaListePacijenata" striped hover >
                           <thead  className="thead-dark" >
                             <tr>
                               <th id="IdPacijenta">Id</th>
