@@ -1,12 +1,12 @@
 export default [
     {
-      title: "02:00-06:59",
+      title: "Odsustvo/Odmor",
       start: "2019-12-03 02:00",
       end: "2019-12-03 06:59",
       up_down_ind: "N"
     },
     {
-      title: "07:00-23:59",
+      title: "Zakazan pregled",
       start: "2019-12-11 07:00",
       end: "2019-12-11 09:59",
       up_down_ind: "Y"

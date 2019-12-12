@@ -10,12 +10,13 @@ import {
 
 import { Card } from "components/Card/Card.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
-import "izmenaProfila.css";
+import "klinickiCentar.css";
 
-//dodam link za sliku  mozda od doktora!!
+
 
 import "login.js";
 import axios from "axios";
+import CustomCheckbox from "components/CustomCheckbox/CustomCheckbox";
 // import Dialog from 'react-bootstrap-dialog';
 
 class IzmenaProfilaMedSestre extends Component {
@@ -28,8 +29,16 @@ class IzmenaProfilaMedSestre extends Component {
       ime: "",
       prezime: "",
       lozinka: "", 
-      brTelefona: ""
+      menjanjeLozinke: "password",
+      brTelefona: "",
+      imeN: "",
+      prezimeN: "",
+      lozinkaN: "", 
+      brTelefonaN: "",
+      is_checked: false
     };
+
+    this.handleCheckBox = this.handleCheckBox.bind(this);
   }
 
   componentWillMount() {
@@ -71,38 +80,52 @@ class IzmenaProfilaMedSestre extends Component {
   handleSumbit = e => {
     e.preventDefault();
     console.log("KLIK SUBMITTT");
-    // let formErrors = { ...this.state.formErrors };
     console.log("Izmena : ---------------");
-    console.log(this.state.ime);
-    console.log(this.state.prezime);
-    // axios
-    //   .put("http://localhost:8025/api/administratoriKC/izmena", {
-    //     ime: this.state.ime,
-    //     prezime: this.state.prezime,
-    //     email: this.state.email,
-    //     adresa: this.state.lozinka
-    //   })
-    //   .then(response => {
-    //     console.log(response.data);
+    axios
+      .put("http://localhost:8025/api/medicinskaSestra/izmena", {
+        ime: this.state.imeN,
+        prezime: this.state.prezimeN,
+        email: this.state.email,
+        lozinka: this.state.lozinkaN,
+        adresa: this.state.lozinkaN,
+        brTelefona: this.state.brTelefonaN
+      })
+      .then(response => {
+        console.log(response.data);
 
-    //     this.setState({
-    //       ime: response.data.ime
-    //     });
+        this.setState({
+          ime: response.data.ime
+        });
 
-    //     this.setState({
-    //       prezime: response.data.prezime
-    //     });
+        this.setState({
+          prezime: response.data.prezime
+        });
 
-    //     this.setState({
-    //       lozinka: response.data.lozinka
-    //     });
+        this.setState({
+          lozinka: response.data.lozinka
+        });
+
+        this.setState({
+          brTelefona: response.data.brTelefona
+        });
         
 
-    //   })
-    //   .catch(error => {
-    //     console.log("Izmena nije uspela! ");
-    //   });
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ");
+      });
   };
+
+  handleCheckBox() {
+    if(this.state.is_checked == true){
+      this.setState({ is_checked: false });
+      this.setState({ menjanjeLozinke : "password"});
+    }else{
+      this.setState({ is_checked: true });
+      this.setState({ menjanjeLozinke : "text"});
+    }
+    
+  }
 
   render() {
     const email = this.state.email;
@@ -125,56 +148,77 @@ class IzmenaProfilaMedSestre extends Component {
                     onSubmit={this.handleSumbit}
                     className="formaIzmenaProfilaMedSestre"
                   >
-                    <div className="ime">
-                      <label htmlFor="ime">Ime: </label>
-                      <input
+                  
+                    <div className="formaPolje">
+                      <label className="formaPolje" htmlFor="ime">Ime: </label>
+                      <input className="formaPolje"
                         type="text"
-                        name="ime"
+                        name="imeN"
                         defaultValue={ime}
                         // placeholder={this.state.ime}
                         // noValidate
                         onChange={this.handleChange}
                       />
                     </div>
-                    <div className="prezime">
-                      <label htmlFor="prezime">Prezime: </label>
-                      <input
+                    <div className="formaPolje">
+                      <label className="formaPolje" htmlFor="prezime">Prezime: </label>
+                      <input className="formaPolje"
                         type="text"
-                        name="prezime"
+                        name="prezimeN"
                         defaultValue={prezime}
                         // placeholder="prezime"
                         // noValidate
                         onChange={this.handleChange}
                       />
                     </div>
-
-                   
-                    <div className="lozinka">
-                      <label htmlFor="lozinka">Lozinka: </label>
-                      <input
+                    <div className="formaPolje">
+                      <label className="formaPolje" htmlFor="prezime">Email: </label>
+                      <input className="formaPolje"
                         type="text"
-                        name="lozinka"
+                        name="email"
+                        defaultValue={email}
+                        // placeholder="prezime"
+                        // noValidate
+                        disabled="disabled"
+                        // onChange={this.handleChange}
+                      />
+                    </div>
+                    <div className="formaPolje">
+                      <label className="formaPolje" htmlFor="lozinka">Lozinka: </label>
+                      <input className="formaPolje"
+                        type={this.state.menjanjeLozinke}
+                        name="lozinkaN"
                         defaultValue={lozinka}
                         // placeholder={this.state.adresa}
                         // noValidate
                         onChange={this.handleChange}
                       />
+                      <div className="checkbox">
+                        <input
+                          id="check"
+                          type="checkbox"
+                          onChange={this.handleCheckBox}
+                          checked={this.state.is_checked}
+                         
+                        />
+                        <label htmlFor="check">prikazi lozinku</label>
+                      </div> 
                     </div>
-                    <div className="brTelefona">
-                      <label htmlFor="brTelefona">Br. Telefona: </label>
-                      <input
+                    <div className="formaPolje">
+                      <label className="formaPolje" htmlFor="brTelefona">Br. Telefona: </label>
+                      <input className="formaPolje"
                         type="text"
-                        name="brTelefona"
+                        name="brTelefonaN"
                         defaultValue={brTelefona}
                         // placeholder={this.state.adresa}
                         // noValidate
                         onChange={this.handleChange}
                       />
                     </div>
-
-                    <div className="izmeniPodatkeMedSestri">
+                    <div className="formaDugme">
                       <Button type="submit">Izmeni podatke</Button>
                     </div>
+                  
                   </form>
                   
                 }
@@ -214,12 +258,12 @@ class IzmenaProfilaMedSestre extends Component {
                         <label className="prezimeAdminaKC">{prezime}</label>
                       </h2>
                     </div>
-                    <div className="typo-line">
+                    {/* <div className="typo-line">
                       <h2>
                         <p className="category">Lozinka: </p>
                         <label className="lozinkaAdminaKC">{lozinka}</label>
                       </h2>
-                    </div>
+                    </div> */}
                     <div className="typo-line">
                       <h2>
                         <p className="category">Br. telefona: </p>

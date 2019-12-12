@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Grid, Row, Col, Table } from "react-bootstrap";
+import { Grid, Row, Col, Table, NavItem, Nav, NavDropdown, MenuItem  } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import axios from "axios";
 import "klinickiCentar.css";
@@ -30,8 +30,8 @@ class KlinickiCentarPocetna extends Component {
       prezimeNAK: "",
       emailNAK: "",
       lozinkaNAK: "",
-      telefonNAK: null,
-      klinikaNAK: null,
+      telefonNAK: "",
+      klinikaNAK: "",
       imeNAKC: "",
       prezimeNAKC: "",
       emailNAKC: "",
@@ -42,6 +42,8 @@ class KlinickiCentarPocetna extends Component {
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
     this.listaAdminaKlinikaUKC = this.listaAdminaKlinikaUKC.bind(this);
     this.listaAdminaUKC = this.listaAdminaUKC.bind(this);
+    this.listaKlinikaIzbor = this.listaKlinikaIzbor.bind(this);
+    this.proslediKliniku = this.proslediKliniku.bind(this);
 
     this.dodajKliniku = this.dodajKliniku.bind(this);
     this.dodajAdminaKlinike = this.dodajAdminaKlinike.bind(this);
@@ -138,18 +140,27 @@ class KlinickiCentarPocetna extends Component {
     this.podaciOKC();
       
   }
-
+  listaKlinikaIzbor(){
+    let res = [];
+    let lista = this.state.listaKlinika;
+    for (var i = 0; i < lista.length; i++) {
+      res.push(
+         <MenuItem eventKey={lista[i].id}>{lista[i].naziv}</MenuItem>
+      );
+    }
+    return res;
+  }
   listaKlinikaUKC() {
     let res = [];
     let lista = this.state.listaKlinika;
     for (var i = 0; i < lista.length; i++) {
       res.push(
         <tr key = {i}>
-          <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].naziv}>{lista[i].naziv}</td>
-          <td key={lista[i].adresa}>{lista[i].adresa}</td>
-          <td key={lista[i].opis}>{lista[i].opis}</td>
-          <td key={lista[i].ocena}>{lista[i].ocena}</td>
+          <td >{lista[i].id}</td>
+          <td >{lista[i].naziv}</td>
+          <td >{lista[i].adresa}</td>
+          <td >{lista[i].opis}</td>
+          <td >{lista[i].ocena}</td>
           <td ><Button type="submit">Izmeni</Button></td>
           <td ><Button type="submit">Obrisi</Button></td>
           {/* <td ><Button type="submit">Dodaj administratora</Button></td> */}
@@ -164,10 +175,10 @@ class KlinickiCentarPocetna extends Component {
     for (var i = 0; i < lista.length; i++) {
       res.push(
         <tr key = {i}>
-          <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].ime}>{lista[i].ime}</td>
-          <td key={lista[i].prezime}>{lista[i].prezime}</td>
-          <td key={lista[i].email}>{lista[i].email}</td>
+          <td>{lista[i].id}</td>
+          <td >{lista[i].ime}</td>
+          <td >{lista[i].prezime}</td>
+          <td >{lista[i].email}</td>
           <td ><Button type="submit">Izmeni</Button></td>
           <td ><Button type="submit">Obrisi</Button></td>
         </tr>
@@ -181,7 +192,7 @@ class KlinickiCentarPocetna extends Component {
     for (var i = 0; i < lista.length; i++) {
       res.push(
         <tr key = {i}>
-          <td key={lista[i].id}>{lista[i].id}</td>
+          <td >{lista[i].id}</td>
           <td >{lista[i].ime}</td>
           <td >{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
@@ -361,6 +372,21 @@ class KlinickiCentarPocetna extends Component {
     
   };
 
+  proslediKliniku(klinika) {
+    
+    console.log("prosledjena klinika");
+
+    console.log(klinika);
+    console.log("-------------------------" + this.state.klinikaNAK);
+        this.setState({
+            klinikaNAK : klinika
+        });
+
+    console.log("-------------------------" + this.state.klinikaNAK);
+
+
+  };
+
   dodajAdminaKlinike = e => {
     e.preventDefault();
 
@@ -421,11 +447,24 @@ class KlinickiCentarPocetna extends Component {
             />
           </div>
           <div className="klinikaNAK" >
+          <NavDropdown
+            margin-left="3px"
+            // readOnly={e => {this.proslediKliniku(e)}}
+            // onClick={e => {this.proslediKliniku(e)}}
+            // onChange={e => {this.proslediKliniku(e)}}
+            onSelect={e => {this.proslediKliniku(e)}}
+            className="SortListePacijenata"
+            title="Izaberi kliniku"
+            id="nav-item dropdown">{this.listaKlinikaIzbor()}           
+          </NavDropdown>
             <label className="klinikaNAKLabela" htmlFor="klinikaNAK">Klinika: </label>
+            <label className="klinikaNAKInput" htmlFor="klinikaNAK">{this.state.klinikaNAK}</label>
             <input className="klinikaNAKInput"
               type="text"
               name="klinikaNAK"
-              defaultValue=""
+              // defaultValue=""
+              // value={this.state.klinikaNAK}
+              disabled="disabled"
               onChange={this.handleChange}
             />
           </div>

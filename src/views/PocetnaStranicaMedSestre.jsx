@@ -24,7 +24,13 @@ import slikaLekar from "assets/img/images.jpg";
 import Login from "login.js";
 import axios from "axios";
 import ListaPacijenata from "views/ListaPacijenataMedSestra.jsx";
+import events from "events.js";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import "react-big-calendar/lib/css/react-big-calendar.css"; 
 
+import moment from 'moment';
+
+const localizer = momentLocalizer(moment);
 
 class PocetnaStranicaMedSestre extends React.Component {
   constructor(props) {
@@ -145,28 +151,28 @@ class PocetnaStranicaMedSestre extends React.Component {
           </Row>
           <Row>
             <Col >
-              <Card
               
+              <Card
                 title="Kalendar"
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
-                 content={
-                  <div className="ct-chart">
-                    {/* <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    /> */}
-                    <p>
-                    
-                    </p>
+                content={
+              
+                  <div style={{ height: 400 }}  className="ct-chart">
+                    <Calendar
+                        localizer={localizer}
+                        events={events }
+                        views={["month"]}   
+                        defaultDate={new Date()}
+                    />
                   </div>
-                 }
+                 
+                }
                 // legend={
                 //   <div className="legend">{this.createLegend(legendSales)}</div>
                 // }
               />
+                
             </Col>
             
             {/* <Col md={4}>
