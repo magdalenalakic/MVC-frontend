@@ -12,6 +12,7 @@ import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranicaAdminaKlinike from "views/PocetnaStranicaAdminaKlinike";
+import slobodniTermini from "views/SlobodniTermini.jsx"
 
 
 
@@ -44,6 +45,13 @@ const dashboardRoutes = [
     name: "Lista Lekara",
     icon: "pe-7s-user",
     component: listaLekara,
+    layout: "/admin"
+  },
+  {
+    path: "/slobodniTermini",
+    name: "Slobodni termini",
+    icon: "pe-7s-user",
+    component: slobodniTermini,
     layout: "/admin"
   },
 ];
