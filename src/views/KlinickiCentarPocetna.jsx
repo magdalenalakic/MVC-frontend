@@ -48,7 +48,8 @@ class KlinickiCentarPocetna extends Component {
     this.dodajKliniku = this.dodajKliniku.bind(this);
     this.dodajAdminaKlinike = this.dodajAdminaKlinike.bind(this);
     this.dodajAdminaKC = this.dodajAdminaKC.bind(this);
-    this.getKlinikaValue = this.getKlinikaValue.bind(this);
+    this.izmeniKliniku = this.izmeniKliniku.bind(this);
+
 
     this.handleChange = this.handleChange.bind(this);
     
@@ -56,10 +57,9 @@ class KlinickiCentarPocetna extends Component {
     console.log(this.state.uloga);
     console.log(this.state.email);
   }
-  getKlinikaValue(){
-    console.log('get klinika value');
-    return this.state.klinikaNAK;
-  }
+
+  
+
   listaKlinika(){
     console.log("--------lista klinika u KC");
 
@@ -156,7 +156,10 @@ class KlinickiCentarPocetna extends Component {
           <td >{lista[i].adresa}</td>
           <td >{lista[i].opis}</td>
           <td >{lista[i].ocena}</td>
-          <td ><Button type="submit">Izmeni</Button></td>
+          <td >
+          <Button id={lista[i].id} onClick={e => this.izmeniKliniku(e)}>Izmeni</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td>
           <td ><Button type="submit">Obrisi</Button></td>
           {/* <td ><Button type="submit">Dodaj administratora</Button></td> */}
         </tr>
@@ -191,7 +194,11 @@ class KlinickiCentarPocetna extends Component {
           <td >{lista[i].ime}</td>
           <td >{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
-          <td ><Button type="submit">Izmeni</Button></td>
+          <td >
+          <Button id={lista[i].id} >Izmeni</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td>
+          
           <td ><Button type="submit">Obrisi</Button></td>
         </tr>
       );
@@ -206,6 +213,14 @@ class KlinickiCentarPocetna extends Component {
     console.log("On change !!!");
   };
 
+  izmeniKliniku = e =>{
+    e.preventDefault();
+    console.log(e.target.id)
+    this.dialog.show({
+      title: 'Izmena klinike',
+      body: []
+    });
+  }
   dodajKliniku = e => {
     e.preventDefault();
 
@@ -457,14 +472,6 @@ class KlinickiCentarPocetna extends Component {
             />
           </div>
           <div className="klinikaNAK" >
-          {/* <NavDropdown
-            margin-left="3px"
-            onSelect={e => {this.proslediKliniku(e)}}
-            className="SortListePacijenata"
-            title="Izaberi kliniku"
-            id="nav-item dropdown">
-            {this.listaKlinikaIzbor()}           
-          </NavDropdown> */}
           <label className="klinikaNAKLabela" htmlFor="klinikaNAK">Klinika: </label> 
           <div>
             <select name="odabirKlinike"  onChange={e => {this.proslediKliniku(e)}}>
@@ -472,19 +479,7 @@ class KlinickiCentarPocetna extends Component {
             
             </select>
           </div>
-
-
-            
-            {/* <label className="klinikaNAKInput" htmlFor="klinikaNAK">{this.state.klinikaNAK}</label> */}
-            {/* <input className="klinikaNAKInput"
-              type="text"
-              name="klinikaNAK"
-              // defaultValue=""
-              value={this.getKlinikaValue()}
-              disabled="disabled"
-              // onChange={this.handleChange}
-            /> */}
-          </div>
+        </div>
           
       </form> 
       ],
@@ -509,13 +504,13 @@ class KlinickiCentarPocetna extends Component {
               
             })
             .then(response => {
-              console.log("Dodavanje uspelo! ");
+              console.log("***********************************Dodavanje uspelo! ");
               console.log(response.data);
               this.listaAdministratoraKlinika();
 
             })
             .catch(error => {
-              console.log("Dodavanje novog administratora klinike nije uspelo! ");
+              console.log("**************Dodavanje novog administratora klinike nije uspelo! ");
             });
         })
       ],
