@@ -26,6 +26,11 @@
   letter-spacing: 1px;
   margin-bottom: 0.25em;
 }
+.errorMessage {
+  color: red;
+  font-size: 0.75em;
+  display: relative;
+}
 
 
 .DodajKlinikuDugme{
