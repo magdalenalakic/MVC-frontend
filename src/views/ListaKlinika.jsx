@@ -279,6 +279,7 @@ class ListaKlinika extends Component {
       let lista = this.state.listaLekara;
 
       for (var i = 0; i < lista.length; i++) {
+
         var ime = lista[i].ime;
         var prezime = lista[i].prezime;
         var ocena;
@@ -290,6 +291,7 @@ class ListaKlinika extends Component {
         if (
           ime.toLowerCase().includes(pretraga.toLowerCase()) ||
           prezime.toLowerCase().includes(pretraga.toLowerCase())
+
         ) {
           console.log(oc);
           console.log(ocena);
@@ -577,7 +579,6 @@ class ListaKlinika extends Component {
                   <input
                     placeholder="Pretrazi"
                     type="text"
-                    placeholder="Search"
                     aria-label="Search"
                     name="pretraziPoljeKlinika"
                     onChange={this.handleChange}

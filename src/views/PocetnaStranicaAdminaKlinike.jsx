@@ -43,26 +43,14 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       opis: "",
       ocena: "",
       listaPacijenata:[],
-     // redirectToProfilPacijenta: false,
+      redirectToListaLekara: false,
+      redirectToSlobodniTermini: false,
       
     };
    // this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
-
+   this.handleListaLekara = this.handleListaLekara.bind(this);
+   this.handleSlobodniTermini = this.handleSlobodniTermini.bind(this);
   }
-
-//   handleClick = e => {
-//     e.preventDefault();
-//     console.log("CLICK *** ");  
-//     console.log("PPPPPPPPPPPP: " + e.telefon);
-//     // this.props.onClick(this.props.value);
-//     // console.log(e.lista.email);
-//     console.log("prikaz profila pacijenta");
-//     this.setState({
-//       redirectToProfilPacijenta: true,
-//       emailPacijenta: this.state.emailPacijenta,
-  
-//     });
-//   };
 
   componentWillMount(){
     console.log("wmount")
@@ -109,6 +97,40 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     
   }
 
+  handleListaLekara() {
+    // this.setState({
+    //   redirectToListaLekara: true
+    // });
+    console.log("REDIREKCIJA NA LISTU LEKARA");
+    this.setState({
+      redirectToListaLekara: true
+    });
+
+  }
+  handleSlobodniTermini() {
+    // this.setState({
+    //   redirectToListaLekara: true
+    // });
+    console.log("REDIREKCIJA NA Slobodne termine");
+    this.setState({
+      redirectToSlobodniTermini: true
+    });
+
+ 
+    
+  }
+  renderRedirect = () => {
+    if(this.state.redirectToListaLekara){
+      return <Redirect from="/" to="/admin/lekari"/>;
+    }
+  };
+
+
+  renderRedirectST = () => {
+   if(this.state.redirectToSlobodniTermini){
+      return <Redirect from="/" to="/admin/slobodniTermini"/>;
+    }
+  };
 
   createLegend(json) {
     var legend = [];
@@ -154,7 +176,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     // console.log("Ispisi  props u pocetna stranica lekara: "); 
     // console.log(this.props);
 
-    // const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
+    const redirectToListaLekara = this.state.redirectToListaLekara;
+
+    const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
+
     const email = this.state.email;
     const uloga = this.state.uloga;
     const ime = this.state.ime;
@@ -303,6 +328,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           </Col>
             {/* <h1>{this.state}</h1> */}
           <Col md={3}>
+              {this.renderRedirect()}
+              <div onClick={this.handleListaLekara}>
               <StatsCard
                 bigIcon={<i className="pe-7s-wallet text-success" />}
                 // statsText="Pocetak pregleda"
@@ -310,6 +337,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                 // statsIcon={<i className="fa fa-calendar-o" />}
                  statsIconText="Lekari"
               />
+              </div>
             </Col>
             {/* <Col lg={3} sm={6}>
               <StatsCard
@@ -327,6 +355,19 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                 // statsValue="23"
                 // statsIcon={<i className="fa fa-clock-o" />}
                  statsIconText="Sale"
+              />
+            </Col>
+            <Col md={3}>
+
+              {this.renderRedirectST()}
+              <div onClick={this.handleSlobodniTermini}/>
+
+              <StatsCard
+                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                // statsText="Profil korisnika"
+                // statsValue="23"
+                // statsIcon={<i className="fa fa-clock-o" />}
+                 statsIconText="Slobodni termini"
               />
             </Col>
             {/* <Col lg={3} sm={6}>

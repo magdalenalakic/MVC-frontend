@@ -6,9 +6,17 @@ import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
 import axios from "axios";
+
+import { render } from "react-dom";
+import events from "events.js";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import "react-big-calendar/lib/css/react-big-calendar.css"; 
+
+import moment from 'moment';
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import routes from "routesPacijent.js";
 import AdministatorKlinike from "views/AdministatorKlinike.jsx";
+
 import {
   dataPie,
   legendPie,
@@ -25,6 +33,8 @@ import slikaPacijent from "assets/img/pacijentImage.jpg";
 import slikaZakaziPregled from "assets/img/zakaziPregled.jpg";
 import Login from "login.js";
 import ListaKlinika from "./ListaKlinika";
+
+const localizer = momentLocalizer(moment);
 
 class PocetnaStranaPacijenta extends React.Component {
   constructor(props) {
@@ -126,6 +136,7 @@ class PocetnaStranaPacijenta extends React.Component {
   };
 
   render() {
+    
     const email = this.state.email;
     const uloga = this.state.uloga;
     const ime = this.state.ime;
@@ -208,21 +219,22 @@ class PocetnaStranaPacijenta extends React.Component {
             </Col> */}
           </Row>
           <Row>
-            <Col md={8}>
+            <Col md={8} >
               <Card
                 title=""
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
                 content={
-                  <div className="ct-chart">
-                    {/* <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    /> */}
-                    <p></p>
-                  </div>
+              
+                     <div style={{ height: 400 }}  className="ct-chart">
+                       <Calendar
+                        localizer={localizer}
+                        events={events }
+                        views={["month"]}
+                        defaultDate={new Date()}
+                    />
+                    </div>
+                 
                 }
                 // legend={
                 //   <div className="legend">{this.createLegend(legendSales)}</div>

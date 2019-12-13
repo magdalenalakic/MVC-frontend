@@ -32,7 +32,10 @@ class IzmenaProfilaAdminaKC extends Component {
       uloga: props.uloga,
       ime: "",
       prezime: "",
-      lozinka: "" 
+      lozinka: "",
+      imeN: "",
+      prezimeN: "",
+      lozinkaN: "" 
     };
   }
 
@@ -74,14 +77,14 @@ class IzmenaProfilaAdminaKC extends Component {
     console.log("KLIK SUBMITTT");
     // let formErrors = { ...this.state.formErrors };
     console.log("Izmena : ---------------");
-    console.log(this.state.ime);
-    console.log(this.state.prezime);
+    console.log(this.state.imeN);
+    console.log(this.state.prezimeN);
     axios
       .put("http://localhost:8025/api/administratoriKC/izmena", {
-        ime: this.state.ime,
-        prezime: this.state.prezime,
+        ime: this.state.imeN,
+        prezime: this.state.prezimeN,
         email: this.state.email,
-        adresa: this.state.lozinka
+        adresa: this.state.lozinkaN
       })
       .then(response => {
         console.log(response.data);
@@ -111,6 +114,9 @@ class IzmenaProfilaAdminaKC extends Component {
     const ime = this.state.ime;
     const prezime = this.state.prezime;
     const lozinka = this.state.lozinka;
+    const imeN = this.state.imeN;
+    const prezimeN = this.state.prezimeN;
+    const lozinkaN = this.state.lozinkaN;
  
 
     return (
@@ -125,12 +131,25 @@ class IzmenaProfilaAdminaKC extends Component {
                     onSubmit={this.handleSumbit}
                     className="formaIzmenaProfilaAdminaKC"
                   >
+                  <div className="ime">
+                      <label htmlFor="ime">Email: </label>
+                      <input
+                        type="text"
+                        name="ime"
+                        defaultValue={email}
+                        disabled= "disabled"
+                        // placeholder={this.state.ime}
+                        // noValidate
+                        // onChange={this.handleChange}
+                      />
+                    </div>
                     <div className="ime">
                       <label htmlFor="ime">Ime: </label>
                       <input
                         type="text"
-                        name="ime"
+                        name="imeN"
                         defaultValue={ime}
+
                         // placeholder={this.state.ime}
                         // noValidate
                         onChange={this.handleChange}
@@ -140,7 +159,7 @@ class IzmenaProfilaAdminaKC extends Component {
                       <label htmlFor="prezime">Prezime: </label>
                       <input
                         type="text"
-                        name="prezime"
+                        name="prezimeN"
                         defaultValue={prezime}
                         // placeholder="prezime"
                         // noValidate
@@ -153,7 +172,7 @@ class IzmenaProfilaAdminaKC extends Component {
                       <label htmlFor="lozinka">Lozinka: </label>
                       <input
                         type="text"
-                        name="lozinka"
+                        name="lozinkaN"
                         defaultValue={lozinka}
                         // placeholder={this.state.adresa}
                         // noValidate
