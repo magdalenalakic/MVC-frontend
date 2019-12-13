@@ -163,13 +163,9 @@ class ListaPacijenataMedSestra extends Component {
           krvnaGrupa: Response.data.krvnaGrupa
         });
         this.dialog.show({
-          // title: 'Dodavanje nove klinike',
+          title: 'Zdravstveni karton',
           body: [
-            <Card
-                title="Zdravstveni karton"
-                content={
-                  <div>
-                    <Table striped hover>
+            <Table  striped hover>
                       <tbody>
                         <tr>
                           <td>
@@ -269,9 +265,7 @@ class ListaPacijenataMedSestra extends Component {
                         </tr>
                       </tbody>
                     </Table>
-                  </div>
-                }
-              />
+
           ],
           // actions: [
           //   Dialog.CancelAction(),

@@ -26,6 +26,11 @@ class KlinickiCentarPocetna extends Component {
       adresaNoveKlinike: "",
       opisNoveKlinike: "",
       ocenaNoveKlinike: 0,
+      idIzmenjeneKlinike: 0,
+      nazivIzmenjeneKlinike: "",
+      adresaIzmenjeneKlinike: "",
+      opisIzmenjeneKlinike: "",
+      ocenaIzmenjeneKlinike: 0,
       imeNAK: "",
       prezimeNAK: "",
       emailNAK: "",
@@ -195,7 +200,7 @@ class KlinickiCentarPocetna extends Component {
           <td >{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
           <td >
-          <Button id={lista[i].id} >Izmeni</Button>
+          <Button id={lista[i].id} onClick={e => this.izmeniAdminaKlinike(e)} >Izmeni</Button>
           <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
           </td>
           
@@ -216,10 +221,124 @@ class KlinickiCentarPocetna extends Component {
   izmeniKliniku = e =>{
     e.preventDefault();
     console.log(e.target.id)
-    this.dialog.show({
-      title: 'Izmena klinike',
-      body: []
-    });
+    const url = 'http://localhost:8025/api/klinike/' + e.target.id;
+        axios.get(url)
+          .then(Response => {
+            console.log("Preuzeta klinike: ");
+            console.log(Response.data);
+          
+            this.setState({
+              idIzmenjeneKlinike: Response.data.id,
+              nazivIzmenjeneKlinike: Response.data.naziv,
+              adresaIzmenjeneKlinike: Response.data.adresa,
+              ocenaIzmenjeneKlinike: Response.data.ocena,
+              opisIzmenjeneKlinike: Response.data.opis,
+            });
+            this.dialog.show({
+              title: 'Izmena klinike',
+              body: [
+                
+                <form onSubmit={this.handleSumbit} className="formaIzmenaProfilaLekara">
+                     <div className="ime">
+                        <label htmlFor="naziv">Naziv: </label>
+                        <input
+                          type="text"
+                          name="nazivIzmenjeneKlinike"
+                          
+                          defaultValue={this.state.nazivIzmenjeneKlinike}
+                          // placeholder={this.state.ime}
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="ime">
+                        <label htmlFor="adresa">Adresa: </label>
+                        <input
+                          type="text"
+                          name="adresaIzmenjeneKlinike"
+                          defaultValue={this.state.adresaIzmenjeneKlinike}
+                          // placeholder="prezime"
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="ime">
+                        <label htmlFor="opis">Opis: </label>
+                        <input
+                          type="text"
+                          name="opisIzmenjeneKlinike"
+                          defaultValue={this.state.opisIzmenjeneKlinike}
+                          // placeholder="prezime"
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="ime">
+                        <label htmlFor="ocena">Ocena: </label>
+                        <input
+                          type="text"
+                          name="ocenaIzmenjeneKlinike"
+                          defaultValue={this.state.ocenaIzmenjeneKlinike}
+                          disabled="disabled"
+                          // placeholder="prezime"
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                     
+                      {/* <div className="izmeniPodatkeLekar">
+                         <Button type="submit">Izmeni podatke</Button>
+                      </div> */}
+                  </form>
+              ],
+              actions: [
+                Dialog.CancelAction(),
+                Dialog.OKAction(()=> {
+                 
+                      console.log("Izmjena klinike: ---------------")  
+                      console.log(this.state.naziv);
+                      console.log(this.state.idKlinike);
+                      console.log(this.state.id);
+                    axios
+                      .put("http://localhost:8025/api/klinike/update", {
+                        id: this.state.idIzmenjeneKlinike,
+                        naziv: this.state.nazivIzmenjeneKlinike,
+                        adresa: this.state.adresaIzmenjeneKlinike,
+                        ocena: this.state.ocenaIzmenjeneKlinike,
+                        opis: this.state.opisIzmenjeneKlinike
+                      })
+                      .then(response => {
+                        console.log(response.data);
+                        this.listaKlinika();
+
+                        // this.setState({
+                        //   id: response.data.id,
+                        //   naziv: response.data.naziv,
+                        //   adresa: response.data.adresa,
+                        //   ocena: response.data.ocena,
+                        //   opis: response.data.opis
+                        // });
+                      })
+                      .catch(error => {
+                        console.log("Izmena nije uspela! ")
+                      });
+                 
+                })
+              ],
+              bsSize: 'medium',
+              onHide: (dialog) => {
+                dialog.hide()
+                console.log('closed by clicking background.')
+              }
+            });
+    
+          })
+          
+          .catch(error => {
+            console.log("klinika nije preuzeta")
+          })
+
+    
   }
   dodajKliniku = e => {
     e.preventDefault();
@@ -408,7 +527,10 @@ class KlinickiCentarPocetna extends Component {
 
 
   };
-
+  izmeniAdminaKlinike = e => {
+    e.preventDefault();
+    console.log(e.target.id)
+  }
   dodajAdminaKlinike = e => {
     e.preventDefault();
     // this.setState({
