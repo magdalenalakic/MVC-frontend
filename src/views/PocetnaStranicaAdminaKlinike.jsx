@@ -52,20 +52,6 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
    this.handleSlobodniTermini = this.handleSlobodniTermini.bind(this);
   }
 
-//   handleClick = e => {
-//     e.preventDefault();
-//     console.log("CLICK *** ");  
-//     console.log("PPPPPPPPPPPP: " + e.telefon);
-//     // this.props.onClick(this.props.value);
-//     // console.log(e.lista.email);
-//     console.log("prikaz profila pacijenta");
-//     this.setState({
-//       redirectToProfilPacijenta: true,
-//       emailPacijenta: this.state.emailPacijenta,
-  
-//     });
-//   };
-
   componentWillMount(){
     console.log("wmount")
     console.log("Preuzimanje admina klinike.....")

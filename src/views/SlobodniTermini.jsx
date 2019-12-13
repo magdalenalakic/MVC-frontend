@@ -16,10 +16,10 @@ class SlobodniTermini extends Component {
       email: props.email,
       id: "",
       idKlinike: "",
-      listaLekara: []
+      listaSlobodnihLekara: []
     };
     
-    this.listaLekara = this.listaLekara.bind(this);
+    this.listaSlobodnihLekara = this.listaSlobodnihLekara.bind(this);
     // this.handleOdobren = this.handleOdobren.bind(this);
     // this.handleOdbijen = this.handleOdbijen.bind(this);
     // this.handleChange = this.handleChange.bind(this);
@@ -177,9 +177,9 @@ handleIzmeni = e => {
     
 //   }
 
-listaLekara() {
+listaSlobodnihLekara() {
     let res = [];
-    let lista = this.state.listaLekara;
+    let lista = this.state.listaSlobodnihLekara;
 
     for (var i = 0; i < lista.length; i++) {
       
@@ -234,7 +234,7 @@ listaLekara() {
                           })} */}
                         </tr>
                       </thead>
-                      <tbody>{this.listaLekara()}</tbody>
+                      <tbody>{this.listaSlobodnihLekara()}</tbody>
                     </Table>
                   }
                 />
