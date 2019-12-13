@@ -78,10 +78,21 @@
 .dijagnozaOznaka,
 .dijagnozaOpis,
 .razlogOdbijanja,
-.za
+.za,
+.formaPolje,
+.pretraga
 {
   width: 100%;
   height: 80%;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.formaDugme{
+  width: 100%;
+  height: 80%;
+  margin-top: 6px;
+  
 }
 
 .nazivNKlinikeLabela,
@@ -101,6 +112,19 @@
 .dijagnozaOpisLabel,
 .razlogOdbijanjaLabel,
 .zaLabel
+.lekarImeLabel,
+.lekarPrezimeLabel,
+.lekarTelefonLabel,
+.prezimeLekara, 
+.telefonLekara,
+.imeLekara,
+.lozinkaLekara,
+.emailLekara,
+.lekarMailLabel,
+.lekarKlinika,
+.lekarKlinikaLabel,
+.pretraga
+
 {
   width: 100%;
   height: 80%;
@@ -115,10 +139,23 @@
 .emailNAKInput,
 .lozinkaNAKInput,
 .klinikaNAKInput,
-.telefonNAKInput
-
+.telefonNAKInput,
+.lekarImeLabel,
+.lekarLozinka,
+.lekarLozinkaLabel,
+.pretraga
 {
   width: 100%;
   height: 80%;
   margin: 3px;
+}
+
+.TabelaListePacijenata, .SortListePacijenata{
+  width: 100%;
+  margin: 3px;
+}
+
+.TabelaListePacijenata{
+  width: 100%;
+  /* margin: 3px; */
 }

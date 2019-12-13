@@ -181,6 +181,7 @@ class IzmenaKlinike extends Component {
                           type="text"
                           name="ocena"
                           defaultValue={ocena}
+                          disabled="disabled"
                           // placeholder="prezime"
                           // noValidate
                           onChange={this.handleChange}

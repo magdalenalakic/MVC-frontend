@@ -1,29 +1,22 @@
-/*!
-
-=========================================================
-* Light Bootstrap Dashboard React - v1.3.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
-
 import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
 import axios from "axios";
+
+import { render } from "react-dom";
+import events from "events.js";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import "react-big-calendar/lib/css/react-big-calendar.css"; 
+
+import moment from 'moment';
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import routes from "routesPacijent.js";
+import AdministatorKlinike from "views/AdministatorKlinike.jsx";
+
 import {
   dataPie,
   legendPie,
@@ -37,7 +30,11 @@ import {
   legendBar
 } from "variables/Variables.jsx";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
+import slikaZakaziPregled from "assets/img/zakaziPregled.jpg";
 import Login from "login.js";
+import ListaKlinika from "./ListaKlinika";
+
+const localizer = momentLocalizer(moment);
 
 class PocetnaStranaPacijenta extends React.Component {
   constructor(props) {
@@ -54,8 +51,16 @@ class PocetnaStranaPacijenta extends React.Component {
       drzava: "",
       telefon: "",
       brojOsiguranika: "",
-      lozinka: ""
+      lozinka: "",
+      redirectToZahtevZaPregled: false,
+      redirectZdravstveniKarton: false,
+      redirectIstorijaPO: false,
+      redirectBrzoZakazivanje: false
     };
+    this.handleZahtevZaPregled = this.handleZahtevZaPregled.bind(this);
+    this.handleZdravstveniKarton = this.handleZdravstveniKarton.bind(this);
+    this.handleIstorijaPO = this.handleIstorijaPO.bind(this);
+    this.handleBrzoZakazivanje = this.handleBrzoZakazivanje.bind(this);
     console.log(this.state.email);
   }
   componentWillMount() {
@@ -87,10 +92,6 @@ class PocetnaStranaPacijenta extends React.Component {
       });
   }
 
-  // componentDidMount() {
-  //   console.log("in mount component $$$$$$$$$$$$$$$$$$$$$");
-  //   console.log(this.props);
-  // }
   createLegend(json) {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
@@ -101,7 +102,41 @@ class PocetnaStranaPacijenta extends React.Component {
     }
     return legend;
   }
+  handleZahtevZaPregled() {
+    this.setState({
+      redirectToZahtevZaPregled: true
+    });
+  }
+  handleZdravstveniKarton() {
+    this.setState({
+      redirectZdravstveniKarton: true
+    });
+  }
+  handleIstorijaPO() {
+    this.setState({
+      redirectIstorijaPO: true
+    });
+  }
+  handleBrzoZakazivanje() {
+    this.setState({
+      redirectBrzoZakazivanje: true
+    });
+  }
+
+  renderRedirect = () => {
+    if (this.state.redirectToZahtevZaPregled == true) {
+      return <Redirect from="/" to="/admin/klinike" />;
+    } else if (this.state.redirectBrzoZakazivanje == true) {
+      // return <Redirect from="/" to="/admin/klinike" />;
+    } else if (this.state.redirectIstorijaPO == true) {
+      // return <Redirect from="/" to="/admin/klinike" />;
+    } else if (this.state.redirectZdravstveniKarton == true) {
+      return <Redirect from="/" to="/admin/zdravstveniKarton" />;
+    }
+  };
+
   render() {
+    
     const email = this.state.email;
     const uloga = this.state.uloga;
     const ime = this.state.ime;
@@ -117,41 +152,61 @@ class PocetnaStranaPacijenta extends React.Component {
         <Grid fluid>
           <Row>
             <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                // statsText="Lista pacijenata"
-                // statsValue="105GB"
-                // statsIcon={<i className="fa fa-refresh" />}
-                statsIconText="Zahtev za pregled"
-              />
+              {this.renderRedirect()}
+              <div onClick={this.handleZahtevZaPregled}>
+                <StatsCard
+                  bigIcon={
+                    <img
+                      className="slikaPacijent"
+                      src={slikaZakaziPregled}
+                      width="30"
+                      height="30"
+                    ></img>
+                  }
+                  // statsText="Lista pacijenata"
+                  // statsValue="105GB"
+                  // statsIcon={<i className="fa fa-refresh" />}
+
+                  statsIconText="Zahtev za pregled"
+                />
+              </div>
             </Col>
             {/* <h1>{this.state}</h1> */}
             <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-wallet text-success" />}
-                // statsText="Pocetak pregleda"
-                // statsValue="$1,345"
-                // statsIcon={<i className="fa fa-calendar-o" />}
-                statsIconText="Pregled zdravstvenog kartona"
-              />
+              {this.renderRedirect()}
+              <div onClick={this.handleZdravstveniKarton}>
+                <StatsCard
+                  bigIcon={<i className="pe-4s-wallet text-success" />}
+                  // statsText="Pocetak pregleda"
+                  // statsValue="$1,345"
+                  statsIcon={<i className="fa fa-calendar-o" />}
+                  statsIconText="Pregled zdravstvenog kartona"
+                />
+              </div>
             </Col>
             <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                statsIconText="Istorija pregleda/operacija"
-              />
+              {this.renderRedirect()}
+              <div onClick={this.handleIstorijaPO}>
+                <StatsCard
+                  bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                  // statsText="Profil korisnika"
+                  // statsValue="23"
+                  // statsIcon={<i className="fa fa-clock-o" />}
+                  statsIconText="Istorija pregleda/operacija"
+                />
+              </div>
             </Col>
             <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                statsIconText="Brzo zakazivanje pregleda"
-              />
+              {this.renderRedirect()}
+              <div onClick={this.handleBrzoZakazivanje}>
+                <StatsCard
+                  bigIcon={<i className="pe-7s-wallet text-success" />}
+                  // statsText="Profil korisnika"
+                  // statsValue="23"
+                  // statsIcon={<i className="fa fa-clock-o" />}
+                  statsIconText="Brzo zakazivanje pregleda"
+                />
+              </div>
             </Col>
             {/* <Col lg={3} sm={6}>
               <StatsCard
@@ -164,21 +219,22 @@ class PocetnaStranaPacijenta extends React.Component {
             </Col> */}
           </Row>
           <Row>
-            <Col md={8}>
+            <Col md={8} >
               <Card
                 title=""
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
                 content={
-                  <div className="ct-chart">
-                    {/* <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    /> */}
-                    <p></p>
-                  </div>
+              
+                     <div style={{ height: 400 }}  className="ct-chart">
+                       <Calendar
+                        localizer={localizer}
+                        events={events }
+                        views={["month"]}
+                        defaultDate={new Date()}
+                    />
+                    </div>
+                 
                 }
                 // legend={
                 //   <div className="legend">{this.createLegend(legendSales)}</div>

@@ -13,6 +13,11 @@ import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranicaAdminaKlinike from "views/PocetnaStranicaAdminaKlinike";
 
+import slobodniTermini from "views/SlobodniTermini.jsx"
+
+import izmenaProfila from "views/IzmenaProfila";
+
+
 
 
 const dashboardRoutes = [
@@ -46,6 +51,23 @@ const dashboardRoutes = [
     component: listaLekara,
     layout: "/admin"
   },
+
+  {
+    path: "/slobodniTermini",
+    name: "Slobodni termini",
+    icon: "pe-7s-user",
+    component: slobodniTermini,
+    layout: "/admin"
+  },
+
+  // {
+  //   path: "/izmenaProfilaLekara",
+  //   name: "Pocetna Strana Admina ",
+  //   icon: "pe-7s-graph",
+  //   component: izmenaProfila,
+  //   layout: "/admin"
+  // },
+
 ];
 
 export default dashboardRoutes;
