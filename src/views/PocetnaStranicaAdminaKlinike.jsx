@@ -347,6 +347,15 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                  statsIconText="Sale"
               />
             </Col>
+            <Col md={3}>
+              <StatsCard
+                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                // statsText="Profil korisnika"
+                // statsValue="23"
+                // statsIcon={<i className="fa fa-clock-o" />}
+                 statsIconText="Slobodni termini"
+              />
+            </Col>
             {/* <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="fa fa-twitter text-info" />}

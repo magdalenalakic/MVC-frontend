@@ -472,18 +472,6 @@ class KlinickiCentarPocetna extends Component {
             
             </select>
           </div>
-
-
-            
-            {/* <label className="klinikaNAKInput" htmlFor="klinikaNAK">{this.state.klinikaNAK}</label> */}
-            {/* <input className="klinikaNAKInput"
-              type="text"
-              name="klinikaNAK"
-              // defaultValue=""
-              value={this.getKlinikaValue()}
-              disabled="disabled"
-              // onChange={this.handleChange}
-            /> */}
           </div>
           
       </form> 

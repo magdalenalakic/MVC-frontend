@@ -53,6 +53,7 @@ class PocetnaStranicaLekara extends React.Component {
       listaPacijenata:[],
       redirectToProfilPacijenta: false,
       emailPacijenta: "",
+      pretraziPolje: "",
     };
     this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
@@ -124,70 +125,104 @@ class PocetnaStranicaLekara extends React.Component {
     }
     return legend;
   }
-
+  handleChange = e => {
+      e.preventDefault();
+      this.setState({ [e.target.name]: e.target.value });
+      console.log(this.state);
+      console.log("On click !!!");
+  };
 
   listaPacijenataLekara(){
     let res=[];
     let lista = this.state.listaPacijenata;
-    for(var i=0; i< lista.length;i++){
-      console.log( "Pacijent : "  + lista[i].email);
+    const pretraga = this.state.pretraziPolje;
+    if (pretraga == "" || pretraga == undefined){
+      for(var i=0; i< lista.length;i++){
+        console.log( "Pacijent : "  + lista[i].email);
 
-      res.push(
-       
-        <tr key = {i}>
-          {/* <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].naziv}>{lista[i].ime}</td>
-          <td key={lista[i].adresa}>{lista[i].prezime}</td>
-          <td key={lista[i].opis}>{lista[i].email}</td> */}
-          <td key={lista[i].id}>{lista[i].id}</td>
-          <td>{lista[i].ime}</td>
-          <td>{lista[i].prezime}</td>
-          <td>{lista[i].lbo}</td>
-          <td key={lista[i].email}>{lista[i].email}</td>
-          <td ><Button className="OdobrenZahtev"
-              id={lista[i].email}
-              onClick={e => this.handleClick(e)}> Prikazi profil </Button></td>
-          {/* <td><link to="/admin/login">Prikazi profil</link></td> */}
-         {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
-     
-         </tr>
-      )
+        res.push(
+        
+          <tr key = {i}>
+            {/* <td key={lista[i].id}>{lista[i].id}</td>
+            <td key={lista[i].naziv}>{lista[i].ime}</td>
+            <td key={lista[i].adresa}>{lista[i].prezime}</td>
+            <td key={lista[i].opis}>{lista[i].email}</td> */}
+            <td key={lista[i].id}>{lista[i].id}</td>
+            <td>{lista[i].ime}</td>
+            <td>{lista[i].prezime}</td>
+            <td>{lista[i].lbo}</td>
+            <td key={lista[i].email}>{lista[i].email}</td>
+            <td ><Button className="OdobrenZahtev"
+                id={lista[i].email}
+                onClick={e => this.handleClick(e)}> Prikazi profil </Button></td>
+            {/* <td><link to="/admin/login">Prikazi profil</link></td> */}
+          {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
+      
+          </tr>
+        );
+      }
+  }else{
+    console.log(pretraga);
+    let lista = this.state.listaPacijenata;
+    for (var i = 0; i < lista.length; i++) {
+      var lbo = lista[i].lbo;
+      var ime = lista[i].ime;
+      var prezime = lista[i].prezime;
+
+      if(lbo.toLowerCase().includes(pretraga.toLowerCase()) || 
+      ime.toLowerCase().includes(pretraga.toLowerCase()) ||
+      prezime.toLowerCase().includes(pretraga.toLowerCase()) ){
+        res.push(
+          <tr key = {i} >
+      <td>{lista[i].ime}</td>
+            <td>{lista[i].prezime}</td>
+            <td>{lista[i].lbo}</td>
+            <td >{lista[i].email}</td>
+            
+            <td ><Button className="OdobrenZahtev"
+                id={lista[i].email}
+                onClick={e => this.handleClick(e)}> Prikazi profil </Button></td>
+          
+          </tr>
+        );
+      }
     }
+  }
     return res;
   }
   sortMyArray(sortBy) {
     console.log("sort funkcija");
-    console.log(sortBy);
+    console.log(sortBy.target.value);
     const lista = this.state.listaPacijenata;
-    if (sortBy === "lbo") {
+    if (sortBy.target.value  === "lbo") {
       console.log("lbo");
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.lbo - b.lbo)
       });
-    } else if (sortBy === "ime") {
+    } else if (sortBy.target.value  === "ime") {
       console.log("ime");
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.ime.localeCompare(b.ime))
       });
-    } else if (sortBy === "prezime") {
+    } else if (sortBy.target.value  === "prezime") {
       console.log("prezime");
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.prezime.localeCompare(b.prezime))
       });
-    } else if (sortBy === "email") {
+    } else if (sortBy.target.value  === "email") {
       console.log("email");
 
       this.setState({
         listaPacijenata: lista.sort((a, b) => a.email.localeCompare(b.email))
       });
     
-    } else if (sortBy === "idOpadajuce") {
+    } else if (sortBy.target.value  === "idOpadajuce") {
       console.log("idOpadajuce");
 
       this.setState({
         listaPacijenata: lista.sort((a, b) => b.id - a.id)
       });
-    } else if (sortBy === "idRastuce") {
+    } else if (sortBy.target.value  === "idRastuce") {
       console.log("idRastuce");
 
       this.setState({
@@ -296,28 +331,34 @@ class PocetnaStranicaLekara extends React.Component {
                   onSubmit={this.handleSumbit}
                   className="formaIzmenaProfilaPacijent"
                   >
-                  <NavDropdown
-                    onSelect={e => {
-                      this.sortMyArray(e);
-                    }}
-                    className="SortListePacijenata"
-                    title="Sortiraj"
-                    id="nav-item dropdown"
-                    
-                  >
-                    <MenuItem eventKey={"idRastuce"}>Id (rastuce)</MenuItem>
-                    <MenuItem eventKey={"idOpadajuce"}>Id (opadajuce)</MenuItem>
-                    <MenuItem eventKey={"lbo"}>LBO</MenuItem>
-                    <MenuItem eventKey={"ime"}>Ime</MenuItem>
-                    <MenuItem eventKey={"prezime"}>Prezime</MenuItem>
-                    <MenuItem eventKey={"email"}>Email</MenuItem>
-  
-                  </NavDropdown>
+                     <div className="pretraga">
+                      <input
+                        className="pretraga"
+                        placeholder="Pretrazi"
+                        type="text"
+                        aria-label="Search"
+                        name="pretraziPolje"
+                        margin= "2px"
+                        onChange={this.handleChange}
+                      />
+
+             </div>
+                    <div className="pretraga">
+                      <select onChange={e => {this.sortMyArray(e) }}>
+                        <option value={"idRastuce"} >Id (rastuce)</option>
+                        <option value={"idOpadajuce"} >Id (opadajuce)</option>
+                        <option value={"lbo"}>LBO</option>
+                        <option value={"ime"}>Ime</option>
+                        <option value={"prezime"}>Prezime</option>
+                        <option value={"email"}>Email</option>
+                      </select>
+              </div>
              <Card 
                 ctTableFullWidth
-                ctTableResponsive
+               // ctTableResponsive
+                className="pretraga"
                  content={
-                  <Table striped hover style={{ wiidth: 1000 }}>
+                  <Table className="TabelaListePacijenata" striped hover style={{ width: 100 }}>
                   <thead>
                     <tr>
                       {/*                             
