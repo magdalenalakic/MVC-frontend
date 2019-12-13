@@ -48,7 +48,11 @@ class ListaPacijenataMedSestra extends Component {
       pretraziPolje: "",
       tezina: "",
       visina: "",
-      krvnaGrupa: ""
+      krvnaGrupa: "",
+      ime: "",
+      prezime: "",
+      lbo: ""
+
     };
     this.listaPacijenata = this.listaPacijenata.bind(this);
     this.handlePrikazZK = this.handlePrikazZK.bind(this);
@@ -125,6 +129,24 @@ class ListaPacijenataMedSestra extends Component {
     e.preventDefault();
     console.log("CLICK  **** otvori mi dijalog na klik ");  
     console.log( e.target.id);
+    const url ="http://localhost:8025/api/pacijenti/findPacijentEmail/" + e.target.id;
+    axios
+      .get(url)
+      .then(response => {
+        console.log("URL 111");
+        console.log(response);
+        this.setState({
+          ime: response.data.ime,
+          prezime: response.data.prezime,
+          lbo: response.data.lbo
+        });
+        console.log(this.state);
+       
+      })
+      .catch(error => {
+        console.log("nije uspeo url1");
+        console.log(error);
+      });
     const url2 =
       "http://localhost:8025/api/pacijenti/findZK/" + e.target.id;
     axios
@@ -141,13 +163,9 @@ class ListaPacijenataMedSestra extends Component {
           krvnaGrupa: Response.data.krvnaGrupa
         });
         this.dialog.show({
-          // title: 'Dodavanje nove klinike',
+          title: 'Zdravstveni karton',
           body: [
-            <Card
-                title="Zdravstveni karton"
-                content={
-                  <div>
-                    <Table striped hover>
+            <Table  striped hover>
                       <tbody>
                         <tr>
                           <td>
@@ -247,9 +265,7 @@ class ListaPacijenataMedSestra extends Component {
                         </tr>
                       </tbody>
                     </Table>
-                  </div>
-                }
-              />
+
           ],
           // actions: [
           //   Dialog.CancelAction(),
@@ -261,26 +277,7 @@ class ListaPacijenataMedSestra extends Component {
             console.log('closed by clicking background.')
           }
         });
-        // axios
-        //   .get(
-        //     "http://localhost:8025/api/pacijenti/findPacijentEmail/" +
-        //     this.state.email
-        //   )
-
-        //   .then(Response => {
-        //     console.log("URL 111");
-        //     console.log(Response);
-        //     this.setState({
-        //       ime: Response.data.ime,
-        //       prezime: Response.data.prezime,
-        //       lbo: Response.data.lbo
-        //     });
-        //     console.log(this.state);
-        //   })
-        //   .catch(error => {
-        //     console.log("nije uspeo url1");
-        //     console.log(error);
-        //   });
+       
       })
 
       .catch(error => {
@@ -288,18 +285,7 @@ class ListaPacijenataMedSestra extends Component {
       });
 
 
-    // const url2 = "http://localhost:8025/api/pacijenti/findPacijentEmail/" + e.target.id;
-    // axios
-    //   .get(url2)
-    //   .then(response => {
-    //           console.log("Preuzimanje pacijenta uspelo! ");
-    //           console.log(response.data);
-            
-
-    //   })
-    //   .catch(error => {
-    //       console.log("Preuzimanje pacijenta nije uspelo! ");
-    //    });
+    
     
     
   };
@@ -359,9 +345,8 @@ class ListaPacijenataMedSestra extends Component {
               
               <td ><Button className="OdobrenZahtev"
                   id={lista[i].email}
-                  onClick={e => this.handlePrikazZK(e)}
-                  > ZK </Button>
-                  {/* <Dialog ref={(el) => { this.dialog = el }} ></Dialog> */}
+                  onClick={e => this.handlePrikazZK(e)}> ZK </Button>
+                  <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
               </td>
             
             </tr>
@@ -442,7 +427,7 @@ class ListaPacijenataMedSestra extends Component {
       <div className="content">
         <Grid fluid>
           <Row>
-            <Col>
+            <Col md={12}>
               <Card 
                   title="Lista pacijenata"
                   // category="Here is a subtitle for this table"
@@ -503,11 +488,11 @@ class ListaPacijenataMedSestra extends Component {
 
                     <Card 
                       // category="Here is a subtitle for this table"
-                      ctTableFullWidth
+                      // ctTableFullWidth
                       // ctTableResponsive
                       className="pretraga"
                       content={
-                        <Table className="TabelaListePacijenata" striped hover >
+                        <Table style={{width:950}} className="TabelaListePacijenata" striped hover >
                           <thead  className="thead-dark" >
                             <tr>
                               <th id="IdPacijenta">Id</th>

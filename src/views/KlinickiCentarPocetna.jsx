@@ -26,6 +26,11 @@ class KlinickiCentarPocetna extends Component {
       adresaNoveKlinike: "",
       opisNoveKlinike: "",
       ocenaNoveKlinike: 0,
+      idIzmenjeneKlinike: 0,
+      nazivIzmenjeneKlinike: "",
+      adresaIzmenjeneKlinike: "",
+      opisIzmenjeneKlinike: "",
+      ocenaIzmenjeneKlinike: 0,
       imeNAK: "",
       prezimeNAK: "",
       emailNAK: "",
@@ -48,7 +53,8 @@ class KlinickiCentarPocetna extends Component {
     this.dodajKliniku = this.dodajKliniku.bind(this);
     this.dodajAdminaKlinike = this.dodajAdminaKlinike.bind(this);
     this.dodajAdminaKC = this.dodajAdminaKC.bind(this);
-    this.getKlinikaValue = this.getKlinikaValue.bind(this);
+    this.izmeniKliniku = this.izmeniKliniku.bind(this);
+
 
     this.handleChange = this.handleChange.bind(this);
     
@@ -56,10 +62,9 @@ class KlinickiCentarPocetna extends Component {
     console.log(this.state.uloga);
     console.log(this.state.email);
   }
-  getKlinikaValue(){
-    console.log('get klinika value');
-    return this.state.klinikaNAK;
-  }
+
+  
+
   listaKlinika(){
     console.log("--------lista klinika u KC");
 
@@ -156,7 +161,10 @@ class KlinickiCentarPocetna extends Component {
           <td >{lista[i].adresa}</td>
           <td >{lista[i].opis}</td>
           <td >{lista[i].ocena}</td>
-          <td ><Button type="submit">Izmeni</Button></td>
+          <td >
+          <Button id={lista[i].id} onClick={e => this.izmeniKliniku(e)}>Izmeni</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td>
           <td ><Button type="submit">Obrisi</Button></td>
           {/* <td ><Button type="submit">Dodaj administratora</Button></td> */}
         </tr>
@@ -191,7 +199,11 @@ class KlinickiCentarPocetna extends Component {
           <td >{lista[i].ime}</td>
           <td >{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
-          <td ><Button type="submit">Izmeni</Button></td>
+          <td >
+          <Button id={lista[i].id} onClick={e => this.izmeniAdminaKlinike(e)} >Izmeni</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td>
+          
           <td ><Button type="submit">Obrisi</Button></td>
         </tr>
       );
@@ -206,6 +218,128 @@ class KlinickiCentarPocetna extends Component {
     console.log("On change !!!");
   };
 
+  izmeniKliniku = e =>{
+    e.preventDefault();
+    console.log(e.target.id)
+    const url = 'http://localhost:8025/api/klinike/' + e.target.id;
+        axios.get(url)
+          .then(Response => {
+            console.log("Preuzeta klinike: ");
+            console.log(Response.data);
+          
+            this.setState({
+              idIzmenjeneKlinike: Response.data.id,
+              nazivIzmenjeneKlinike: Response.data.naziv,
+              adresaIzmenjeneKlinike: Response.data.adresa,
+              ocenaIzmenjeneKlinike: Response.data.ocena,
+              opisIzmenjeneKlinike: Response.data.opis,
+            });
+            this.dialog.show({
+              title: 'Izmena klinike',
+              body: [
+                
+                <form onSubmit={this.handleSumbit} className="formaIzmenaProfilaLekara">
+                     <div className="ime">
+                        <label htmlFor="naziv">Naziv: </label>
+                        <input
+                          type="text"
+                          name="nazivIzmenjeneKlinike"
+                          
+                          defaultValue={this.state.nazivIzmenjeneKlinike}
+                          // placeholder={this.state.ime}
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="ime">
+                        <label htmlFor="adresa">Adresa: </label>
+                        <input
+                          type="text"
+                          name="adresaIzmenjeneKlinike"
+                          defaultValue={this.state.adresaIzmenjeneKlinike}
+                          // placeholder="prezime"
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="ime">
+                        <label htmlFor="opis">Opis: </label>
+                        <input
+                          type="text"
+                          name="opisIzmenjeneKlinike"
+                          defaultValue={this.state.opisIzmenjeneKlinike}
+                          // placeholder="prezime"
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="ime">
+                        <label htmlFor="ocena">Ocena: </label>
+                        <input
+                          type="text"
+                          name="ocenaIzmenjeneKlinike"
+                          defaultValue={this.state.ocenaIzmenjeneKlinike}
+                          disabled="disabled"
+                          // placeholder="prezime"
+                          // noValidate
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                     
+                      {/* <div className="izmeniPodatkeLekar">
+                         <Button type="submit">Izmeni podatke</Button>
+                      </div> */}
+                  </form>
+              ],
+              actions: [
+                Dialog.CancelAction(),
+                Dialog.OKAction(()=> {
+                 
+                      console.log("Izmjena klinike: ---------------")  
+                      console.log(this.state.naziv);
+                      console.log(this.state.idKlinike);
+                      console.log(this.state.id);
+                    axios
+                      .put("http://localhost:8025/api/klinike/update", {
+                        id: this.state.idIzmenjeneKlinike,
+                        naziv: this.state.nazivIzmenjeneKlinike,
+                        adresa: this.state.adresaIzmenjeneKlinike,
+                        ocena: this.state.ocenaIzmenjeneKlinike,
+                        opis: this.state.opisIzmenjeneKlinike
+                      })
+                      .then(response => {
+                        console.log(response.data);
+                        this.listaKlinika();
+
+                        // this.setState({
+                        //   id: response.data.id,
+                        //   naziv: response.data.naziv,
+                        //   adresa: response.data.adresa,
+                        //   ocena: response.data.ocena,
+                        //   opis: response.data.opis
+                        // });
+                      })
+                      .catch(error => {
+                        console.log("Izmena nije uspela! ")
+                      });
+                 
+                })
+              ],
+              bsSize: 'medium',
+              onHide: (dialog) => {
+                dialog.hide()
+                console.log('closed by clicking background.')
+              }
+            });
+    
+          })
+          
+          .catch(error => {
+            console.log("klinika nije preuzeta")
+          })
+
+    
+  }
   dodajKliniku = e => {
     e.preventDefault();
 
@@ -393,7 +527,10 @@ class KlinickiCentarPocetna extends Component {
 
 
   };
-
+  izmeniAdminaKlinike = e => {
+    e.preventDefault();
+    console.log(e.target.id)
+  }
   dodajAdminaKlinike = e => {
     e.preventDefault();
     // this.setState({
@@ -457,14 +594,6 @@ class KlinickiCentarPocetna extends Component {
             />
           </div>
           <div className="klinikaNAK" >
-          {/* <NavDropdown
-            margin-left="3px"
-            onSelect={e => {this.proslediKliniku(e)}}
-            className="SortListePacijenata"
-            title="Izaberi kliniku"
-            id="nav-item dropdown">
-            {this.listaKlinikaIzbor()}           
-          </NavDropdown> */}
           <label className="klinikaNAKLabela" htmlFor="klinikaNAK">Klinika: </label> 
           <div>
             <select name="odabirKlinike"  onChange={e => {this.proslediKliniku(e)}}>
@@ -472,7 +601,8 @@ class KlinickiCentarPocetna extends Component {
             
             </select>
           </div>
-          </div>
+
+        </div>
           
       </form> 
       ],
@@ -497,13 +627,13 @@ class KlinickiCentarPocetna extends Component {
               
             })
             .then(response => {
-              console.log("Dodavanje uspelo! ");
+              console.log("***********************************Dodavanje uspelo! ");
               console.log(response.data);
               this.listaAdministratoraKlinika();
 
             })
             .catch(error => {
-              console.log("Dodavanje novog administratora klinike nije uspelo! ");
+              console.log("**************Dodavanje novog administratora klinike nije uspelo! ");
             });
         })
       ],
