@@ -27,26 +27,59 @@ class ListaLekara extends Component {
       prezimeLekara: "",
       lozinkaLekara: "",
       telefonLekara: "",
-      klinikaLekara: "",
+      klinikaLekara: 0,
       reirectToIzmeniLekar: false,
     };
     this.listaLekaraUK = this.listaLekaraUK.bind(this);
     this.dodajLekara = this.dodajLekara.bind(this);
     this.obrisiLekara = this.obrisiLekara.bind(this);
-    this.createSelectItems = this.createSelectItems.bind(this);
+    this.proslediKliniku = this.proslediKliniku.bind(this);
+    // this.listaKlinikaIzbor = this.listaKlinikaIzbor.bind(this);
+    this.getKlinikaValue = this.getKlinikaValue.bind(this);
     // this.handleOdobren = this.handleOdobren.bind(this);
     // this.handleOdbijen = this.handleOdbijen.bind(this);
     // this.handleChange = this.handleChange.bind(this);
   }
 
+  getKlinikaValue(){
+    console.log('get klinika value');
+    return this.state.idKlinike;
+  }
   handleChange = e => {
     e.preventDefault();
     
     this.setState({ [e.target.name]: e.target.value });
-    console.log(this.state);
+    // console.log(this.state);
     console.log("On change !!!");
   };
 
+  // listaKlinikaIzbor(){
+  //   let res = [];
+    
+  //   let lista = this.state.listaKlinika;
+
+  //   for (var i = 0; i < lista.length; i++) {
+  //     res.push(
+  //       <option value={lista[i].id} >{lista[i].naziv}</option>
+  //        //<MenuItem eventKey={lista[i].id}>{lista[i].naziv}</MenuItem>
+  //     );
+  //   }
+  //   return res;
+  // }
+  proslediKliniku(klinika) {
+    
+    console.log("prosledjena klinika");
+
+    console.log("I==================D" + klinika.target.value);
+    console.log("-------------------------" + this.state.idKlinike);
+    this.setState({
+      klinikaLekara : klinika.target.value
+      
+    },() => console.log(this.state));
+   
+
+
+  };
   listaLekara() {
     console.log("Ponovo ispisi listu bez obrisanog lekara");
     console.log("!!!!!!!!!!!!!!!11111 ID KL " + this.state.idKlinike);
@@ -149,21 +182,7 @@ componentWillMount(){
           console.log("klinike nisu preuzete");
         });
   }
-  createSelectItems() {
-    // let res = [];
-    // let lista = this.state.listaKlinika;
-
-    // // for (var i = 0; i < lista.length; i++) {
-    // // res.push(<option value="NANA">NANANA</option>); 
-    // // }
-    // for(var i = 0; i <=3; i++){
-    //   res.push(
-    //     <option>i</option>
-    //   );
-    // }
-    // return res;
-     //UCITAVANJE KLINIKA
-}  
+ 
   onDropdownSelected(e) {
     console.log("THE VAL", e.target.value);
     //here you will see the current selected value of the select input
@@ -222,17 +241,14 @@ componentWillMount(){
               onChange={this.handleChange}
             />
           </div>
-          {/* <div className="lekarKlinika" >
+          {/* <div className="klinikaLekara" >
             <label className="lekarKlinikaLabel" htmlFor="lekarKlinika">Klinika: </label>
-            <input className="lekarKlinikaLabel"
-              type="select"
-              name="lekarKlinika"
-              defaultValue=""
-              // onChange={this.handleChange}
-              onChange={this.onDropdownSelected}label="Multiple Select" multiple>
-                 {this.createSelectItems()}
-               
-            </input>
+            <div>
+            <select name="odabirKlinike"  onChange={e => {this.proslediKliniku(e)}}>
+            {this.listaKlinikaIzbor()} 
+            
+            </select>
+          </div>
           </div> */}
       </form> 
       ],
@@ -241,6 +257,7 @@ componentWillMount(){
         Dialog.OKAction(() => {
           
           console.log('OK je kliknuto!');
+
           const url3 = "http://localhost:8025/api/adminKlinike/dodavanjeLekara";
           axios
             .post(url3, {
@@ -248,7 +265,8 @@ componentWillMount(){
               prezime: this.state.prezimeLekara,
               telefon: this.state.telefonLekara,
               lozinka: this.state.lozinkaLekara,
-              email: this.state.emailLekara
+              email: this.state.emailLekara,
+              klinikaID: this.state.idKlinike,
             })
             .then(response => {
               
@@ -259,7 +277,9 @@ componentWillMount(){
             })
             .catch(error => {
               console.log("Dodavanje novog lekaara nije uspjelo! ");
+              console.log("+++++++++++" + this.state.idKlinike);
             });
+           
         })
       ],
       bsSize: 'medium',

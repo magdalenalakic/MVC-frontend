@@ -418,6 +418,7 @@ class ListaPacijenataMedSestra extends Component {
         listaPacijenata: lista.sort((a, b) => a.id - b.id)
       });
     }
+    
   }
 
 

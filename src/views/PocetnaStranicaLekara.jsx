@@ -1,7 +1,7 @@
 
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
-import { Grid, Row, Col, Table } from "react-bootstrap";
+import { Grid, Row, Col, Table , NavItem, Nav, NavDropdown, MenuItem} from "react-bootstrap";
 
 import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
@@ -48,11 +48,15 @@ class PocetnaStranicaLekara extends React.Component {
       ime: "",
       telefon: "",
       prezime: "",
+      lbo: "",
+      klinikaID: "", 
       listaPacijenata:[],
       redirectToProfilPacijenta: false,
       emailPacijenta: "",
+      pretraziPolje: "",
     };
     this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
+    this.sortMyArray = this.sortMyArray.bind(this);
   }
 
   handleClick = e => {
@@ -78,42 +82,35 @@ class PocetnaStranicaLekara extends React.Component {
     // console.log('url: ' + url);
     axios.get(url)
       .then(Response => {
-        console.log("Preuzet lekar: ");
+        console.log("Preuzet lekar: //////////////////////////////////////////");
         console.log(Response.data);
         this.setState({
-          email: Response.data.email
-        });
-        this.setState({
-          ime: Response.data.ime
-        });
-
-        this.setState({
-          prezime: Response.data.prezime
-        });
-        this.setState({
+          email: Response.data.email,
+          klinikaID: Response.data.klinikaID,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
           telefon: Response.data.telefon
         });
+
+        const url1 = 'http://localhost:8025/api/klinike/pacijentiKlinike/' + this.state.klinikaID; 
+        console.log(url1);
+        axios.get(url1)
+          .then(response => {
+            console.log("URL 111");
+            console.log(response);
+            this.setState({
+              listaPacijenata: response.data
+            });
+          })
+          .catch(error => {
+              console.log("nije uspeo url1");
+              console.log(error);
+          })
       })
       
       .catch(error => {
         console.log("Lekar  nije preuzet")
       })
-
-      console.log("------***********--pocetak");
-      const url1 = 'http://localhost:8025/api/lekari/listaPacijenataLekara/' + this.state.email; 
-      console.log(url1);
-      axios.get(url1)
-        .then(response => {
-          console.log("URL 111");
-          console.log(response);
-          this.setState({
-            listaPacijenata: response.data
-          });
-        })
-        .catch(error => {
-            console.log("nije uspeo url1");
-            console.log(error);
-        })
 
   }
 
@@ -128,38 +125,112 @@ class PocetnaStranicaLekara extends React.Component {
     }
     return legend;
   }
-
+  handleChange = e => {
+      e.preventDefault();
+      this.setState({ [e.target.name]: e.target.value });
+      console.log(this.state);
+      console.log("On click !!!");
+  };
 
   listaPacijenataLekara(){
     let res=[];
     let lista = this.state.listaPacijenata;
-    for(var i=0; i< lista.length;i++){
-      console.log( "Pacijent : "  + lista[i].email);
-     // this.state.emailPacijenta = lista[i].email;
-      console.log(this.state.emailPacijenta);
-      res.push(
-       
-        <tr key = {i}>
-          {/* <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].naziv}>{lista[i].ime}</td>
-          <td key={lista[i].adresa}>{lista[i].prezime}</td>
-          <td key={lista[i].opis}>{lista[i].email}</td> */}
-          <td key={lista[i].id}>{lista[i].id}</td>
-          <td>{lista[i].ime}</td>
-          <td>{lista[i].prezime}</td>
-          <td key={lista[i].email}>{lista[i].email}</td>
-          <td ><Button className="OdobrenZahtev"
-              id={lista[i].email}
-              onClick={e => this.handleClick(e)}> Prikazi profil </Button></td>
-          {/* <td><link to="/admin/login">Prikazi profil</link></td> */}
-         {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
-     
-         </tr>
-      )
+    const pretraga = this.state.pretraziPolje;
+    if (pretraga == "" || pretraga == undefined){
+      for(var i=0; i< lista.length;i++){
+        console.log( "Pacijent : "  + lista[i].email);
+
+        res.push(
+        
+          <tr key = {i}>
+            {/* <td key={lista[i].id}>{lista[i].id}</td>
+            <td key={lista[i].naziv}>{lista[i].ime}</td>
+            <td key={lista[i].adresa}>{lista[i].prezime}</td>
+            <td key={lista[i].opis}>{lista[i].email}</td> */}
+            <td key={lista[i].id}>{lista[i].id}</td>
+            <td>{lista[i].ime}</td>
+            <td>{lista[i].prezime}</td>
+            <td>{lista[i].lbo}</td>
+            <td key={lista[i].email}>{lista[i].email}</td>
+            <td ><Button className="OdobrenZahtev"
+                id={lista[i].email}
+                onClick={e => this.handleClick(e)}> Prikazi profil </Button></td>
+            {/* <td><link to="/admin/login">Prikazi profil</link></td> */}
+          {/* <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
+      
+          </tr>
+        );
+      }
+  }else{
+    console.log(pretraga);
+    let lista = this.state.listaPacijenata;
+    for (var i = 0; i < lista.length; i++) {
+      var lbo = lista[i].lbo;
+      var ime = lista[i].ime;
+      var prezime = lista[i].prezime;
+
+      if(lbo.toLowerCase().includes(pretraga.toLowerCase()) || 
+      ime.toLowerCase().includes(pretraga.toLowerCase()) ||
+      prezime.toLowerCase().includes(pretraga.toLowerCase()) ){
+        res.push(
+          <tr key = {i} >
+      <td>{lista[i].ime}</td>
+            <td>{lista[i].prezime}</td>
+            <td>{lista[i].lbo}</td>
+            <td >{lista[i].email}</td>
+            
+            <td ><Button className="OdobrenZahtev"
+                id={lista[i].email}
+                onClick={e => this.handleClick(e)}> Prikazi profil </Button></td>
+          
+          </tr>
+        );
+      }
     }
+  }
     return res;
   }
+  sortMyArray(sortBy) {
+    console.log("sort funkcija");
+    console.log(sortBy.target.value);
+    const lista = this.state.listaPacijenata;
+    if (sortBy.target.value  === "lbo") {
+      console.log("lbo");
+      this.setState({
+        listaPacijenata: lista.sort((a, b) => a.lbo - b.lbo)
+      });
+    } else if (sortBy.target.value  === "ime") {
+      console.log("ime");
+      this.setState({
+        listaPacijenata: lista.sort((a, b) => a.ime.localeCompare(b.ime))
+      });
+    } else if (sortBy.target.value  === "prezime") {
+      console.log("prezime");
+      this.setState({
+        listaPacijenata: lista.sort((a, b) => a.prezime.localeCompare(b.prezime))
+      });
+    } else if (sortBy.target.value  === "email") {
+      console.log("email");
 
+      this.setState({
+        listaPacijenata: lista.sort((a, b) => a.email.localeCompare(b.email))
+      });
+    
+    } else if (sortBy.target.value  === "idOpadajuce") {
+      console.log("idOpadajuce");
+
+      this.setState({
+        listaPacijenata: lista.sort((a, b) => b.id - a.id)
+      });
+    } else if (sortBy.target.value  === "idRastuce") {
+      console.log("idRastuce");
+
+      this.setState({
+        listaPacijenata: lista.sort((a, b) => a.id - b.id)
+      });
+    }
+    
+  }
   render() {
     // console.log("Ispisi  props u pocetna stranica lekara: "); 
     // console.log(this.props);
@@ -169,6 +240,7 @@ class PocetnaStranicaLekara extends React.Component {
     const uloga = this.state.uloga;
     const ime = this.state.ime;
     const prezime = this.state.prezime;
+    const lbo = this.state.lbo;
     const telefon = this.state.telefon;
     // console.log("Render ps email: " + email);
     // console.log("Render ps uloga: " + uloga);
@@ -229,7 +301,7 @@ class PocetnaStranicaLekara extends React.Component {
                  statsIconText="Profil korisnika"
               />
             </Col> */}
-            <Col lg={3} sm={6}>
+            <Col lg={3} sm={6} >
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
                 // statsText="Profil korisnika"
@@ -249,16 +321,44 @@ class PocetnaStranicaLekara extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col md={18}>
+            <Col md={6}>
               <Card
-              
                 title="Lista pacijenata"
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
+                content={
+                  <form
+                  onSubmit={this.handleSumbit}
+                  className="formaIzmenaProfilaPacijent"
+                  >
+                     <div className="pretraga">
+                      <input
+                        className="pretraga"
+                        placeholder="Pretrazi"
+                        type="text"
+                        aria-label="Search"
+                        name="pretraziPolje"
+                        margin= "2px"
+                        onChange={this.handleChange}
+                      />
+
+             </div>
+                    <div className="pretraga">
+                      <select onChange={e => {this.sortMyArray(e) }}>
+                        <option value={"idRastuce"} >Id (rastuce)</option>
+                        <option value={"idOpadajuce"} >Id (opadajuce)</option>
+                        <option value={"lbo"}>LBO</option>
+                        <option value={"ime"}>Ime</option>
+                        <option value={"prezime"}>Prezime</option>
+                        <option value={"email"}>Email</option>
+                      </select>
+              </div>
+             <Card 
                 ctTableFullWidth
-                ctTableResponsive
+               // ctTableResponsive
+                className="pretraga"
                  content={
-                  <Table striped hover>
+                  <Table className="TabelaListePacijenata" striped hover style={{ width: 100 }}>
                   <thead>
                     <tr>
                       {/*                             
@@ -268,6 +368,7 @@ class PocetnaStranicaLekara extends React.Component {
                       <th id="Id">Id</th>
                       <th id="Ime">Ime</th>
                       <th id="Prezime"> Prezime</th>
+                      <th id="Lbo"> Lbo</th>
                       <th id="Email">Email</th>
                   
                     </tr>
@@ -279,72 +380,14 @@ class PocetnaStranicaLekara extends React.Component {
                   </tbody>
                 </Table>
                  }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendSales)}</div>
-                // }
-              />
-            </Col>
-            
-            {/* <Col md={4}>
-            <Card
-                // statsIcon="fa fa-clock-o"
-                title="O lekaru"
-                // category="Ime"
-                content={
-                  <div id="a">
-                    <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Ime:</p>
-                        <label className="adresaKC"> {this.state.ime} </label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Prezime:</p>
-                        <label className="adresaKC">{this.state.prezime} </label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Telefon:</p>
-                <label className="adresaKC">{this.state.telefon}</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Opis posla:</p>
-                        <label className="opisKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    
-                    
-                    
-                  </div>
-                }
+           
+                />
+                </form>
+              }
+             />
                 
-                // category="opis ... naziv adresa i opis  "
-                // stats="Campaign sent 2 days ago"
-                // content={
-                //   <div
-                //     id="chartPreferences"
-                //     className="ct-chart ct-perfect-fourth"
-                //   >
-                //     <ChartistGraph data={dataPie} type="Pie" />
-                //   </div>
-                // }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendPie)}</div>
-                // }
-              />
-            </Col> */}
-          </Row>
-          <Row>
-            <Col md={14} >
+          </Col>
+          <Col md={6} >
               <Card
                 title=""
                 // category="24 Hours performance"
@@ -366,6 +409,9 @@ class PocetnaStranicaLekara extends React.Component {
                 // }
               />
             </Col>
+          </Row>
+          <Row>
+           
             </Row>
 {/* 
           <Row>

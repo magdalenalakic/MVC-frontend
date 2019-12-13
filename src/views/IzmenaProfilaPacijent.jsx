@@ -36,7 +36,15 @@ class IzmenaProfilaPacijent extends Component {
       lozinka: "",
       adresa: "",
       grad: "",
-      drzava: ""
+      drzava: "",
+      imeN: "",
+      telefonN: "",
+      prezimeN: "",
+      lboN: "",
+      lozinkaN: "",
+      adresaN: "",
+      gradN: "",
+      drzavaN: ""
     };
   }
 
@@ -89,14 +97,14 @@ class IzmenaProfilaPacijent extends Component {
     console.log(this.state.prezime);
     axios
       .put("http://localhost:8025/api/pacijenti/update", {
-        ime: this.state.ime,
-        prezime: this.state.prezime,
-        telefon: this.state.telefon,
-        email: this.state.email,
-        adresa: this.state.adresa,
-        grad: this.state.grad,
-        drzava: this.state.drzava,
-        lbo: this.state.lbo
+        ime: this.state.imeN,
+        prezime: this.state.prezimeN,
+        telefon: this.state.telefonN,
+        email: this.state.emailN,
+        adresa: this.state.adresaN,
+        grad: this.state.gradN,
+        drzava: this.state.drzavaN,
+        lbo: this.state.lboN
       })
       .then(response => {
         console.log(response.data);
@@ -153,7 +161,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="ime">Ime: </label>
                       <input
                         type="text"
-                        name="ime"
+                        name="imeN"
                         defaultValue={ime}
                         // placeholder={this.state.ime}
                         // noValidate
@@ -164,7 +172,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="prezime">Prezime: </label>
                       <input
                         type="text"
-                        name="prezime"
+                        name="prezimeN"
                         defaultValue={prezime}
                         // placeholder="prezime"
                         // noValidate
@@ -207,7 +215,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="grad">Grad: </label>
                       <input
                         type="text"
-                        name="grad"
+                        name="gradN"
                         defaultValue={grad}
                         // placeholder={this.state.grad}
                         // noValidate
@@ -218,7 +226,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="drzava">Drzava: </label>
                       <input
                         type="text"
-                        name="drzava"
+                        name="drzavaN"
                         defaultValue={drzava}
                         // placeholder={this.state.drzava}
                         // noValidate
@@ -229,7 +237,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="telefon">Broj telefona: </label>
                       <input
                         type="text"
-                        name="telefon"
+                        name="telefonN"
                         defaultValue={this.state.telefon}
                         // placeholder="telefon"
                         // noValidate

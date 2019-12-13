@@ -35,6 +35,7 @@ class IzmenaProfilaMedSestre extends Component {
       prezimeN: "",
       lozinkaN: "", 
       brTelefonaN: "",
+      adresaN: "",
       is_checked: false
     };
 
@@ -87,7 +88,7 @@ class IzmenaProfilaMedSestre extends Component {
         prezime: this.state.prezimeN,
         email: this.state.email,
         lozinka: this.state.lozinkaN,
-        adresa: this.state.lozinkaN,
+      
         brTelefona: this.state.brTelefonaN
       })
       .then(response => {
@@ -115,7 +116,7 @@ class IzmenaProfilaMedSestre extends Component {
         console.log("Izmena nije uspela! ");
       });
   };
-
+//prikaz pass
   handleCheckBox() {
     if(this.state.is_checked == true){
       this.setState({ is_checked: false });

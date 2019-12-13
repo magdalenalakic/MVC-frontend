@@ -13,6 +13,7 @@ import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
+import ProfilPacijenta from "views/PocetnaStranaPacijenta.jsx";
 
 const dashboardRoutes = [
  
