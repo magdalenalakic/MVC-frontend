@@ -97,6 +97,7 @@ class ListaZahtevaAdminKC extends Component {
               type="text"
               name="za"
               value = {zaKoga}
+              disabled="disabled"
               // defaultValue= {za}
               // placeholder={this.state.ime}
               // noValidate

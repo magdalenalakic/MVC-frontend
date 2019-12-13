@@ -16,13 +16,6 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/izmenaProfila",
-    name: "Izmena profila",
-    icon: "pe-7s-user",
-    component: IzmenaProfila,
-    layout: "/admin"
-  },
-  {
     path: "/listaPacijenata",
     name: "Lista pacijenata",
     icon: "pe-7s-user",
@@ -34,6 +27,13 @@ const dashboardRoutes = [
     name: "Overavanje recepata",
     icon: "pe-7s-user",
     component: OveravanjeRecepata,
+    layout: "/admin"
+  },
+  {
+    path: "/izmenaProfila",
+    name: "Izmena profila",
+    icon: "pe-7s-user",
+    component: IzmenaProfila,
     layout: "/admin"
   },
   {

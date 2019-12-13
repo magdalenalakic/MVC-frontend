@@ -5,6 +5,10 @@ import "klinickiCentar.css";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
+import IzmenaLekara from 'views/IzmenaProfila.jsx';
+import "klinickiCentar.css";
+import IzmenaProfila from "./IzmenaProfila";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 class ListaLekara extends Component {
   constructor(props) {
@@ -14,37 +18,114 @@ class ListaLekara extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
-      id: "",
+      idAdmina: "",
       idKlinike: "",
-      listaLekara: []
+      listaLekara: [],
+      listaKlinika: [], 
+      emailLekara: "",
+      imeLekara: "",
+      prezimeLekara: "",
+      lozinkaLekara: "",
+      telefonLekara: "",
+      klinikaLekara: 0,
+      reirectToIzmeniLekar: false,
     };
-    
-    this.listaLekara = this.listaLekara.bind(this);
+    this.listaLekaraUK = this.listaLekaraUK.bind(this);
+    this.dodajLekara = this.dodajLekara.bind(this);
+    this.obrisiLekara = this.obrisiLekara.bind(this);
+    this.proslediKliniku = this.proslediKliniku.bind(this);
+    // this.listaKlinikaIzbor = this.listaKlinikaIzbor.bind(this);
+    this.getKlinikaValue = this.getKlinikaValue.bind(this);
     // this.handleOdobren = this.handleOdobren.bind(this);
     // this.handleOdbijen = this.handleOdbijen.bind(this);
     // this.handleChange = this.handleChange.bind(this);
   }
 
-//   ucitajPonovo(){
-//     const url1 =
-//       "http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/" +
-//       this.state.email;
+  getKlinikaValue(){
+    console.log('get klinika value');
+    return this.state.idKlinike;
+  }
+  handleChange = e => {
+    e.preventDefault();
+    
+    this.setState({ [e.target.name]: e.target.value });
+    // console.log(this.state);
+    console.log("On change !!!");
+  };
 
-//     console.log(url1);
-//     axios
-//       .get(url1)
-//       .then(response => {
-//         console.log("URL zahtevi za reg");
-//         console.log(response);
-//         this.setState({
-//           listaZahtevaZaRegistraciju: response.data
-//         });
-//       })
-//       .catch(error => {
-//         console.log("nije uspeo url1");
-//         console.log(error);
-//       });
-//   }
+  // listaKlinikaIzbor(){
+  //   let res = [];
+    
+  //   let lista = this.state.listaKlinika;
+
+  //   for (var i = 0; i < lista.length; i++) {
+  //     res.push(
+  //       <option value={lista[i].id} >{lista[i].naziv}</option>
+  //        //<MenuItem eventKey={lista[i].id}>{lista[i].naziv}</MenuItem>
+  //     );
+  //   }
+  //   return res;
+  // }
+  proslediKliniku(klinika) {
+    
+    console.log("prosledjena klinika");
+
+    console.log("I==================D" + klinika.target.value);
+    console.log("-------------------------" + this.state.idKlinike);
+    this.setState({
+      klinikaLekara : klinika.target.value
+      
+    },() => console.log(this.state));
+   
+
+
+  };
+  listaLekara() {
+    console.log("Ponovo ispisi listu bez obrisanog lekara");
+    console.log("!!!!!!!!!!!!!!!11111 ID KL " + this.state.idKlinike);
+    
+        console.log("ID KLINIKE OD KOJE TRAZIM LEKARE: " + this.state.idKlinike);
+        console.log("ucitaj mi kliniku");
+        const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
+        axios.get(urlKlinike)
+          .then(klinika => {
+            console.log("Preuzeta klinika");
+            console.log(klinika.data);
+   
+            this.setState({
+                idKlinika: klinika.data.id,
+                listaLekara: klinika.data,
+             
+            });
+       
+          })
+      
+
+  }
+
+obrisiLekara = e => {
+  e.preventDefault();
+  console.log("CLick brisanje lekara");
+  console.log("LLL: " + e.target.id);
+  console.log("--------------------------------");
+  const url6 = "http://localhost:8025/api/klinike/brisanjeLekara";
+        axios
+          .post(url6, {
+            email : e.target.id
+            
+          })
+          .then(response => {
+            console.log("Brisanje lekara uspelo! ");
+            console.log(response.data);
+            this.listaLekara();
+
+          })
+          .catch(error => {
+            console.log("Brisanje leka nije uspelo! ");
+          });
+
+}
+
 componentWillMount(){
     console.log("wmount")
     console.log("Preuzimanje admina klinike.....")
@@ -61,7 +142,7 @@ componentWillMount(){
         //   telefon: Response.data.telefon,
         idKlinike: Response.data.idKlinike,
         });
-
+        console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
         const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
         axios.get(urlKlinike)
@@ -70,11 +151,11 @@ componentWillMount(){
             console.log(klinika.data);
    
             this.setState({
-                id: klinika.data.id,
+                // idKlinike: klinika.data.id,
                 listaLekara: klinika.data,
              
             });
-       
+                console.log("++++++++++++++++++ Id k: " + this.state.idKlinike);
           })
       
       })
@@ -82,22 +163,141 @@ componentWillMount(){
       .catch(error => {
         console.log("Administrator klinike  nije preuzet")
       })
+      console.log("************* ID KLINIKE JE:" + this.state.idKlinike);
 
-      //za kliniku ovdje
+      //za klinike ovdje
+      const url1 = "http://localhost:8025/api/klinike/all";
+      axios
+        .get(url1)
+        .then(Response => {
+          console.log("Preuzeta lista klinika: ");
+          console.log(Response.data);
+          this.setState({
+            listaKlinika: Response.data
+          });
+          console.log(this.state.listaKlinika);
+        })
+  
+        .catch(error => {
+          console.log("klinike nisu preuzete");
+        });
+  }
+ 
+  onDropdownSelected(e) {
+    console.log("THE VAL", e.target.value);
+    //here you will see the current selected value of the select input
+}
+  dodajLekara = e => {
+    e.preventDefault();
+
+    console.log("--------------------------------");
+    this.dialog.show({
+      title: 'Dodavanje novog lekara',
+      body: [
+      <form className="formaZaDodavanjeNovogLekara">
+         
+          <div className="imeLekara" >
+            <label className="lekarImeLabel" htmlFor="imeLekara">Ime: </label>
+            <input className="lekarImeLabel"
+              type="text"
+              name="imeLekara"
+              defaultValue = "" 
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="prezimeLekara" >
+            <label className="lekarPrezimeLabel" htmlFor="prezimeLekara">Prezime: </label>
+            <input className="lekarPrezimeLabel"
+              type="text"
+              name="prezimeLekara"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="telefonLekara" >
+            <label className="lekarTelefonLabel" htmlFor="telefonLekara">Telefon: </label>
+            <input className="lekarTelefonLabel"
+              type="text"
+              name="telefonLekara"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="emailLekara" >
+            <label className="lekarMailLabel" htmlFor="emailLekara">Email: </label>
+            <input className="lekarMailLabel"
+              type="text"
+              name="emailLekara"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="lozinkaLekara" >
+            <label className="lekarLozinkaLabel" htmlFor="lozinkaLekara">Lozinka: </label>
+            <input className="lekarLozinkaLabel"
+              type="password"
+              name="lozinkaLekara"
+              defaultValue=""
+              onChange={this.handleChange}
+            />
+          </div>
+          {/* <div className="klinikaLekara" >
+            <label className="lekarKlinikaLabel" htmlFor="lekarKlinika">Klinika: </label>
+            <div>
+            <select name="odabirKlinike"  onChange={e => {this.proslediKliniku(e)}}>
+            {this.listaKlinikaIzbor()} 
+            
+            </select>
+          </div>
+          </div> */}
+      </form> 
+      ],
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.OKAction(() => {
+          
+          console.log('OK je kliknuto!');
+
+          const url3 = "http://localhost:8025/api/adminKlinike/dodavanjeLekara";
+          axios
+            .post(url3, {
+              ime: this.state.imeLekara,
+              prezime: this.state.prezimeLekara,
+              telefon: this.state.telefonLekara,
+              lozinka: this.state.lozinkaLekara,
+              email: this.state.emailLekara,
+              klinikaID: this.state.idKlinike,
+            })
+            .then(response => {
+              
+              console.log("Dodavanje lekra je uspjelo! ");
+              console.log(response.data);
+              this.listaLekara();
+
+            })
+            .catch(error => {
+              console.log("Dodavanje novog lekaara nije uspjelo! ");
+              console.log("+++++++++++" + this.state.idKlinike);
+            });
+           
+        })
+      ],
+      bsSize: 'medium',
+      onHide: (dialog) => {
+        dialog.hide()
+        console.log('closed by clicking background.')
+      }
+    })
     
   }
-//   handleChange = e => {
-//     e.preventDefault();
-    
-//     this.setState({ [e.target.name]: e.target.value });
-//     console.log(this.state);
-//     console.log("On change !!!");
-//   };
- 
 handleIzmeni = e => {
     e.preventDefault();
     console.log(e.target.id);
-    console.log("handle IZMENIIII")
+    console.log("handle IZMENIIII LEKARA")
+    this.setState({
+      reirectToIzmeniLekar: true,
+      emailLekara: e.target.id,
+    });
     // const url2 = "http://localhost:8025/api/lekari/update/" + e.target.id;
     // axios
     // .post(url2, {})
@@ -111,79 +311,17 @@ handleIzmeni = e => {
     // });
 
   };
-//   handleOdbijen = e => {
-    
-//     e.preventDefault();
-//     let za = e.target.id;
-//     this.setState({
-//       za : za
-//     })
-//     console.log("--------------------------------");
 
-//     this.dialog.show({
-//       title: 'Odbijanje zahteva za registraciju',
-//       body: [
-//         <form className="formaZaSlanjeRazlogaOdbijanja">
-//           <div >
-//             <label htmlFor="za">Za: </label>
-//             <input
-//               type="text"
-//               name="za"
-//               value = {za}
-//               // defaultValue= {za}
-//               // placeholder={this.state.ime}
-//               // noValidate
-//               // onChange={this.handleChange}
-//             />
-//           </div>
-//           <div >
-//             <label htmlFor="razlogOdbijanja">Razlog odbijanja: </label>
-//             <input
-//               type="text"
-//               name="razlogOdbijanja"
-//               defaultValue=""
-//               onChange={this.handleChange}
-//             />
-//           </div>
-//       </form>
-//       ],
-//       actions: [
-//         Dialog.CancelAction(),
-//         Dialog.OKAction(() => {
-//           console.log('OK je kliknuto!');
-//           console.log("Poslat razlog : ---------------");
-//           console.log(this.state.za);
-//           console.log(this.state.razlogOdbijanja);
-//           const url3 = "http://localhost:8025/api/administratoriKC/odbijanje/" + this.state.za + "/" + this.state.razlogOdbijanja;
-//           axios
-//             .post(url3, {})
-//             .then(response => {
-//               console.log("Odbijanje uspelo! ");
-//               console.log(response.data);
-//               this.ucitajPonovo();
+ 
 
-//             })
-//             .catch(error => {
-//               console.log("Odbijanje nije uspelo! ");
-//             });
-//         })
-//       ],
-//       bsSize: 'medium',
-//       onHide: (dialog) => {
-//         dialog.hide()
-//         console.log('closed by clicking background.')
-//       }
-//     })
-    
-//   }
-
-listaLekara() {
+listaLekaraUK() {
     let res = [];
     let lista = this.state.listaLekara;
 
     for (var i = 0; i < lista.length; i++) {
       
       res.push(
+
         <tr key={i}>
           <td>{lista[i].id}</td>
          
@@ -191,8 +329,11 @@ listaLekara() {
           <td>{lista[i].prezime}</td>
           <td>{lista[i].email}</td>
        
-          <td>{lista[i].telefon}</td>
-
+          <td>{lista[i].telefon}</td>   
+        <td >
+             <Button  id={lista[i].email} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
+             <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
+       </td>
          <td>
             <Button className="OdobrenZahtev" id={lista[i].email} onClick={e => this.handleIzmeni(e)}>
               Izmeni
@@ -206,6 +347,24 @@ listaLekara() {
   }
 
   render() {
+    const lista = this.state.listaKlinika;
+    const reirectToIzmeniLekar = this.state.reirectToIzmeniLekar;
+   console.log("LEKARRRRRRR : "  + this.state.emailLekara);
+   const emailLekara = this.state.emailLekara;
+    if (reirectToIzmeniLekar === true) {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+            
+              path="/izmenaProfilaLekara"
+              render={props => <IzmenaProfila {...props} email={emailLekara} />}
+            />
+            <Redirect from="/" to="/izmenaProfilaLekara" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
     return (
       <div className="content">
         <Grid fluid>
@@ -218,6 +377,11 @@ listaLekara() {
                   ctTableFullWidth
                   ctTableResponsive
                   content={
+                    <div>
+                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj lekara</Button>
+                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+                    
+                   
                     <Table striped hover>
                       <thead>
                         <tr>
@@ -228,13 +392,12 @@ listaLekara() {
                           <th id="EmailPacijenta">Email</th>
                          
                           <th id="TelefonPacijenta">Telefon</th>
-                          {/* {thArray.map((prop, key) => {
-                            return <th key={key}>{prop}</th>;
-                          })} */}
+                  
                         </tr>
                       </thead>
-                      <tbody>{this.listaLekara()}</tbody>
+                      <tbody>{this.listaLekaraUK()}</tbody>
                     </Table>
+                    </div>
                   }
                 />
               </Row>

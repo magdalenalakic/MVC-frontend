@@ -119,6 +119,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     this.setState({
       redirectToListaLekara: true
     });
+
   }
   handleSlobodniTermini() {
     // this.setState({
@@ -128,6 +129,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     this.setState({
       redirectToSlobodniTermini: true
     });
+
  
     
   }
@@ -136,6 +138,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       return <Redirect from="/" to="/admin/lekari"/>;
     }
   };
+
 
   renderRedirectST = () => {
    if(this.state.redirectToSlobodniTermini){
@@ -188,7 +191,9 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     // console.log(this.props);
 
     const redirectToListaLekara = this.state.redirectToListaLekara;
+
     const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
+
     const email = this.state.email;
     const uloga = this.state.uloga;
     const ime = this.state.ime;
@@ -367,8 +372,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
               />
             </Col>
             <Col md={3}>
+
               {this.renderRedirectST()}
               <div onClick={this.handleSlobodniTermini}/>
+
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
                 // statsText="Profil korisnika"
