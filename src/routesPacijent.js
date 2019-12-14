@@ -10,7 +10,7 @@ import Upgrade from "views/Upgrade.jsx";
 import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
-import PocetnaStranaPacijenta from "views/PocetnaStranaPacijenta.jsx";
+import PocetnaStranaPacijenta from "views/PocetnaStranicaPacijenta.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
 import ListaKlinika from "views/ListaKlinika.jsx";
@@ -26,14 +26,14 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/user",
+    path: "/izmenaProfilaPacijenta",
     name: "Izmena profila",
     icon: "pe-7s-user",
     component: IzmenaProfilaPacijent,
     layout: "/admin"
   },
   {
-    path: "/klinike",
+    path: "/klinikePacijenta",
     name: "Klinike",
     icon: "pe-7s-user",
     component: ListaKlinika,
