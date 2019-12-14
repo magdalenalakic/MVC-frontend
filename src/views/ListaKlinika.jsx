@@ -194,9 +194,12 @@ class ListaKlinika extends Component {
               nazivIzabranogLekara: ""
             },
             () =>
-              this.setState({
-                nazivIzabranogLekara: lista[i].ime + " " + lista[i].prezime
-              }, ()=>console.log(this.state))
+              this.setState(
+                {
+                  nazivIzabranogLekara: lista[i].ime + " " + lista[i].prezime
+                },
+                () => console.log(this.state)
+              )
           );
           break;
         }
@@ -619,6 +622,11 @@ class ListaKlinika extends Component {
     }
     return res;
   }
+  slanjeZahtevaZaPregled = e=>{
+    e.preventDefault();
+    console.log('slanje zahteva....')
+    
+  }
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;
@@ -950,11 +958,11 @@ class ListaKlinika extends Component {
             <Row>
               <Col md={10}>
                 <Card
-                  title="Lekari"
+                  title="Detalji o zahtevu za zdravstveni pregled"
                   content={
                     <form
                       onSubmit={e => {
-                        this.odabranLekar(e);
+                        this.slanjeZahtevaZaPregled(e);
                       }}
                     >
                       <div>
@@ -977,42 +985,12 @@ class ListaKlinika extends Component {
                           }
                         />
                       </div>
+                      <Button type="submit">Potvrdi</Button>
                     </form>
                   }
                 />
               </Col>
-              {/* <Col md={4}>
-                <Card
-                  // statsIcon="fa fa-clock-o"
-                  title="O Pacijentu"
-                  // category="Ime"
-                  content={
-                    <div id="a">
-                      <div className="slikaKCdiv">
-                        <h2>
-                          <img
-                            className="slikaPacijent"
-                            src={slikaPacijent}
-                          ></img>
-                        </h2>
-                      </div>
 
-                      <div className="typo-line">
-                        <h2>
-                          <p className="category">Email: </p>
-                          <label className="adresaKC">{email}</label>
-                        </h2>
-                      </div>
-                      <div className="typo-line">
-                        <h2>
-                          <p className="category">LBO: </p>
-                          <label className="opisKC">{lbo}</label>
-                        </h2>
-                      </div>
-                    </div>
-                  }
-                />
-              </Col> */}
             </Row>
           </Grid>
         </div>
