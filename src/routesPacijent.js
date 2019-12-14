@@ -1,4 +1,3 @@
-
 import Dashboard from "views/Dashboard.jsx";
 import IzmenaProfilaPacijent from "views/IzmenaProfilaPacijent.jsx";
 import TableList from "views/TableList.jsx";
@@ -10,7 +9,7 @@ import Upgrade from "views/Upgrade.jsx";
 import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
-import PocetnaStranaPacijenta from "views/PocetnaStranicaPacijenta.jsx";
+import PocetnaStranicaPacijenta from "views/PocetnaStranicaPacijenta.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
 import ListaKlinika from "views/ListaKlinika.jsx";
@@ -22,7 +21,7 @@ const dashboardRoutes = [
     path: "/pocetnaStranica",
     name: "Pocetna Strana",
     icon: "pe-7s-graph",
-    component: PocetnaStranaPacijenta,
+    component: PocetnaStranicaPacijenta,
     layout: "/admin"
   },
   {
