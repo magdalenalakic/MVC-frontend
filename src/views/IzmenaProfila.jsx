@@ -40,6 +40,7 @@ class izmenaProfila extends Component {
 
   componentWillMount(){
     console.log("wmount")
+    console.log("LEKAR SA EMAIL-OM: " + this.state.email)
     const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
     axios.get(url)
       .then(Response => {
