@@ -10,7 +10,7 @@ import "klinickiCentar.css";
 
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
-class SlobodniTermini extends Component {
+class ListaPregleda extends Component {
   constructor(props) {
     super(props);
     console.log("LISTA PREGLEDA");
@@ -29,6 +29,11 @@ class SlobodniTermini extends Component {
       telefonLekara: "",
       klinikaLekara: 0,
       reirectToIzmeniLekar: false,
+      pregledPacijentID: "",
+      pregledLekarID: "",
+      pregledTipPregledaID: "",
+      pregledCijena: "",
+      nazivTipPregled: "",
     };
      this.listaSalaK = this.listaSalaK.bind(this);
     // this.dodajLekara = this.dodajLekara.bind(this);
@@ -161,12 +166,34 @@ componentWillMount(){
                     .then(klinika => {
                         console.log("Preuzeta lista klinika");
                         console.log(klinika.data);
-            
+                        console.log(klinika.data[0].tipPregledaID);
                         this.setState({
                             // idKlinike: klinika.data.id,
                             listaLekara: klinika.data,
+                            pregledLekarID: klinika.data.lekarID,
+                            pregledPacijentID: klinika.data.pacijentID,
+                            pregledTipPregledaID: klinika.data[0].tipPregledaID,
+                            pregledCijena: klinika.data.cena,
                         
                         });
+                        // console.log("**" + this.state.pregledTipPregledaID);
+                        // console.log("Preuzmi mi tip");
+                        // const urlKlinike = 'http://localhost:8025/api/tipPregleda/' + this.state.pregledTipPregledaID;    
+                        //  axios.get(urlKlinike)
+                        //     .then(resp => {
+                        //         console.log("Preuzet pregled");
+                        //         console.log(resp.data);
+                                
+                        //         this.setState({
+                        //             // idKlinike: klinika.data.id,
+                        //             nazivTipPregled: resp.data.naziv,
+                            
+                                
+                        //         });
+        
+                                
+                 
+                        //  })
          
                  })
          
@@ -325,11 +352,14 @@ handleIzmeni = e => {
        
          
           <td>{lista[i].datum}</td>
-          <td>{lista[i].tipPregledaID}</td>
+      <td>{lista[i].nazivTP}</td>
+          <td>{lista[i].imeL} {lista[i].prezimeL}</td>
+      <td>{lista[i].imeP} {lista[i].prezimeP}</td>
+           <td>{lista[i].cena} RSD</td>
         
        
-          <td>{lista[i].telefon}</td>   
-        <td >
+          {/* <td>{lista[i].telefon}</td>    */}
+        {/* <td >
              <Button  id={lista[i].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
              <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
        </td>
@@ -337,7 +367,7 @@ handleIzmeni = e => {
             <Button className="OdobrenZahtev" id={lista[i].id} onClick={e => this.handleIzmeni(e)}>
               Izmeni
             </Button>
-          </td>
+          </td> */}
  
         </tr>
       );
@@ -371,13 +401,13 @@ handleIzmeni = e => {
             <Col>
               <Row>
                 <Card
-                  title="Lista sala klinike"
+                  title="Lista definisanih pregleda"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
                   ctTableResponsive
                   content={
                     <div>
-                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj lekara</Button>
+                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj novi termin za pregled</Button>
                     <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
                     
                    
@@ -385,9 +415,14 @@ handleIzmeni = e => {
                       <thead>
                         <tr>
                           <th id="IdPacijenta">Datum</th>
-                          <th id="ImePacijenta">Tip</th>
-      
-                  
+                          <th id="ImePacijenta">Tip pregleda</th>
+
+                            <th id="lekar">Lekar</th>
+                                    
+                            <th id="pacijent">Pacijent</th>
+
+                            <th id="cena">Cena</th>
+                                
                         </tr>
                       </thead>
                       <tbody>{this.listaSalaK()}</tbody>
@@ -404,4 +439,4 @@ handleIzmeni = e => {
   }
 }
 
-export default SlobodniTermini;
+export default ListaPregleda;
