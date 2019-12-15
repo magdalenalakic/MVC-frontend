@@ -46,12 +46,14 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       redirectToListaLekara: false,
       redirectToListaSala: false,
       redirectToSlobodniTermini: false,
+      redirectToListaPregleda: false,
       
     };
    // this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
    this.handleListaLekara = this.handleListaLekara.bind(this);
    this.handleListaSala = this.handleListaSala.bind(this);
   this.handleSlobodniTermini = this.handleSlobodniTermini.bind(this);
+  this.handleLisaPregleda = this.handleLisaPregleda.bind(this);
   }
 
   componentWillMount(){
@@ -107,12 +109,23 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     });
 
   }
+  
+  handleLisaPregleda() {
+
+    console.log("REDIREKCIJA NA LISTU Pregleda");
+    this.setState({
+      redirectToListaPregleda: true
+    });
+
+  }
 
   handleListaSala() {
     console.log("REDIREKCIJA NA LISTU SALAAA");
     this.setState({
       redirectToListaSala: true
-    });
+    }, () => console.log(this.state.redirectToListaSala)
+    
+    );
 
   }
   handleSlobodniTermini() {
@@ -126,12 +139,16 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     
   }
   renderRedirect = () => {
+    console.log("aaaaaaa")
     if(this.state.redirectToListaLekara){
       return <Redirect from="/" to="/admin/lekari"/>;
     }else  if(this.state.redirectToListaSala){
-      return <Redirect from="/" to="/admin/Sale"> </Redirect>;
+      console.log("redirect SALA//////////////")
+      return <Redirect from="/" to="/admin/Sale"> </Redirect>
     }else if(this.state.redirectToSlobodniTermini){
-      return <Redirect from="/" to="/admin/slobodniTermini"></Redirect>;
+      return <Redirect from="/" to="/admin/slobodniTermini"></Redirect>
+    }else if(this.state.redirectToListaPregleda){
+      return <Redirect from="/" to="/admin/Pregledi"></Redirect>
     }
   };
 
@@ -320,7 +337,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             </Col>
             <Row>
             <Col md={3}>
-           
+            {this.renderRedirect()}
+              <div onClick={this.handleLisaPregleda}>
               <StatsCard
                 bigIcon={<i className="pe-7s-server text-warning" />}
                 // statsText="Lista pacijenata"
@@ -328,6 +346,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                 // statsIcon={<i className="fa fa-refresh" />}
                  statsIconText="Pregledi"
               />
+              </div>
           </Col>
             {/* <h1>{this.state}</h1> */}
           <Col md={3}>
@@ -353,7 +372,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             </Col> */}
             <Col md={3}>
             {this.renderRedirect()}
-              <div onClick={this.handleListaSala}/>
+              <div onClick={this.handleListaSala}>
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
                 // statsText="Profil korisnika"
@@ -361,11 +380,12 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                 // statsIcon={<i className="fa fa-clock-o" />}
                  statsIconText="Sale"
               />
+             </div>
             </Col>
             <Col md={3}>
 
               {this.renderRedirect()}
-              <div onClick={this.handleSlobodniTermini}/>
+              <div onClick={this.handleSlobodniTermini}>
 
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
@@ -374,6 +394,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                 // statsIcon={<i className="fa fa-clock-o" />}
                  statsIconText="Slobodni termini"
               />
+            </div>
             </Col>
             {/* <Col lg={3} sm={6}>
               <StatsCard
