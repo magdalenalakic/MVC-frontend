@@ -176,25 +176,7 @@ componentWillMount(){
                             pregledCijena: klinika.data.cena,
                         
                         });
-                        // console.log("**" + this.state.pregledTipPregledaID);
-                        // console.log("Preuzmi mi tip");
-                        // const urlKlinike = 'http://localhost:8025/api/tipPregleda/' + this.state.pregledTipPregledaID;    
-                        //  axios.get(urlKlinike)
-                        //     .then(resp => {
-                        //         console.log("Preuzet pregled");
-                        //         console.log(resp.data);
-                                
-                        //         this.setState({
-                        //             // idKlinike: klinika.data.id,
-                        //             nazivTipPregled: resp.data.naziv,
-                            
-                                
-                        //         });
-        
-                                
-                 
-                        //  })
-         
+                  
                  })
          
             })
@@ -401,15 +383,15 @@ handleIzmeni = e => {
             <Col>
               <Row>
                 <Card
-                  title="Lista definisanih pregleda"
+                  title="Lista pregleda klinike"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
                   ctTableResponsive
                   content={
                     <div>
-                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj novi termin za pregled</Button>
+                    {/* <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj novi termin za pregled</Button>
                     <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
-                    
+                     */}
                    
                     <Table striped hover>
                       <thead>

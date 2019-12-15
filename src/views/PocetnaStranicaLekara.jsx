@@ -32,7 +32,11 @@ import { render } from "react-dom";
 import events from "events.js";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css"; 
-
+import Slikalekari from "assets/img/lekari.jpg";
+import slikaPregledi from "assets/img/pregled.jpg"
+import slikaSala from "assets/img/sala.jpg"
+import slikaST from "assets/img/lekari.jpg"
+import kalendarSlika from "assets/img/calendar.png"
 import moment from 'moment';
  
 
@@ -268,7 +272,7 @@ class PocetnaStranicaLekara extends React.Component {
           <Row>
             <Col lg={3} sm={6}>
               <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
+                bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
                 // statsText="Lista pacijenata"
                 // statsValue="105GB"
                 // statsIcon={<i className="fa fa-refresh" />}
@@ -285,7 +289,7 @@ class PocetnaStranicaLekara extends React.Component {
             {/* <h1>{this.state}</h1> */}
             <Col lg={3} sm={6}>
               <StatsCard
-                bigIcon={<i className="pe-7s-wallet text-success" />}
+                bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
                 // statsText="Pocetak pregleda"
                 // statsValue="$1,345"
                 // statsIcon={<i className="fa fa-calendar-o" />}
@@ -303,7 +307,7 @@ class PocetnaStranicaLekara extends React.Component {
             </Col> */}
             <Col lg={3} sm={6} >
               <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                bigIcon={<div> <img src = { Slikalekari} width="30" height="20" /></div>}
                 // statsText="Profil korisnika"
                 // statsValue="23"
                 // statsIcon={<i className="fa fa-clock-o" />}
@@ -312,7 +316,7 @@ class PocetnaStranicaLekara extends React.Component {
             </Col>
             <Col lg={3} sm={6}>
               <StatsCard
-                bigIcon={<i className="fa fa-twitter text-info" />}
+                bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
                 statsText=""
                 // statsValue="+45"
                 // statsIcon={<i className="fa fa-refresh" />}

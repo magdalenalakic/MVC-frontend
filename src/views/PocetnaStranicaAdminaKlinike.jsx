@@ -22,7 +22,10 @@ import {
   responsiveBar,
   legendBar
 } from "variables/Variables.jsx";
-import slikaLekar from "assets/img/images.jpg";
+import Slikalekari from "assets/img/lekari.jpg";
+import slikaPregledi from "assets/img/pregled.jpg"
+import slikaSala from "assets/img/sala.jpg"
+import slikaST from "assets/img/lekari.jpg"
 import Login from "login.js";
 import axios from "axios";
 
@@ -340,7 +343,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             {this.renderRedirect()}
               <div onClick={this.handleLisaPregleda}>
               <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
+                bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
                 // statsText="Lista pacijenata"
                 // statsValue="105GB"
                 // statsIcon={<i className="fa fa-refresh" />}
@@ -353,7 +356,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
               {this.renderRedirect()}
               <div onClick={this.handleListaLekara}>
               <StatsCard
-                bigIcon={<i className="pe-7s-wallet text-success" />}
+                bigIcon={<div> <img src = { Slikalekari} width="30" height="20" /></div>}
                 // statsText="Pocetak pregleda"
                 // statsValue="$1,345"
                 // statsIcon={<i className="fa fa-calendar-o" />}
@@ -374,7 +377,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             {this.renderRedirect()}
               <div onClick={this.handleListaSala}>
               <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                bigIcon={<div> <img src = { slikaSala} width="30" height="20" /></div>}
                 // statsText="Profil korisnika"
                 // statsValue="23"
                 // statsIcon={<i className="fa fa-clock-o" />}
@@ -388,7 +391,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
               <div onClick={this.handleSlobodniTermini}>
 
               <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                bigIcon={<div> <img src = { slikaST} width="30" height="20" /></div>}
                 // statsText="Profil korisnika"
                 // statsValue="23"
                 // statsIcon={<i className="fa fa-clock-o" />}
