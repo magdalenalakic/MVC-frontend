@@ -641,7 +641,7 @@ class ListaKlinika extends Component {
 
     axios
 
-      .post("http://localhost:8025/api/pregled/new", {
+      .post("http://localhost:8025/api/pregledi/new", {
         lekarID: this.state.izabranLekar,
         klinikaID: this.state.izabranaKlinika,
         tipPregledaID: this.state.oznaceniTipPregleda,

@@ -14,6 +14,7 @@ import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
 import ListaKlinika from "views/ListaKlinika.jsx";
 import ZdravstveniKarton from "views/ZdravstveniKarton.jsx";
+import BrzoZakazivanje from "views/BrzoZakazivanje.jsx";
 
 const dashboardRoutes = [
   //za pacijenta
@@ -29,6 +30,13 @@ const dashboardRoutes = [
     name: "Izmena profila",
     icon: "pe-7s-user",
     component: IzmenaProfilaPacijent,
+    layout: "/admin"
+  },
+  {
+    path: "/brzoZakazivanje",
+    name: "Brzo Zakazivanje",
+    icon: "pe-7s-user",
+    component: BrzoZakazivanje,
     layout: "/admin"
   },
   {
