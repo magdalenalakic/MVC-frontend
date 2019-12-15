@@ -39,7 +39,7 @@ class KlinickiCentarPocetna extends Component {
       emailNAK: "",
       lozinkaNAK: "",
       telefonNAK: "",
-      klinikaNAK: 0,
+      klinikaNAK: 1,
       //za izmenu postojeceg administratora klinike
       imeIzmenjenogAK: "",
       prezimeIzmenjenogAK: "",
@@ -317,7 +317,7 @@ class KlinickiCentarPocetna extends Component {
           <div className="lozinkaNAK" >
             <label className="lozinkaNAKLabel" htmlFor="lozinkaNAK">Lozinka: </label>
             <input className="lozinkaNAKInput"
-              type="text"
+              type="password"
               name="lozinkaNAK"
               defaultValue=""
               onChange={this.handleChange}
@@ -487,7 +487,7 @@ class KlinickiCentarPocetna extends Component {
           <div className="lozinkaNAK" >
             <label className="lozinkaNAKLabel" htmlFor="lozinkaNAK">Lozinka: </label>
             <input className="lozinkaNAKInput"
-              type="text"
+              type="password"
               name="lozinkaNAK"
               defaultValue=""
               onChange={this.handleChange}
@@ -599,7 +599,7 @@ class KlinickiCentarPocetna extends Component {
           <div className="lozinkaNAK" >
             <label className="lozinkaNAKLabel" htmlFor="lozinkaNAK">Lozinka: </label>
             <input className="lozinkaNAKInput"
-              type="text"
+              type="password"
               name="lozinkaNAKC"
               defaultValue=""
               onChange={this.handleChange}
@@ -833,9 +833,9 @@ class KlinickiCentarPocetna extends Component {
               <div className="lozinkaNAK" >
                 <label className="lozinkaNAKLabel" htmlFor="lozinkaNAK">Lozinka: </label>
                 <input className="lozinkaNAKInput"
-                  type="text"
+                  type="password"
                   name="lozinkaIzmenjenogAK"
-                  defaultValue={this.state.lozinkaIzmenjenogAK}
+                  defaultValue={Response.data.lozinka}
                   onChange={this.handleChange}
                 />
                 {/* <div className="checkbox">
@@ -880,9 +880,9 @@ class KlinickiCentarPocetna extends Component {
              
                 console.log("Izmjena admina klinike: ---------------")  
                 axios
-                .put("http://localhost:8025/api/medicinskaSestra/izmena", {
+                .put("http://localhost:8025/api/adminKlinike/update", {
                   ime: this.state.imeIzmenjenogAK,
-                  prezime: this.state.prezimeIzmenjenogAKC,
+                  prezime: this.state.prezimeIzmenjenogAK,
                   email: this.state.emailIzmenjenogAK,
                   brTelefona: this.state.telefonIzmenjenogAK,
                   lozinka: this.state.lozinkaIzmenjenogAK,
@@ -977,7 +977,7 @@ class KlinickiCentarPocetna extends Component {
                   <div className="lozinka">
                       <label htmlFor="lozinka">Lozinka: </label>
                       <input
-                        type="text"
+                        type="password"
                         name="lozinkaIzmenjenogAKC"
                         defaultValue={this.state.lozinkaIzmenjenogAKC}
                         // placeholder={this.state.adresa}

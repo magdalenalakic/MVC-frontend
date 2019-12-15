@@ -32,6 +32,9 @@ class izmenaProfila extends Component {
       ime: "",
       telefon: "",
       prezime: "",
+      imeN: "",
+      telefonN: "",
+      prezimeN: "",
 
     }
 
@@ -83,9 +86,9 @@ class izmenaProfila extends Component {
       console.log(this.state.prezime);
     axios
       .put("http://localhost:8025/api/lekari/update", {
-        ime: this.state.ime,
-        prezime: this.state.prezime,
-        telefon: this.state.telefon,
+        ime: this.state.imeN,
+        prezime: this.state.prezimeN,
+        telefon: this.state.telefonN,
         email: this.state.email
       })
       .then(response => {
@@ -134,7 +137,7 @@ class izmenaProfila extends Component {
                         <label htmlFor="ime">Ime: </label>
                         <input
                           type="text"
-                          name="ime"
+                          name="imeN"
                           
                           defaultValue={ime}
                           // placeholder={this.state.ime}
@@ -146,7 +149,7 @@ class izmenaProfila extends Component {
                         <label htmlFor="prezime">Prezime: </label>
                         <input
                           type="text"
-                          name="prezime"
+                          name="prezimeN"
                           defaultValue={prezime}
                           // placeholder="prezime"
                           // noValidate
@@ -189,7 +192,7 @@ class izmenaProfila extends Component {
                         <label htmlFor="telefon">Broj telefona: </label>
                         <input
                           type="text"
-                          name="telefon"
+                          name="telefonN"
                           defaultValue={this.state.telefon}
                           // placeholder="telefon"
                           // noValidate
