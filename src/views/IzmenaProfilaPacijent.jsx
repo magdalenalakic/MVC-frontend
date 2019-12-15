@@ -8,12 +8,12 @@ import {
   FormControl
 } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-
+import { Table } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import "izmenaProfila.css";
-
+import "klinickiCentar.css";
 //dodam link za sliku  mozda od doktora!!
 import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
@@ -32,6 +32,7 @@ class IzmenaProfilaPacijent extends Component {
       ime: "",
       telefon: "",
       prezime: "",
+      formMessage: "",
       lbo: "",
       lozinka: "",
       adresa: "",
@@ -97,14 +98,14 @@ class IzmenaProfilaPacijent extends Component {
     console.log(this.state.prezime);
     axios
       .put("http://localhost:8025/api/pacijenti/update", {
-        ime: this.state.imeN,
-        prezime: this.state.prezimeN,
-        telefon: this.state.telefonN,
-        email: this.state.emailN,
-        adresa: this.state.adresaN,
-        grad: this.state.gradN,
-        drzava: this.state.drzavaN,
-        lbo: this.state.lboN
+        ime: this.state.ime,
+        prezime: this.state.prezime,
+        telefon: this.state.telefon,
+        email: this.state.email,
+        adresa: this.state.adresa,
+        grad: this.state.grad,
+        drzava: this.state.drzava,
+        lbo: this.state.lbo
       })
       .then(response => {
         console.log(response.data);
@@ -114,7 +115,8 @@ class IzmenaProfilaPacijent extends Component {
         });
 
         this.setState({
-          prezime: response.data.prezime
+          prezime: response.data.prezime,
+          formMessage: "Uspesno izmenjeno!"
         });
 
         this.setState({
@@ -161,7 +163,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="ime">Ime: </label>
                       <input
                         type="text"
-                        name="imeN"
+                        name="ime"
                         defaultValue={ime}
                         // placeholder={this.state.ime}
                         // noValidate
@@ -172,7 +174,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="prezime">Prezime: </label>
                       <input
                         type="text"
-                        name="prezimeN"
+                        name="prezime"
                         defaultValue={prezime}
                         // placeholder="prezime"
                         // noValidate
@@ -215,7 +217,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="grad">Grad: </label>
                       <input
                         type="text"
-                        name="gradN"
+                        name="grad"
                         defaultValue={grad}
                         // placeholder={this.state.grad}
                         // noValidate
@@ -226,7 +228,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="drzava">Drzava: </label>
                       <input
                         type="text"
-                        name="drzavaN"
+                        name="drzava"
                         defaultValue={drzava}
                         // placeholder={this.state.drzava}
                         // noValidate
@@ -237,7 +239,7 @@ class IzmenaProfilaPacijent extends Component {
                       <label htmlFor="telefon">Broj telefona: </label>
                       <input
                         type="text"
-                        name="telefonN"
+                        name="telefon"
                         defaultValue={this.state.telefon}
                         // placeholder="telefon"
                         // noValidate
@@ -258,6 +260,12 @@ class IzmenaProfilaPacijent extends Component {
                       <Button variant="outline-primary" type="submit">
                         Izmeni podatke
                       </Button>
+
+                      {this.state.formMessage.length > 0 && (
+                        <span className="successMessage">
+                          {this.state.formMessage}
+                        </span>
+                      )}
                     </div>
                   </form>
                   // <form className="formUserProfile">
@@ -342,35 +350,20 @@ class IzmenaProfilaPacijent extends Component {
                         ></img>
                       </h2>
                     </div>
-
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Email: </p>
-                        <label className="adresaKC">{email}</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">LBO: </p>
-                        <label className="opisKC">{lbo}</label>
-                      </h2>
-                    </div>
+                    <Table striped hover>
+                      <thead className="thead-dark">
+                        <tr>
+                          <td>E-mail:</td>
+                          <td>{email}</td>
+                        </tr>
+                        <tr>
+                          <td>LBO:</td>
+                          <td>{lbo}</td>
+                        </tr>
+                      </thead>
+                    </Table>
                   </div>
                 }
-
-                // category="opis ... naziv adresa i opis  "
-                // stats="Campaign sent 2 days ago"
-                // content={
-                //   <div
-                //     id="chartPreferences"
-                //     className="ct-chart ct-perfect-fourth"
-                //   >
-                //     <ChartistGraph data={dataPie} type="Pie" />
-                //   </div>
-                // }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendPie)}</div>
-                // }
               />
             </Col>
           </Row>
