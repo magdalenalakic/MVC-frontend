@@ -54,6 +54,7 @@ class ZdravstveniKarton extends Component {
         console.log("Pacijent  nije preuzet");
       });
   }
+
   promenjenOdabirPregleda() {
     console.log("promenjen odabrir");
   }
