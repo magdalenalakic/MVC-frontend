@@ -26,6 +26,7 @@ import Login from "login";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
 import { string } from "prop-types";
+import PocetnaStranicaPacijenta from "./PocetnaStranicaPacijenta";
 
 class ListaKlinika extends Component {
   constructor(props) {
@@ -50,7 +51,10 @@ class ListaKlinika extends Component {
       nazivIzabraneKlinike: "",
       tipoviPregleda: [],
       oznaceniTipPregleda: 1,
-      nazivOznacenogPregleda: ""
+      nazivOznacenogPregleda: "",
+      back: false,
+      quit: false,
+      uspesnoPoslatZahtev: false
     };
     console.log(this.state);
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
@@ -64,6 +68,11 @@ class ListaKlinika extends Component {
     this.izaberiVrstuPregleda = this.izaberiVrstuPregleda.bind(this);
     this.redirectReferer = this.redirectReferer(this);
     this.redirectReferer2 = this.redirectReferer2(this);
+    this.prethodno = this.prethodno.bind(this);
+    this.prethodno2 = this.prethodno2.bind(this);
+    this.odustani = this.odustani.bind(this);
+    this.odustani2 = this.odustani2.bind(this);
+
     console.log(this.state.flag);
   }
 
@@ -341,7 +350,6 @@ class ListaKlinika extends Component {
       let lista = this.state.listaLekara;
 
       for (var i = 0; i < lista.length; i++) {
-
         var ime = lista[i].ime;
         var prezime = lista[i].prezime;
         var ocena;
@@ -353,7 +361,6 @@ class ListaKlinika extends Component {
         if (
           ime.toLowerCase().includes(pretraga.toLowerCase()) ||
           prezime.toLowerCase().includes(pretraga.toLowerCase())
-
         ) {
           console.log(oc);
           console.log(ocena);
@@ -502,6 +509,7 @@ class ListaKlinika extends Component {
     //treba redirektovati na pretragu i filtriranje lekara
     e.preventDefault();
     console.log(this.state.izabranLekar);
+    console.log(this.state.flag);
     const ol = this.state.izabranLekar;
     if (ol != 0 && ol != undefined) {
       this.setState({
@@ -509,12 +517,15 @@ class ListaKlinika extends Component {
         flag: 2
       });
     } else {
-      this.setState(
-        {
-          formError: "Odaberite Lekara"
-        },
-        () => console.log(this.state.formError)
-      );
+      console.log(this.state.back);
+      if (this.state.back == false) {
+        this.setState(
+          {
+            formError: "Odaberite Lekara"
+          },
+          () => console.log(this.state.formError)
+        );
+      }
     }
   };
   redirectReferer() {
@@ -552,7 +563,7 @@ class ListaKlinika extends Component {
             />
           )}
         >
-          <Redirect from="/" to="/admin/klinike" />
+          <Redirect from="/" to="/admin/klinikePacijenta" />
         </Route>
       );
     }
@@ -592,7 +603,7 @@ class ListaKlinika extends Component {
             />
           )}
         >
-          <Redirect from="/" to="/admin/klinike" />
+          <Redirect from="/" to="/admin/klinikePacijenta" />
         </Route>
       );
     }
@@ -624,11 +635,77 @@ class ListaKlinika extends Component {
     }
     return res;
   }
-  slanjeZahtevaZaPregled = e=>{
+  slanjeZahtevaZaPregled = e => {
     e.preventDefault();
-    console.log('slanje zahteva....')
-    
+    console.log("slanje zahteva....");
+
+    axios
+
+      .post("http://localhost:8025/api/pregled/new", {
+        lekarID: this.state.izabranLekar,
+        klinikaID: this.state.izabranaKlinika,
+        tipPregledaID: this.state.oznaceniTipPregleda,
+        pacijentEmail: this.state.email,
+        cena: 500,
+        datum: this.state.datumZaPregled
+      })
+      .then(response => {
+        console.log("PREGLED");
+        console.log(response);
+        this.setState({
+          uspesnoPoslatZahtev: true
+        });
+      })
+      .catch(error => {
+        console.log("greska pregled");
+        console.log(error.response);
+      });
+  };
+  prethodno = e => {
+    e.preventDefault();
+    console.log("vrati se");
+    var flag = 0;
+    this.setState(
+      {
+        back: true,
+        flag: 0
+      },
+      () => console.log(this.state.back)
+    );
+  };
+  prethodno2() {
+    var flag = 0;
+    console.log("prethodno 2");
+    if (this.state.back == true) {
+      return (
+        <Route
+          path="/registration"
+          render={props => (
+            <ListaKlinika
+              {...props}
+              flag={this.state.flag}
+              back={this.state.back}
+            />
+          )}
+        >
+          <Redirect from="/" to="/admin/klinikePacijenta" />
+        </Route>
+      );
+    }
   }
+  odustani = e => {
+    e.preventDefault();
+    console.log("odustani od pregleda");
+    this.setState({
+      quit: true
+    });
+  };
+  odustani2 = () => {
+    console.log("odustani 2");
+    if (this.state.quit == true) {
+      return <Redirect from="/" to="/admin/pocetnaStranica" />;
+    }
+  };
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;
@@ -642,46 +719,69 @@ class ListaKlinika extends Component {
     const lista = this.state.listaKlinika;
     console.log(this.state.flag);
     // const [startDate, setStartDate] = useState(new Date());
-    if (this.state.flag == 0) {
+
+    if (this.state.uspesnoPoslatZahtev == true) {
       return (
         <div className="content">
           <Grid fluid>
             <Row>
               <Col md={10}>
-                {/* <Nav pullRight> */}
-                <form>
-                  <input
-                    placeholder="Pretrazi"
-                    type="text"
-                    aria-label="Search"
-                    name="pretraziPoljeKlinika"
-                    onChange={this.handleChange}
-                  />
-                  <Button onClick={e => this.izaberiKliniku()}>Pretrazi</Button>
-                </form>
-                <div>
-                  <h5>Datum za pregled:</h5>
-                  <DatePicker
-                    placeholderText="Izaberi datum"
-                    selected={this.state.datumZaPregled}
-                    onSelect={this.handleChangeDate}
-
-                    // onChange={date => setStartDate(date)}
-                  />
-                  <Button onClick={this.slobodniTermini}>
-                    Pronadji termine
-                  </Button>
-                </div>
-                <div>
+                <Card
+                  title="Zahtev za pregled je uspesno poslat!"
+                  content={
+                    <h3 className="successMessage">
+                      Potvrdite zahtev za pregled preko E-maila!
+                    </h3>
+                  }
+                />
+              </Col>
+            </Row>
+          </Grid>
+        </div>
+      );
+    } else {
+      if (this.state.flag == 0) {
+        return (
+          <div className="content">
+            <Grid fluid>
+              <Row>
+                <Col md={10}>
+                  {/* <Nav pullRight> */}
+                  <form>
+                    <input
+                      placeholder="Pretrazi"
+                      type="text"
+                      aria-label="Search"
+                      name="pretraziPoljeKlinika"
+                      onChange={this.handleChange}
+                    />
+                    <Button onClick={e => this.izaberiKliniku()}>
+                      Pretrazi
+                    </Button>
+                  </form>
                   <div>
-                    <h5>Tip Pregleda:</h5>
-                    <select
-                      name="tipPregleda"
-                      onChange={e => this.biranjeTipaPregleda(e)}
-                    >
-                      {this.izaberiVrstuPregleda()}
-                    </select>
-                    {/* {" "}
+                    <h5>Datum za pregled:</h5>
+                    <DatePicker
+                      placeholderText="Izaberi datum"
+                      selected={this.state.datumZaPregled}
+                      onSelect={this.handleChangeDate}
+
+                      // onChange={date => setStartDate(date)}
+                    />
+                    <Button onClick={this.slobodniTermini}>
+                      Pronadji termine
+                    </Button>
+                  </div>
+                  <div>
+                    <div>
+                      <h5>Tip Pregleda:</h5>
+                      <select
+                        name="tipPregleda"
+                        onChange={e => this.biranjeTipaPregleda(e)}
+                      >
+                        {this.izaberiVrstuPregleda()}
+                      </select>
+                      {/* {" "}
                     <NavDropdown
                       onSelect={e => {
                         this.biranjeTipaPregleda(e);
@@ -691,185 +791,35 @@ class ListaKlinika extends Component {
                     >
                       {this.izaberiVrstuPregleda()}
                     </NavDropdown> */}
-                  </div>
-                </div>
-                <div>
-                  <h5>Ocena: </h5>
-                  <Button value="9" onClick={e => this.podesiOcenuKlinike(e)}>
-                    9+
-                  </Button>
-                  <Button value="8" onClick={e => this.podesiOcenuKlinike(e)}>
-                    8+
-                  </Button>
-                  <Button value="7" onClick={e => this.podesiOcenuKlinike(e)}>
-                    7+
-                  </Button>
-                  <Button value="6" onClick={e => this.podesiOcenuKlinike(e)}>
-                    6+
-                  </Button>
-                  <Button value="5" onClick={e => this.podesiOcenuKlinike(e)}>
-                    5+
-                  </Button>
-                </div>
-                {/* </Nav> */}
-                <Card
-                  title="Klinike"
-                  content={
-                    <form
-                      onSubmit={e => {
-                        this.odabranaKlinika(e);
-                      }}
-                    >
-                      <NavDropdown
-                        onSelect={e => {
-                          this.sortMyArray(e);
-                        }}
-                        title="Sortiraj"
-                        id="nav-item dropdown"
-                      >
-                        <MenuItem eventKey={"id"}>id</MenuItem>
-                        <MenuItem eventKey={"naziv"}>Naziv</MenuItem>
-                        <MenuItem eventKey={"opis"}>Opis</MenuItem>
-                        <MenuItem eventKey={"adresa"}>Adresa</MenuItem>
-                        <MenuItem eventKey={"ocena"}>Ocena</MenuItem>
-                      </NavDropdown>
-
-                      <Card
-                        // category="Here is a subtitle for this table"
-                        ctTableFullWidth
-                        ctTableResponsive
-                        content={
-                          <Table striped hover style={{ width: 800 }}>
-                            <thead className="thead-dark">
-                              <tr>
-                                <th></th>
-                                <th id="Id">Id</th>
-                                <th id="Naziv">Naziv</th>
-                                <th id="Adresa"> Adresa</th>
-                                <th id="Opis">Opis</th>
-                                <th id="Ocena">Ocena</th>
-                              </tr>
-                            </thead>
-                            <tbody>{this.listaKlinikaUKC()}</tbody>
-                          </Table>
-                        }
-                      />
-                      {this.redirectReferer}
-                      <Button type="submit">DALJE</Button>
-                    </form>
-                  }
-                />
-              </Col>
-              {/* <Col md={4}>
-                <Card
-                  // statsIcon="fa fa-clock-o"
-                  title="O Pacijentu"
-                  // category="Ime"
-                  content={
-                    <div id="a">
-                      <div className="slikaKCdiv">
-                        <h2>
-                          <img
-                            className="slikaPacijent"
-                            src={slikaPacijent}
-                          ></img>
-                        </h2>
-                      </div>
-
-                      <div className="typo-line">
-                        <h2>
-                          <p className="category">Email: </p>
-                          <label className="adresaKC">{email}</label>
-                        </h2>
-                      </div>
-                      <div className="typo-line">
-                        <h2>
-                          <p className="category">LBO: </p>
-                          <label className="opisKC">{lbo}</label>
-                        </h2>
-                      </div>
                     </div>
-                  }
-                />
-              </Col> */}
-            </Row>
-          </Grid>
-        </div>
-      );
-    } else if (this.state.flag == 1) {
-      return (
-        <div className="content">
-          <Grid fluid>
-            <Row>
-              <Col md={10}>
-                {/* <Nav pullRight> */}
-                <form>
-                  <input
-                    placeholder="Pretrazi"
-                    type="text"
-                    placeholder="Search"
-                    aria-label="Search"
-                    name="pretraziPoljeLekara"
-                    onChange={this.handleChange}
-                  />
-                  <Button onClick={e => this.izaberiDoktore()}>Pretrazi</Button>
-                </form>
-                <div>
-                  <h5>Datum za pregled:</h5>
-                  <DatePicker
-                    placeholderText="Izaberi datum"
-                    selected={this.state.datumZaPregled}
-                    onSelect={this.handleChangeDate}
-
-                    // onChange={date => setStartDate(date)}
-                  />
-                  <Button onClick={this.slobodniTermini}>
-                    Pronadji termine
-                  </Button>
-                </div>
-                <div>
-                  <h5>Tip pregleda: </h5>
-                  <NavDropdown
-                    onSelect={e => {
-                      // this.sortMyArray(e);
-                    }}
-                    title="Pregled"
-                    id="dropdown"
-                  >
-                    <MenuItem eventKey={"pregled1"}>Vrsta pregleda 1</MenuItem>
-                    <MenuItem eventKey={"pregled2"}>Vrsta pregleda 2</MenuItem>
-                    <MenuItem eventKey={"pregled3"}>Vrsta pregleda 3</MenuItem>
-                    <MenuItem eventKey={"pregled4"}>Vrsta pregleda 4</MenuItem>
-                  </NavDropdown>
-                </div>
-                <div>
-                  <h5>Ocena: </h5>
-                  <Button value="9" onClick={e => this.podesiOcenuLekara(e)}>
-                    9+
-                  </Button>
-                  <Button value="8" onClick={e => this.podesiOcenuLekara(e)}>
-                    8+
-                  </Button>
-                  <Button value="7" onClick={e => this.podesiOcenuLekara(e)}>
-                    7+
-                  </Button>
-                  <Button value="6" onClick={e => this.podesiOcenuLekara(e)}>
-                    6+
-                  </Button>
-                  <Button value="5" onClick={e => this.podesiOcenuLekara(e)}>
-                    5+
-                  </Button>
-                </div>
-                {/* </Nav> */}
-                <Card
-                  title="Lekari"
-                  content={
-                    <form
-                      onSubmit={e => {
-                        this.odabranLekar(e);
-                      }}
-                    >
-                      <div>
+                  </div>
+                  <div>
+                    <h5>Ocena: </h5>
+                    <Button value="9" onClick={e => this.podesiOcenuKlinike(e)}>
+                      9+
+                    </Button>
+                    <Button value="8" onClick={e => this.podesiOcenuKlinike(e)}>
+                      8+
+                    </Button>
+                    <Button value="7" onClick={e => this.podesiOcenuKlinike(e)}>
+                      7+
+                    </Button>
+                    <Button value="6" onClick={e => this.podesiOcenuKlinike(e)}>
+                      6+
+                    </Button>
+                    <Button value="5" onClick={e => this.podesiOcenuKlinike(e)}>
+                      5+
+                    </Button>
+                  </div>
+                  {/* </Nav> */}
+                  <Card
+                    title="Izaberi kliniku za pregled"
+                    content={
+                      <form
+                        onSubmit={e => {
+                          this.odabranaKlinika(e);
+                        }}
+                      >
                         <NavDropdown
                           onSelect={e => {
                             this.sortMyArray(e);
@@ -877,8 +827,10 @@ class ListaKlinika extends Component {
                           title="Sortiraj"
                           id="nav-item dropdown"
                         >
-                          <MenuItem eventKey={"ime"}>Ime</MenuItem>
-                          <MenuItem eventKey={"prezime"}>Prezime</MenuItem>
+                          <MenuItem eventKey={"id"}>id</MenuItem>
+                          <MenuItem eventKey={"naziv"}>Naziv</MenuItem>
+                          <MenuItem eventKey={"opis"}>Opis</MenuItem>
+                          <MenuItem eventKey={"adresa"}>Adresa</MenuItem>
                           <MenuItem eventKey={"ocena"}>Ocena</MenuItem>
                         </NavDropdown>
 
@@ -887,36 +839,28 @@ class ListaKlinika extends Component {
                           ctTableFullWidth
                           ctTableResponsive
                           content={
-                            <Table style={{ width: 800 }} striped hover>
+                            <Table striped hover style={{ width: 800 }}>
                               <thead className="thead-dark">
                                 <tr>
                                   <th></th>
-                                  <th id="id">Id</th>
-                                  <th id="ime">Ime</th>
-                                  <th id="prezime"> Prezime</th>
-                                  <th id="ocena">Ocena</th>
+                                  <th id="Id">Id</th>
+                                  <th id="Naziv">Naziv</th>
+                                  <th id="Adresa"> Adresa</th>
+                                  <th id="Opis">Opis</th>
+                                  <th id="Ocena">Ocena</th>
                                 </tr>
                               </thead>
-                              <tbody>{this.listaLekaraKlinike()}</tbody>
+                              <tbody>{this.listaKlinikaUKC()}</tbody>
                             </Table>
                           }
                         />
-                      </div>
-                      {this.redirectReferer2}
-                      <Button type="submit">DALJE</Button>
-                      <h5>
-                        {(this.state.izabranLekar == undefined ||
-                          this.state.izabranLekar == 0) && (
-                          <span className="errorMessage">
-                            {this.state.formError}
-                          </span>
-                        )}
-                      </h5>
-                    </form>
-                  }
-                />
-              </Col>
-              {/* <Col md={4}>
+                        {this.redirectReferer}
+                        <Button type="submit">DALJE</Button>
+                      </form>
+                    }
+                  />
+                </Col>
+                {/* <Col md={4}>
                 <Card
                   // statsIcon="fa fa-clock-o"
                   title="O Pacijentu"
@@ -948,54 +892,228 @@ class ListaKlinika extends Component {
                   }
                 />
               </Col> */}
-            </Row>
-          </Grid>
-        </div>
-      );
-    } else if (this.state.flag == 2) {
-      return (
-        <div className="content">
-          <Grid fluid>
-            <Row>
-              <Col md={10}>
-                <Card
-                  title="Detalji o zahtevu za zdravstveni pregled"
-                  content={
-                    <form
-                      onSubmit={e => {
-                        this.slanjeZahtevaZaPregled(e);
+              </Row>
+            </Grid>
+          </div>
+        );
+      } else if (this.state.flag == 1) {
+        return (
+          <div className="content">
+            <Grid fluid>
+              <Row>
+                <Col md={10}>
+                  {/* <Nav pullRight> */}
+                  <form>
+                    <input
+                      placeholder="Pretrazi"
+                      type="text"
+                      placeholder="Search"
+                      aria-label="Search"
+                      name="pretraziPoljeLekara"
+                      onChange={this.handleChange}
+                    />
+                    <Button onClick={e => this.izaberiDoktore()}>
+                      Pretrazi
+                    </Button>
+                  </form>
+                  <div>
+                    <h5>Datum za pregled:</h5>
+                    <DatePicker
+                      placeholderText="Izaberi datum"
+                      selected={this.state.datumZaPregled}
+                      onSelect={this.handleChangeDate}
+
+                      // onChange={date => setStartDate(date)}
+                    />
+                    <Button onClick={this.slobodniTermini}>
+                      Pronadji termine
+                    </Button>
+                  </div>
+                  <div>
+                    <h5>Tip pregleda: </h5>
+                    <NavDropdown
+                      onSelect={e => {
+                        // this.sortMyArray(e);
                       }}
+                      title="Pregled"
+                      id="dropdown"
                     >
+                      <MenuItem eventKey={"pregled1"}>
+                        Vrsta pregleda 1
+                      </MenuItem>
+                      <MenuItem eventKey={"pregled2"}>
+                        Vrsta pregleda 2
+                      </MenuItem>
+                      <MenuItem eventKey={"pregled3"}>
+                        Vrsta pregleda 3
+                      </MenuItem>
+                      <MenuItem eventKey={"pregled4"}>
+                        Vrsta pregleda 4
+                      </MenuItem>
+                    </NavDropdown>
+                  </div>
+                  <div>
+                    <h5>Ocena: </h5>
+                    <Button value="9" onClick={e => this.podesiOcenuLekara(e)}>
+                      9+
+                    </Button>
+                    <Button value="8" onClick={e => this.podesiOcenuLekara(e)}>
+                      8+
+                    </Button>
+                    <Button value="7" onClick={e => this.podesiOcenuLekara(e)}>
+                      7+
+                    </Button>
+                    <Button value="6" onClick={e => this.podesiOcenuLekara(e)}>
+                      6+
+                    </Button>
+                    <Button value="5" onClick={e => this.podesiOcenuLekara(e)}>
+                      5+
+                    </Button>
+                  </div>
+                  {/* </Nav> */}
+                  <Card
+                    title="Izaberi lekara za pregled"
+                    content={
                       <div>
-                        <Card
-                          // category="Here is a subtitle for this table"
-                          ctTableFullWidth
-                          ctTableResponsive
-                          content={
-                            <Table style={{ width: 800 }} striped hover>
-                              <thead className="thead-dark">
-                                <tr>
-                                  <th id="id">Klinika</th>
-                                  <th id="ime">Tip pregleda</th>
-                                  <th id="prezime"> Lekar</th>
-                                  <th id="ocena">Cena</th>
-                                </tr>
-                              </thead>
-                              <tbody>{this.pregledZahteva()}</tbody>
-                            </Table>
-                          }
-                        />
+                        <form
+                          onSubmit={e => {
+                            this.prethodno(e);
+                          }}
+                        >
+                          <div>
+                            <NavDropdown
+                              onSelect={e => {
+                                this.sortMyArray(e);
+                              }}
+                              title="Sortiraj"
+                              id="nav-item dropdown"
+                            >
+                              <MenuItem eventKey={"ime"}>Ime</MenuItem>
+                              <MenuItem eventKey={"prezime"}>Prezime</MenuItem>
+                              <MenuItem eventKey={"ocena"}>Ocena</MenuItem>
+                            </NavDropdown>
+
+                            <Card
+                              // category="Here is a subtitle for this table"
+                              ctTableFullWidth
+                              ctTableResponsive
+                              content={
+                                <Table style={{ width: 800 }} striped hover>
+                                  <thead className="thead-dark">
+                                    <tr>
+                                      <th></th>
+                                      <th id="id">Id</th>
+                                      <th id="ime">Ime</th>
+                                      <th id="prezime"> Prezime</th>
+                                      <th id="ocena">Ocena</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>{this.listaLekaraKlinike()}</tbody>
+                                </Table>
+                              }
+                            />
+                          </div>
+                          {this.prethodno2}
+                          <Button type="submit">PRETHODNO</Button>
+                        </form>
+                        <form onSubmit={e => this.odabranLekar(e)}>
+                          {this.redirectReferer2}
+                          <Button type="submit">DALJE</Button>
+                          <h5>
+                            {(this.state.izabranLekar == undefined ||
+                              this.state.izabranLekar == 0) && (
+                              <span className="errorMessage">
+                                {this.state.formError}
+                              </span>
+                            )}
+                          </h5>
+                        </form>
                       </div>
-                      <Button type="submit">Potvrdi</Button>
-                    </form>
+                    }
+                  />
+                </Col>
+                {/* <Col md={4}>
+                <Card
+                  // statsIcon="fa fa-clock-o"
+                  title="O Pacijentu"
+                  // category="Ime"
+                  content={
+                    <div id="a">
+                      <div className="slikaKCdiv">
+                        <h2>
+                          <img
+                            className="slikaPacijent"
+                            src={slikaPacijent}
+                          ></img>
+                        </h2>
+                      </div>
+
+                      <div className="typo-line">
+                        <h2>
+                          <p className="category">Email: </p>
+                          <label className="adresaKC">{email}</label>
+                        </h2>
+                      </div>
+                      <div className="typo-line">
+                        <h2>
+                          <p className="category">LBO: </p>
+                          <label className="opisKC">{lbo}</label>
+                        </h2>
+                      </div>
+                    </div>
                   }
                 />
-              </Col>
-
-            </Row>
-          </Grid>
-        </div>
-      );
+              </Col> */}
+              </Row>
+            </Grid>
+          </div>
+        );
+      } else if (this.state.flag == 2) {
+        return (
+          <div className="content">
+            <Grid fluid>
+              <Row>
+                <Col md={10}>
+                  <Card
+                    title="Detalji o zahtevu za zdravstveni pregled"
+                    content={
+                      <div>
+                        <form>
+                          <div>
+                            <Card
+                              // category="Here is a subtitle for this table"
+                              ctTableFullWidth
+                              ctTableResponsive
+                              content={
+                                <Table style={{ width: 800 }} striped hover>
+                                  <thead className="thead-dark">
+                                    <tr>
+                                      <th id="id">Klinika</th>
+                                      <th id="ime">Tip pregleda</th>
+                                      <th id="prezime"> Lekar</th>
+                                      <th id="ocena">Cena</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>{this.pregledZahteva()}</tbody>
+                                </Table>
+                              }
+                            />
+                          </div>
+                          {this.odustani2()}
+                          <Button onClick={this.odustani}>Odustani</Button>
+                        </form>
+                        <form onSubmit={e => this.slanjeZahtevaZaPregled(e)}>
+                          <Button type="submit">Potvrdi</Button>
+                        </form>
+                      </div>
+                    }
+                  />
+                </Col>
+              </Row>
+            </Grid>
+          </div>
+        );
+      }
     }
   }
 }
