@@ -31,6 +31,7 @@ class ZdravstveniKarton extends Component {
       uloga: props.uloga,
       listaPregleda: []
     };
+    this.redirectReferer = this.redirectReferer(this);
   }
 
   componentWillMount() {
@@ -56,6 +57,13 @@ class ZdravstveniKarton extends Component {
   promenjenOdabirPregleda() {
     console.log("promenjen odabrir");
   }
+  odabranPrelged = e => {
+    //treba redirektovati na pretragu i filtriranje lekara
+    e.preventDefault();
+    this.setState({
+      redirectNext: true
+    });
+  };
   listaUnapredDefinisanihPregleda() {
     let res = [];
     console.log("lista kl");

@@ -502,7 +502,7 @@ class ListaKlinika extends Component {
     e.preventDefault();
     this.setState({
       redirectNext: true,
-      flag: 1
+      flodabranaKlinikaag: 1
     });
   };
   odabranLekar = e => {
