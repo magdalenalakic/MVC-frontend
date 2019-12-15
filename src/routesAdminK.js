@@ -12,9 +12,9 @@ import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranicaAdminaKlinike from "views/PocetnaStranicaAdminaKlinike";
-
+import listaPregleda from "views/ListaPregleda.jsx";
 import slobodniTermini from "views/SlobodniTermini.jsx"
-
+import listaSala from "views/ListaSala.jsx"
 import izmenaProfila from "views/IzmenaProfila";
 
 
@@ -52,6 +52,20 @@ const dashboardRoutes = [
     layout: "/admin"
   },
 
+  {
+    path: "/Pregledi",
+    name: "Pregledi",
+    icon: "pe-7s-user",
+    component: listaPregleda,
+    layout: "/admin"
+  },
+  {
+    path: "/Sale",
+    name: "Sale",
+    icon: "pe-7s-user",
+    component: listaSala,
+    layout: "/admin"
+  },
   {
     path: "/slobodniTermini",
     name: "Slobodni termini",
