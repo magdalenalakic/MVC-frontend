@@ -10,10 +10,10 @@ import "klinickiCentar.css";
 
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
-class SlobodniTermini extends Component {
+class ListaLekara extends Component {
   constructor(props) {
     super(props);
-    console.log("LISTA PREGLEDA");
+    console.log("LISTA SALA");
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
@@ -156,7 +156,7 @@ componentWillMount(){
                 console.log("++++++++++++++++++ Id k: " + this.state.idKlinike);
          
                 console.log("Preuzmi mi sale za tu kliniku");
-                const urlKlinike = 'http://localhost:8025/api/pregledi/preuzmiPregledeKlinike/' + this.state.idKlinike;    
+                const urlKlinike = 'http://localhost:8025/api/sale/preuzmiSaleKlinike/' + this.state.idKlinike;    
                  axios.get(urlKlinike)
                     .then(klinika => {
                         console.log("Preuzeta lista klinika");
@@ -324,8 +324,8 @@ handleIzmeni = e => {
         <tr key={i}>
        
          
-          <td>{lista[i].datum}</td>
-          <td>{lista[i].tipPregledaID}</td>
+          <td>{lista[i].naziv}</td>
+          <td>{lista[i].broj}</td>
         
        
           <td>{lista[i].telefon}</td>   
@@ -384,8 +384,9 @@ handleIzmeni = e => {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th id="IdPacijenta">Datum</th>
-                          <th id="ImePacijenta">Tip</th>
+                          <th id="IdPacijenta">Naziv</th>
+                         
+                          <th id="ImePacijenta"> Broj</th>
       
                   
                         </tr>
@@ -404,4 +405,4 @@ handleIzmeni = e => {
   }
 }
 
-export default SlobodniTermini;
+export default ListaLekara;

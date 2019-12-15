@@ -131,7 +131,7 @@ class Pacijent extends Component {
       this.setState({ fixedClasses: "dropdown" });
     }
   };
-  componentDidMount() {
+  // componentDidMount() {
     // this.setState({ _notificationSystem: this.refs.notificationSystem });
     // var _notificationSystem = this.refs.notificationSystem;
     // var color = Math.floor(Math.random() * 4 + 1);
@@ -164,7 +164,7 @@ class Pacijent extends Component {
     //   position: "tr",
     //   autoDismiss: 15
     // });
-  }
+  // }
   componentDidUpdate(e) {
     if (
       window.innerWidth < 993 &&
@@ -191,8 +191,8 @@ class Pacijent extends Component {
           image={this.state.image}
           color={this.state.color}
           hasImage={this.state.hasImage}
-          email={email}
-          uloga={uloga}
+          // email={email}
+          // uloga={uloga}
         />
         <div id="main-panel" className="main-panel" ref="mainPanel">
           <AdminNavbar
