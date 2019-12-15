@@ -90,7 +90,7 @@ class PocetnaStranicaPacijenta extends Component {
         if (this.state.redirectToZahtevZaPregled == true) {
         return <Redirect from="/" to="/admin/klinikePacijenta" />;
         } else if (this.state.redirectBrzoZakazivanje == true) {
-        // return <Redirect from="/" to="/admin/klinike" />;
+        return <Redirect from="/" to="/admin/brzoZakazivanje" />;
         } else if (this.state.redirectIstorijaPO == true) {
         // return <Redirect from="/" to="/admin/klinike" />;
         } else if (this.state.redirectZdravstveniKarton == true) {

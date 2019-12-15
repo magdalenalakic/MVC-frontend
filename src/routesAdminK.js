@@ -15,6 +15,7 @@ import PocetnaStranicaAdminaKlinike from "views/PocetnaStranicaAdminaKlinike";
 import listaPregleda from "views/ListaPregleda.jsx";
 import slobodniTermini from "views/SlobodniTermini.jsx"
 import listaSala from "views/ListaSala.jsx"
+import listaZahteva from "views/ListaZahtevaPregled.jsx"
 import izmenaProfila from "views/IzmenaProfila";
 
 
@@ -73,7 +74,13 @@ const dashboardRoutes = [
     component: slobodniTermini,
     layout: "/admin"
   },
-
+  {
+    path: "/listaZahtevaPregled",
+    name: "lLsta Zahteva",
+    icon: "pe-7s-user",
+    component: listaZahteva,
+    layout: "/admin"
+  },
   // {
   //   path: "/izmenaProfilaLekara",
   //   name: "Pocetna Strana Admina ",
