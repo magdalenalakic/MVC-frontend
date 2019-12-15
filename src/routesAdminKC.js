@@ -1,4 +1,4 @@
-import KlinickiCentarPocetna from "views/KlinickiCentarPocetna.jsx";
+import KlinickiCentarPocetna from "views/PocetnaStranicaAdminaKC.jsx";
 import IzmenaProfilaAdminaKC from "views/IzmenaProfilaAdminaKC.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";

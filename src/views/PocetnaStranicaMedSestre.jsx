@@ -30,8 +30,11 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import moment from 'moment';
 
-const localizer = momentLocalizer(moment);
+import Button from "components/CustomButton/CustomButton.jsx";
+import Dialog from 'react-bootstrap-dialog';
 
+
+const localizer = momentLocalizer(moment);
 class PocetnaStranicaMedSestre extends React.Component {
   constructor(props) {
     super(props);
@@ -43,7 +46,16 @@ class PocetnaStranicaMedSestre extends React.Component {
       redirectToListaPacijenata: false,
       redirectToProfilMedSestre: false,
       redirectToZahtevZaGodOdmor: false,
-      redirectToOveraRecepata: false
+      redirectToOveraRecepata: false,
+      //vezano za kalendar
+      
+      listaPregleda: {
+        title: "",
+        start: "",
+        end: "",
+        up_down_ind: "",
+        tipPregleda: ""
+      }
     };
     this.handleListaPacijenata = this.handleListaPacijenata.bind(this);
     this.handleProfilMedSestre = this.handleProfilMedSestre.bind(this);
@@ -90,7 +102,14 @@ class PocetnaStranicaMedSestre extends React.Component {
       return <Redirect from="/" to="/admin/overavanjeRecepata"></Redirect>
     }
   };
-
+  
+  dodajDogadjaj = e => {
+    e.preventDefault();
+    console.log("dodavanje dogadjaja");
+    this.setState({
+      
+    })
+  };
   render() {
 
     console.log(this.props);
@@ -159,9 +178,12 @@ class PocetnaStranicaMedSestre extends React.Component {
                 content={
               
                   <div style={{ height: 400 }}  className="ct-chart">
+                    <Button onClick={this.dodajDogadjaj}>Dodaj dogadjaj</Button>
                     <Calendar
+
                         localizer={localizer}
-                        events={events }
+                        // events={events }
+                        events={this.state.listaPregleda }
                         views={["month"]}   
                         defaultDate={new Date()}
                     />

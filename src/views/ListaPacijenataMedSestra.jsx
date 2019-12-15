@@ -130,159 +130,152 @@ class ListaPacijenataMedSestra extends Component {
     console.log("CLICK  **** otvori mi dijalog na klik ");  
     console.log( e.target.id);
     const url ="http://localhost:8025/api/pacijenti/findPacijentEmail/" + e.target.id;
+    const url2 ="http://localhost:8025/api/pacijenti/findZK/" + e.target.id;
     axios
       .get(url)
       .then(response => {
-        console.log("URL 111");
+        console.log("Preuzet pacijent");
         console.log(response);
         this.setState({
           ime: response.data.ime,
           prezime: response.data.prezime,
           lbo: response.data.lbo
-        });
-        console.log(this.state);
-       
+        }, ()=> axios
+                  .get(url2)
+                  .then(Response => {
+                    console.log("Preuzet ZK  pacijenta: ");
+                    console.log(Response.data);
+            
+                    this.setState({
+                      tezina: Response.data.tezina,
+                      visina: Response.data.visina,
+                      krvnaGrupa: Response.data.krvnaGrupa
+                    }, ()=> this.dialog.show({
+                      title: 'Zdravstveni karton',
+                      body: [
+                        <Table  striped hover>
+                                  <tbody>
+                                    <tr>
+                                      <td>
+                                        <label>Ime: </label>
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          name="ime"
+                                          defaultValue={this.state.ime}
+                                          disabled="disabled"
+                                          // placeholder={this.state.ime}
+                                          // noValidate
+                                          onChange={this.handleChange}
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <label>Prezime: </label>
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          name="prezime"
+                                          defaultValue={this.state.prezime}
+                                          disabled="disabled"
+                                          // placeholder={this.state.prezime}
+                                          // noValidate
+                                          onChange={this.handleChange}
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <label>Jedinstveni broj osiguranika: </label>
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          name="lbo"
+                                          defaultValue={this.state.lbo}
+                                          disabled="disabled"
+                                          // placeholder={this.state.lbo}
+                                          // noValidate
+                                          onChange={this.handleChange}
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <label>Visina: </label>
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          name="visina"
+                                          defaultValue={this.state.visina}
+                                          disabled="disabled"
+                                          // placeholder={this.state.visina}
+                                          // noValidate
+                                          onChange={this.handleChange}
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <label>Tezina: </label>
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          name="tezina"
+                                          defaultValue={this.state.tezina}
+                                          disabled="disabled"
+                                          // placeholder={this.state.tezina}
+                                          // noValidate
+                                          onChange={this.handleChange}
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <label>Krvna grupa: </label>
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          name="krvnaGrupa"
+                                          defaultValue={this.state.krvnaGrupa}
+                                          disabled="disabled"
+                                          // placeholder={this.state.krvnaGrupa}
+                                          // noValidate
+                                          onChange={this.handleChange}
+                                        />
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </Table>
+            
+                      ],
+                      // actions: [
+                      //   Dialog.CancelAction(),
+                      //   Dialog.OKAction()
+                      // ],
+                      bsSize: 'medium',
+                      onHide: (dialog) => {
+                        dialog.hide()
+                        console.log('closed by clicking background.')
+                      }
+                    }));
+        })
+        .catch(error => {
+          console.log("ZK pacijenta nije preuzet");
+        })); 
       })
       .catch(error => {
-        console.log("nije uspeo url1");
+        console.log("Pacijent nije preuzet");
         console.log(error);
       });
-    const url2 =
-      "http://localhost:8025/api/pacijenti/findZK/" + e.target.id;
-    axios
-      .get(url2)
-      .then(Response => {
-        console.log("Preuzet pacijent: ");
-        console.log(Response.data);
-
-        this.setState({
-          tezina: Response.data.tezina
-        });
-        this.setState({
-          visina: Response.data.visina,
-          krvnaGrupa: Response.data.krvnaGrupa
-        });
-        this.dialog.show({
-          title: 'Zdravstveni karton',
-          body: [
-            <Table  striped hover>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <label>Ime: </label>
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              name="ime"
-                              defaultValue={this.state.ime}
-                              disabled="disabled"
-                              // placeholder={this.state.ime}
-                              // noValidate
-                              onChange={this.handleChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label>Prezime: </label>
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              name="prezime"
-                              defaultValue={this.state.prezime}
-                              disabled="disabled"
-                              // placeholder={this.state.prezime}
-                              // noValidate
-                              onChange={this.handleChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label>Jedinstveni broj osiguranika: </label>
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              name="lbo"
-                              defaultValue={this.state.lbo}
-                              disabled="disabled"
-                              // placeholder={this.state.lbo}
-                              // noValidate
-                              onChange={this.handleChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label>Visina: </label>
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              name="visina"
-                              defaultValue={this.state.visina}
-                              disabled="disabled"
-                              // placeholder={this.state.visina}
-                              // noValidate
-                              onChange={this.handleChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label>Tezina: </label>
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              name="tezina"
-                              defaultValue={this.state.tezina}
-                              disabled="disabled"
-                              // placeholder={this.state.tezina}
-                              // noValidate
-                              onChange={this.handleChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label>Krvna grupa: </label>
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              name="krvnaGrupa"
-                              defaultValue={this.state.krvnaGrupa}
-                              disabled="disabled"
-                              // placeholder={this.state.krvnaGrupa}
-                              // noValidate
-                              onChange={this.handleChange}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
-
-          ],
-          // actions: [
-          //   Dialog.CancelAction(),
-          //   Dialog.OKAction()
-          // ],
-          bsSize: 'medium',
-          onHide: (dialog) => {
-            dialog.hide()
-            console.log('closed by clicking background.')
-          }
-        });
-       
-      })
-
-      .catch(error => {
-        console.log("Pacijent  nije preuzet");
-      });
+    
+    
 
 
     
