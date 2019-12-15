@@ -44,12 +44,14 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       ocena: "",
       listaPacijenata:[],
       redirectToListaLekara: false,
+      redirectToListaSala: false,
       redirectToSlobodniTermini: false,
       
     };
    // this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
    this.handleListaLekara = this.handleListaLekara.bind(this);
-   this.handleSlobodniTermini = this.handleSlobodniTermini.bind(this);
+   this.handleListaSala = this.handleListaSala.bind(this);
+  this.handleSlobodniTermini = this.handleSlobodniTermini.bind(this);
   }
 
   componentWillMount(){
@@ -98,19 +100,23 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
   }
 
   handleListaLekara() {
-    // this.setState({
-    //   redirectToListaLekara: true
-    // });
+
     console.log("REDIREKCIJA NA LISTU LEKARA");
     this.setState({
       redirectToListaLekara: true
     });
 
   }
+
+  handleListaSala() {
+    console.log("REDIREKCIJA NA LISTU SALAAA");
+    this.setState({
+      redirectToListaSala: true
+    });
+
+  }
   handleSlobodniTermini() {
-    // this.setState({
-    //   redirectToListaLekara: true
-    // });
+    
     console.log("REDIREKCIJA NA Slobodne termine");
     this.setState({
       redirectToSlobodniTermini: true
@@ -122,13 +128,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
   renderRedirect = () => {
     if(this.state.redirectToListaLekara){
       return <Redirect from="/" to="/admin/lekari"/>;
-    }
-  };
-
-
-  renderRedirectST = () => {
-   if(this.state.redirectToSlobodniTermini){
-      return <Redirect from="/" to="/admin/slobodniTermini"/>;
+    }else  if(this.state.redirectToListaSala){
+      return <Redirect from="/" to="/admin/Sale"> </Redirect>;
+    }else if(this.state.redirectToSlobodniTermini){
+      return <Redirect from="/" to="/admin/slobodniTermini"></Redirect>;
     }
   };
 
@@ -177,7 +180,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     // console.log(this.props);
 
     const redirectToListaLekara = this.state.redirectToListaLekara;
-
+ 
     const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
 
     const email = this.state.email;
@@ -317,8 +320,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             </Col>
             <Row>
             <Col md={3}>
+           
               <StatsCard
-                
                 bigIcon={<i className="pe-7s-server text-warning" />}
                 // statsText="Lista pacijenata"
                 // statsValue="105GB"
@@ -349,6 +352,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
               />
             </Col> */}
             <Col md={3}>
+            {this.renderRedirect()}
+              <div onClick={this.handleListaSala}/>
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
                 // statsText="Profil korisnika"
@@ -359,7 +364,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             </Col>
             <Col md={3}>
 
-              {this.renderRedirectST()}
+              {this.renderRedirect()}
               <div onClick={this.handleSlobodniTermini}/>
 
               <StatsCard
