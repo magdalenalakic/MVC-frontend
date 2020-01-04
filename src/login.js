@@ -124,7 +124,7 @@ class Login extends Component {
     const redirectToReferrer = this.state.redirectToReferrer;
     const redirectToRegistration = this.state.redirectToRegistration;
 
-    if (uloga === "ADMINISTRATORKC") {
+    if (uloga === "ADMIN_KC") {
       return (
         <BrowserRouter>
           <Switch>
@@ -139,7 +139,7 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    if (uloga === "ADMINISTRATORK") {
+    if (uloga === "ADMIN_KLINIKE") {
       return (
         <BrowserRouter>
           <Switch>
@@ -167,7 +167,7 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    if (uloga === "MEDICINSKASESTRA") {
+    if (uloga === "MED_SESTRA") {
       return (
         <BrowserRouter>
           <Switch>
