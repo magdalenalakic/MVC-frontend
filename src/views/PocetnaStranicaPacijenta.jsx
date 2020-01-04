@@ -19,6 +19,7 @@ class PocetnaStranicaPacijenta extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga,
+      token: props.token,
       ime: "",
       prezime: "",
       adresa: "",
@@ -38,13 +39,22 @@ class PocetnaStranicaPacijenta extends Component {
     this.handleIstorijaPO = this.handleIstorijaPO.bind(this);
     this.handleBrzoZakazivanje = this.handleBrzoZakazivanje.bind(this);
     console.log(this.state.email);
+    console.log(this.state.token);
   }
 
   pronadjiPacijenta() {
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     axios
       .get(
-        "http://localhost:8025/api/pacijenti/findPacijentEmail/" +
-          this.state.email
+        "http://localhost:8025/api/pacijenti/findPacijentEmail",
+        // this.state.email,
+        config
       )
 
       .then(Response => {
@@ -68,7 +78,6 @@ class PocetnaStranicaPacijenta extends Component {
       });
   }
   componentWillMount() {
-    console.log("blabla bla");
     this.pronadjiPacijenta();
   }
   handleZahtevZaPregled() {
