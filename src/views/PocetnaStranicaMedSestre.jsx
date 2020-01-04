@@ -30,7 +30,51 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import moment from 'moment';
 
+import Button from "components/CustomButton/CustomButton.jsx";
+import Dialog from 'react-bootstrap-dialog';
+
+
 const localizer = momentLocalizer(moment);
+const listaRadnihDana = [];
+const listaPregleda = [
+  {
+    title: "Odsustvo/Odmor",
+    start: "2019-12-03 02:00",
+    end: "2019-12-06 06:59",
+    up_down_ind: "N"
+  }
+  ,
+    {
+      title: "Radni dani",
+      start: "2019-12-09 13:00",
+      end: "2019-12-13 13:59",
+      up_down_ind: "Y"
+    },
+    {
+      title: "Radni dani",
+      start: "2019-12-02 13:00",
+      end: "2019-12-02 13:59",
+      up_down_ind: "Y"
+    }
+    ,{
+      title: "Radni dani",
+      start: "2019-12-16 13:00",
+      end: "2019-12-20 13:59",
+      up_down_ind: "Y"
+    }
+    ,{
+      title: "Radni dani",
+      start: "2019-12-23 13:00",
+      end: "2019-12-27 13:59",
+      up_down_ind: "Y"
+    }
+  //   {
+  //     title: "Zakazan pregled",
+  //     start: "2019-12-11 14:00",
+  //     end: "2019-12-11 14:59",
+  //     up_down_ind: "Y"
+  //   }
+];
 
 class PocetnaStranicaMedSestre extends React.Component {
   constructor(props) {
@@ -43,13 +87,20 @@ class PocetnaStranicaMedSestre extends React.Component {
       redirectToListaPacijenata: false,
       redirectToProfilMedSestre: false,
       redirectToZahtevZaGodOdmor: false,
-      redirectToOveraRecepata: false
+      redirectToOveraRecepata: false,
+      redirectToPocetnaStranica: false,
+      listaRadnihDana : []
+      //vezano za kalendar
+      
+      
     };
     this.handleListaPacijenata = this.handleListaPacijenata.bind(this);
     this.handleProfilMedSestre = this.handleProfilMedSestre.bind(this);
     this.handleZahtevZaGodOdmor = this.handleZahtevZaGodOdmor.bind(this);
     this.handleOveraRecepata = this.handleOveraRecepata.bind(this);
-
+    this.ucitavanjeRadnihDana = this.ucitavanjeRadnihDana.bind(this);
+    this.dodavanjeRadnihDanaUKalendar = this.dodavanjeRadnihDanaUKalendar.bind(this);
+    this.prikaziRadneDane = this.prikaziRadneDane.bind(this);
 
     // console.log(this.state.uloga);
     // console.log(this.state.email);
@@ -75,7 +126,65 @@ class PocetnaStranicaMedSestre extends React.Component {
       redirectToOveraRecepata: true,
     });
   };
+  ucitavanjeRadnihDana(){
+    const url1 = 'http://localhost:8025/api/medicinskaSestra/listaRadnihDana/' + this.state.email; 
 
+    console.log(url1);
+    axios
+      .get(url1)
+      .then(response => {
+        console.log("ucitana lista radnih dana");
+        console.log(response);
+        this.setState({
+          listaRadnihDana: response.data
+        }
+       , ()=> this.dodavanjeRadnihDanaUKalendar()
+        );
+      })
+      .catch(error => {
+        console.log("nije ucitana lista radnih dana");
+        console.log(error);
+      });
+  }
+  dodavanjeRadnihDanaUKalendar(){
+    
+    let lista = this.state.listaRadnihDana;
+    for (var i = 0; i < lista.length; i++) {
+      
+      let start = lista[i].datumPocetka;
+      console.log(start);
+      let datum= start.split('T')[0];
+      let sat = start.split('T')[1].split(':')[0];
+      let minut = start.split('T')[1].split(':')[1];
+      let vreme = sat + ":" + minut;
+      console.log(datum);
+      console.log(vreme);
+      start = datum + " " + vreme;
+      console.log(start);
+      
+      let end = lista[i].datumKraja;
+      let datumend= end.split('T')[0];
+      let satend = end.split('T')[1].split(':')[0];
+      let minutend = end.split('T')[1].split(':')[1];
+      let vremeend = satend + ":" + minutend;
+      end = datumend + " " + vremeend;
+      console.log(end);
+
+      listaPregleda.push({
+        title: "radni dan",
+        start: start,
+        end: end,
+        up_down_ind: "Y"
+      });
+      
+     
+    }
+    
+  }
+  // componentWillMount(){
+  //   ;
+    
+  // }
 
  
   renderRedirect = () => {
@@ -90,10 +199,32 @@ class PocetnaStranicaMedSestre extends React.Component {
       return <Redirect from="/" to="/admin/overavanjeRecepata"></Redirect>
     }
   };
+  
+  dodajDogadjaj = e => {
+    e.preventDefault();
+    console.log("dodavanje dogadjaja");
+    listaPregleda.push({
+      title: "dogadjaj",
+      start: "2019-12-09 14:00",
+      end: "2019-12-09 14:59",
+      up_down_ind: "Y"
+    });
+    
+  };
+  prikaziRadneDane = e => {
+    e.preventDefault();
+    console.log("dodavanje dogadjaja");
+    
+    this.ucitavanjeRadnihDana();
+  }
+  
+
+  
 
   render() {
 
     console.log(this.props);
+    
    
     return (
       <div className="content">
@@ -103,7 +234,7 @@ class PocetnaStranicaMedSestre extends React.Component {
               {this.renderRedirect()}
               <div onClick={this.handleListaPacijenata}>
                 <StatsCard
-                  bigIcon={<i className="pe-7s-server text-warning" />}
+                  // bigIcon={<i className="pe-7s-server text-warning" />}
                   // statsText="Lista pacijenata"
                   // statsValue="105GB"
                   // statsIcon={<i className="fa fa-refresh" />}
@@ -115,8 +246,8 @@ class PocetnaStranicaMedSestre extends React.Component {
               {this.renderRedirect()}
               <div onClick={this.handleOveraRecepata}>
                 <StatsCard
-                  bigIcon={<i className="fa fa-twitter text-info" />}
-                  statsText=""
+                  // bigIcon={<i className="fa fa-twitter text-info" />}
+                  // statsText=""
                   // statsValue="+45"
                   // statsIcon={<i className="fa fa-refresh" />}
                   statsIconText="Overa recepata"
@@ -127,7 +258,7 @@ class PocetnaStranicaMedSestre extends React.Component {
               {this.renderRedirect()}
               <div onClick={this.handleProfilMedSestre}>
                 <StatsCard
-                  bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                  // bigIcon={<i className="pe-7s-graph1 text-danger" />}
                   // statsText="Profil korisnika"
                   // statsValue="23"
                   // statsIcon={<i className="fa fa-clock-o" />}
@@ -139,7 +270,7 @@ class PocetnaStranicaMedSestre extends React.Component {
               {this.renderRedirect()}
               <div onClick={this.handleZahtevZaGodOdmor}>
                 <StatsCard
-                  bigIcon={<i className="pe-7s-graph1 text-danger" />}
+                  // bigIcon={<i className="pe-7s-graph1 text-danger" />}
                   // statsText="Profil korisnika"
                   // statsValue="23"
                   // statsIcon={<i className="fa fa-clock-o" />}
@@ -159,12 +290,19 @@ class PocetnaStranicaMedSestre extends React.Component {
                 content={
               
                   <div style={{ height: 400 }}  className="ct-chart">
+                    
+                    {/* <Button onClick={this.prikaziRadneDane}>Radni dani</Button> */}
+                    {/* <Button onClick={this.dodajDogadjaj}>Dodaj dogadjaj</Button> */}
                     <Calendar
+
                         localizer={localizer}
-                        events={events }
+                        //events={events}
+                        
+                        events={listaPregleda}
                         views={["month"]}   
                         defaultDate={new Date()}
-                    />
+                      />
+                    
                   </div>
                  
                 }

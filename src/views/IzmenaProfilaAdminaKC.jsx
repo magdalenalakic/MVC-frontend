@@ -35,8 +35,11 @@ class IzmenaProfilaAdminaKC extends Component {
       lozinka: "",
       imeN: "",
       prezimeN: "",
-      lozinkaN: "" 
+      lozinkaN: "" ,
+      menjanjeLozinke: "password",
+      is_checked: false,
     };
+    this.handleCheckBox = this.handleCheckBox.bind(this);
   }
 
   componentWillMount() {
@@ -107,6 +110,16 @@ class IzmenaProfilaAdminaKC extends Component {
         console.log("Izmena nije uspela! ");
       });
   };
+  handleCheckBox() {
+    if(this.state.is_checked == true){
+      this.setState({ is_checked: false });
+      this.setState({ menjanjeLozinke : "password"});
+    }else{
+      this.setState({ is_checked: true });
+      this.setState({ menjanjeLozinke : "text"});
+    }
+    
+  }
 
   render() {
     const email = this.state.email;
@@ -131,7 +144,7 @@ class IzmenaProfilaAdminaKC extends Component {
                     onSubmit={this.handleSumbit}
                     className="formaIzmenaProfilaAdminaKC"
                   >
-                  <div className="ime">
+                    <div className="ime">
                       <label htmlFor="ime">Email: </label>
                       <input
                         type="text"
@@ -171,13 +184,23 @@ class IzmenaProfilaAdminaKC extends Component {
                     <div className="lozinka">
                       <label htmlFor="lozinka">Lozinka: </label>
                       <input
-                        type="text"
+                        type={this.state.menjanjeLozinke}
                         name="lozinkaN"
                         defaultValue={lozinka}
                         // placeholder={this.state.adresa}
                         // noValidate
                         onChange={this.handleChange}
                       />
+                      <div className="checkbox">
+                        <input
+                          id="check"
+                          type="checkbox"
+                          onChange={this.handleCheckBox}
+                          checked={this.state.is_checked}
+                              
+                        />
+                        <label htmlFor="check">prikazi lozinku</label>
+                      </div> 
                     </div>
 
                     <div className="izmeniPodatkeAdminKC">
@@ -222,12 +245,12 @@ class IzmenaProfilaAdminaKC extends Component {
                         <label className="prezimeAdminaKC">{prezime}</label>
                       </h2>
                     </div>
-                    <div className="typo-line">
+                    {/* <div className="typo-line">
                       <h2>
                         <p className="category">Lozinka: </p>
                         <label className="lozinkaAdminaKC">{lozinka}</label>
                       </h2>
-                    </div>
+                    </div> */}
                   </div>
                 }
 

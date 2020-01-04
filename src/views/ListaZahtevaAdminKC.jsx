@@ -91,9 +91,9 @@ class ListaZahtevaAdminKC extends Component {
       title: 'Odbijanje zahteva za registraciju',
       body: [
         <form className="formaZaSlanjeRazlogaOdbijanja">
-          <div className="za">
-            <label className="zaLabel" htmlFor="za">Za: </label>
-            <input className="zaLabel"
+          <div className="razlogOdbijanja">
+            <label className="razlogOdbijanjaLabel" htmlFor="razlogOdbijanja">Za: </label>
+            <input className="razlogOdbijanjaLabel"
               type="text"
               name="za"
               value = {zaKoga}
