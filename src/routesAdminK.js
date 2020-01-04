@@ -12,9 +12,10 @@ import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranicaAdminaKlinike from "views/PocetnaStranicaAdminaKlinike";
-
+import listaPregleda from "views/ListaPregleda.jsx";
 import slobodniTermini from "views/SlobodniTermini.jsx"
-
+import listaSala from "views/ListaSala.jsx"
+import listaZahteva from "views/ListaZahtevaPregled.jsx"
 import izmenaProfila from "views/IzmenaProfila";
 
 
@@ -25,14 +26,14 @@ const dashboardRoutes = [
   //za admina k 
   {
     path: "/pocetnaStranica",
-    name: "Pocetna Strana Admina ",
+    name: "Pocetna Strana ",
     icon: "pe-7s-graph",
     component: PocetnaStranicaAdminaKlinike,
     layout: "/admin"
   },
   {
     path: "/izmenaProfilaAdminaKlinike",
-    name: "Izmena profila admina",
+    name: "Izmena profila",
     icon: "pe-7s-user",
     component: izmenaProfilaAdminaKlinike,
     layout: "/admin"
@@ -47,19 +48,39 @@ const dashboardRoutes = [
   {
     path: "/lekari",
     name: "Lista Lekara",
-    icon: "pe-7s-user",
+    icon: "pe-7s-graph",
     component: listaLekara,
     layout: "/admin"
   },
 
   {
+    path: "/Pregledi",
+    name: "Pregledi",
+    icon: "pe-7s-graph",
+    component: listaPregleda,
+    layout: "/admin"
+  },
+  {
+    path: "/Sale",
+    name: "Sale",
+    icon: "pe-7s-graph",
+    component: listaSala,
+    layout: "/admin"
+  },
+  {
     path: "/slobodniTermini",
     name: "Slobodni termini",
-    icon: "pe-7s-user",
+    icon: "pe-7s-graph",
     component: slobodniTermini,
     layout: "/admin"
   },
-
+  {
+    path: "/listaZahtevaPregled",
+    name: "lLsta Zahteva",
+    icon: "pe-7s-graph",
+    component: listaZahteva,
+    layout: "/admin"
+  },
   // {
   //   path: "/izmenaProfilaLekara",
   //   name: "Pocetna Strana Admina ",

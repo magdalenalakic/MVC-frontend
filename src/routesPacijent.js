@@ -1,4 +1,3 @@
-
 import Dashboard from "views/Dashboard.jsx";
 import IzmenaProfilaPacijent from "views/IzmenaProfilaPacijent.jsx";
 import TableList from "views/TableList.jsx";
@@ -10,11 +9,12 @@ import Upgrade from "views/Upgrade.jsx";
 import Login from "login.js";
 import Registracija from "registracija";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
-import PocetnaStranaPacijenta from "views/PocetnaStranaPacijenta.jsx";
+import PocetnaStranaPacijenta from "views/PocetnaStranicaPacijenta.jsx";
 import ListaZahtevaAdminKC from "views/ListaZahtevaAdminKC.jsx";
 import Sifrarnik from "views/Sifrarnik.jsx";
 import ListaKlinika from "views/ListaKlinika.jsx";
 import ZdravstveniKarton from "views/ZdravstveniKarton.jsx";
+import BrzoZakazivanje from "views/BrzoZakazivanje.jsx";
 
 const dashboardRoutes = [
   //za pacijenta
@@ -26,14 +26,21 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/user",
+    path: "/izmenaProfilaPacijenta",
     name: "Izmena profila",
     icon: "pe-7s-user",
     component: IzmenaProfilaPacijent,
     layout: "/admin"
   },
   {
-    path: "/klinike",
+    path: "/brzoZakazivanje",
+    name: "Brzo Zakazivanje",
+    icon: "pe-7s-user",
+    component: BrzoZakazivanje,
+    layout: "/admin"
+  },
+  {
+    path: "/klinikePacijenta",
     name: "Klinike",
     icon: "pe-7s-user",
     component: ListaKlinika,
