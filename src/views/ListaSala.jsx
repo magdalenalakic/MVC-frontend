@@ -10,7 +10,7 @@ import "klinickiCentar.css";
 
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
-class ListaLekara extends Component {
+class ListaSala extends Component {
   constructor(props) {
     super(props);
     console.log("LISTA SALA");
@@ -405,4 +405,4 @@ handleIzmeni = e => {
   }
 }
 
-export default ListaLekara;
+export default ListaSala;
