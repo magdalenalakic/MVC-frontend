@@ -56,7 +56,7 @@ class ZdravstveniKarton extends Component {
         axios
           .get(
             "http://localhost:8025/api/pacijenti/findPacijentEmail/" +
-            this.state.email
+              this.state.email
           )
 
           .then(Response => {
@@ -275,19 +275,18 @@ class ZdravstveniKarton extends Component {
                         ></img>
                       </h2>
                     </div>
-
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Email: </p>
-                        <label className="adresaKC">{email}</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">LBO: </p>
-                        <label className="opisKC">{lbo}</label>
-                      </h2>
-                    </div>
+                    <Table striped hover>
+                      <thead className="thead-dark">
+                        <tr>
+                          <td>E-mail:</td>
+                          <td>{email}</td>
+                        </tr>
+                        <tr>
+                          <td>LBO:</td>
+                          <td>{lbo}</td>
+                        </tr>
+                      </thead>
+                    </Table>
                   </div>
                 }
               />

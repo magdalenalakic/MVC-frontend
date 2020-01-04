@@ -59,6 +59,7 @@ class ListaKlinika extends Component {
     console.log(this.state);
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
+    this.sortMyArrayLekari = this.sortMyArrayLekari.bind(this);
     this.handleChangeDate = this.handleChangeDate.bind(this);
     this.podesiOcenuKlinike = this.podesiOcenuKlinike.bind(this);
     this.podesiOcenuLekara = this.podesiOcenuLekara.bind(this);
@@ -308,7 +309,7 @@ class ListaKlinika extends Component {
 
         <td>{this.state.nazivOznacenogPregleda}</td>
         <td>{this.state.nazivIzabranogLekara}</td>
-        <td>CENA</td>
+        <td>2000 RSD</td>
       </tr>
     );
     return res;
@@ -418,7 +419,29 @@ class ListaKlinika extends Component {
       });
     }
   }
+  sortMyArrayLekari(sortBy) {
+    console.log("sort funkcija");
+    console.log(sortBy);
+    const lista = this.state.listaLekara;
+    if (sortBy === "ime") {
+      console.log("ime");
+      this.setState({
+        listaKlinika: lista.sort((a, b) => a.ime.localeCompare(b.ime))
+      });
+    } else if (sortBy === "prezime") {
+      console.log("prezime");
+      this.setState({
+        listaKlinika: lista.sort((a, b) => a.prezime.localeCompare(b.prezime))
+      });
+    } 
+    else if (sortBy === "ocena") {
+      console.log("ocena");
 
+      this.setState({
+        listaKlinika: lista.sort((a, b) => b.ocena - a.ocena)
+      });
+    }
+  }
   handleChange = e => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -500,10 +523,30 @@ class ListaKlinika extends Component {
   odabranaKlinika = e => {
     //treba redirektovati na pretragu i filtriranje lekara
     e.preventDefault();
-    this.setState({
-      redirectNext: true,
-      flodabranaKlinikaag: 1
-    });
+    axios
+      .get(
+        "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
+          this.state.izabranaKlinika
+      )
+      .then(Response => {
+        console.log("Preuzeta lista lekara: ");
+        console.log(Response.data);
+        this.setState({
+          listaLekara: Response.data,
+          nazivIzabranogLekara:
+            Response.data[0].ime + " " + Response.data[0].prezime,
+            redirectNext: true,
+            flag: 1
+        });
+        console.log(this.state.listaLekara);
+      })
+
+      .catch(error => {
+        console.log("lekari nisu preuzete");
+      });
+    // this.setState({
+      
+    // });
   };
   odabranLekar = e => {
     //treba redirektovati na pretragu i filtriranje lekara
@@ -530,25 +573,8 @@ class ListaKlinika extends Component {
   };
   redirectReferer() {
     var flag = 1;
-    axios
-      .get(
-        "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
-          this.state.izabranaKlinika
-      )
-      .then(Response => {
-        console.log("Preuzeta lista lekara: ");
-        console.log(Response.data);
-        this.setState({
-          listaLekara: Response.data,
-          nazivIzabranogLekara:
-            Response.data[0].ime + " " + Response.data[0].prezime
-        });
-        console.log(this.state.listaLekara);
-      })
-
-      .catch(error => {
-        console.log("lekari nisu preuzete");
-      });
+    console.log(this.state.izabranaKlinika)
+    
     if (this.state.redirectNext == true) {
       return (
         <Route
@@ -929,29 +955,8 @@ class ListaKlinika extends Component {
                       Pronadji termine
                     </Button>
                   </div>
-                  <div>
-                    <h5>Tip pregleda: </h5>
-                    <NavDropdown
-                      onSelect={e => {
-                        // this.sortMyArray(e);
-                      }}
-                      title="Pregled"
-                      id="dropdown"
-                    >
-                      <MenuItem eventKey={"pregled1"}>
-                        Vrsta pregleda 1
-                      </MenuItem>
-                      <MenuItem eventKey={"pregled2"}>
-                        Vrsta pregleda 2
-                      </MenuItem>
-                      <MenuItem eventKey={"pregled3"}>
-                        Vrsta pregleda 3
-                      </MenuItem>
-                      <MenuItem eventKey={"pregled4"}>
-                        Vrsta pregleda 4
-                      </MenuItem>
-                    </NavDropdown>
-                  </div>
+   
+        
                   <div>
                     <h5>Ocena: </h5>
                     <Button value="9" onClick={e => this.podesiOcenuLekara(e)}>
@@ -983,7 +988,7 @@ class ListaKlinika extends Component {
                           <div>
                             <NavDropdown
                               onSelect={e => {
-                                this.sortMyArray(e);
+                                this.sortMyArrayLekari(e);
                               }}
                               title="Sortiraj"
                               id="nav-item dropdown"
