@@ -32,6 +32,7 @@ class Login extends Component {
       redirectToReferrer: false,
       redirectToRegistration: false,
       errorF: false,
+      token: "",
       waitToapprove: props.waitToapprove,
       formErrors: {
         log: "",
@@ -55,6 +56,12 @@ class Login extends Component {
       })
       .then(response => {
         console.log(response.data);
+        console.log(response.data.accessToken);
+        this.setState({
+          token: response.data.accessToken
+        });
+        // console.log(response.data.accessToken.getUser());
+
         this.setState({
           uloga: response.data.uloga
         });
@@ -63,7 +70,7 @@ class Login extends Component {
           email: response.data.email
         });
 
-        console.log(this.state.uloga);
+        // console.log(this.state.uloga);
         this.setState({
           redirectToReferrer: true
         });
@@ -123,6 +130,7 @@ class Login extends Component {
     const uloga = this.state.uloga;
     const redirectToReferrer = this.state.redirectToReferrer;
     const redirectToRegistration = this.state.redirectToRegistration;
+    const token = this.state.token;
 
     if (uloga === "ADMIN_KC") {
       return (
@@ -189,7 +197,12 @@ class Login extends Component {
             <Route
               path="/admin"
               render={props => (
-                <Pacijent {...props} email={email} uloga={uloga} />
+                <Pacijent
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                />
               )}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
