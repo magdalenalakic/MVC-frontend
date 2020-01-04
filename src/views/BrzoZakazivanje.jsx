@@ -30,6 +30,7 @@ class BrzoZakazivanje extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga,
+      token: props.token,
       listaPregleda: [],
       redirectNext: false,
       flag: 0,
@@ -107,8 +108,15 @@ class BrzoZakazivanje extends Component {
 
   componentWillMount() {
     const url = "http://localhost:8025/api/ST/unapredDef";
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     axios
-      .get(url)
+      .get(url, config)
       .then(Response => {
         console.log("Preuzeti unapred def pregledi: ");
         console.log(Response.data);
@@ -148,17 +156,28 @@ class BrzoZakazivanje extends Component {
     e.preventDefault();
     console.log(this.state.izabranPregled);
     const ol = this.state.izabranPregled;
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     if (ol != 0 && ol != undefined) {
       axios
 
-        .post("http://localhost:8025/api/pregledi/newST", {
-          lekarID: this.state.izabraniLekar,
-          klinikaID: this.state.izabranaKlinika,
-          tipPregledaID: this.state.izabraniTipPregleda,
-          pacijentEmail: this.state.email,
-          cena: this.state.izabranaCena,
-          datum: this.state.izabraniDatum
-        })
+        .post(
+          "http://localhost:8025/api/pregledi/new",
+          {
+            lekarID: this.state.izabraniLekar,
+            klinikaID: this.state.izabranaKlinika,
+            tipPregledaID: this.state.izabraniTipPregleda,
+            pacijentEmail: this.state.email,
+            cena: this.state.izabranaCena,
+            datum: this.state.izabraniDatum
+          },
+          config
+        )
         .then(response => {
           console.log("PREGLED");
           console.log(response);
@@ -267,51 +286,51 @@ class BrzoZakazivanje extends Component {
     console.log("On change !!!");
   };
 
-  handleSumbit = e => {
-    e.preventDefault();
-    console.log("KLIK SUBMITTT");
-    // let formErrors = { ...this.state.formErrors };
-    console.log("Izmjena : ---------------");
-    console.log(this.state.ime);
-    console.log(this.state.prezime);
-    axios
-      .put("http://localhost:8025/api/pacijenti/update", {
-        ime: this.state.ime,
-        prezime: this.state.prezime,
-        telefon: this.state.telefon,
-        email: this.state.email,
-        adresa: this.state.adresa,
-        grad: this.state.grad,
-        drzava: this.state.drzava,
-        lbo: this.state.lbo
-      })
-      .then(response => {
-        console.log(response.data);
+  // handleSumbit = e => {
+  //   e.preventDefault();
+  //   console.log("KLIK SUBMITTT");
+  //   // let formErrors = { ...this.state.formErrors };
+  //   console.log("Izmjena : ---------------");
+  //   console.log(this.state.ime);
+  //   console.log(this.state.prezime);
+  //   axios
+  //     .put("http://localhost:8025/api/pacijenti/update", {
+  //       ime: this.state.ime,
+  //       prezime: this.state.prezime,
+  //       telefon: this.state.telefon,
+  //       email: this.state.email,
+  //       adresa: this.state.adresa,
+  //       grad: this.state.grad,
+  //       drzava: this.state.drzava,
+  //       lbo: this.state.lbo
+  //     })
+  //     .then(response => {
+  //       console.log(response.data);
 
-        this.setState({
-          ime: response.data.ime
-        });
+  //       this.setState({
+  //         ime: response.data.ime
+  //       });
 
-        this.setState({
-          prezime: response.data.prezime
-        });
+  //       this.setState({
+  //         prezime: response.data.prezime
+  //       });
 
-        this.setState({
-          telefon: response.data.telefon,
-          adresa: response.data.adresa,
-          grad: response.data.grad,
-          drzava: response.data.drzava,
-          lbo: response.data.lbo
-        });
+  //       this.setState({
+  //         telefon: response.data.telefon,
+  //         adresa: response.data.adresa,
+  //         grad: response.data.grad,
+  //         drzava: response.data.drzava,
+  //         lbo: response.data.lbo
+  //       });
 
-        // this.setState({
-        //   redirectToReferrer: true
-        // });
-      })
-      .catch(error => {
-        console.log("Izmena nije uspela! ");
-      });
-  };
+  //       // this.setState({
+  //       //   redirectToReferrer: true
+  //       // });
+  //     })
+  //     .catch(error => {
+  //       console.log("Izmena nije uspela! ");
+  //     });
+  // };
   redirectReferer() {
     var flag = 1;
     if (this.state.redirectNext == true) {

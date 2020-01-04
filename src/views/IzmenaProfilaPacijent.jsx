@@ -29,6 +29,7 @@ class IzmenaProfilaPacijent extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga,
+      token: props.token,
       ime: "",
       telefon: "",
       prezime: "",
@@ -50,11 +51,16 @@ class IzmenaProfilaPacijent extends Component {
   }
 
   componentWillMount() {
-    const url =
-      "http://localhost:8025/api/pacijenti/findPacijentEmail/" +
-      this.state.email;
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = "http://localhost:8025/api/pacijenti/findPacijentEmail";
     axios
-      .get(url)
+      .get(url, config)
       .then(Response => {
         console.log("Preuzet pacijent: ");
         console.log(Response.data);
@@ -96,17 +102,28 @@ class IzmenaProfilaPacijent extends Component {
     console.log("Izmjena : ---------------");
     console.log(this.state.ime);
     console.log(this.state.prezime);
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     axios
-      .put("http://localhost:8025/api/pacijenti/update", {
-        ime: this.state.ime,
-        prezime: this.state.prezime,
-        telefon: this.state.telefon,
-        email: this.state.email,
-        adresa: this.state.adresa,
-        grad: this.state.grad,
-        drzava: this.state.drzava,
-        lbo: this.state.lbo
-      })
+      .put(
+        "http://localhost:8025/api/pacijenti/update",
+        {
+          ime: this.state.ime,
+          prezime: this.state.prezime,
+          telefon: this.state.telefon,
+          email: this.state.email,
+          adresa: this.state.adresa,
+          grad: this.state.grad,
+          drzava: this.state.drzava,
+          lbo: this.state.lbo
+        },
+        config
+      )
       .then(response => {
         console.log(response.data);
 
