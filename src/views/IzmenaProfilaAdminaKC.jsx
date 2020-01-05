@@ -30,6 +30,7 @@ class IzmenaProfilaAdminaKC extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga,
+      token: props.token,
       ime: "",
       prezime: "",
       lozinka: "",
@@ -43,10 +44,17 @@ class IzmenaProfilaAdminaKC extends Component {
   }
 
   componentWillMount() {
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     const url =
-      "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC/" + this.state.email;
+      "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC";
     axios
-      .get(url)
+      .get(url, config)
       .then(Response => {
         console.log("Preuzet admin: ");
         console.log(Response.data);

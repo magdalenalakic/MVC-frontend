@@ -10,6 +10,7 @@ import Dialog from 'react-bootstrap-dialog';
 // import { render } from 'react-dom';
 // import ReactDOM from 'react-dom'
 
+
 class KlinickiCentarPocetna extends Component {
   constructor(props) {
     super(props);
@@ -18,6 +19,7 @@ class KlinickiCentarPocetna extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       listaKlinika: [],
       listaAdministratoraKlinika: [],
       listaAdministratoraKC: [],
@@ -63,6 +65,13 @@ class KlinickiCentarPocetna extends Component {
 
 
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
     this.listaAdminaKlinikaUKC = this.listaAdminaKlinikaUKC.bind(this);
     this.listaAdminaUKC = this.listaAdminaUKC.bind(this); 
@@ -87,12 +96,11 @@ class KlinickiCentarPocetna extends Component {
 
   listaKlinika(){
     console.log("--------lista klinika u KC");
-
-    const url1 = 'http://localhost:8025/api/administratoriKC/listaKlinika/' + this.state.email; 
-
+    
+    const url1 = 'http://localhost:8025/api/administratoriKC/listaKlinika'; 
     console.log(url1);
     axios
-      .get(url1)
+      .get(url1, this.config)
       .then(response => {
         console.log("URL 111");
         console.log(response);
@@ -107,9 +115,9 @@ class KlinickiCentarPocetna extends Component {
   }
   listaAdministratoraKlinika(){
     console.log("--------lista administratora klinika u KC");
-    const url2 = 'http://localhost:8025/api/administratoriKC/listaAdministratoraKlinika/' + this.state.email; 
+    const url2 = 'http://localhost:8025/api/administratoriKC/listaAdministratoraKlinika'; 
     console.log(url2);
-    axios.get(url2)
+    axios.get(url2,this.config)
       .then(response => {
         console.log("url 22222");
         console.log(response);
@@ -128,7 +136,7 @@ class KlinickiCentarPocetna extends Component {
 
     console.log(url3);
     axios
-      .get(url3)
+      .get(url3, this.config)
       .then(response => {
         console.log("URL 333");
         console.log(response);
@@ -144,9 +152,9 @@ class KlinickiCentarPocetna extends Component {
   }
   podaciOKC(){
     console.log("--------Podaci o KC");
-    const url4 = 'http://localhost:8025/api/administratoriKC/klinickiCentar/' + this.state.email; 
+    const url4 = 'http://localhost:8025/api/administratoriKC/klinickiCentar'; 
     console.log(url4);
-      axios.get(url4)
+      axios.get(url4, this.config)
   
         .then(response => {
           console.log("url 44444");

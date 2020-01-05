@@ -14,6 +14,7 @@ class Sifrarnik extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       listaLekova:[],
       listaDijagnoza:[],
       lekNaziv: "",
@@ -23,6 +24,13 @@ class Sifrarnik extends Component {
       dijagnozaNaziv: ""
       
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
     this.listaLekovaUKC = this.listaLekovaUKC.bind(this);
     this.listaDijagnozaUKC = this.listaDijagnozaUKC.bind(this);
     this.dodajLek = this.dodajLek.bind(this);
@@ -85,9 +93,9 @@ class Sifrarnik extends Component {
   }
   listaLekova(){
     console.log("--------lista lekova");
-    const url1 = 'http://localhost:8025/api/administratoriKC/listaLekova/' + this.state.email; 
+    const url1 = 'http://localhost:8025/api/administratoriKC/listaLekova/'; 
     console.log(url1);
-    axios.get(url1)
+    axios.get(url1, this.config)
       .then(response => {
         console.log("URL Lek");
         console.log(response);
@@ -103,9 +111,9 @@ class Sifrarnik extends Component {
 
   listaDijagnoza(){
     console.log("--------lista dijagnoza");
-  const url2 = 'http://localhost:8025/api/administratoriKC/listaDijagnoza/' + this.state.email; 
+  const url2 = 'http://localhost:8025/api/administratoriKC/listaDijagnoza/'; 
   console.log(url2);
-  axios.get(url2)
+  axios.get(url2, this.config)
       .then(response => {
         console.log("URL Dijagnoza");
         console.log(response);
@@ -168,14 +176,19 @@ class Sifrarnik extends Component {
       actions: [
         Dialog.CancelAction(),
         Dialog.OKAction(() => {
-          
+         
           console.log('OK je kliknuto!');
           const url3 = "http://localhost:8025/api/administratoriKC/dodavanjeLeka";
           axios
-            .post(url3, {
+            .post(url3,{
               naziv : this.state.lekNaziv,
-              sifra : this.state.lekSifra
-              
+              sifra : this.state.lekSifra, 
+              headers: {
+                Authorization: "Bearer " + this.state.token,
+                Accept: "application/json",
+                "Content-Type": "application/json"
+              }
+
             })
             .then(response => {
               console.log("Dodavanje leka uspelo! ");

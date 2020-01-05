@@ -14,6 +14,7 @@ class ListaZahtevaAdminKC extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       razlogOdbijanja: "",
       za: "",
       listaZahtevaZaRegistraciju: []
@@ -26,13 +27,19 @@ class ListaZahtevaAdminKC extends Component {
   }
 
   ucitajPonovo(){
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     const url1 =
-      "http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/" +
-      this.state.email;
+      "http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/";
 
     console.log(url1);
     axios
-      .get(url1)
+      .get(url1, config)
       .then(response => {
         console.log("URL zahtevi za reg");
         console.log(response);

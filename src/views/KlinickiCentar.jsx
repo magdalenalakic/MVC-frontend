@@ -40,6 +40,7 @@ class KlinickiCentar extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       // listaKlinika:[],
       _notificationSystem: null,
       // image: image,
@@ -68,6 +69,7 @@ class KlinickiCentar extends Component {
                 handleClick={this.handleNotificationClick}
                 uloga ={this.state.uloga}
                 email = {this.state.email}
+                token={this.state.token}
               />
             )}
             key={key}
