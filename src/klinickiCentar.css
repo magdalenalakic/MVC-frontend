@@ -8,6 +8,17 @@
   font-weight: 900;
 }
 
+.slovaCard{
+  font-size: 1em;
+  color: #222;
+  font-weight: 500;
+  /* margin-bottom: 0.25em; */
+}
+.cardLa{
+  width: 210px;
+  height: 250px;
+}
+
 .slikaKC {
   width: 4.5cm;
   height: 4.5cm;
