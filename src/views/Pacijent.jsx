@@ -79,7 +79,12 @@ class Pacijent extends Component {
     console.log("handle not click");
     console.log("PORUKA: ", poruka);
     var klasa = "pe-7s-gift";
-    if (poruka == "USPESNA IZMENA" || poruka == "ZAHTEV JE POTVRDJEN") {
+    if (
+      poruka == "USPESNA IZMENA" ||
+      poruka == "ZAHTEV JE POTVRDJEN" ||
+      poruka == "OCENJEN LEKAR" ||
+      poruka == "OCENJENA KLINIKA"
+    ) {
       level = "success";
       klasa = "pe-7s-check";
     } else if (poruka == "ZAHTEV JE ODBIJEN") {

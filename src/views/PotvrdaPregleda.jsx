@@ -99,7 +99,7 @@ class PotvrdaPregleda extends Component {
       .then(res => {
         console.log(res.data);
         this.setState({
-          pregledi: res.data
+          pregledi: res.data.sort((a, b) => b.id - a.id)
         });
       })
       .catch(error => {

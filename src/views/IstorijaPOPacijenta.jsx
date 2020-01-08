@@ -39,7 +39,9 @@ class IstorijaPOPacijenta extends Component {
       pregledi: [],
       OnazivKl: "",
       OimeL: "",
-      OprezimeL: ""
+      OprezimeL: "",
+      OklinikaID: "",
+      OlekarID: ""
     };
     this.listaPregleda = this.listaPregleda.bind(this);
     this.oceni = this.oceni.bind(this);
@@ -93,11 +95,68 @@ class IstorijaPOPacijenta extends Component {
         console.log("Pacijent  nije preuzet");
       });
   }
-  ocenjenaKlinika = e => {
+  ocenjenaKlinika(e, klinikaID) {
+    console.log(this.state);
     console.log(e.currentTarget.value);
-  };
-  ocenjenLekar = e => {
+    console.log(klinikaID);
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .put(
+        "http://localhost:8025/api/klinike/oceni/" +
+          klinikaID +
+          "/" +
+          e.currentTarget.value,
+        {},
+        config
+      )
+      .then(response => {
+        console.log(response.data);
+        this.props.handleClick("OCENJENA KLINIKA");
+
+        this.setState({
+          ime: response.data.ime
+        });
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ");
+      });
+  }
+  ocenjenLekar(e,lekarID){
     console.log(e.currentTarget.value);
+    console.log(lekarID)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .put(
+        "http://localhost:8025/api/lekari/oceni/" +
+        lekarID +
+          "/" +
+          e.currentTarget.value,
+        {},
+        config
+      )
+      .then(response => {
+        console.log(response.data);
+        this.props.handleClick("OCENJEN LEKAR");
+
+        this.setState({
+          ime: response.data.ime
+        });
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ");
+      });
   };
   oceni = e => {
     let lista = this.state.pregledi;
@@ -111,7 +170,9 @@ class IstorijaPOPacijenta extends Component {
           {
             OnazivKl: lista[i].nazivKl,
             OimeL: lista[i].imeL,
-            OprezimeL: lista[i].prezimeL
+            OprezimeL: lista[i].prezimeL,
+            OklinikaID: lista[i].klinikaID,
+            OlekarID: lista[i].lekarID
           },
           () => {
             this.dialog.show({
@@ -126,7 +187,9 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="1"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e =>
+                          this.ocenjenaKlinika(e, this.state.OklinikaID)
+                        }
                       >
                         1
                       </Button>
@@ -134,7 +197,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="2"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         2
                       </Button>
@@ -142,7 +205,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="3"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         3
                       </Button>
@@ -150,7 +213,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="4"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         4
                       </Button>
@@ -158,7 +221,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="5"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         5
                       </Button>
@@ -166,7 +229,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="6"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         6
                       </Button>
@@ -174,7 +237,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="7"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         7
                       </Button>
@@ -182,7 +245,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="8"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         8
                       </Button>
@@ -190,7 +253,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="9"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         9
                       </Button>
@@ -198,7 +261,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="10"
-                        onClick={e => this.ocenjenaKlinika(e)}
+                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
                       >
                         10
                       </Button>
@@ -214,7 +277,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="1"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         1
                       </Button>
@@ -222,7 +285,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="2"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         2
                       </Button>
@@ -230,7 +293,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="3"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         3
                       </Button>
@@ -238,7 +301,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="4"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         4
                       </Button>
@@ -246,7 +309,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="5"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         5
                       </Button>
@@ -254,7 +317,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="6"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         6
                       </Button>
@@ -262,7 +325,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="7"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         7
                       </Button>
@@ -270,7 +333,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="8"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         8
                       </Button>
@@ -278,7 +341,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="9"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         9
                       </Button>
@@ -286,7 +349,7 @@ class IstorijaPOPacijenta extends Component {
                         fill
                         bsStyle="danger"
                         value="10"
-                        onClick={e => this.ocenjenLekar(e)}
+                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
                       >
                         10
                       </Button>
