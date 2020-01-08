@@ -30,8 +30,8 @@ class PocetnaStranicaPacijenta extends Component {
       lozinka: "",
       redirectToZahtevZaPregled: false,
       redirectZdravstveniKarton: false,
-      redirectIstorijaPO: false,
-      redirectBrzoZakazivanje: false
+      redirectBrzoZakazivanje: false,
+      redirectIstorijaPO: false
     };
     this.pronadjiPacijenta = this.pronadjiPacijenta.bind(this);
     this.handleZahtevZaPregled = this.handleZahtevZaPregled.bind(this);
@@ -107,7 +107,7 @@ class PocetnaStranicaPacijenta extends Component {
     } else if (this.state.redirectBrzoZakazivanje == true) {
       return <Redirect from="/" to="/admin/brzoZakazivanje" />;
     } else if (this.state.redirectIstorijaPO == true) {
-      // return <Redirect from="/" to="/admin/klinike" />;
+      return <Redirect from="/" to="/admin/istorija" />;
     } else if (this.state.redirectZdravstveniKarton == true) {
       return <Redirect from="/" to="/admin/zdravstveniKarton" />;
     }
@@ -159,13 +159,13 @@ class PocetnaStranicaPacijenta extends Component {
                   // statsText="Pocetak pregleda"
                   // statsValue="$1,345"
                   // statsIcon={<i className="fa fa-calendar-o" />}
-                  statsIconText="Pregled zdravstvenog kartona"
+                  statsIconText="Pregled kartona"
                 />
               </div>
             </Col>
           </Row>
           <Row>
-            <Col lg={6} sm={9}>
+            <Col lg={6} sm={6}>
               {this.renderRedirect()}
               <div onClick={this.handleIstorijaPO}>
                 <StatsCard
@@ -184,7 +184,7 @@ class PocetnaStranicaPacijenta extends Component {
                 />
               </div>
             </Col>
-            <Col lg={6} sm={9}>
+            <Col lg={6} sm={6}>
               {this.renderRedirect()}
               <div onClick={this.handleBrzoZakazivanje}>
                 <StatsCard
@@ -199,7 +199,7 @@ class PocetnaStranicaPacijenta extends Component {
                   // statsText="Profil korisnika"
                   // statsValue="23"
                   // statsIcon={<i className="fa fa-clock-o" />}
-                  statsIconText="Brzo zakazivanje pregleda"
+                  statsIconText="Brzo zakazivanje"
                 />
               </div>
             </Col>

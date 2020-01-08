@@ -1131,7 +1131,10 @@ class ListaKlinika extends Component {
                           <Button onClick={this.odustani}>Odustani</Button>
                         </form>
                         <form onSubmit={e => this.slanjeZahtevaZaPregled(e)}>
-                          <Button type="submit">Potvrdi</Button>
+                          <Button type="submit"  
+                          onClick={()=> this.props.handleClick("Zahtev je poslat!")}
+                            
+                        >Potvrdi</Button>
                         </form>
                       </div>
                     }

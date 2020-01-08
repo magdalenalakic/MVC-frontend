@@ -132,8 +132,7 @@ class IzmenaProfilaPacijent extends Component {
         });
 
         this.setState({
-          prezime: response.data.prezime,
-          formMessage: "Uspesno izmenjeno!"
+          prezime: response.data.prezime
         });
 
         this.setState({
@@ -274,7 +273,11 @@ class IzmenaProfilaPacijent extends Component {
                         />*/}
                     </div>
                     <div className="izmeniPodatkePacijent">
-                      <Button variant="outline-primary" type="submit">
+                      <Button
+                        variant="outline-primary"
+                        type="submit"
+                        onClick={() => this.props.handleClick("USPESNA IZMENA")}
+                      >
                         Izmeni podatke
                       </Button>
 

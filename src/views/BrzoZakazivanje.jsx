@@ -41,7 +41,8 @@ class BrzoZakazivanje extends Component {
       izabraniDatum: new Date(),
       izabraniTipPregleda: 0,
       izabranaCena: 0,
-      izabraniPopust: 0
+      izabraniPopust: 0,
+      canClick: false
     };
     this.redirectReferer = this.redirectReferer.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
@@ -136,6 +137,7 @@ class BrzoZakazivanje extends Component {
 
   promenjenOdabirPregleda = e => {
     console.log("promenjen odabrir");
+    console.log(e.currentTarget.value);
     const lista = this.state.listaPregleda;
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].id == e.currentTarget.value) {
@@ -146,10 +148,12 @@ class BrzoZakazivanje extends Component {
           izabraniDatum: lista[i].datum,
           izabranaCena: lista[i].cena,
           izabraniTipPregleda: lista[i].tipPregledaID
+
           // izabraniPopust:lista[i].popust
         });
       }
     }
+    console.log(this.state);
   };
   odabranPrelged = e => {
     //treba redirektovati na pretragu i filtriranje lekara
@@ -167,14 +171,15 @@ class BrzoZakazivanje extends Component {
       axios
 
         .post(
-          "http://localhost:8025/api/pregledi/new",
+          "http://localhost:8025/api/pregledi/newST",
           {
             lekarID: this.state.izabraniLekar,
             klinikaID: this.state.izabranaKlinika,
             tipPregledaID: this.state.izabraniTipPregleda,
             pacijentEmail: this.state.email,
             cena: this.state.izabranaCena,
-            datum: this.state.izabraniDatum
+            datum: this.state.izabraniDatum,
+            canClick: true
           },
           config
         )
@@ -414,7 +419,16 @@ class BrzoZakazivanje extends Component {
                         }
                       />
                       {this.redirectReferer}
-                      <Button type="submit">Zakazi</Button>
+                      <Button
+                        type="submit"
+                        onClick={
+                          this.state.canClick
+                            ? this.props.handleClick("Zahtev je poslat!")
+                            : null
+                        }
+                      >
+                        Zakazi
+                      </Button>
                       <h5>
                         {(this.state.izabranPregled == undefined ||
                           this.state.izabranPregled == 0) && (
@@ -432,25 +446,27 @@ class BrzoZakazivanje extends Component {
         </div>
       );
     } else if (this.state.flag == 1) {
-      return (
-        <div className="content">
-          <Grid fluid>
-            <Row>
-              <Col md={10}>
-                <Card
-                  title="Zahtev za pregled je uspesno poslat!"
-                  content={
-                    <h3 className="successMessage">
-                      Potvrdite zahtev za pregled preko E-maila!
-                    </h3>
-                  }
-                />
-              </Col>
-            </Row>
-          </Grid>
-        </div>
-      );
+      return <Redirect from="/" to="/admin/pocetnaStranica" />;
     }
+    //   return (
+    //     <div className="content">
+    //       <Grid fluid>
+    //         <Row>
+    //           <Col md={10}>
+    //             <Card
+    //               title="Zahtev za pregled je uspesno poslat!"
+    //               content={
+    //                 <h3 className="successMessage">
+    //                   Potvrdite zahtev za pregled preko E-maila!
+    //                 </h3>
+    //               }
+    //             />
+    //           </Col>
+    //         </Row>
+    //       </Grid>
+    //     </div>
+    //   );
+    // }
   }
 }
 

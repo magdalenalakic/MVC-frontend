@@ -73,37 +73,42 @@ class Pacijent extends Component {
       }
     });
   };
-  handleNotificationClick = position => {
-    var color = Math.floor(Math.random() * 4 + 1);
+  handleNotificationClick = poruka => {
+    var color = 1;
     var level;
-    switch (color) {
-      case 1:
-        level = "success";
-        break;
-      case 2:
-        level = "warning";
-        break;
-      case 3:
-        level = "error";
-        break;
-      case 4:
-        level = "info";
-        break;
-      default:
-        break;
+    console.log("handle not click");
+    console.log("PORUKA: ", poruka);
+    var klasa = "pe-7s-gift";
+    if (poruka == "USPESNA IZMENA" || poruka == "ZAHTEV JE POTVRDJEN") {
+      level = "success";
+      klasa = "pe-7s-check";
+    } else if (poruka == "ZAHTEV JE ODBIJEN") {
+      level = "error";
+      klasa = "pe-7s-close";
     }
-    // this.state._notificationSystem.addNotification({
-    //   title: <span data-notify="icon" className="pe-7s-gift" />,
-    //   message: (
-    //     <div>
-    //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-    //       every web developer.
-    //     </div>
-    //   ),
-    //   level: level,
-    //   position: position,
-    //   autoDismiss: 15
-    // });
+    // switch (poruka) {
+    //   case "USPESNA IZMENA":
+    //     level = "success";
+    //     break;
+    //   case 2:
+    //     level = "warning";
+    //     break;
+    //   case 3:
+    //     level = "error";
+    //     break;
+    //   case 4:
+    //     level = "info";
+    //     break;
+    //   default:
+    //     break;
+    // }
+    this.state._notificationSystem.addNotification({
+      title: <span data-notify="icon" className={klasa} />,
+      message: <div>{poruka}</div>,
+      level: level,
+      position: "tr",
+      autoDismiss: 15
+    });
   };
   getBrandText = path => {
     for (let i = 0; i < routes.length; i++) {
@@ -133,40 +138,35 @@ class Pacijent extends Component {
       this.setState({ fixedClasses: "dropdown" });
     }
   };
-  // componentDidMount() {
-  // this.setState({ _notificationSystem: this.refs.notificationSystem });
-  // var _notificationSystem = this.refs.notificationSystem;
-  // var color = Math.floor(Math.random() * 4 + 1);
-  // var level;
-  // switch (color) {
-  //   case 1:
-  //     level = "success";
-  //     break;
-  //   case 2:
-  //     level = "warning";
-  //     break;
-  //   case 3:
-  //     level = "error";
-  //     break;
-  //   case 4:
-  //     level = "info";
-  //     break;
-  //   default:
-  //     break;
-  // }
-  // _notificationSystem.addNotification({
-  //   title: <span data-notify="icon" className="pe-7s-gift" />,
-  //   message: (
-  //     <div>
-  //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-  //       every web developer.
-  //     </div>
-  //   ),
-  //   level: level,
-  //   position: "tr",
-  //   autoDismiss: 15
-  // });
-  // }
+  componentDidMount() {
+    this.setState({ _notificationSystem: this.refs.notificationSystem });
+    var _notificationSystem = this.refs.notificationSystem;
+    var color = 4;
+    var level;
+    switch (color) {
+      case 1:
+        level = "success";
+        break;
+      case 2:
+        level = "warning";
+        break;
+      case 3:
+        level = "error";
+        break;
+      case 4:
+        level = "info";
+        break;
+      default:
+        break;
+    }
+    _notificationSystem.addNotification({
+      title: <span data-notify="icon" className="pe-7s-gift" />,
+      message: <div>Dobrodosli, {this.state.email}</div>,
+      level: level,
+      position: "tr",
+      autoDismiss: 15
+    });
+  }
   componentDidUpdate(e) {
     if (
       window.innerWidth < 993 &&
@@ -186,7 +186,7 @@ class Pacijent extends Component {
     const uloga = this.state.uloga;
     return (
       <div className="wrapper">
-        {/* <NotificationSystem ref="notificationSystem" style={style} /> */}
+        <NotificationSystem ref="notificationSystem" style={style} />
         <Sidebar
           {...this.props}
           routes={routes}
