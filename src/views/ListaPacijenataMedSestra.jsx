@@ -33,6 +33,7 @@ class ListaPacijenataMedSestra extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       selected: null,
       listaPacijenata: [],
       adresaP: "",
@@ -54,6 +55,13 @@ class ListaPacijenataMedSestra extends Component {
       lbo: ""
 
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
     this.listaPacijenata = this.listaPacijenata.bind(this);
     this.handlePrikazZK = this.handlePrikazZK.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
@@ -61,11 +69,11 @@ class ListaPacijenataMedSestra extends Component {
   componentWillMount() {
     console.log("--------pocetak");
 
-    const url1 = 'http://localhost:8025/api/medicinskaSestra/listaPacijenata/' + this.state.email; 
+    const url1 = 'http://localhost:8025/api/medicinskaSestra/listaPacijenata' ; 
 
-    console.log(url1);
+    // console.log(url1, this.config);
     axios
-      .get(url1)
+      .get(url1, this.config)
       .then(response => {
         console.log("URL lista pacijenata");
         console.log(response);
@@ -129,10 +137,10 @@ class ListaPacijenataMedSestra extends Component {
     e.preventDefault();
     console.log("CLICK  **** otvori mi dijalog na klik ");  
     console.log( e.target.id);
-    const url ="http://localhost:8025/api/pacijenti/findPacijentEmail/" + e.target.id;
-    const url2 ="http://localhost:8025/api/pacijenti/findZK/" + e.target.id;
+    const url ="http://localhost:8025/api/medicinskaSestra/findPacijentEmail/" + e.target.id;
+    const url2 ="http://localhost:8025/api/medicinskaSestra/findZK/" + e.target.id;
     axios
-      .get(url)
+      .get(url, this.config)
       .then(response => {
         console.log("Preuzet pacijent");
         console.log(response);
@@ -141,7 +149,7 @@ class ListaPacijenataMedSestra extends Component {
           prezime: response.data.prezime,
           lbo: response.data.lbo
         }, ()=> axios
-                  .get(url2)
+                  .get(url2, this.config)
                   .then(Response => {
                     console.log("Preuzet ZK  pacijenta: ");
                     console.log(Response.data);
@@ -293,7 +301,7 @@ class ListaPacijenataMedSestra extends Component {
       for (var i = 0; i < lista.length; i++) {
         res.push(
           <tr key = {i} >
-            <td >{lista[i].id}</td>
+            <td >{i+1}</td>
             <td >{lista[i].lbo}</td>
             <td >{lista[i].ime}</td>
             <td >{lista[i].prezime}</td>
@@ -326,7 +334,7 @@ class ListaPacijenataMedSestra extends Component {
         prezime.toLowerCase().includes(pretraga.toLowerCase()) ){
           res.push(
             <tr key = {i} >
-              <td >{lista[i].id}</td>
+              <td >{i+1}</td>
               <td >{lista[i].lbo}</td>
               <td >{lista[i].ime}</td>
               <td >{lista[i].prezime}</td>
@@ -446,8 +454,8 @@ class ListaPacijenataMedSestra extends Component {
                     </div>
                     <div className="pretraga">
                       <select onChange={e => {this.sortMyArray(e) }}>
-                        <option value={"idRastuce"} >Id (rastuce)</option>
-                        <option value={"idOpadajuce"} >Id (opadajuce)</option>
+                        <option value={"idRastuce"} >Rbr (rastuce)</option>
+                        <option value={"idOpadajuce"} >Rbr (opadajuce)</option>
                         <option value={"lbo"}>LBO</option>
                         <option value={"ime"}>Ime</option>
                         <option value={"prezime"}>Prezime</option>
@@ -488,7 +496,7 @@ class ListaPacijenataMedSestra extends Component {
                         <Table style={{width:950}} className="TabelaListePacijenata" striped hover >
                           <thead  className="thead-dark" >
                             <tr>
-                              <th id="IdPacijenta">Id</th>
+                              <th id="IdPacijenta">Rbr</th>
                               <th id="LBOPacijenta">LBO</th>
                               <th id="ImePacijenta"> Ime</th>
                               <th id="PrezimePacijenta">Prezime</th>

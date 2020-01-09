@@ -76,6 +76,7 @@ const listaPregleda = [
   //   }
 ];
 
+
 class PocetnaStranicaMedSestre extends React.Component {
   constructor(props) {
     super(props);
@@ -84,16 +85,26 @@ class PocetnaStranicaMedSestre extends React.Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       redirectToListaPacijenata: false,
       redirectToProfilMedSestre: false,
       redirectToZahtevZaGodOdmor: false,
       redirectToOveraRecepata: false,
       redirectToPocetnaStranica: false,
-      listaRadnihDana : []
+      listaRadnihDana : [],
+      listaOdmor : [],
+      listaOdsustvo: []
       //vezano za kalendar
       
       
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
     this.handleListaPacijenata = this.handleListaPacijenata.bind(this);
     this.handleProfilMedSestre = this.handleProfilMedSestre.bind(this);
     this.handleZahtevZaGodOdmor = this.handleZahtevZaGodOdmor.bind(this);
@@ -101,6 +112,8 @@ class PocetnaStranicaMedSestre extends React.Component {
     this.ucitavanjeRadnihDana = this.ucitavanjeRadnihDana.bind(this);
     this.dodavanjeRadnihDanaUKalendar = this.dodavanjeRadnihDanaUKalendar.bind(this);
     this.prikaziRadneDane = this.prikaziRadneDane.bind(this);
+
+    this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(this);
 
     // console.log(this.state.uloga);
     // console.log(this.state.email);
@@ -126,10 +139,49 @@ class PocetnaStranicaMedSestre extends React.Component {
       redirectToOveraRecepata: true,
     });
   };
+  ucitavanjeListeOdmorOdsustvo(){
+    const url1 = 'http://localhost:8025/api/medicinskaSestra/listaOdmor';
+    console.log(url1);
+    axios
+      .get(url1, this.config)
+      .then(response => {
+        console.log("ucitana lista odmor odsustvo");
+        console.log(response);
+        this.setState({
+          listaOdmor: response.data
+        }
+       , 
+       //()=> this.dodavanjeRadnihDanaUKalendar()
+        );
+      })
+      .catch(error => {
+        console.log("nije ucitana lista odmor odsustvo");
+        console.log(error);
+      });
+
+    const url2 = 'http://localhost:8025/api/medicinskaSestra/listaOdsustvo';
+    console.log(url2);
+    axios
+      .get(url2, this.config)
+      .then(response => {
+        console.log("ucitana lista odmor odsustvo");
+        console.log(response);
+        this.setState({
+          listaOdsustvo: response.data
+        }
+       , 
+       //()=> this.dodavanjeRadnihDanaUKalendar()
+        );
+      })
+      .catch(error => {
+        console.log("nije ucitana lista odmor odsustvo");
+        console.log(error);
+      });
+  }
   ucitavanjeRadnihDana(){
     const url1 = 'http://localhost:8025/api/medicinskaSestra/listaRadnihDana/' + this.state.email; 
 
-    console.log(url1);
+    console.log(url1, this.config);
     axios
       .get(url1)
       .then(response => {
@@ -181,10 +233,10 @@ class PocetnaStranicaMedSestre extends React.Component {
     }
     
   }
-  // componentWillMount(){
-  //   ;
-    
-  // }
+
+  componentWillMount(){
+    this.ucitavanjeListeOdmorOdsustvo()
+  }
 
  
   renderRedirect = () => {

@@ -21,7 +21,9 @@ class Sifrarnik extends Component {
       lekSifra: "",
       dijagnozaOznaka: "",
       dijagnozaOpis: "",
-      dijagnozaNaziv: ""
+      dijagnozaNaziv: "",
+      hiddenLekovi: true,
+      hiddenDijagnoza: false
       
     };
     this.config = {
@@ -39,10 +41,10 @@ class Sifrarnik extends Component {
     this.obrisiLek = this.obrisiLek.bind(this);
     this.izmeniDijagnozu = this.izmeniDijagnozu.bind(this);
     this.obrisiDijagnozu = this.obrisiDijagnozu.bind(this);
-    
-    console.log(this.state.uloga);
-    console.log(this.state.email);
 
+    this.prikazLekova = this.prikazLekova.bind(this);
+    this.prikazDijagnoza = this.prikazDijagnoza.bind(this);
+    
   }
 
   listaLekovaUKC(){
@@ -55,7 +57,7 @@ class Sifrarnik extends Component {
           <td >{lista[i].sifra}</td>
           <td >{lista[i].naziv}</td>
           <td >
-          <Button id={lista[i].id} onClick={e => this.izmeniLek(e)}>Izmeni</Button>
+          <Button id={lista[i].id} onClick={e => this.izmeniLek(e)} >Izmeni</Button>
           <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
           </td>
           <td >
@@ -517,13 +519,30 @@ class Sifrarnik extends Component {
 
   }
 
+  prikazLekova(){
+    this.setState({
+      hiddenLekovi: true,
+      hiddenDijagnoza: false
+    });
+  }
+  prikazDijagnoza(){
+    this.setState({
+      hiddenLekovi: false,
+      hiddenDijagnoza: true
+    });
+  }
+
   render() {
     return (
       <div className="content">
         <Grid fluid>
-       
-          <Col md={5} >
-               <Card
+          <Row>
+              <Button className="DodajKlinikuDugme"  onClick={this.prikazLekova}>LEKOVI</Button> 
+              <Button className="DodajKlinikuDugme"  onClick={this.prikazDijagnoza}>DIJAGNOZE</Button>  
+          </Row>
+          <Row>
+          { this.state.hiddenLekovi ?
+            <Card
                   title="Lista lekova"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
@@ -548,12 +567,13 @@ class Sifrarnik extends Component {
                     </Table>
                     </div>
                   }
-                />
-
-            
-          </Col>
-          <Col md={7}>
-            <Card
+            />
+            : null
+          }
+          </Row>
+          <Row>
+            { this.state.hiddenDijagnoza ?
+              <Card
                   title="Lista dijagnoza"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
@@ -580,10 +600,10 @@ class Sifrarnik extends Component {
                     </Table>
                     </div>
                   }
-                />
-          </Col>
-
-       
+              />
+              : null
+            }
+          </Row>       
         </Grid>
       </div>
     );

@@ -8,13 +8,14 @@
   font-weight: 900;
 }
 
-.slovaCard{
+.slovaCard {
   font-size: 1em;
   color: #222;
   font-weight: 500;
   /* margin-bottom: 0.25em; */
 }
-.cardLa{
+
+.cardLa {
   width: 210px;
   height: 250px;
 }
@@ -54,17 +55,19 @@
 .DodajKlinikuDugme {
   /* padding-left: 8px; */
   margin-left: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-right: 8px;
+
   background-color: #519e8a;
   color: #fff;
   border: 2px solid #fff;
   /* width: 100%; */
-  margin-top: 1em;
   padding: 8px 3px;
-
   font-size: 1em;
   font-weight: lighter;
   letter-spacing: 1px;
-  margin-bottom: 0.25em;
+  
 }
 
 .DodajKlinikuDugme:hover {
