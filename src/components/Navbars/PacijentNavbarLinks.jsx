@@ -37,9 +37,13 @@ class PacijentNavbarLinks extends Component {
       brObavestenja: 0,
       obavestenja: [],
       redirectToPotvrdaPregleda: false,
-      menuIsOpened: false
+      redirectToIstorijaPO: false,
+      menuIsOpened: false,
+      notOcena: false,
+      notPotvrda: false
     };
-    this.listaPregleda = this.listaPregleda.bind(this);
+    this.listaPregledaPO = this.listaPregledaPO.bind(this);
+    this.listaPregledaOC = this.listaPregledaOC.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handlePonistiObavestenja = this.handlePonistiObavestenja.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
@@ -49,10 +53,32 @@ class PacijentNavbarLinks extends Component {
     e.preventDefault();
     console.log(e.currentTarget.value);
     if (e.currentTarget.value == "Potvrdite zahtev za pregled") {
+      //   this.setState({people: this.state.people.filter(function(person) {
+      //     return person !== e.target.value
+      // })});
+
       this.setState(
         {
           redirectToPotvrdaPregleda: true,
-          menuIsOpened: false
+          menuIsOpened: false,
+          obavestenja: this.state.obavestenja.filter(function(ob) {
+            return ob != e.currentTarget.value;
+          })
+        },
+        () => this.handlePonistiObavestenja()
+      );
+    } else if (
+      e.currentTarget.value == "Ocenite kliniku i lekara" ||
+      e.currentTarget.value == "Ocenite kliniku" ||
+      e.currentTarget.value == "Ocenite lekara"
+    ) {
+      this.setState(
+        {
+          redirectToIstorijaPO: true,
+          menuIsOpened: false,
+          obavestenja: this.state.obavestenja.filter(function(ob) {
+            return ob != e.currentTarget.value;
+          })
         },
         () => this.handlePonistiObavestenja()
       );
@@ -67,7 +93,7 @@ class PacijentNavbarLinks extends Component {
   handlePonistiObavestenja() {
     console.log("handle ponisti o");
     this.setState({
-      brObavestenja: 0
+      brObavestenja: this.state.brObavestenja - 1
     });
   }
   componentWillMount() {
@@ -87,7 +113,7 @@ class PacijentNavbarLinks extends Component {
             pregledi: res.data
           },
           () => {
-            this.listaPregleda();
+            this.listaPregledaPO();
           }
         );
       })
@@ -95,23 +121,97 @@ class PacijentNavbarLinks extends Component {
         console.log("Pacijent  nije preuzet");
       });
   }
-  listaPregleda() {
+  listaPregledaPO() {
     let res = [];
     let lista = this.state.pregledi;
+    var temp = 0;
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].status == 0) {
         if (lista[i].salaID != undefined || lista[i].salaID != null) {
-          this.setState(
-            {
-              brObavestenja: this.state.brObavestenja + 1,
-              obavestenja: this.state.obavestenja.concat(
-                "Potvrdite zahtev za pregled"
-              )
-            },
-            () => console.log(this.state)
-          );
+          console.log("lista PO temp = 1");
+          temp = 1;
+          break;
         }
       }
+    }
+    if (temp == 1) {
+      this.setState(
+        {
+          brObavestenja: this.state.brObavestenja + 1,
+          obavestenja: this.state.obavestenja.concat(
+            "Potvrdite zahtev za pregled"
+          )
+        },
+        () => {
+          console.log(this.state);
+          console.log("stateeeeeeeeeeeeeeee");
+          this.listaPregledaOC();
+        }
+      );
+    }
+  }
+  listaPregledaOC() {
+    let res = [];
+    let lista = this.state.pregledi;
+    var temp = 0;
+
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i].status == 3) {
+        console.log("lista OC temp = 1");
+        temp = 1;
+        break;
+      }
+    }
+    if (temp != 1) {
+      for (var i = 0; i < lista.length; i++) {
+        if (lista[i].status == 4) {
+          if (temp == 3) {
+            temp = 1;
+            break;
+          } else {
+            temp = 2;
+          }
+        } else if (lista[i].status == 5) {
+          if (temp == 2) {
+            temp = 1;
+            break;
+          } else {
+            temp = 3;
+          }
+        }
+      }
+    }
+
+    if (temp == 1) {
+      this.setState(
+        {
+          brObavestenja: this.state.brObavestenja + 1,
+          obavestenja: this.state.obavestenja.concat("Ocenite kliniku i lekara")
+        },
+        () => {
+          console.log(this.state);
+        }
+      );
+    } else if (temp == 2) {
+      this.setState(
+        {
+          brObavestenja: this.state.brObavestenja + 1,
+          obavestenja: this.state.obavestenja.concat("Ocenite lekara"),
+          notOcena: true
+        },
+        () => {
+          console.log(this.state);
+        }
+      );
+    } else if (temp == 3) {
+      this.setState(
+        {
+          brObavestenja: this.state.brObavestenja + 1,
+          obavestenja: this.state.obavestenja.concat("Ocenite kliniku"),
+          notOcena: true
+        },
+        () => console.log(this.state)
+      );
     }
   }
   renderRedirect() {
@@ -119,6 +219,8 @@ class PacijentNavbarLinks extends Component {
     if (this.state.redirectToPotvrdaPregleda == true) {
       console.log("the same");
       return <Redirect from="/" to="/admin/potvrdaPregleda" />;
+    } else if (this.state.redirectToIstorijaPO == true) {
+      return <Redirect from="/" to="/admin/istorija" />;
     }
   }
   handleC() {
@@ -126,6 +228,10 @@ class PacijentNavbarLinks extends Component {
     if (this.state.redirectToPotvrdaPregleda == true) {
       this.setState({
         redirectToPotvrdaPregleda: false
+      });
+    } else if (this.state.redirectToIstorijaPO == true) {
+      this.setState({
+        redirectToIstorijaPO: false
       });
     }
   }

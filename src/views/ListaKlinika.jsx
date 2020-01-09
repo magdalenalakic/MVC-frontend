@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { useState } from 'react';
 import {
   Grid,
   Row,
@@ -27,6 +28,7 @@ import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
 import { string } from "prop-types";
 import PocetnaStranicaPacijenta from "./PocetnaStranicaPacijenta";
+import {setHours, setMinutes, subHours,subMinutes} from "date-fns"
 
 class ListaKlinika extends Component {
   constructor(props) {
@@ -457,6 +459,7 @@ class ListaKlinika extends Component {
     this.setState({ [name]: value }, () => console.log(this.state));
   };
   handleChangeDate = date => {
+    console.log(date)
     this.setState(
       {
         datumZaPregled: date
@@ -790,6 +793,9 @@ class ListaKlinika extends Component {
       );
     } else {
       if (this.state.flag == 0) {
+        // const [startDate, setStartDate] = useState(
+        //   setHours(setMinutes(new Date(), 30), 16)
+        // );
         return (
           <div className="content">
             <Grid fluid>
@@ -810,10 +816,21 @@ class ListaKlinika extends Component {
                   </form>
                   <div>
                     <h5>Datum za pregled:</h5>
+
                     <DatePicker
                       placeholderText="Izaberi datum"
                       selected={this.state.datumZaPregled}
-                      onSelect={this.handleChangeDate}
+                      onChange={date=>this.handleChangeDate(date)}
+                      // showTimeSelect
+                      minDate={new Date()}
+                      // timeCaption="Vreme"
+                      withPortal
+                      // excludeTimes={[
+                      //   setHours(setMinutes(new Date(), 0), 17)
+                      // ]}
+                      // minTime={setHours(setMinutes(new Date(), 0), 7)}
+                      // maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                      dateFormat="dd.MM.yyyy"
 
                       // onChange={date => setStartDate(date)}
                     />

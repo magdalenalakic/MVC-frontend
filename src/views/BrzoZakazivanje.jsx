@@ -23,6 +23,7 @@ import avatar from "assets/img/faces/face-3.jpg";
 import { log } from "util";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
+import moment from "moment";
 
 class BrzoZakazivanje extends Component {
   constructor(props) {
@@ -229,7 +230,9 @@ class BrzoZakazivanje extends Component {
             ></input>
           </td>
 
-          <td key={lista[i].datum}>{lista[i].datum}</td>
+          <td key={lista[i].datum}>
+            {moment(lista[i].datum).format("DD.MM.YYYY HH:mm")}
+          </td>
           <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
           <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
           <td key={lista[i].lekarId}>

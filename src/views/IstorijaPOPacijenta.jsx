@@ -7,7 +7,8 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
-import Button from "components/CustomButton/CustomButton.jsx";
+// import Button from "components/CustomButton/CustomButton.jsx";
+import { Button, ButtonToolbar } from "react-bootstrap";
 import { Table } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
@@ -41,10 +42,12 @@ class IstorijaPOPacijenta extends Component {
       OimeL: "",
       OprezimeL: "",
       OklinikaID: "",
-      OlekarID: ""
+      OlekarID: "",
+      OpregledID:""
     };
     this.listaPregleda = this.listaPregleda.bind(this);
-    this.oceni = this.oceni.bind(this);
+    this.oceniKliniku = this.oceniKliniku.bind(this);
+    this.oceniLekara = this.oceniLekara.bind(this);
     this.ocenjenaKlinika = this.ocenjenaKlinika.bind(this);
     this.ocenjenLekar = this.ocenjenLekar.bind(this);
   }
@@ -65,37 +68,47 @@ class IstorijaPOPacijenta extends Component {
         console.log(Response.data);
 
         this.setState({
-          email: Response.data.email
-        });
-        this.setState({
-          ime: Response.data.ime
-        });
-
-        this.setState({
-          prezime: Response.data.prezime
-        });
-        this.setState({
+          email: Response.data.email,
           telefon: Response.data.telefon,
           adresa: Response.data.adresa,
           grad: Response.data.grad,
           drzava: Response.data.drzava,
-          lbo: Response.data.lbo
+          lbo: Response.data.lbo,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime
+        }, ()=>{
+          this.ucitaj();
         });
-        axios
-          .get("http://localhost:8025/api/pregledi/preglediPacijenta", config)
-          .then(res => {
-            console.log(res.data);
-            this.setState({
-              pregledi: res.data
-            });
-          });
+
+
       })
 
       .catch(error => {
         console.log("Pacijent  nije preuzet");
       });
   }
-  ocenjenaKlinika(e, klinikaID) {
+  ucitaj(){
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+    .get("http://localhost:8025/api/pregledi/preglediPacijenta", config)
+    .then(res => {
+      console.log(res.data);
+      this.setState({
+        pregledi: res.data.sort((a, b) => b.id - a.id)
+      });
+    })      
+    .catch(error => {
+      console.log("Pacijent  nije preuzet");
+    });
+  }
+  ocenjenaKlinika(h, e, klinikaID, pregledID) {
+    h.dialog.hide();
     console.log(this.state);
     console.log(e.currentTarget.value);
     console.log(klinikaID);
@@ -111,25 +124,25 @@ class IstorijaPOPacijenta extends Component {
         "http://localhost:8025/api/klinike/oceni/" +
           klinikaID +
           "/" +
-          e.currentTarget.value,
+          e.currentTarget.value +
+          "/" +
+          pregledID,
         {},
         config
       )
       .then(response => {
         console.log(response.data);
         this.props.handleClick("OCENJENA KLINIKA");
-
-        this.setState({
-          ime: response.data.ime
-        });
+        this.ucitaj();
       })
       .catch(error => {
         console.log("Izmena nije uspela! ");
       });
   }
-  ocenjenLekar(e,lekarID){
+  ocenjenLekar(h, e, lekarID, pregledID) {
+    h.dialog.hide();
     console.log(e.currentTarget.value);
-    console.log(lekarID)
+    console.log(lekarID);
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -140,25 +153,25 @@ class IstorijaPOPacijenta extends Component {
     axios
       .put(
         "http://localhost:8025/api/lekari/oceni/" +
-        lekarID +
+          lekarID +
           "/" +
-          e.currentTarget.value,
+          e.currentTarget.value +
+          "/" +
+          pregledID,
         {},
         config
       )
       .then(response => {
         console.log(response.data);
         this.props.handleClick("OCENJEN LEKAR");
+        this.ucitaj();
 
-        this.setState({
-          ime: response.data.ime
-        });
       })
       .catch(error => {
         console.log("Izmena nije uspela! ");
       });
-  };
-  oceni = e => {
+  }
+  oceniKliniku = e => {
     let lista = this.state.pregledi;
     console.log(e.currentTarget.value);
 
@@ -172,187 +185,264 @@ class IstorijaPOPacijenta extends Component {
             OimeL: lista[i].imeL,
             OprezimeL: lista[i].prezimeL,
             OklinikaID: lista[i].klinikaID,
-            OlekarID: lista[i].lekarID
+            OlekarID: lista[i].lekarID,
+            OpregledID:lista[i].id
           },
           () => {
             this.dialog.show({
-              title: "Oceni pregled",
+              title: "Ocenite kliniku",
               body: [
                 <form className="formaIzmenaProfilaLekara">
                   <div className="ime">
-                    <label htmlFor="Ocenite kliniku">Ocenite kliniku: </label>
-                    <label>{this.state.OnazivKl}</label>
+                    <h6>{this.state.OnazivKl}</h6>
                     <div>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="1"
-                        onClick={e =>
-                          this.ocenjenaKlinika(e, this.state.OklinikaID)
-                        }
-                      >
-                        1
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="2"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        2
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="3"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        3
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="4"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        4
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="5"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        5
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="6"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        6
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="7"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        7
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="8"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        8
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="9"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        9
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="10"
-                        onClick={e => this.ocenjenaKlinika(e, this.state.OklinikaID)}
-                      >
-                        10
-                      </Button>
+                      <ButtonToolbar>
+                        <Button
+                          fill
+                          bsStyle="danger"
+                          value="1"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          1
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="danger"
+                          value="2"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          2
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="warning"
+                          value="3"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          3
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="warning"
+                          value="4"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          4
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="info"
+                          value="5"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          5
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="info"
+                          value="6"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          6
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="info"
+                          value="7"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          7
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="success"
+                          value="8"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          8
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="success"
+                          value="9"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          9
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="success"
+                          value="10"
+                          onClick={e =>
+                            this.ocenjenaKlinika(this, e, this.state.OklinikaID, this.state.OpregledID)
+                          }
+                        >
+                          10
+                        </Button>
+                      </ButtonToolbar>
                     </div>
                   </div>
+                </form>
+              ],
+              actions: [Dialog.CancelAction()],
+              bsSize: "medium",
+              onHide: dialog => {
+                dialog.hide();
+                console.log("closed by clicking background.");
+              }
+            });
+          }
+        );
+      }
+    }
+  };
+  oceniLekara = e => {
+    let lista = this.state.pregledi;
+    console.log(e.currentTarget.value);
+
+    for (var i = 0; i < lista.length; i++) {
+      console.log(lista[i].id);
+      if (lista[i].id == e.currentTarget.value) {
+        console.log("equals");
+        this.setState(
+          {
+            OnazivKl: lista[i].nazivKl,
+            OimeL: lista[i].imeL,
+            OprezimeL: lista[i].prezimeL,
+            OklinikaID: lista[i].klinikaID,
+            OlekarID: lista[i].lekarID,
+            OpregledID:lista[i].id
+          },
+          () => {
+            this.dialog.show({
+              title: "Oceni lekara",
+              body: [
+                <form className="formaIzmenaProfilaLekara">
                   <div className="ime">
-                    <label htmlFor="Ocenite lekara">Ocenite lekara: </label>
-                    <label>
+                    <h6>
                       {this.state.OimeL} {this.state.OprezimeL}
-                    </label>
+                    </h6>
                     <div>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="1"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        1
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="2"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        2
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="3"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        3
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="4"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        4
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="5"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        5
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="6"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        6
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="7"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        7
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="8"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        8
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="9"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        9
-                      </Button>
-                      <Button
-                        fill
-                        bsStyle="danger"
-                        value="10"
-                        onClick={e => this.ocenjenLekar(e, this.state.OlekarID)}
-                      >
-                        10
-                      </Button>
+                      <ButtonToolbar>
+                        <Button
+                          fill
+                          bsStyle="danger"
+                          value="1"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          1
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="danger"
+                          value="2"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          2
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="warning"
+                          value="3"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          3
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="warning"
+                          value="4"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          4
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="info"
+                          value="5"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          5
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="info"
+                          value="6"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          6
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="info"
+                          value="7"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          7
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="success"
+                          value="8"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          8
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="success"
+                          value="9"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          9
+                        </Button>
+                        <Button
+                          fill
+                          bsStyle="success"
+                          value="10"
+                          onClick={e =>
+                            this.ocenjenLekar(this, e, this.state.OlekarID, this.state.OpregledID)
+                          }
+                        >
+                          10
+                        </Button>
+                      </ButtonToolbar>
                     </div>
                   </div>
 
@@ -361,38 +451,7 @@ class IstorijaPOPacijenta extends Component {
                       </div> */}
                 </form>
               ],
-              actions: [
-                Dialog.CancelAction(),
-                Dialog.OKAction(() => {
-                  console.log("Izmjena klinike: ---------------");
-                  console.log(this.state.naziv);
-                  console.log(this.state.idKlinike);
-                  console.log(this.state.id);
-                  // axios
-                  //   .put("http://localhost:8025/api/klinike/update", {
-                  //     id: this.state.idIzmenjeneKlinike,
-                  //     naziv: this.state.nazivIzmenjeneKlinike,
-                  //     adresa: this.state.adresaIzmenjeneKlinike,
-                  //     ocena: this.state.ocenaIzmenjeneKlinike,
-                  //     opis: this.state.opisIzmenjeneKlinike
-                  //   })
-                  //   .then(response => {
-                  //     console.log(response.data);
-                  //     this.listaKlinika();
-
-                  //     // this.setState({
-                  //     //   id: response.data.id,
-                  //     //   naziv: response.data.naziv,
-                  //     //   adresa: response.data.adresa,
-                  //     //   ocena: response.data.ocena,
-                  //     //   opis: response.data.opis
-                  //     // });
-                  //   })
-                  //   .catch(error => {
-                  //     console.log("Izmena nije uspela! ");
-                  //   });
-                })
-              ],
+              actions: [Dialog.CancelAction()],
               bsSize: "medium",
               onHide: dialog => {
                 dialog.hide();
@@ -413,10 +472,11 @@ class IstorijaPOPacijenta extends Component {
     // console.log(oc);
     // if ((pretraga == "" || pretraga == undefined) && oc < 5) {
     let lista = this.state.pregledi;
-    const oceni = <Tooltip id="oceni_tooltip">Oceni</Tooltip>;
+    const oceniK = <Tooltip id="oceni_tooltip">Oceni Kliniku</Tooltip>;
+    const oceniL = <Tooltip id="oceni_tooltip">Oceni Lekara</Tooltip>;
 
     for (var i = 0; i < lista.length; i++) {
-      if (lista[i].status != 2) {
+      if (lista[i].status == 3) {
         res.push(
           <tr key={i}>
             <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
@@ -426,14 +486,14 @@ class IstorijaPOPacijenta extends Component {
             <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
             <td key={lista[i].cena}>{lista[i].cena} RSD</td>
             <td>
-              <OverlayTrigger placement="top" overlay={oceni}>
+              <OverlayTrigger placement="top" overlay={oceniK}>
                 <Button
                   bsStyle="info"
                   simple
                   type="button"
                   bsSize="sm"
                   value={lista[i].id}
-                  onClick={e => this.oceni(e)}
+                  onClick={e => this.oceniKliniku(e)}
                 >
                   <i className="pe-7s-like2 text-info" />
                 </Button>
@@ -443,6 +503,108 @@ class IstorijaPOPacijenta extends Component {
                   this.dialog = el;
                 }}
               ></Dialog>
+            </td>
+            <td>
+              <OverlayTrigger placement="top" overlay={oceniL}>
+                <Button
+                  bsStyle="info"
+                  simple
+                  type="button"
+                  bsSize="sm"
+                  value={lista[i].id}
+                  onClick={e => this.oceniLekara(e)}
+                >
+                  <i className="pe-7s-like2 text-info" />
+                </Button>
+              </OverlayTrigger>
+              <Dialog
+                ref={el => {
+                  this.dialog = el;
+                }}
+              ></Dialog>
+            </td>
+          </tr>
+        );
+      }else if(lista[i].status == 4){
+        res.push(
+          <tr key={i}>
+            <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+            <td key={lista[i].lekarID}>
+              {lista[i].imeL} {lista[i].prezimeL}
+            </td>
+            <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td>
+            <i className="pe-7s-like2 text-info" />
+            </td>
+            <td>
+              <OverlayTrigger placement="top" overlay={oceniL}>
+                <Button
+                  bsStyle="info"
+                  simple
+                  type="button"
+                  bsSize="sm"
+                  value={lista[i].id}
+                  onClick={e => this.oceniLekara(e)}
+                >
+                  <i className="pe-7s-like2 text-info" />
+                </Button>
+              </OverlayTrigger>
+              <Dialog
+                ref={el => {
+                  this.dialog = el;
+                }}
+              ></Dialog>
+            </td>
+          </tr>
+        );
+      }else if(lista[i].status == 5){
+        res.push(
+          <tr key={i}>
+            <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+            <td key={lista[i].lekarID}>
+              {lista[i].imeL} {lista[i].prezimeL}
+            </td>
+            <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td>
+              <OverlayTrigger placement="top" overlay={oceniK}>
+                <Button
+                  bsStyle="info"
+                  simple
+                  type="button"
+                  bsSize="sm"
+                  value={lista[i].id}
+                  onClick={e => this.oceniKliniku(e)}
+                >
+                  <i className="pe-7s-like2 text-info" />
+                </Button>
+              </OverlayTrigger>
+              <Dialog
+                ref={el => {
+                  this.dialog = el;
+                }}
+              ></Dialog>
+            </td>
+            <td>
+            <i className="pe-7s-like2 text-info" />
+            </td>
+          </tr>
+        );
+      }else if(lista[i].status == 6){
+        res.push(
+          <tr key={i}>
+            <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+            <td key={lista[i].lekarID}>
+              {lista[i].imeL} {lista[i].prezimeL}
+            </td>
+            <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td>
+            <i className="pe-7s-like2 text-info" />
+            </td>
+            <td>
+            <i className="pe-7s-like2 text-info" />
             </td>
           </tr>
         );
@@ -581,6 +743,8 @@ class IstorijaPOPacijenta extends Component {
                         <th id="Lekar">Lekar</th>
                         <th id="TipPregleda"> Tip Pregleda</th>
                         <th id="Cena">Cena (RSD)</th>
+                        <th id="OcenaKlinike">Ocena Klinike</th>
+                        <th id="OcenaLekara">Ocena Lekara</th>
                       </tr>
                     </thead>
                     <tbody>{this.listaPregleda()}</tbody>
