@@ -229,7 +229,7 @@ class Login extends Component {
       <div>
         <div className="logForm">
           <div className="form-logForm">
-            <h1>Uloguj se</h1>
+            <h1>Prijavi se</h1>
             {this.state.waitToapprove === true && (
               <span className="errorMessage">
                 Bicete obavesteni o potvrdi registracije putem mejla u najkracem

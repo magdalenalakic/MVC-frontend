@@ -19,10 +19,11 @@ import React, { Component } from "react";
 import { Navbar } from "react-bootstrap";
 
 import AdminNavbarLinks from "./AdminNavbarLinks.jsx";
-
+import PacijentNavbarLinks from "./PacijentNavbarLinks.jsx";
 class Header extends Component {
   constructor(props) {
     super(props);
+    console.log(this.props);
     this.mobileSidebarToggle = this.mobileSidebarToggle.bind(this);
     this.state = {
       sidebarExists: false
@@ -45,19 +46,36 @@ class Header extends Component {
     document.body.appendChild(node);
   }
   render() {
-    return (
-      <Navbar fluid>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="#pablo">{this.props.brandText}</a>
-          </Navbar.Brand>
-          <Navbar.Toggle onClick={this.mobileSidebarToggle} />
-        </Navbar.Header>
-        <Navbar.Collapse>
-          <AdminNavbarLinks />
-        </Navbar.Collapse>
-      </Navbar>
-    );
+    if(this.props.uloga == "PACIJENT"){
+      return (
+        <Navbar fluid>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <a href="#pablo">{this.props.brandText}</a>
+            </Navbar.Brand>
+            <Navbar.Toggle onClick={this.mobileSidebarToggle} />
+          </Navbar.Header>
+          <Navbar.Collapse>
+            <PacijentNavbarLinks {...this.props} />
+          </Navbar.Collapse>
+        </Navbar>
+      );
+    }else{
+      return (
+        <Navbar fluid>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <a href="#pablo">{this.props.brandText}</a>
+            </Navbar.Brand>
+            <Navbar.Toggle onClick={this.mobileSidebarToggle} />
+          </Navbar.Header>
+          <Navbar.Collapse>
+            <AdminNavbarLinks {...this.props} />
+          </Navbar.Collapse>
+        </Navbar>
+      );
+    }
+
   }
 }
 
