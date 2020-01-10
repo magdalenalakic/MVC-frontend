@@ -26,8 +26,10 @@ class IzmenaProfilaAdminaKlinike extends Component {
   constructor(props){
     super(props);
     console.log("IZMENA PROFILA ADMINA KLINIKE");
+    console.log("PROPS PRINT OD AK: " + this.props)
     this.state = {
       email: props.email,
+      token: props.token,
       uloga: props.uloga, 
       ime: "",
       telefon: "",
@@ -44,8 +46,15 @@ class IzmenaProfilaAdminaKlinike extends Component {
 
   componentWillMount(){
     console.log("wmount!!!!")
-    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    axios.get(url)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);

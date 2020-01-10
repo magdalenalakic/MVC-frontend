@@ -19,6 +19,7 @@ class SlobodniTermini extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       idAdmina: "",
       idKlinike: "",
       listaLekara: [],
@@ -148,8 +149,15 @@ obrisiLekara = e => {
 componentWillMount(){
     console.log("wmount")
     console.log("Preuzimanje admina klinike.....")
-    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    axios.get(url)
+      var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);
@@ -164,7 +172,7 @@ componentWillMount(){
         console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
         const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
-        axios.get(urlKlinike)
+        axios.get(urlKlinike, config)
           .then(klinika => {
             console.log("Preuzeta klinika");
             console.log(klinika.data);
@@ -177,7 +185,7 @@ componentWillMount(){
                 console.log("++++++++++++++++++ Id k: " + this.state.idKlinike);
                 console.log("Preuzmi mi sale za tu kliniku");
                 const urlslobodni = 'http://localhost:8025/api/ST/preuzmiSTKlinike/' + this.state.idKlinike;    
-                 axios.get(urlslobodni)
+                 axios.get(urlslobodni, config)
                     .then(klinika => {
                         console.log("Preuzeta lista klinika");
                         console.log(klinika.data);
@@ -195,7 +203,7 @@ componentWillMount(){
                  })
                 console.log("Preuzmi mi sale za tu kliniku");
                 const urlKlinike = 'http://localhost:8025/api/tipPregleda/tipPregledaKlinike/' + this.state.idKlinike;    
-                 axios.get(urlKlinike)
+                 axios.get(urlKlinike, config)
                     .then(resp => {
                         console.log("Preuzeta lista klinika");
                         console.log(resp.data);
@@ -213,7 +221,7 @@ componentWillMount(){
          
                  })
                  const url2 = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
-                 axios.get(url2)
+                 axios.get(url2, config)
                     .then(resp => {
                         console.log("Preuzeta lista klinika");
                         console.log(resp.data);

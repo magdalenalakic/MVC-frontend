@@ -26,9 +26,11 @@ class izmenaProfila extends Component {
   constructor(props){
     super(props);
     console.log("IZMENA PROFILA LEKARA LEKARA");
+    console.log(this.props.token)
     this.state = {
       email: props.email,
       uloga: props.uloga, 
+      token: props.token,
       ime: "",
       telefon: "",
       prezime: "",
@@ -42,10 +44,18 @@ class izmenaProfila extends Component {
 
 
   componentWillMount(){
+
     console.log("wmount")
     console.log("LEKAR SA EMAIL-OM: " + this.state.email)
-    const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
-    axios.get(url)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/lekari/getLekarByEmail';
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet lekar: ");
         console.log(Response.data);
@@ -68,6 +78,8 @@ class izmenaProfila extends Component {
       .catch(error => {
         console.log("Lekar  nije preuzet")
       })
+
+      
   }
   handleChange = e => {
     e.preventDefault();
@@ -84,13 +96,20 @@ class izmenaProfila extends Component {
       console.log("Izmjena : ---------------")  
       console.log(this.state.ime);
       console.log(this.state.prezime);
+      var config = {
+        headers: {
+          Authorization: "Bearer " + this.state.token,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      };
     axios
       .put("http://localhost:8025/api/lekari/update", {
         ime: this.state.imeN,
         prezime: this.state.prezimeN,
         telefon: this.state.telefonN,
         email: this.state.email
-      })
+      }, config)
       .then(response => {
         console.log(response.data);
  

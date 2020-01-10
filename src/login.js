@@ -60,7 +60,7 @@ class Login extends Component {
         this.setState({
           token: response.data.accessToken
         });
-        // console.log(response.data.accessToken.getUser());
+        console.log("TOKEN : " + this.state.token);
 
         this.setState({
           uloga: response.data.uloga
@@ -154,7 +154,7 @@ class Login extends Component {
             <Route
               path="/admin"
               render={props => (
-                <AdministatorKlinike {...props} email={email} uloga={uloga} />
+                <AdministatorKlinike {...props} email={email} uloga={uloga} token={token}/>
               )}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
@@ -168,7 +168,7 @@ class Login extends Component {
           <Switch>
             <Route
               path="/admin"
-              render={props => <Lekar {...props} email={email} uloga={uloga} />}
+              render={props => <Lekar {...props} email={email} uloga={uloga}  token={token} />}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
           </Switch>
