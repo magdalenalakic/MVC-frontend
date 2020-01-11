@@ -91,6 +91,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
         });
         console.log(this.state);
         console.log("Id klinike: " + this.state.idKlinike);
+        console.log("******Id klinike: " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
         const urlKlinike = 'http://localhost:8025/api/klinike/finKlinikaById/' + this.state.idKlinike;    
         console.log(urlKlinike);
@@ -108,6 +109,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             });
        
           })
+          
+      .catch(error => {
+        console.log("Klinika nije preuzeta!!!!")
+      })
       
       })
       

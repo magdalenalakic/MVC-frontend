@@ -380,6 +380,7 @@ listaLekaraUK() {
     const reirectToIzmeniLekar = this.state.reirectToIzmeniLekar;
    console.log("LEKARRRRRRR : "  + this.state.emailLekara);
    const emailLekara = this.state.emailLekara;
+   const token = this.state.token;
     if (reirectToIzmeniLekar === true) {
       return (
         <BrowserRouter>
@@ -387,7 +388,7 @@ listaLekaraUK() {
             <Route
             
               path="/izmenaProfilaLekara"
-              render={props => <IzmenaProfila {...props} email={emailLekara} />}
+              render={props => <IzmenaProfila {...props} email={emailLekara} token={token}/>}
             />
             <Redirect from="/" to="/izmenaProfilaLekara" />
           </Switch>

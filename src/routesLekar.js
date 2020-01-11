@@ -10,7 +10,7 @@ const dashboardRoutes = [
   {
     path: "/pocetnaStranica",
     name: "Pocetna Strana Lekara",
-    icon: "pe-7s-graph",
+    icon: "pe-7s-home",
     component: PocetnaStranicaLekara,
     layout: "/admin"
   },

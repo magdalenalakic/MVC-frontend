@@ -106,7 +106,7 @@ class PocetnaStranicaLekara extends React.Component {
 
         const url1 = 'http://localhost:8025/api/klinike/pacijentiKlinike/' + this.state.klinikaID; 
         console.log(url1);
-        axios.get(url1)
+        axios.get(url1, config)
           .then(response => {
             console.log("URL 111");
             console.log(response);
@@ -115,7 +115,7 @@ class PocetnaStranicaLekara extends React.Component {
             });
           })
           .catch(error => {
-              console.log("nije uspeo url1");
+              console.log("nisu preuzeti pacijenti klinike");
               console.log(error);
           })
       })

@@ -15,7 +15,7 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
-import avatar from "assets/img/faces/face-3.jpg";
+// import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
 import { log } from "util";
 import Login from "login";
@@ -225,8 +225,8 @@ class IzmenaKlinike extends Component {
                         />
                       </div> */}
                      
-                      <div className="izmeniPodatkeLekar">
-                         <button type="submit">Izmeni podatke</button>
+                      <div className="izmeniPodatkePacijent">
+                         <Button type="submit">Izmeni podatke</Button>
                       </div>
                   </form>
            

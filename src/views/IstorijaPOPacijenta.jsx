@@ -17,7 +17,7 @@ import "izmenaProfila.css";
 import "klinickiCentar.css";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 //dodam link za sliku  mozda od doktora!!
-import avatar from "assets/img/faces/face-3.jpg";
+// import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
 import { log } from "util";
 import Login from "login";
