@@ -137,8 +137,8 @@ class ListaPacijenataMedSestra extends Component {
     e.preventDefault();
     console.log("CLICK  **** otvori mi dijalog na klik ");  
     console.log( e.target.id);
-    const url ="http://localhost:8025/api/medicinskaSestra/findPacijentEmail/" + e.target.id;
-    const url2 ="http://localhost:8025/api/medicinskaSestra/findZK/" + e.target.id;
+    const url ="http://localhost:8025/api/pacijenti/findPacijentEmail/" + e.target.id;
+    const url2 ="http://localhost:8025/api/pacijenti/findZK/" + e.target.id;
     axios
       .get(url, this.config)
       .then(response => {

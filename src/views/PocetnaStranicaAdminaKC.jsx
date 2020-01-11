@@ -57,6 +57,7 @@ class KlinickiCentarPocetna extends Component {
       prezimeNAKC: "",
       emailNAKC: "",
       lozinkaNAKC: "",
+
       //za izmenu postojeceg admina klinickog centra
       idIzmenjenogAKC: 0,
       imeIzmenjenogAKC: "",
@@ -89,6 +90,7 @@ class KlinickiCentarPocetna extends Component {
 
     this.listaKlinikaIzbor = this.listaKlinikaIzbor.bind(this);
     this.proslediKliniku = this.proslediKliniku.bind(this);
+    this.proslediKlinikuIzmena = this.proslediKlinikuIzmena.bind(this);
 
     this.izmeniKliniku = this.izmeniKliniku.bind(this);
     this.izmeniAdminaKlinike = this.izmeniAdminaKlinike.bind(this);
@@ -98,12 +100,14 @@ class KlinickiCentarPocetna extends Component {
     this.prikazListeKlinika = this.prikazListeKlinika.bind(this);
     this.prikazListeAdminaKlinika = this.prikazListeAdminaKlinika.bind(this);
     this.prikazListeAdminaKC = this.prikazListeAdminaKC.bind(this);
+
+    
   }
 
   listaKlinika(){
     console.log("--------lista klinika u KC");
     
-    const url1 = 'http://localhost:8025/api/administratoriKC/listaKlinika'; 
+    const url1 = 'http://localhost:8025/api/kc/listaKlinika'; 
     console.log(url1);
     axios
       .get(url1, this.config)
@@ -122,7 +126,7 @@ class KlinickiCentarPocetna extends Component {
 
   listaAdministratoraKlinika(){
     console.log("--------lista administratora klinika u KC");
-    const url2 = 'http://localhost:8025/api/administratoriKC/listaAdministratoraKlinika'; 
+    const url2 = 'http://localhost:8025/api/kc/listaAdministratoraKlinika'; 
     console.log(url2);
     axios.get(url2, this.config)
       .then(response => {
@@ -161,7 +165,7 @@ class KlinickiCentarPocetna extends Component {
 
   podaciOKC(){
     console.log("--------Podaci o KC");
-    const url4 = 'http://localhost:8025/api/administratoriKC/klinickiCentar'; 
+    const url4 = 'http://localhost:8025/api/kc/klinickiCentar'; 
     console.log(url4);
       axios.get(url4, this.config)
   
@@ -187,10 +191,14 @@ class KlinickiCentarPocetna extends Component {
       
   }
   
+
   listaKlinikaUKC() {
     let res = [];
     let lista = this.state.listaKlinika;
+
     for (var i = 0; i < lista.length; i++) {
+     
+      
       res.push(
         <tr key = {i}>
           <td >{i+1}</td>
@@ -214,14 +222,17 @@ class KlinickiCentarPocetna extends Component {
     let res = [];
     let lista = this.state.listaAdministratoraKlinika;
     for (var i = 0; i < lista.length; i++) {
+    
+
       res.push(
         <tr key = {i}>
           <td>{i+1}</td>
           <td >{lista[i].ime}</td>
           <td >{lista[i].prezime}</td>
           <td >{lista[i].email}</td>
+          <td>{lista[i].nazivKlinike}</td>
           <td > 
-          <Button id={lista[i].email} onClick={e => this.izmeniAdminaKlinike(e)}>Izmeni</Button>
+          <Button id={lista[i].id} onClick={e => this.izmeniAdminaKlinike(e)}>Izmeni</Button>
           <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
           </td>
           {/* <td ><Button type="submit">Obrisi</Button></td> */}
@@ -242,7 +253,7 @@ class KlinickiCentarPocetna extends Component {
           <td >{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
           <td >
-          <Button id={lista[i].email} onClick={e => this.izmeniAdminaKC(e)} >Izmeni</Button>
+          <Button id={lista[i].id} onClick={e => this.izmeniAdminaKC(e)} >Izmeni</Button>
           <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
           </td>
           
@@ -662,7 +673,7 @@ class KlinickiCentarPocetna extends Component {
   izmeniKliniku = e =>{
     e.preventDefault();
     console.log(e.target.id)
-    const url10 = 'http://localhost:8025/api/administratoriKC/getKlinika/' + e.target.id;
+    const url10 = 'http://localhost:8025/api/klinike/' + e.target.id;
         axios.get(url10, this.config)
           .then(Response => {
             console.log("Preuzeta klinike: ");
@@ -740,7 +751,7 @@ class KlinickiCentarPocetna extends Component {
                       console.log(this.state.idKlinike);
                       console.log(this.state.id);
                     axios
-                      .put("http://localhost:8025/api/administratoriKC/update", {
+                      .put("http://localhost:8025/api/klinike/update", {
                         id: this.state.idIzmenjeneKlinike,
                         naziv: this.state.nazivIzmenjeneKlinike,
                         adresa: this.state.adresaIzmenjeneKlinike,
@@ -796,7 +807,7 @@ class KlinickiCentarPocetna extends Component {
   izmeniAdminaKlinike = e => {
     e.preventDefault();
     console.log(e.target.id);
-    const url5 = 'http://localhost:8025/api/administratoriKC/getAdminKlinikeByEmail/' + e.target.id;
+    const url5 = 'http://localhost:8025/api/adminKlinike/' + e.target.id;
     axios.get(url5, this.config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
@@ -808,7 +819,7 @@ class KlinickiCentarPocetna extends Component {
           prezimeIzmenjenogAK: Response.data.prezime,
           telefonIzmenjenogAK: Response.data.telefon,
           // lozinkaIzmenjenogAK: Response.date.lozinka,
-          // klinikaIzmenjenogAK: Response.date.idKlinike
+          klinikaIzmenjenogAK: Response.date.idKlinike
         }, 
         ()=> this.dialog.show({
           title: 'Izmena administratora klinike',
@@ -878,12 +889,13 @@ class KlinickiCentarPocetna extends Component {
                 <div>
                   <select 
                     name="odabirKlinike" 
-                    //defaultValue={this.state.klinikaIzmenjenogAK}
+                    defaultValue={this.state.klinikaIzmenjenogAK}
                     onChange={e => {this.proslediKlinikuIzmena(e)}}
                    >
                     {this.listaKlinikaIzbor()} 
                   
                   </select>
+                  
                 </div>
               </div>
           
@@ -895,7 +907,7 @@ class KlinickiCentarPocetna extends Component {
              
                 console.log("Izmjena admina klinike: ---------------")  
                 axios
-                .put("http://localhost:8025/api/administratoriKC/updateAK", {
+                .put("http://localhost:8025/api/adminKlinike/update", {
                   ime: this.state.imeIzmenjenogAK,
                   prezime: this.state.prezimeIzmenjenogAK,
                   email: this.state.emailIzmenjenogAK,
@@ -937,7 +949,7 @@ class KlinickiCentarPocetna extends Component {
     e.preventDefault();
     console.log(e.target.id);
     const url =
-    "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC/" + e.target.id;
+    "http://localhost:8025/api/administratoriKC/pronadjenAdminKC/" + e.target.id;
   axios
     .get(url, this.config)
     .then(Response => {
@@ -1132,6 +1144,7 @@ class KlinickiCentarPocetna extends Component {
                             <th id="ImeAdminaKlinike">Ime</th>
                             <th id="PrezimeAdminaKlinike"> Prezime</th>
                             <th id="EmailAdminaKlinike">Email</th>
+                            <th >Klinika</th>
                           
                           </tr>
                         </thead>

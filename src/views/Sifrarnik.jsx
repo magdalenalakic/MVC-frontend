@@ -95,7 +95,7 @@ class Sifrarnik extends Component {
   }
   listaLekova(){
     console.log("--------lista lekova");
-    const url1 = 'http://localhost:8025/api/administratoriKC/listaLekova/'; 
+    const url1 = 'http://localhost:8025/api/lekovi/listaLekova/'; 
     console.log(url1);
     axios.get(url1, this.config)
       .then(response => {
@@ -113,7 +113,7 @@ class Sifrarnik extends Component {
 
   listaDijagnoza(){
     console.log("--------lista dijagnoza");
-  const url2 = 'http://localhost:8025/api/administratoriKC/listaDijagnoza/'; 
+  const url2 = 'http://localhost:8025/api/dijagnoze/listaDijagnoza/'; 
   console.log(url2);
   axios.get(url2, this.config)
       .then(response => {
@@ -181,7 +181,7 @@ class Sifrarnik extends Component {
          
           console.log('OK je kliknuto!');
           
-          const url3 = "http://localhost:8025/api/administratoriKC/dodavanjeLeka";
+          const url3 = "http://localhost:8025/api/lekovi/dodavanjeLeka";
           axios
             .post(url3, { 
               naziv: this.state.lekNaziv, 
@@ -254,7 +254,7 @@ class Sifrarnik extends Component {
         Dialog.OKAction(() => {
           
           console.log('OK je kliknuto!');
-          const url3 = "http://localhost:8025/api/administratoriKC/dodavanjeDijagnoze";
+          const url3 = "http://localhost:8025/api/dijagnoze/dodavanjeDijagnoze";
           axios
             .post(url3, {
               naziv : this.state.dijagnozaNaziv,
@@ -285,7 +285,7 @@ class Sifrarnik extends Component {
     console.log(e.target.id);
     console.log("--------------------------------");
     
-    const url7 = "http://localhost:8025/api/administratoriKC/getLek/" + e.target.id;
+    const url7 = "http://localhost:8025/api/lekovi/getLek/" + e.target.id;
     axios
       .get(url7, this.config)
       .then(response => {
@@ -331,7 +331,7 @@ class Sifrarnik extends Component {
                 Dialog.OKAction(() => {
                   
                   console.log('OK je kliknuto!');
-                  const url3 = "http://localhost:8025/api/administratoriKC/izmenaLeka";
+                  const url3 = "http://localhost:8025/api/lekovi/izmenaLeka";
                   axios
                     .put(url3, {
                       id : response.data.id,
@@ -368,21 +368,10 @@ class Sifrarnik extends Component {
     e.preventDefault();
     console.log("brisanje leka");
     console.log(e.target.id);
-    // const url7 = "http://localhost:8025/api/administratoriKC/getLek/" + e.target.id;
-    // axios
-    //   .get(url7)
-    //   .then(response => {
-    //           console.log("Preuzimanje leka uspelo! ");
-    //           console.log(response.data);
-    //           // this.listaLekova();
-
-    //   })
-    //   .catch(error => {
-    //       console.log("Preuzimanje leka nije uspelo! ");
-    //    });
+    
 
     console.log("--------------------------------");
-    const url6 = "http://localhost:8025/api/administratoriKC/brisanjeLeka";
+    const url6 = "http://localhost:8025/api/lekovi/brisanjeLeka";
           axios
             .post(url6, {
               id : e.target.id
@@ -404,7 +393,7 @@ class Sifrarnik extends Component {
     console.log("izmena dijagnoze");
     console.log(e.target.id);
     console.log("--------------------------------");
-    const url7 = "http://localhost:8025/api/administratoriKC/getDijagnoza/" + e.target.id;
+    const url7 = "http://localhost:8025/api/dijagnoze/getDijagnoza/" + e.target.id;
     axios
       .get(url7, this.config)
       .then(response => {
@@ -462,7 +451,7 @@ class Sifrarnik extends Component {
                 Dialog.OKAction(() => {
                   
                   console.log('OK je kliknuto!');
-                  const url3 = "http://localhost:8025/api/administratoriKC/izmenaDijagnoze";
+                  const url3 = "http://localhost:8025/api/dijagnoze/izmenaDijagnoze";
                   axios
                     .put(url3, {
                       id : response.data.id,
@@ -501,7 +490,7 @@ class Sifrarnik extends Component {
     console.log("brisanje dijagnoze");
     console.log(e.target.id);
     console.log("--------------------------------");
-    const url5 = "http://localhost:8025/api/administratoriKC/brisanjeDijagnoze";
+    const url5 = "http://localhost:8025/api/dijagnoze/brisanjeDijagnoze";
           axios
             .post(url5, {
               id : e.target.id
