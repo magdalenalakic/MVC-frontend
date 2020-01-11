@@ -68,9 +68,9 @@ class ListaZahtevaAdminKC extends Component {
   handleOdobren = e => {
     e.preventDefault();
     console.log(e.target.id);
-    const url2 = "http://localhost:8025/api/administratoriKC/potvrda/" + e.target.id;
+    const url2 = "http://localhost:8025/api/administratoriKC/potvrda"  ;
     axios
-    .post(url2, this.config)
+    .post(url2,{email: e.target.id}, this.config)
     .then(response => {
       console.log("ODOBRENOOOO");
       console.log(response);
@@ -129,9 +129,9 @@ class ListaZahtevaAdminKC extends Component {
           console.log("Poslat razlog : ---------------");
           console.log(this.state.za);
           console.log(this.state.razlogOdbijanja);
-          const url3 = "http://localhost:8025/api/administratoriKC/odbijanje/" + this.state.za + "/" + this.state.razlogOdbijanja;
+          const url3 = "http://localhost:8025/api/administratoriKC/odbijanje/"  + this.state.razlogOdbijanja;
           axios
-            .post(url3, this.config)
+            .post(url3,{email: e.state.za}, this.config)
             .then(response => {
               console.log("Odbijanje uspelo! ");
               console.log(response.data);
