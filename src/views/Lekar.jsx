@@ -40,6 +40,7 @@ class Lekar extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -64,6 +65,7 @@ class Lekar extends Component {
                 handleClick={this.handleNotificationClick}
                 uloga = {this.state.uloga}
                 email = {this.state.email}
+                token={this.state.token}
               />
             )}
             key={key}

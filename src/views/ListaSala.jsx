@@ -18,6 +18,7 @@ class ListaSala extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       idAdmina: "",
       idKlinike: "",
       listaLekara: [],
@@ -28,6 +29,7 @@ class ListaSala extends Component {
       lozinkaLekara: "",
       telefonLekara: "",
       klinikaLekara: 0,
+      idSale: "",
       reirectToIzmeniLekar: false,
     };
      this.listaSalaK = this.listaSalaK.bind(this);
@@ -103,32 +105,54 @@ class ListaSala extends Component {
 
 obrisiLekara = e => {
   e.preventDefault();
-  console.log("CLick brisanje lekara");
-  console.log("LLL: " + e.target.id);
+  console.log("CLick brisanje sale  ");
+  
+  console.log("Sala za brisanje: " + e.target.id);
   console.log("--------------------------------");
-  const url6 = "http://localhost:8025/api/klinike/brisanjeLekara";
+  var config = {
+    headers: {
+      Authorization: "Bearer " + this.state.token,
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    }
+  };
+  const url6 = "http://localhost:8025/api/sale/brisanjeSale";
         axios
           .post(url6, {
-            email : e.target.id
+            id : e.target.id
             
-          })
+          }, config)
           .then(response => {
-            console.log("Brisanje lekara uspelo! ");
+            console.log("Brisanje sale uspelo! ");
             console.log(response.data);
             this.listaLekara();
 
           })
           .catch(error => {
-            console.log("Brisanje leka nije uspelo! ");
+            console.log("Brisanje sale nije uspelo! ");
           });
 
 }
 
 componentWillMount(){
+  var config = {
+    headers: {
+      Authorization: "Bearer " + this.state.token,
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    }
+  };
     console.log("wmount")
     console.log("Preuzimanje admina klinike.....")
-    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    axios.get(url)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);
@@ -143,7 +167,7 @@ componentWillMount(){
         console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
         const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
-        axios.get(urlKlinike)
+        axios.get(urlKlinike, config)
           .then(klinika => {
             console.log("Preuzeta klinika");
             console.log(klinika.data);
@@ -157,7 +181,7 @@ componentWillMount(){
          
                 console.log("Preuzmi mi sale za tu kliniku");
                 const urlKlinike = 'http://localhost:8025/api/sale/preuzmiSaleKlinike/' + this.state.idKlinike;    
-                 axios.get(urlKlinike)
+                 axios.get(urlKlinike, config)
                     .then(klinika => {
                         console.log("Preuzeta lista klinika");
                         console.log(klinika.data);
@@ -377,7 +401,7 @@ handleIzmeni = e => {
                   ctTableResponsive
                   content={
                     <div>
-                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj lekara</Button>
+                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj salu</Button>
                     <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
                     
                    

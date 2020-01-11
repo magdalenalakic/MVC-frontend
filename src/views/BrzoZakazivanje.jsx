@@ -18,11 +18,12 @@ import Button from "components/CustomButton/CustomButton.jsx";
 // import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
-import avatar from "assets/img/faces/face-3.jpg";
+// import avatar from "assets/img/faces/face-3.jpg";
 
 import { log } from "util";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
+import moment from "moment";
 
 class BrzoZakazivanje extends Component {
   constructor(props) {
@@ -30,6 +31,7 @@ class BrzoZakazivanje extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga,
+      token: props.token,
       listaPregleda: [],
       redirectNext: false,
       flag: 0,
@@ -40,7 +42,8 @@ class BrzoZakazivanje extends Component {
       izabraniDatum: new Date(),
       izabraniTipPregleda: 0,
       izabranaCena: 0,
-      izabraniPopust: 0
+      izabraniPopust: 0,
+      canClick: false
     };
     this.redirectReferer = this.redirectReferer.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
@@ -107,8 +110,15 @@ class BrzoZakazivanje extends Component {
 
   componentWillMount() {
     const url = "http://localhost:8025/api/ST/unapredDef";
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     axios
-      .get(url)
+      .get(url, config)
       .then(Response => {
         console.log("Preuzeti unapred def pregledi: ");
         console.log(Response.data);
@@ -128,6 +138,7 @@ class BrzoZakazivanje extends Component {
 
   promenjenOdabirPregleda = e => {
     console.log("promenjen odabrir");
+    console.log(e.currentTarget.value);
     const lista = this.state.listaPregleda;
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].id == e.currentTarget.value) {
@@ -138,27 +149,41 @@ class BrzoZakazivanje extends Component {
           izabraniDatum: lista[i].datum,
           izabranaCena: lista[i].cena,
           izabraniTipPregleda: lista[i].tipPregledaID
+
           // izabraniPopust:lista[i].popust
         });
       }
     }
+    console.log(this.state);
   };
   odabranPrelged = e => {
     //treba redirektovati na pretragu i filtriranje lekara
     e.preventDefault();
     console.log(this.state.izabranPregled);
     const ol = this.state.izabranPregled;
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     if (ol != 0 && ol != undefined) {
       axios
 
-        .post("http://localhost:8025/api/pregledi/newST", {
-          lekarID: this.state.izabraniLekar,
-          klinikaID: this.state.izabranaKlinika,
-          tipPregledaID: this.state.izabraniTipPregleda,
-          pacijentEmail: this.state.email,
-          cena: this.state.izabranaCena,
-          datum: this.state.izabraniDatum
-        })
+        .post(
+          "http://localhost:8025/api/pregledi/newST",
+          {
+            lekarID: this.state.izabraniLekar,
+            klinikaID: this.state.izabranaKlinika,
+            tipPregledaID: this.state.izabraniTipPregleda,
+            pacijentEmail: this.state.email,
+            cena: this.state.izabranaCena,
+            datum: this.state.izabraniDatum,
+            canClick: true
+          },
+          config
+        )
         .then(response => {
           console.log("PREGLED");
           console.log(response);
@@ -205,7 +230,9 @@ class BrzoZakazivanje extends Component {
             ></input>
           </td>
 
-          <td key={lista[i].datum}>{lista[i].datum}</td>
+          <td key={lista[i].datum}>
+            {moment(lista[i].datum).format("DD.MM.YYYY HH:mm")}
+          </td>
           <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
           <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
           <td key={lista[i].lekarId}>
@@ -267,51 +294,51 @@ class BrzoZakazivanje extends Component {
     console.log("On change !!!");
   };
 
-  handleSumbit = e => {
-    e.preventDefault();
-    console.log("KLIK SUBMITTT");
-    // let formErrors = { ...this.state.formErrors };
-    console.log("Izmjena : ---------------");
-    console.log(this.state.ime);
-    console.log(this.state.prezime);
-    axios
-      .put("http://localhost:8025/api/pacijenti/update", {
-        ime: this.state.ime,
-        prezime: this.state.prezime,
-        telefon: this.state.telefon,
-        email: this.state.email,
-        adresa: this.state.adresa,
-        grad: this.state.grad,
-        drzava: this.state.drzava,
-        lbo: this.state.lbo
-      })
-      .then(response => {
-        console.log(response.data);
+  // handleSumbit = e => {
+  //   e.preventDefault();
+  //   console.log("KLIK SUBMITTT");
+  //   // let formErrors = { ...this.state.formErrors };
+  //   console.log("Izmjena : ---------------");
+  //   console.log(this.state.ime);
+  //   console.log(this.state.prezime);
+  //   axios
+  //     .put("http://localhost:8025/api/pacijenti/update", {
+  //       ime: this.state.ime,
+  //       prezime: this.state.prezime,
+  //       telefon: this.state.telefon,
+  //       email: this.state.email,
+  //       adresa: this.state.adresa,
+  //       grad: this.state.grad,
+  //       drzava: this.state.drzava,
+  //       lbo: this.state.lbo
+  //     })
+  //     .then(response => {
+  //       console.log(response.data);
 
-        this.setState({
-          ime: response.data.ime
-        });
+  //       this.setState({
+  //         ime: response.data.ime
+  //       });
 
-        this.setState({
-          prezime: response.data.prezime
-        });
+  //       this.setState({
+  //         prezime: response.data.prezime
+  //       });
 
-        this.setState({
-          telefon: response.data.telefon,
-          adresa: response.data.adresa,
-          grad: response.data.grad,
-          drzava: response.data.drzava,
-          lbo: response.data.lbo
-        });
+  //       this.setState({
+  //         telefon: response.data.telefon,
+  //         adresa: response.data.adresa,
+  //         grad: response.data.grad,
+  //         drzava: response.data.drzava,
+  //         lbo: response.data.lbo
+  //       });
 
-        // this.setState({
-        //   redirectToReferrer: true
-        // });
-      })
-      .catch(error => {
-        console.log("Izmena nije uspela! ");
-      });
-  };
+  //       // this.setState({
+  //       //   redirectToReferrer: true
+  //       // });
+  //     })
+  //     .catch(error => {
+  //       console.log("Izmena nije uspela! ");
+  //     });
+  // };
   redirectReferer() {
     var flag = 1;
     if (this.state.redirectNext == true) {
@@ -395,7 +422,16 @@ class BrzoZakazivanje extends Component {
                         }
                       />
                       {this.redirectReferer}
-                      <Button type="submit">Zakazi</Button>
+                      <Button
+                        type="submit"
+                        onClick={
+                          this.state.canClick
+                            ? this.props.handleClick("Zahtev je poslat!")
+                            : null
+                        }
+                      >
+                        Zakazi
+                      </Button>
                       <h5>
                         {(this.state.izabranPregled == undefined ||
                           this.state.izabranPregled == 0) && (
@@ -413,25 +449,27 @@ class BrzoZakazivanje extends Component {
         </div>
       );
     } else if (this.state.flag == 1) {
-      return (
-        <div className="content">
-          <Grid fluid>
-            <Row>
-              <Col md={10}>
-                <Card
-                  title="Zahtev za pregled je uspesno poslat!"
-                  content={
-                    <h3 className="successMessage">
-                      Potvrdite zahtev za pregled preko E-maila!
-                    </h3>
-                  }
-                />
-              </Col>
-            </Row>
-          </Grid>
-        </div>
-      );
+      return <Redirect from="/" to="/admin/pocetnaStranica" />;
     }
+    //   return (
+    //     <div className="content">
+    //       <Grid fluid>
+    //         <Row>
+    //           <Col md={10}>
+    //             <Card
+    //               title="Zahtev za pregled je uspesno poslat!"
+    //               content={
+    //                 <h3 className="successMessage">
+    //                   Potvrdite zahtev za pregled preko E-maila!
+    //                 </h3>
+    //               }
+    //             />
+    //           </Col>
+    //         </Row>
+    //       </Grid>
+    //     </div>
+    //   );
+    // }
   }
 }
 

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { useState } from 'react';
 import {
   Grid,
   Row,
@@ -19,7 +20,7 @@ import "izmenaProfila.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 //dodam link za sliku  mozda od doktora!!
-import avatar from "assets/img/faces/face-3.jpg";
+// import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
 import { log } from "util";
 import Login from "login";
@@ -27,6 +28,7 @@ import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
 import { string } from "prop-types";
 import PocetnaStranicaPacijenta from "./PocetnaStranicaPacijenta";
+import {setHours, setMinutes, subHours,subMinutes} from "date-fns"
 
 class ListaKlinika extends Component {
   constructor(props) {
@@ -34,6 +36,7 @@ class ListaKlinika extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga,
+      token: props.token,
       listaKlinika: [],
       pretraziPoljeKlinika: "",
       pretraziPoljeLekara: "",
@@ -79,8 +82,15 @@ class ListaKlinika extends Component {
 
   componentWillMount() {
     const url = "http://localhost:8025/api/klinike/all";
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     axios
-      .get(url)
+      .get(url, config)
       .then(Response => {
         console.log("Preuzeta lista klinika: ");
         console.log(Response.data);
@@ -96,7 +106,7 @@ class ListaKlinika extends Component {
       });
 
     axios
-      .get("http://localhost:8025/api/tipPregleda/all")
+      .get("http://localhost:8025/api/tipPregleda/all",config)
       .then(Response => {
         console.log("Preuzeta lista tipova pregleda: ");
         console.log(Response.data);
@@ -118,51 +128,51 @@ class ListaKlinika extends Component {
     console.log("On change !!!");
   };
 
-  handleSumbit = e => {
-    e.preventDefault();
-    console.log("KLIK SUBMITTT");
-    // let formErrors = { ...this.state.formErrors };
-    console.log("Izmjena : ---------------");
-    console.log(this.state.ime);
-    console.log(this.state.prezime);
-    axios
-      .put("http://localhost:8025/api/pacijenti/update", {
-        ime: this.state.ime,
-        prezime: this.state.prezime,
-        telefon: this.state.telefon,
-        email: this.state.email,
-        adresa: this.state.adresa,
-        grad: this.state.grad,
-        drzava: this.state.drzava,
-        lbo: this.state.lbo
-      })
-      .then(response => {
-        console.log(response.data);
+  // handleSumbit = e => {
+  //   e.preventDefault();
+  //   console.log("KLIK SUBMITTT");
+  //   // let formErrors = { ...this.state.formErrors };
+  //   console.log("Izmjena : ---------------");
+  //   console.log(this.state.ime);
+  //   console.log(this.state.prezime);
+  //   axios
+  //     .put("http://localhost:8025/api/pacijenti/update", {
+  //       ime: this.state.ime,
+  //       prezime: this.state.prezime,
+  //       telefon: this.state.telefon,
+  //       email: this.state.email,
+  //       adresa: this.state.adresa,
+  //       grad: this.state.grad,
+  //       drzava: this.state.drzava,
+  //       lbo: this.state.lbo
+  //     })
+  //     .then(response => {
+  //       console.log(response.data);
 
-        this.setState({
-          ime: response.data.ime
-        });
+  //       this.setState({
+  //         ime: response.data.ime
+  //       });
 
-        this.setState({
-          prezime: response.data.prezime
-        });
+  //       this.setState({
+  //         prezime: response.data.prezime
+  //       });
 
-        this.setState({
-          telefon: response.data.telefon,
-          adresa: response.data.adresa,
-          grad: response.data.grad,
-          drzava: response.data.drzava,
-          lbo: response.data.lbo
-        });
+  //       this.setState({
+  //         telefon: response.data.telefon,
+  //         adresa: response.data.adresa,
+  //         grad: response.data.grad,
+  //         drzava: response.data.drzava,
+  //         lbo: response.data.lbo
+  //       });
 
-        // this.setState({
-        //   redirectToReferrer: true
-        // });
-      })
-      .catch(error => {
-        console.log("Izmena nije uspela! ");
-      });
-  };
+  //       // this.setState({
+  //       //   redirectToReferrer: true
+  //       // });
+  //     })
+  //     .catch(error => {
+  //       console.log("Izmena nije uspela! ");
+  //     });
+  // };
   promenjenOdabirKlinike = e => {
     this.setState(
       {
@@ -449,6 +459,7 @@ class ListaKlinika extends Component {
     this.setState({ [name]: value }, () => console.log(this.state));
   };
   handleChangeDate = date => {
+    console.log(date)
     this.setState(
       {
         datumZaPregled: date
@@ -523,10 +534,18 @@ class ListaKlinika extends Component {
   odabranaKlinika = e => {
     //treba redirektovati na pretragu i filtriranje lekara
     e.preventDefault();
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     axios
       .get(
         "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
-          this.state.izabranaKlinika
+          this.state.izabranaKlinika,
+          config
       )
       .then(Response => {
         console.log("Preuzeta lista lekara: ");
@@ -664,6 +683,13 @@ class ListaKlinika extends Component {
   slanjeZahtevaZaPregled = e => {
     e.preventDefault();
     console.log("slanje zahteva....");
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
 
     axios
 
@@ -674,7 +700,7 @@ class ListaKlinika extends Component {
         pacijentEmail: this.state.email,
         cena: 500,
         datum: this.state.datumZaPregled
-      })
+      },config)
       .then(response => {
         console.log("PREGLED");
         console.log(response);
@@ -767,6 +793,9 @@ class ListaKlinika extends Component {
       );
     } else {
       if (this.state.flag == 0) {
+        // const [startDate, setStartDate] = useState(
+        //   setHours(setMinutes(new Date(), 30), 16)
+        // );
         return (
           <div className="content">
             <Grid fluid>
@@ -787,10 +816,21 @@ class ListaKlinika extends Component {
                   </form>
                   <div>
                     <h5>Datum za pregled:</h5>
+
                     <DatePicker
                       placeholderText="Izaberi datum"
                       selected={this.state.datumZaPregled}
-                      onSelect={this.handleChangeDate}
+                      onChange={date=>this.handleChangeDate(date)}
+                      // showTimeSelect
+                      minDate={new Date()}
+                      // timeCaption="Vreme"
+                      withPortal
+                      // excludeTimes={[
+                      //   setHours(setMinutes(new Date(), 0), 17)
+                      // ]}
+                      // minTime={setHours(setMinutes(new Date(), 0), 7)}
+                      // maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                      dateFormat="dd.MM.yyyy"
 
                       // onChange={date => setStartDate(date)}
                     />
@@ -1108,7 +1148,10 @@ class ListaKlinika extends Component {
                           <Button onClick={this.odustani}>Odustani</Button>
                         </form>
                         <form onSubmit={e => this.slanjeZahtevaZaPregled(e)}>
-                          <Button type="submit">Potvrdi</Button>
+                          <Button type="submit"  
+                          onClick={()=> this.props.handleClick("Zahtev je poslat!")}
+                            
+                        >Potvrdi</Button>
                         </form>
                       </div>
                     }

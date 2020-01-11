@@ -18,6 +18,7 @@ class ListaLekara extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       idAdmina: "",
       idKlinike: "",
       listaLekara: [],
@@ -86,8 +87,15 @@ class ListaLekara extends Component {
     
         console.log("ID KLINIKE OD KOJE TRAZIM LEKARE: " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
+        var config = {
+          headers: {
+            Authorization: "Bearer " + this.state.token,
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          }
+        };
         const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
-        axios.get(urlKlinike)
+        axios.get(urlKlinike, config)
           .then(klinika => {
             console.log("Preuzeta klinika");
             console.log(klinika.data);
@@ -108,12 +116,19 @@ obrisiLekara = e => {
   console.log("CLick brisanje lekara");
   console.log("LLL: " + e.target.id);
   console.log("--------------------------------");
+  var config = {
+    headers: {
+      Authorization: "Bearer " + this.state.token,
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    }
+  };
   const url6 = "http://localhost:8025/api/klinike/brisanjeLekara";
         axios
           .post(url6, {
             email : e.target.id
             
-          })
+          }, config)
           .then(response => {
             console.log("Brisanje lekara uspelo! ");
             console.log(response.data);
@@ -129,8 +144,15 @@ obrisiLekara = e => {
 componentWillMount(){
     console.log("wmount")
     console.log("Preuzimanje admina klinike.....")
-    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    axios.get(url)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);
@@ -145,7 +167,7 @@ componentWillMount(){
         console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
         const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
-        axios.get(urlKlinike)
+        axios.get(urlKlinike, config)
           .then(klinika => {
             console.log("Preuzeta klinika");
             console.log(klinika.data);
@@ -166,9 +188,16 @@ componentWillMount(){
       console.log("************* ID KLINIKE JE:" + this.state.idKlinike);
 
       //za klinike ovdje
+      var config = {
+        headers: {
+          Authorization: "Bearer " + this.state.token,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      };
       const url1 = "http://localhost:8025/api/klinike/all";
       axios
-        .get(url1)
+        .get(url1, config)
         .then(Response => {
           console.log("Preuzeta lista klinika: ");
           console.log(Response.data);
@@ -351,6 +380,7 @@ listaLekaraUK() {
     const reirectToIzmeniLekar = this.state.reirectToIzmeniLekar;
    console.log("LEKARRRRRRR : "  + this.state.emailLekara);
    const emailLekara = this.state.emailLekara;
+   const token = this.state.token;
     if (reirectToIzmeniLekar === true) {
       return (
         <BrowserRouter>
@@ -358,7 +388,7 @@ listaLekaraUK() {
             <Route
             
               path="/izmenaProfilaLekara"
-              render={props => <IzmenaProfila {...props} email={emailLekara} />}
+              render={props => <IzmenaProfila {...props} email={emailLekara} token={token}/>}
             />
             <Redirect from="/" to="/izmenaProfilaLekara" />
           </Switch>

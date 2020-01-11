@@ -60,7 +60,7 @@ class Login extends Component {
         this.setState({
           token: response.data.accessToken
         });
-        // console.log(response.data.accessToken.getUser());
+        console.log("TOKEN : " + this.state.token);
 
         this.setState({
           uloga: response.data.uloga
@@ -169,6 +169,7 @@ class Login extends Component {
             <Route
               path="/admin"
               render={props => <Lekar {...props} email={email} uloga={uloga} token={token}/>}
+
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
           </Switch>
@@ -229,7 +230,7 @@ class Login extends Component {
       <div>
         <div className="logForm">
           <div className="form-logForm">
-            <h1>Uloguj se</h1>
+            <h1>Prijavi se</h1>
             {this.state.waitToapprove === true && (
               <span className="errorMessage">
                 Bicete obavesteni o potvrdi registracije putem mejla u najkracem

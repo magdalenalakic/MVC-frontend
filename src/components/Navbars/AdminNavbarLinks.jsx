@@ -18,13 +18,55 @@
 import React, { Component } from "react";
 import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
 import Login from "login";
+import axios from "axios";
+import Pacijent from "views/Pacijent.jsx";
 
 class AdminNavbarLinks extends Component {
+  constructor(props) {
+    super(props);
 
+    console.log(this.props);
+    this.state = {
+      uloga: "",
+      email: "",
+      token: ""
+    };
+    console.log(this.state);
+  }
   handleClick = e => {
     e.preventDefault();
-    
   };
+  pronadjiPacijenta() {
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .get(
+        "http://localhost:8025/api/pacijenti/findPacijentEmail",
+        // this.state.email,
+        config
+      )
+
+      .then(Response => {
+        console.log("URL 111");
+        console.log(Response);
+        this.setState({
+          email: Response.data.email
+        });
+        console.log(this.state);
+      })
+      .catch(error => {
+        console.log("nije uspeo url1");
+        console.log(error);
+      });
+  }
+  componentWillMount() {
+    // this.pronadjiPacijenta();
+  }
   render() {
     const notification = (
       <div>
@@ -40,7 +82,7 @@ class AdminNavbarLinks extends Component {
           {/* <NavItem eventKey={1} href="#">
             <i className="fa fa-dashboard" />
             <p className="hidden-lg hidden-md">Dashboard</p>
-          </NavItem>
+          </NavItem> */}
           <NavDropdown
             eventKey={2}
             title={notification}
@@ -53,7 +95,7 @@ class AdminNavbarLinks extends Component {
             <MenuItem eventKey={2.4}>Notification 4</MenuItem>
             <MenuItem eventKey={2.5}>Another notifications</MenuItem>
           </NavDropdown>
-          <NavItem eventKey={3} href="#">
+          {/* <NavItem eventKey={3} href="#">
             <i className="fa fa-search" />
             <p className="hidden-lg hidden-md">Search</p>
           </NavItem> */}
@@ -75,9 +117,9 @@ class AdminNavbarLinks extends Component {
             <MenuItem divider />
             <MenuItem eventKey={2.5}>Separated link</MenuItem>
           </NavDropdown>*/}
-          <NavItem eventKey={3} href="http://localhost:3000/login" >
-            Log out
-          </NavItem> 
+          <NavItem eventKey={3} href="http://localhost:3000/login">
+            Odjava
+          </NavItem>
         </Nav>
       </div>
     );
