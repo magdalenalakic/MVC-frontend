@@ -819,7 +819,7 @@ class KlinickiCentarPocetna extends Component {
           prezimeIzmenjenogAK: Response.data.prezime,
           telefonIzmenjenogAK: Response.data.telefon,
           // lozinkaIzmenjenogAK: Response.date.lozinka,
-          klinikaIzmenjenogAK: Response.date.idKlinike
+          // klinikaIzmenjenogAK: Response.date.idKlinike
         }, 
         ()=> this.dialog.show({
           title: 'Izmena administratora klinike',
@@ -889,7 +889,7 @@ class KlinickiCentarPocetna extends Component {
                 <div>
                   <select 
                     name="odabirKlinike" 
-                    defaultValue={this.state.klinikaIzmenjenogAK}
+                    // defaultValue={this.state.klinikaIzmenjenogAK}
                     onChange={e => {this.proslediKlinikuIzmena(e)}}
                    >
                     {this.listaKlinikaIzbor()} 
