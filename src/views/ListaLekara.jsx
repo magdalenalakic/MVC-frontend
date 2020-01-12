@@ -110,11 +110,35 @@ class ListaLekara extends Component {
       
 
   }
+  listaLekaraPonovo(){
+    console.log("ID KLINIKE OD KOJE TRAZIM LEKARE: " + this.state.idKlinike);
+    console.log("ucitaj mi kliniku");
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
+    axios.get(urlKlinike, config)
+      .then(klinika => {
+        console.log("Preuzeta klinika");
+        console.log(klinika.data);
 
+        this.setState({
+            idKlinika: klinika.data.id,
+            listaLekara: klinika.data,
+         
+        });
+   
+      })
+  
+  }
 obrisiLekara = e => {
   e.preventDefault();
   console.log("CLick brisanje lekara");
-  console.log("LLL: " + e.target.id);
+  console.log("Lekar kojeg brisem: " + e.target.id);
   console.log("--------------------------------");
   var config = {
     headers: {
@@ -124,6 +148,7 @@ obrisiLekara = e => {
     }
   };
   const url6 = "http://localhost:8025/api/klinike/brisanjeLekara";
+  console.log(url6);
         axios
           .post(url6, {
             email : e.target.id
@@ -132,11 +157,12 @@ obrisiLekara = e => {
           .then(response => {
             console.log("Brisanje lekara uspelo! ");
             console.log(response.data);
-            this.listaLekara();
+            this.listaLekaraPonovo();
 
           })
           .catch(error => {
-            console.log("Brisanje leka nije uspelo! ");
+            console.log("Brisanje leka nije uspelo! " + e.target.id);
+      
           });
 
 }
@@ -286,7 +312,13 @@ componentWillMount(){
         Dialog.OKAction(() => {
           
           console.log('OK je kliknuto!');
-
+          var config = {
+            headers: {
+              Authorization: "Bearer " + this.state.token,
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            }
+          };
           const url3 = "http://localhost:8025/api/adminKlinike/dodavanjeLekara";
           axios
             .post(url3, {
@@ -296,12 +328,12 @@ componentWillMount(){
               lozinka: this.state.lozinkaLekara,
               email: this.state.emailLekara,
               klinikaID: this.state.idKlinike,
-            })
+            }, config)
             .then(response => {
               
               console.log("Dodavanje lekra je uspjelo! ");
               console.log(response.data);
-              this.listaLekara();
+              this.listaLekaraPonovo();
 
             })
             .catch(error => {
