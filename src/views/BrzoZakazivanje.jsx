@@ -369,6 +369,8 @@ class BrzoZakazivanje extends Component {
             <Row>
               <Col md={10}>
                 <Card
+                  ctTableFullWidth
+                  ctTableResponsive
                   title="Izaberi pregled"
                   content={
                     <form
