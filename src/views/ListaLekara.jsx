@@ -410,7 +410,7 @@ listaLekaraUK() {
   render() {
     const lista = this.state.listaKlinika;
     const reirectToIzmeniLekar = this.state.reirectToIzmeniLekar;
-   console.log("LEKARRRRRRR : "  + this.state.emailLekara);
+  // console.log("LEKARRRRRRR : "  + this.state.emailLekara);
    const emailLekara = this.state.emailLekara;
    const token = this.state.token;
     if (reirectToIzmeniLekar === true) {
