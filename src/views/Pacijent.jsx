@@ -83,7 +83,8 @@ class Pacijent extends Component {
       poruka == "USPESNA IZMENA" ||
       poruka == "ZAHTEV JE POTVRDJEN" ||
       poruka == "OCENJEN LEKAR" ||
-      poruka == "OCENJENA KLINIKA"
+      poruka == "OCENJENA KLINIKA" ||
+      poruka == "ZAHTEV JE POSLAT"
     ) {
       level = "success";
       klasa = "pe-7s-check";

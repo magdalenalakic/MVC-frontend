@@ -812,7 +812,7 @@ class IstorijaPOPacijenta extends Component {
       <div className="content">
         <Grid fluid>
           <Row>
-            <Col md={10}>
+            <Col md={12}>
               <Card
                                         ctTableFullWidth
                           ctTableResponsive
