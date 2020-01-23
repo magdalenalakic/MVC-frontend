@@ -14,11 +14,18 @@ class ListaZahtevaAdminKC extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       razlogOdbijanja: "",
       za: "",
       listaZahtevaZaRegistraciju: []
     };
-    
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(this);
     this.handleOdobren = this.handleOdobren.bind(this);
     this.handleOdbijen = this.handleOdbijen.bind(this);
@@ -26,13 +33,13 @@ class ListaZahtevaAdminKC extends Component {
   }
 
   ucitajPonovo(){
+    
     const url1 =
-      "http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/" +
-      this.state.email;
+      "http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/";
 
     console.log(url1);
     axios
-      .get(url1)
+      .get(url1, this.config)
       .then(response => {
         console.log("URL zahtevi za reg");
         console.log(response);
@@ -61,9 +68,9 @@ class ListaZahtevaAdminKC extends Component {
   handleOdobren = e => {
     e.preventDefault();
     console.log(e.target.id);
-    const url2 = "http://localhost:8025/api/administratoriKC/potvrda/" + e.target.id;
+    const url2 = "http://localhost:8025/api/administratoriKC/potvrda"  ;
     axios
-    .post(url2, {})
+    .post(url2,{email: e.target.id}, this.config)
     .then(response => {
       console.log("ODOBRENOOOO");
       console.log(response);
@@ -122,9 +129,9 @@ class ListaZahtevaAdminKC extends Component {
           console.log("Poslat razlog : ---------------");
           console.log(this.state.za);
           console.log(this.state.razlogOdbijanja);
-          const url3 = "http://localhost:8025/api/administratoriKC/odbijanje/" + this.state.za + "/" + this.state.razlogOdbijanja;
+          const url3 = "http://localhost:8025/api/administratoriKC/odbijanje/"  + this.state.razlogOdbijanja;
           axios
-            .post(url3, {})
+            .post(url3,{email: e.state.za}, this.config)
             .then(response => {
               console.log("Odbijanje uspelo! ");
               console.log(response.data);

@@ -27,7 +27,7 @@ const dashboardRoutes = [
   {
     path: "/pocetnaStranica",
     name: "Pocetna Strana ",
-    icon: "pe-7s-graph",
+    icon: "pe-7s-home",
     component: PocetnaStranicaAdminaKlinike,
     layout: "/admin"
   },
@@ -41,14 +41,14 @@ const dashboardRoutes = [
   {
     path: "/izmenaKlinike",
     name: "Izmena  klinike",
-    icon: "pe-7s-user",
+    icon: "pe-7s-note",
     component: izmenaKlinike,
     layout: "/admin"
   },
   {
     path: "/lekari",
-    name: "Lista Lekara",
-    icon: "pe-7s-graph",
+    name: "Lekari",
+    icon: "pe-7s-id",
     component: listaLekara,
     layout: "/admin"
   },
@@ -56,28 +56,28 @@ const dashboardRoutes = [
   {
     path: "/Pregledi",
     name: "Pregledi",
-    icon: "pe-7s-graph",
+    icon: "pe-7s-menu",
     component: listaPregleda,
     layout: "/admin"
   },
   {
     path: "/Sale",
     name: "Sale",
-    icon: "pe-7s-graph",
+    icon: "pe-7s-albums",
     component: listaSala,
     layout: "/admin"
   },
   {
     path: "/slobodniTermini",
     name: "Slobodni termini",
-    icon: "pe-7s-graph",
+    icon: "pe-7s-note2",
     component: slobodniTermini,
     layout: "/admin"
   },
   {
     path: "/listaZahtevaPregled",
-    name: "lLsta Zahteva",
-    icon: "pe-7s-graph",
+    name: "Zahtevi za pregled",
+    icon: "pe-7s-box1",
     component: listaZahteva,
     layout: "/admin"
   },

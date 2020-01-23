@@ -7,7 +7,7 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
-
+import { Table } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
@@ -15,7 +15,7 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
-import avatar from "assets/img/faces/face-3.jpg";
+// import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
 import { log } from "util";
 import Login from "login";
@@ -26,8 +26,10 @@ class IzmenaProfilaAdminaKlinike extends Component {
   constructor(props){
     super(props);
     console.log("IZMENA PROFILA ADMINA KLINIKE");
+    console.log("PROPS PRINT OD AK: " + this.props)
     this.state = {
       email: props.email,
+      token: props.token,
       uloga: props.uloga, 
       ime: "",
       telefon: "",
@@ -36,7 +38,8 @@ class IzmenaProfilaAdminaKlinike extends Component {
       prezimeN: "",
       lozinkaN: "", 
       brTelefonaN: "",
-
+      idKlinika: "",
+      imeKlinike: ""
     }
 
   }
@@ -44,14 +47,22 @@ class IzmenaProfilaAdminaKlinike extends Component {
 
   componentWillMount(){
     console.log("wmount!!!!")
-    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    axios.get(url)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);
       
         this.setState({
-          email: Response.data.email
+          email: Response.data.email,
+          idKlinika: Response.data.idKlinike
         });
         this.setState({
           ime: Response.data.ime
@@ -63,11 +74,29 @@ class IzmenaProfilaAdminaKlinike extends Component {
         this.setState({
           telefon: Response.data.telefon
         });
+
+        console.log("ucitaj mi kliniku " + this.state.idKlinika);
+        const urlKlinike = 'http://localhost:8025/api/klinike/finKlinikaById/' + this.state.idKlinika;    
+        console.log(urlKlinike);
+        axios.get(urlKlinike, config)
+          .then(klinika => {
+            console.log("Preuzeta klinika");
+            console.log(klinika.data);
+   
+            this.setState({
+              imeKlinike: klinika.data.naziv,
+            
+             
+            });
+        
+          })
+
       })
       
       .catch(error => {
         console.log("Admin klinike nije preuzet")
       })
+
   }
   handleChange = e => {
     e.preventDefault();
@@ -84,13 +113,20 @@ class IzmenaProfilaAdminaKlinike extends Component {
       console.log("Izmjena : ---------------")  
       console.log(this.state.ime);
       console.log(this.state.prezime);
+      var config = {
+        headers: {
+          Authorization: "Bearer " + this.state.token,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      };
     axios
       .put("http://localhost:8025/api/adminKlinike/update", {
         ime: this.state.imeN,
         prezime: this.state.prezimeN,
         telefon: this.state.telefonN,
         email: this.state.email
-      })
+      }, config)
       .then(response => {
         console.log(response.data);
  
@@ -208,8 +244,8 @@ class IzmenaProfilaAdminaKlinike extends Component {
                           // onChange={this.handleChange}
                         />*/}
                       </div> 
-                      <div className="izmeniPodatkeLekar">
-                         <button type="submit">Izmeni podatke</button>
+                      <div className="izmeniPodatkePacijent">
+                         <Button type="submit" variant="outline-primary"> Izmeni podatke</Button>
                       </div>
                   </form>
            
@@ -224,31 +260,25 @@ class IzmenaProfilaAdminaKlinike extends Component {
                 content={
                   <div id="a">
                     <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
+                      <h2>
+                        <img
+                          className="slikaPacijent"
+                          src={slikaLekar}
+                        ></img>
                       </h2>
                     </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Ime:</p>
-                <label className="opisKC">{this.state.ime}</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Prezime:</p>
-                <label className="adresaKC">{this.state.prezime}</label>
-                      </h2>
-                    </div>
-                   
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Email:</p>
-                <label className="opisKC">{this.state.email}</label>
-                      </h2>
-                    </div> 
-                    
-                    
+                    <Table striped hover>
+                      <thead className="thead-dark">
+                        <tr>
+                          <td>E-mail:</td>
+                          <td>{email}</td>
+                        </tr>
+                        <tr>
+                          <td>Klinika:</td>
+                          <td>{this.state.imeKlinike}</td>
+                        </tr>
+                      </thead>
+                    </Table>
                   </div>
                 }
                 

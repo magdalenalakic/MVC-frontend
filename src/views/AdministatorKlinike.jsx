@@ -37,9 +37,11 @@ class AdministatorKlinike extends Component {
   constructor(props) {
     super(props);
     console.log("Konsturkotr od Admina klinike")
+    console.log("PROPS PRINT OD AK: " + this.props)
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -48,7 +50,7 @@ class AdministatorKlinike extends Component {
       fixedClasses: "dropdown show-dropdown open"
     };
     // console.log(this.state.uloga);
-    // console.log(this.state.email);
+    console.log(this.state.token);
   }
 
  
@@ -65,6 +67,7 @@ class AdministatorKlinike extends Component {
                 id = {this.state.id}
                 uloga = {this.state.uloga}
                 email = {this.state.email}
+                token={this.state.token}
               />
             )}
             key={key}

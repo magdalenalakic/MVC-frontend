@@ -15,12 +15,13 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
-import avatar from "assets/img/faces/face-3.jpg";
+// import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
 import { log } from "util";
 import Login from "login";
 import slikaLekar from "assets/img/images.jpg"
 import axios from "axios";
+import { copyFile } from "fs";
 
 class IzmenaKlinike extends Component {
   constructor(props){
@@ -28,6 +29,7 @@ class IzmenaKlinike extends Component {
     console.log("IZMENA KLINIKE");
     this.state = {
       email: props.email,
+      token: props.token,
       idKlinike: "",
       naziv: "",
       adresa: "",
@@ -42,8 +44,15 @@ class IzmenaKlinike extends Component {
   componentWillMount(){
     console.log("wmount")
     console.log("Preuzimanje admina klinike.....")
-    const url1 = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    axios.get(url1)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url1 = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+    axios.get(url1, config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);
@@ -56,8 +65,8 @@ class IzmenaKlinike extends Component {
           idKlinike: Response.data.idKlinike,
         });
         console.log("wmount!!!!");
-        const url = 'http://localhost:8025/api/klinike/' + this.state.idKlinike;
-        axios.get(url)
+        const url = 'http://localhost:8025/api/klinike/finKlinikaById/' + this.state.idKlinike;
+        axios.get(url, config)
           .then(Response => {
             console.log("Preuzeta klinike: ");
             console.log(Response.data);
@@ -99,6 +108,13 @@ class IzmenaKlinike extends Component {
       console.log(this.state.naziv);
       console.log(this.state.idKlinike);
       console.log(this.state.id);
+      var config = {
+        headers: {
+          Authorization: "Bearer " + this.state.token,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      };
     axios
       .put("http://localhost:8025/api/klinike/update", {
         id: this.state.id,
@@ -106,7 +122,7 @@ class IzmenaKlinike extends Component {
         adresa: this.state.adresa,
         ocena: this.state.ocena,
         opis: this.state.opis
-      })
+      }, config)
       .then(response => {
         console.log(response.data);
         this.setState({
@@ -209,8 +225,8 @@ class IzmenaKlinike extends Component {
                         />
                       </div> */}
                      
-                      <div className="izmeniPodatkeLekar">
-                         <button type="submit">Izmeni podatke</button>
+                      <div className="izmeniPodatkePacijent">
+                         <Button type="submit">Izmeni podatke</Button>
                       </div>
                   </form>
            

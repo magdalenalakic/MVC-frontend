@@ -1,27 +1,12 @@
 
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { Card } from "components/Card/Card.jsx";
-import { UserCard } from "components/UserCard/UserCard.jsx";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
-import slikaLekar from "assets/img/images.jpg";
-import Login from "login.js";
+import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
+import "klinickiCentar.css";
 
 
 class ZahtevMedSestra extends React.Component {
@@ -31,7 +16,9 @@ class ZahtevMedSestra extends React.Component {
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
-      email: props.email
+      email: props.email,
+      token: props.token,
+
       
     };
    
@@ -39,135 +26,91 @@ class ZahtevMedSestra extends React.Component {
     console.log(this.state.uloga);
     console.log(this.state.email);
   }
-  // createLegend(json) {
-  //   var legend = [];
-  //   for (var i = 0; i < json["names"].length; i++) {
-  //     var type = "fa fa-circle text-" + json["types"][i];
-  //     legend.push(<i className={type} key={i} />);
-  //     legend.push(" ");
-  //     legend.push(json["names"][i]);
-  //   }
-  //   return legend;
-  // }
+ 
   
   render() {
     console.log(this.props);
     return (
       <div className="content">
-        <Grid fluid>
-          {/* <Row>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                // statsText="Lista pacijenata"
-                // statsValue="105GB"
-                // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Lista pacijenata"
-              />
-            </Col>
-            
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Profil korisnika"
-              />
-            </Col>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Zahtev za odmor/odsustvo"
-              />
-            </Col>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="fa fa-twitter text-info" />}
-                statsText=""
-                // statsValue="+45"
-                // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Overa recepata"
-              />
-            </Col> 
-          </Row> */}
-          <Row>
-            <Col >
               <Card
               
-                title="Zahtev za godisnji odmor"
+                title="Zahtev za godisnji odmor/odsustvo"
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
                  content={
-                  <div className="ct-chart">
-                    {/* <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    /> */}
-                    <p>
+                  <div className="formaGodOdomorOdsustvo" >
+                    <Grid fluid>
+                      <Row>
+                        <Col lg={3} sm={6}> 
+                          <h5>Tip (odmor/odsustvo): </h5>
+                          <div>
+                            <select className="izbor"
+                             // name="odabir" 
+                              // defaultValue={this.state.klinikaIzmenjenogAK}
+                            // onChange={e => {this.proslediKlinikuIzmena(e)}}
+                            >
+                              <option 
+                              //value={lista[i].id} 
+                              >ODMOR</option>
+
+                              <option 
+                              //value={lista[i].id} 
+                              >ODSUSTVO</option>
+                            
+                            </select>
+                          </div>
+                        </Col>
+                        <Col lg={3} sm={6}>
+                          <h5>Datum pocetka:</h5>
+                          <DatePicker
+                            placeholderText="Izaberi datum"
+                            //selected={this.state.datumZaPregled}
+                            //onSelect={this.handleChangeDate}
+
+                            // onChange={date => setStartDate(date)}
+                            />
+                        </Col>
+                        <Col lg={3} sm={6}>
+                          <h5>Datum kraja:</h5>
+                          <DatePicker
+                              placeholderText="Izaberi datum"
+                              //selected={this.state.datumZaPregled}
+                              //onSelect={this.handleChangeDate}
+
+                              // onChange={date => setStartDate(date)}
+                          />
+                        </Col>
+                        
+                      </Row>
+                      <Row >
+                        <Col lg={3} >
+                        <h5 >Razlog: </h5>
+                         <input className="razlogPolje"
+                          type="text"
+                          name="razlog"
+                         // defaultValue={ime}
+                          // placeholder={this.state.ime}
+                          // noValidate
+                          //onChange={this.handleChange}
+                        /> 
+                        </Col>
+                      </Row>
+                      <Row >
+                        <Col lg={3} >
+                          <Button className="dugmePosalji">Pošalji</Button>
+                        </Col>
+                      </Row>
+                    </Grid>
                     
-                    </p>
                   </div>
                  }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendSales)}</div>
-                // }
               />
-            </Col>
-            
-            {/* <Col md={4}>
-            <Card
-                // statsIcon="fa fa-clock-o"
-                title="O lekaru"
-                // category="Ime"
-                content={
-                  <div id="a">
-                    <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Ime:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Prezime:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Klinika:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Opis posla:</p>
-                        <label className="opisKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    
-                    
-                    
-                  </div>
-                }
-                
-                
-              />
-            </Col> */}
+
+
+            {/* </Col>
           </Row>
 
-        </Grid>
+        </Grid> */}
       </div>
     );
   }

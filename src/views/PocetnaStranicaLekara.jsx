@@ -49,6 +49,7 @@ class PocetnaStranicaLekara extends React.Component {
     this.state = {
       email: props.email,
       uloga: props.uloga, 
+      token: props.token,
       ime: "",
       telefon: "",
       prezime: "",
@@ -81,10 +82,17 @@ class PocetnaStranicaLekara extends React.Component {
 
   componentWillMount(){
     console.log("wmount")
-    const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/lekari/getLekarByEmail';
     // console.log('Email: ' + this.state.email);
     // console.log('url: ' + url);
-    axios.get(url)
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet lekar: //////////////////////////////////////////");
         console.log(Response.data);
@@ -98,7 +106,7 @@ class PocetnaStranicaLekara extends React.Component {
 
         const url1 = 'http://localhost:8025/api/klinike/pacijentiKlinike/' + this.state.klinikaID; 
         console.log(url1);
-        axios.get(url1)
+        axios.get(url1, config)
           .then(response => {
             console.log("URL 111");
             console.log(response);
@@ -107,7 +115,7 @@ class PocetnaStranicaLekara extends React.Component {
             });
           })
           .catch(error => {
-              console.log("nije uspeo url1");
+              console.log("nisu preuzeti pacijenti klinike");
               console.log(error);
           })
       })

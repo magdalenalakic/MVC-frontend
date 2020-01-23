@@ -5,10 +5,12 @@ import axios from "axios";
 import "klinickiCentar.css";
 import slikaKC from "assets/img/klinickiCentar.jpg";
 import Button from "components/CustomButton/CustomButton.jsx";
+import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import Dialog from 'react-bootstrap-dialog';
 // import Form, { Input, Fieldset } from 'react-bootstrap-form';
 // import { render } from 'react-dom';
 // import ReactDOM from 'react-dom'
+
 
 class KlinickiCentarPocetna extends Component {
   constructor(props) {
@@ -18,6 +20,7 @@ class KlinickiCentarPocetna extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       listaKlinika: [],
       listaAdministratoraKlinika: [],
       listaAdministratoraKC: [],
@@ -59,10 +62,21 @@ class KlinickiCentarPocetna extends Component {
       imeIzmenjenogAKC: "",
       prezimeIzmenjenogAKC: "",
       emailIzmenjenogAKC: "",
-      lozinkaIzmenjenogAKC: ""
+      lozinkaIzmenjenogAKC: "",
+      //za prikaz
+      hiddenKlinika: true,
+      hiddenAdminK: false,
+      hiddenAdminKC: false
 
 
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
     this.listaAdminaKlinikaUKC = this.listaAdminaKlinikaUKC.bind(this);
     this.listaAdminaUKC = this.listaAdminaUKC.bind(this); 
@@ -75,24 +89,27 @@ class KlinickiCentarPocetna extends Component {
 
     this.listaKlinikaIzbor = this.listaKlinikaIzbor.bind(this);
     this.proslediKliniku = this.proslediKliniku.bind(this);
+    this.proslediKlinikuIzmena = this.proslediKlinikuIzmena.bind(this);
 
     this.izmeniKliniku = this.izmeniKliniku.bind(this);
     this.izmeniAdminaKlinike = this.izmeniAdminaKlinike.bind(this);
     this.handleCheckBox = this.handleCheckBox.bind(this);
     this.izmeniAdminaKC = this.izmeniAdminaKC.bind(this);
 
-  }
+    this.prikazListeKlinika = this.prikazListeKlinika.bind(this);
+    this.prikazListeAdminaKlinika = this.prikazListeAdminaKlinika.bind(this);
+    this.prikazListeAdminaKC = this.prikazListeAdminaKC.bind(this);
 
-  
+    
+  }
 
   listaKlinika(){
     console.log("--------lista klinika u KC");
-
-    const url1 = 'http://localhost:8025/api/administratoriKC/listaKlinika/' + this.state.email; 
-
+    
+    const url1 = 'http://localhost:8025/api/kc/listaKlinika'; 
     console.log(url1);
     axios
-      .get(url1)
+      .get(url1, this.config)
       .then(response => {
         console.log("URL 111");
         console.log(response);
@@ -105,11 +122,12 @@ class KlinickiCentarPocetna extends Component {
         console.log(error);
       });
   }
+
   listaAdministratoraKlinika(){
     console.log("--------lista administratora klinika u KC");
-    const url2 = 'http://localhost:8025/api/administratoriKC/listaAdministratoraKlinika/' + this.state.email; 
+    const url2 = 'http://localhost:8025/api/kc/listaAdministratoraKlinika'; 
     console.log(url2);
-    axios.get(url2)
+    axios.get(url2, this.config)
       .then(response => {
         console.log("url 22222");
         console.log(response);
@@ -122,13 +140,14 @@ class KlinickiCentarPocetna extends Component {
           console.log(error);
       })
   }
+
   listaAdministratora(){
     console.log("--------lista administratora KC");
     const url3 = 'http://localhost:8025/api/administratoriKC/svi'; 
 
     console.log(url3);
     axios
-      .get(url3)
+      .get(url3, this.config)
       .then(response => {
         console.log("URL 333");
         console.log(response);
@@ -142,11 +161,12 @@ class KlinickiCentarPocetna extends Component {
           console.log(error);
       })
   }
+
   podaciOKC(){
     console.log("--------Podaci o KC");
-    const url4 = 'http://localhost:8025/api/administratoriKC/klinickiCentar/' + this.state.email; 
+    const url4 = 'http://localhost:8025/api/kc/klinickiCentar'; 
     console.log(url4);
-      axios.get(url4)
+      axios.get(url4, this.config)
   
         .then(response => {
           console.log("url 44444");
@@ -170,13 +190,17 @@ class KlinickiCentarPocetna extends Component {
       
   }
   
+
   listaKlinikaUKC() {
     let res = [];
     let lista = this.state.listaKlinika;
+
     for (var i = 0; i < lista.length; i++) {
+     
+      
       res.push(
         <tr key = {i}>
-          <td >{lista[i].id}</td>
+          <td >{i+1}</td>
           <td >{lista[i].naziv}</td>
           <td >{lista[i].adresa}</td>
           <td >{lista[i].opis}</td>
@@ -192,18 +216,22 @@ class KlinickiCentarPocetna extends Component {
     }
     return res;
   }
+
   listaAdminaKlinikaUKC() {
     let res = [];
     let lista = this.state.listaAdministratoraKlinika;
     for (var i = 0; i < lista.length; i++) {
+    
+
       res.push(
         <tr key = {i}>
-          <td>{lista[i].id}</td>
+          <td>{i+1}</td>
           <td >{lista[i].ime}</td>
           <td >{lista[i].prezime}</td>
           <td >{lista[i].email}</td>
+          <td>{lista[i].nazivKlinike}</td>
           <td > 
-          <Button id={lista[i].email} onClick={e => this.izmeniAdminaKlinike(e)}>Izmeni</Button>
+          <Button id={lista[i].id} onClick={e => this.izmeniAdminaKlinike(e)}>Izmeni</Button>
           <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
           </td>
           {/* <td ><Button type="submit">Obrisi</Button></td> */}
@@ -212,18 +240,19 @@ class KlinickiCentarPocetna extends Component {
     }
     return res;
   }
+
   listaAdminaUKC() {
     let res = [];
     let lista = this.state.listaAdministratoraKC;
     for (var i = 0; i < lista.length; i++) {
       res.push(
         <tr key = {i}>
-          <td >{lista[i].id}</td>
+          <td >{i+1}</td>
           <td >{lista[i].ime}</td>
           <td >{lista[i].prezime}</td>
           <td key={lista[i].email}>{lista[i].email}</td>
           <td >
-          <Button id={lista[i].email} onClick={e => this.izmeniAdminaKC(e)} >Izmeni</Button>
+          <Button id={lista[i].id} onClick={e => this.izmeniAdminaKC(e)} >Izmeni</Button>
           <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
           </td>
           
@@ -233,6 +262,7 @@ class KlinickiCentarPocetna extends Component {
     }
     return res;
   };
+
   handleChange = e => {
     e.preventDefault();
     
@@ -240,17 +270,13 @@ class KlinickiCentarPocetna extends Component {
     console.log(this.state);
     console.log("On change !!!");
   };
-
- 
   dodajKliniku = e => {
     e.preventDefault();
-
-    console.log("--------------------------------");
     this.dialog.show({
       title: 'Dodavanje nove klinike',
       body: [
       <form className="formaZaDodavanjeNoveKlinike">
-         <h4>Uneti podatke o klinici:</h4>
+         {/* <h4>Uneti podatke o klinici:</h4> */}
           <div className="nazivNKlinike" >
             <label className="nazivNKlinikeLabel" htmlFor="nazivNoveKlinike">Naziv: </label>
             <input className="nazivNKlinikeInput"
@@ -282,66 +308,6 @@ class KlinickiCentarPocetna extends Component {
               onChange={this.handleChange}
             />
           </div>
-          <h4>Uneti podatke o administratoru klinike:</h4>
-          <div className="imeNAK" >
-            <label className="imeNAKLabela" htmlFor="imeNAK">Ime: </label>
-            <input className="imeNAKInput"
-              type="text"
-              name="imeNAK"
-              defaultValue = "" 
-              // defaultValue= {za}
-              // placeholder={this.state.ime}
-              // noValidate
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="prezimeNAK" >
-            <label className="prezimeNAKLabel" htmlFor="prezimeNAK">Prezime: </label>
-            <input
-              className="prezimeNAKInput"
-              type="text"
-              name="prezimeNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="emailNAK" >
-            <label className="emailNAKLabel" htmlFor="emailNAK">Email: </label>
-            <input className="emailNAKInput"
-              type="text"
-              name="emailNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="lozinkaNAK" >
-            <label className="lozinkaNAKLabel" htmlFor="lozinkaNAK">Lozinka: </label>
-            <input className="lozinkaNAKInput"
-              type="password"
-              name="lozinkaNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="telefonNAK" >
-            <label className="telefonNAKLabel" htmlFor="telefonNAK">Telefon: </label>
-            <input className="telefonNAKInput"
-              type="text"
-              name="telefonNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-          {/* <div className="klinikaNAK" >
-            <label className="klinikaNAKLabela" htmlFor="klinikaNAK">Klinika: </label>
-            <input className="klinikaNAKInput"
-              type="text"
-              name="klinikaNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div> */}
-          
 
       </form> 
       ],
@@ -358,35 +324,12 @@ class KlinickiCentarPocetna extends Component {
               opis : this.state.opisNoveKlinike,
               ocena : this.state.ocenaNoveKlinike
               
-            })
+            }, this.config)
             .then(response => {
               console.log("Dodavanje uspelo! ");
-              console.log(response.data);
               console.log(response.data.id);
+              this.listaKlinika();
 
-              const url4 = "http://localhost:8025/api/administratoriKC/dodavanjeAdminaKlinike";
-              axios
-              .post(url4, {
-                ime : this.state.imeNAK,
-                prezime : this.state.prezimeNAK,
-                email : this.state.emailNAK,
-                lozinka : this.state.lozinkaNAK,
-                telefon : this.state.telefonNAK,
-                idKlinike : response.data.id
-              })
-              .then(odgovor => {
-                console.log("--------Dodavanje uspelo! ");
-                console.log(odgovor.data);
-                this.listaKlinika();
-                this.listaAdministratoraKlinika();
-  
-              })
-              .catch(greska => {
-                console.log("Dodavanje novog administratora klinike nije uspelo! ");
-              });
-              // this.dodajAdminaKlinike(e);
-             
-              
 
             })
             .catch(error => {
@@ -534,7 +477,7 @@ class KlinickiCentarPocetna extends Component {
               idKlinike : this.state.klinikaNAK
 
               
-            })
+            }, this.config)
             .then(response => {
               console.log("***********************************Dodavanje uspelo! ");
               console.log(response.data);
@@ -625,7 +568,7 @@ class KlinickiCentarPocetna extends Component {
               lozinka : this.state.lozinkaNAKC
 
               
-            })
+            }, this.config)
             .then(response => {
               console.log("Dodavanje uspelo! ");
               console.log(response.data);
@@ -648,8 +591,8 @@ class KlinickiCentarPocetna extends Component {
   izmeniKliniku = e =>{
     e.preventDefault();
     console.log(e.target.id)
-    const url = 'http://localhost:8025/api/klinike/' + e.target.id;
-        axios.get(url)
+    const url10 = 'http://localhost:8025/api/klinike/' + e.target.id;
+        axios.get(url10, this.config)
           .then(Response => {
             console.log("Preuzeta klinike: ");
             console.log(Response.data);
@@ -732,7 +675,7 @@ class KlinickiCentarPocetna extends Component {
                         adresa: this.state.adresaIzmenjeneKlinike,
                         ocena: this.state.ocenaIzmenjeneKlinike,
                         opis: this.state.opisIzmenjeneKlinike
-                      })
+                      }, this.config)
                       .then(response => {
                         console.log(response.data);
                         this.listaKlinika();
@@ -778,11 +721,12 @@ class KlinickiCentarPocetna extends Component {
     }
     
   }
+
   izmeniAdminaKlinike = e => {
     e.preventDefault();
     console.log(e.target.id);
-    const url5 = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + e.target.id;
-    axios.get(url5)
+    const url5 = 'http://localhost:8025/api/adminKlinike/' + e.target.id;
+    axios.get(url5, this.config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);
@@ -863,12 +807,13 @@ class KlinickiCentarPocetna extends Component {
                 <div>
                   <select 
                     name="odabirKlinike" 
-                    //defaultValue={this.state.klinikaIzmenjenogAK}
+                    // defaultValue={this.state.klinikaIzmenjenogAK}
                     onChange={e => {this.proslediKlinikuIzmena(e)}}
                    >
                     {this.listaKlinikaIzbor()} 
                   
                   </select>
+                  
                 </div>
               </div>
           
@@ -887,7 +832,7 @@ class KlinickiCentarPocetna extends Component {
                   brTelefona: this.state.telefonIzmenjenogAK,
                   lozinka: this.state.lozinkaIzmenjenogAK,
                   idKlinike: this.state.klinikaIzmenjenogAK
-                })
+                }, this.config)
                 .then(response => {
                   console.log("izmena uspela");
                   console.log(response.data);
@@ -922,9 +867,9 @@ class KlinickiCentarPocetna extends Component {
     e.preventDefault();
     console.log(e.target.id);
     const url =
-    "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC/" + e.target.id;
+    "http://localhost:8025/api/administratoriKC/pronadjenAdminKC/" + e.target.id;
   axios
-    .get(url)
+    .get(url, this.config)
     .then(Response => {
       console.log("Preuzet admin: ");
       console.log(Response.data);
@@ -998,7 +943,7 @@ class KlinickiCentarPocetna extends Component {
                   prezime: this.state.prezimeIzmenjenogAKC,
                   email: this.state.emailIzmenjenogAKC,
                   adresa: this.state.lozinkaIzmenjenogAKC
-                })
+                }, this.config)
                 .then(response => {
                   console.log(response.data);
                   this.listaAdministratora();
@@ -1025,6 +970,32 @@ class KlinickiCentarPocetna extends Component {
     });
   }
 
+  prikazListeKlinika(){
+    this.setState({
+      hiddenKlinika: true,
+      hiddenAdminK: false,
+      hiddenAdminKC: false
+    });
+
+  }
+  prikazListeAdminaKlinika(){
+    this.setState({
+      hiddenKlinika: false,
+      hiddenAdminK: true,
+      hiddenAdminKC: false
+    });
+
+  }
+  prikazListeAdminaKC(){
+    this.setState({
+      hiddenKlinika: false,
+      hiddenAdminK: false,
+      hiddenAdminKC: true
+    });
+
+
+  }
+
   render() {
     const kc = this.state.kCentar;
 
@@ -1033,8 +1004,16 @@ class KlinickiCentarPocetna extends Component {
         <Grid fluid>
           <Row>
             <Col md={8}>
+              
               <Row>
-                <Card
+                <Button className="DodajKlinikuDugme"  onClick={this.prikazListeKlinika}>KLINIKE</Button> 
+                <Button className="DodajKlinikuDugme"  onClick={this.prikazListeAdminaKlinika}>ADMINISTRATORI KLINIKA</Button>  
+                <Button className="DodajKlinikuDugme"  onClick={this.prikazListeAdminaKC}>ADMINISTRATORI KLINICKOG CENTRA</Button>  
+              </Row>
+              <Row >
+                { this.state.hiddenKlinika 
+                  ? 
+                  <Card 
                   className="listaKlinika"
                   title="Lista klinika"
                   // category="Here is a subtitle for this table"
@@ -1048,11 +1027,7 @@ class KlinickiCentarPocetna extends Component {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          {/*                             
-                            {listaKlinika.map((prop, key) => {
-                              return <th key={key}>{prop}</th>;
-                            })} */}
-                          <th id="Id">Id</th>
+                          <th id="Id">Rbr</th>
                           <th id="Naziv">Naziv</th>
                           <th id="Adresa"> Adresa</th>
                           <th id="Opis">Opis</th>
@@ -1063,9 +1038,14 @@ class KlinickiCentarPocetna extends Component {
                     </Table>
                     </div>
                   }
-                />
+                  />
+                  : null
+                }
+                
               </Row>
               <Row>
+                { this.state.hiddenAdminK
+                ?
                 <Card
                   title="Lista administratora klinika"
                   // category="Here is a subtitle for this table"
@@ -1078,10 +1058,11 @@ class KlinickiCentarPocetna extends Component {
                       <Table striped hover>
                         <thead>
                           <tr>
-                            <th id="IdAdminaKlinike">Id</th>
+                            <th id="IdAdminaKlinike">Rbr</th>
                             <th id="ImeAdminaKlinike">Ime</th>
                             <th id="PrezimeAdminaKlinike"> Prezime</th>
                             <th id="EmailAdminaKlinike">Email</th>
+                            <th >Klinika</th>
                           
                           </tr>
                         </thead>
@@ -1093,8 +1074,13 @@ class KlinickiCentarPocetna extends Component {
                     </div>
                   }
                 />
+                : null
+                }
               </Row>
               <Row>
+                {this.state.hiddenAdminKC
+                ?
+                
                 <Card
                   title="Lista administratora klinickog centra"
                   // category="Here is a subtitle for this table"
@@ -1107,7 +1093,7 @@ class KlinickiCentarPocetna extends Component {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th id="IdAdminaKC">Id</th>
+                          <th id="IdAdminaKC">Rbr</th>
                           <th id="ImeAdminaKC">Ime</th>
                           <th id="PrezimeAdminaKC"> Prezime</th>
                           <th id="EmailAdminaKC">Email</th>
@@ -1122,6 +1108,8 @@ class KlinickiCentarPocetna extends Component {
                     </div>
                   }
                 />
+                : null
+                }
               </Row>
               
             </Col>
