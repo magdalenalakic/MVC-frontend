@@ -1,25 +1,7 @@
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import { Grid, Row, Col, Table, NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
-
 import { Card } from "components/Card/Card.jsx";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
 import "klinickiCentar.css";
-import UserCard from "components/UserCard/UserCard";
-import slikaKC from "assets/img/klinickiCentar.jpg";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
@@ -135,12 +117,10 @@ class ListaPacijenataMedSestra extends Component {
 
   handlePrikazZK = e => {
     e.preventDefault();
-    console.log("CLICK  **** otvori mi dijalog na klik ");  
     console.log( e.target.id);
-    const url ="http://localhost:8025/api/pacijenti/findPacijentEmail/" + e.target.id;
-    const url2 ="http://localhost:8025/api/pacijenti/findZK/" + e.target.id;
     axios
-      .get(url, this.config)
+      .get("http://localhost:8025/api/pacijenti/findPacijentEmailMS",
+      {email: e.target.id}, this.config)
       .then(response => {
         console.log("Preuzet pacijent");
         console.log(response);
@@ -149,7 +129,8 @@ class ListaPacijenataMedSestra extends Component {
           prezime: response.data.prezime,
           lbo: response.data.lbo
         }, ()=> axios
-                  .get(url2, this.config)
+                  .get("http://localhost:8025/api/pacijenti/findZKMS", 
+                  {email: e.target.id}, this.config)
                   .then(Response => {
                     console.log("Preuzet ZK  pacijenta: ");
                     console.log(Response.data);

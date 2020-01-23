@@ -2,7 +2,8 @@
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
@@ -31,7 +32,9 @@ class ZahtevMedSestra extends React.Component {
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
-      email: props.email
+      email: props.email,
+      token: props.token,
+
       
     };
    
@@ -55,45 +58,6 @@ class ZahtevMedSestra extends React.Component {
     return (
       <div className="content">
         <Grid fluid>
-          {/* <Row>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                // statsText="Lista pacijenata"
-                // statsValue="105GB"
-                // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Lista pacijenata"
-              />
-            </Col>
-            
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Profil korisnika"
-              />
-            </Col>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Zahtev za odmor/odsustvo"
-              />
-            </Col>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="fa fa-twitter text-info" />}
-                statsText=""
-                // statsValue="+45"
-                // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Overa recepata"
-              />
-            </Col> 
-          </Row> */}
           <Row>
             <Col >
               <Card
@@ -102,16 +66,15 @@ class ZahtevMedSestra extends React.Component {
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
                  content={
-                  <div className="ct-chart">
-                    {/* <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    /> */}
-                    <p>
-                    
-                    </p>
+                  <div >
+                    <h5>Datum pocetka:</h5>
+                    <DatePicker
+                      placeholderText="Izaberi datum"
+                      //selected={this.state.datumZaPregled}
+                      //onSelect={this.handleChangeDate}
+
+                      // onChange={date => setStartDate(date)}
+                    />
                   </div>
                  }
                 // legend={
@@ -119,52 +82,6 @@ class ZahtevMedSestra extends React.Component {
                 // }
               />
             </Col>
-            
-            {/* <Col md={4}>
-            <Card
-                // statsIcon="fa fa-clock-o"
-                title="O lekaru"
-                // category="Ime"
-                content={
-                  <div id="a">
-                    <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Ime:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Prezime:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Klinika:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Opis posla:</p>
-                        <label className="opisKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    
-                    
-                    
-                  </div>
-                }
-                
-                
-              />
-            </Col> */}
           </Row>
 
         </Grid>

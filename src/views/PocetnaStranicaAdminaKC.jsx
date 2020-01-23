@@ -57,7 +57,6 @@ class KlinickiCentarPocetna extends Component {
       prezimeNAKC: "",
       emailNAKC: "",
       lozinkaNAKC: "",
-
       //za izmenu postojeceg admina klinickog centra
       idIzmenjenogAKC: 0,
       imeIzmenjenogAKC: "",
@@ -271,12 +270,8 @@ class KlinickiCentarPocetna extends Component {
     console.log(this.state);
     console.log("On change !!!");
   };
-
- 
   dodajKliniku = e => {
     e.preventDefault();
-
-    console.log("--------------------------------");
     this.dialog.show({
       title: 'Dodavanje nove klinike',
       body: [
@@ -313,59 +308,6 @@ class KlinickiCentarPocetna extends Component {
               onChange={this.handleChange}
             />
           </div>
-          
-          {/* <h4>Uneti podatke o administratoru klinike:</h4>
-          <div className="imeNAK" >
-            <label className="imeNAKLabela" htmlFor="imeNAK">Ime: </label>
-            <input className="imeNAKInput"
-              type="text"
-              name="imeNAK"
-              defaultValue = "" 
-              // defaultValue= {za}
-              // placeholder={this.state.ime}
-              // noValidate
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="prezimeNAK" >
-            <label className="prezimeNAKLabel" htmlFor="prezimeNAK">Prezime: </label>
-            <input
-              className="prezimeNAKInput"
-              type="text"
-              name="prezimeNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="emailNAK" >
-            <label className="emailNAKLabel" htmlFor="emailNAK">Email: </label>
-            <input className="emailNAKInput"
-              type="text"
-              name="emailNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="lozinkaNAK" >
-            <label className="lozinkaNAKLabel" htmlFor="lozinkaNAK">Lozinka: </label>
-            <input className="lozinkaNAKInput"
-              type="password"
-              name="lozinkaNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="telefonNAK" >
-            <label className="telefonNAKLabel" htmlFor="telefonNAK">Telefon: </label>
-            <input className="telefonNAKInput"
-              type="text"
-              name="telefonNAK"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-           */}
-          
 
       </form> 
       ],
@@ -385,33 +327,9 @@ class KlinickiCentarPocetna extends Component {
             }, this.config)
             .then(response => {
               console.log("Dodavanje uspelo! ");
-              //console.log(response.data);
               console.log(response.data.id);
               this.listaKlinika();
 
-              // const url4 = "http://localhost:8025/api/administratoriKC/dodavanjeAdminaKlinike";
-              // axios
-              // .post(url4, {
-              //   ime : this.state.imeNAK,
-              //   prezime : this.state.prezimeNAK,
-              //   email : this.state.emailNAK,
-              //   lozinka : this.state.lozinkaNAK,
-              //   telefon : this.state.telefonNAK,
-              //   idKlinike : response.data.id
-              // }, this.config)
-              // .then(odgovor => {
-              //   console.log("--------Dodavanje uspelo! ");
-              //   console.log(odgovor.data);
-              //   this.listaKlinika();
-              //   this.listaAdministratoraKlinika();
-  
-              // })
-              // .catch(greska => {
-              //   console.log("Dodavanje novog administratora klinike nije uspelo! ");
-              // });
-              // // this.dodajAdminaKlinike(e);
-             
-              
 
             })
             .catch(error => {
@@ -420,10 +338,10 @@ class KlinickiCentarPocetna extends Component {
         })
       ],
       bsSize: 'medium',
-      // onHide: (dialog) => {
-      //   dialog.hide()
-      //   console.log('closed by clicking background.')
-      // }
+      onHide: (dialog) => {
+        dialog.hide()
+        console.log('closed by clicking background.')
+      }
     })
     
   };
