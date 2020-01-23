@@ -17,6 +17,7 @@ import slobodniTermini from "views/SlobodniTermini.jsx"
 import listaSala from "views/ListaSala.jsx"
 import listaZahteva from "views/ListaZahtevaPregled.jsx"
 import izmenaProfila from "views/IzmenaProfila";
+import tipoviPregleda from "views/TipoviPregleda.jsx"
 
 
 
@@ -72,6 +73,13 @@ const dashboardRoutes = [
     name: "Slobodni termini",
     icon: "pe-7s-note2",
     component: slobodniTermini,
+    layout: "/admin"
+  },
+  {
+    path: "/tipoviPregleda",
+    name: "Tipovi pregleda",
+    icon: "pe-7s-news-paper",
+    component: tipoviPregleda,
     layout: "/admin"
   },
   {

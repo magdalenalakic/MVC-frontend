@@ -5,29 +5,29 @@ import "klinickiCentar.css";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
-
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
 class ListaZahtevaPregled extends Component {
   constructor(props) {
     super(props);
-    console.log("ADMINISTRATOR KLINICKOG CENTRA");
+    console.log("LISTA ZAHTJEVA ZA PREGLED");
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
       email: props.email,
-      razlogOdbijanja: "",
-      za: "",
-      listaZahtevaZaRegistraciju: []
+      token: props.token,
+      idKlinike: "",
+      listaZahtevaZaOregled: []
     };
-    
-    this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(this);
-    this.handleOdobren = this.handleOdobren.bind(this);
-    this.handleOdbijen = this.handleOdbijen.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.listaZahtevaZaPregled = this.listaZahtevaZaPregled.bind(this);
+    // this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(this);
+    // this.handleOdobren = this.handleOdobren.bind(this);
+    // this.handleOdbijen = this.handleOdbijen.bind(this);
+    // this.handleChange = this.handleChange.bind(this);
   }
 
   ucitajPonovo(){
     const url1 =
-      "http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/" +
+      "http://localhost:8025/api/pregledi/listaZahtevaZaRegistraciju/" +
       this.state.email;
 
     console.log(url1);
@@ -45,9 +45,57 @@ class ListaZahtevaPregled extends Component {
         console.log(error);
       });
   }
-  componentWillMount() {
-    console.log("--------pocetak");
-    this.ucitajPonovo();
+  componentWillMount(){
+    console.log("wmount")
+    console.log("Preuzimanje admina klinike.....")
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+    axios.get(url, config)
+      .then(Response => {
+        console.log("Preuzet admin klinike: ");
+        console.log(Response.data);
+
+        this.setState({
+          email: Response.data.email,
+        //   ime: Response.data.ime,
+        //   prezime: Response.data.prezime,
+        //   telefon: Response.data.telefon,
+         idKlinike: Response.data.idKlinike,
+        }, () => {
+          console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
+          console.log("ucitaj mi kliniku");
+          const urlKlinike = 'http://localhost:8025/api/pregledi/preuzmiZahtevePregledaKlinike/' + this.state.idKlinike;    
+          axios.get(urlKlinike, config)
+            .then(k => {
+              console.log("Preuzeti zahtjevi");
+              console.log(k.data);
+     
+              this.setState({
+                  // idKlinike: klinika.data.id,
+                  listaZahtevaZaOregled: k.data,
+               
+              });
+                
+           
+              })
+        });
+
+
+        
+      
+      })
+      
+      .catch(error => {
+        console.log("Administrator klinike  nije preuzet")
+      })
+      console.log("************* ID KLINIKE JE:" + this.state.idKlinike);
+
     
   }
   handleChange = e => {
@@ -145,38 +193,175 @@ class ListaZahtevaPregled extends Component {
     
   }
 
-  listaZahtevaZaRegistraciju() {
+  listaZahtevaZaPregled() {
     let res = [];
-    let lista = this.state.listaZahtevaZaRegistraciju;
+    console.log("lista kl");
+    const odbij = <Tooltip id="remove_tooltip">Odbij</Tooltip>;
+    const potvrdi = <Tooltip id="remove_tooltip">Potvrdi</Tooltip>;
+
+    // const pretraga = this.state.pretraziPoljeKlinika;
+    // const oc = this.state.ocenaKlinike;
+    // console.log(oc);
+    // if ((pretraga == "" || pretraga == undefined) && oc < 5) {
+    let lista = this.state.listaZahtevaZaOregled;
 
     for (var i = 0; i < lista.length; i++) {
-      
-      res.push(
-        <tr key={i}>
-          <td>{lista[i].id}</td>
-          <td>{lista[i].lbo}</td>
-          <td>{lista[i].ime}</td>
-          <td>{lista[i].prezime}</td>
-          <td>{lista[i].email}</td>
-          <td>{lista[i].adresa}</td>
-          <td>{lista[i].grad}</td>
-          <td>{lista[i].drzava}</td>
-          <td>{lista[i].telefon}</td>
+      console.log(lista[i]);
+      if (lista[i].salaN == "" || lista[i].salaN == undefined) {
+        res.push(
+          <tr key={i}>
+            
+            <td key={lista[i].lekarID}>
+              {lista[i].imeL} {lista[i].prezimeL}
+            </td>
+            <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+        <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td>
+            {/* <td align={"center"}>
+              <i className="pe-7s-clock text-warning" />
+            </td>
+            <td align={"center"}>
+              <i className="pe-7s-clock text-warning" />
+            </td> */}
+            <td></td>
+            <td></td>
+          </tr>
+        );
+      } else {
+        if (lista[i].status == 1) {
+          res.push(
+            <tr key={i}>
+              <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+              <td key={lista[i].lekarID}>
+                {lista[i].imeL} {lista[i].prezimeL}
+              </td>
+              <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+              <td key={lista[i].cena}>{lista[i].cena} RSD</td>
 
-          <td>
-            <Button className="OdobrenZahtev" id={lista[i].email} onClick={e => this.handleOdobren(e)}>
-              Odobri
-            </Button>
-          </td>
-          <td>
-            <Button  id={lista[i].email} className="OdbijenZahtev" onClick={e => this.handleOdbijen(e)}>
-            Odbij
-            </Button>
-            <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
-          </td>
-        </tr>
-      );
+              <td align={"center"} key={lista[i].status}>
+                {" "}
+                <i className="pe-7s-check text-success" />
+              </td>
+              <td key={lista[i].sala}>
+                {lista[i].salaN} {lista[i].salaBR}
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+          );
+        } else if (lista[i].status == 0) {
+          res.push(
+            <tr key={i}>
+              <td key={lista[i].lekarID}>
+              {lista[i].imeL} {lista[i].prezimeL}
+            </td>
+            <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td >
+            {lista[i].imeP} {lista[i].prezimeP}
+            </td>
+        <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td>
+              {/* <td key={lista[i].status} align={"center"}>
+                <i className="pe-7s-timer text-warning" />
+              </td> */}
+              {/* <td key={lista[i].sala}>
+                {lista[i].salaN} {lista[i].salaBR}{" "}
+              </td> */}
+              <td>
+                <OverlayTrigger placement="top" overlay={potvrdi}>
+                  <Button
+                    bsStyle="success"
+                    simple
+                    type="button"
+                    bsSize="sm"
+                    value={lista[i].id}
+                    onClick={e => this.handleOdobren(e)}
+                  >
+                    <i className="pe-7s-check text-success" />
+                  </Button>
+                </OverlayTrigger>
+              </td>
+              <td>
+                <OverlayTrigger placement="top" overlay={odbij}>
+                  <Button
+                    bsStyle="danger"
+                    simple
+                    type="button"
+                    bsSize="sm"
+                    value={lista[i].id}
+                    onClick={e => this.handleOdbijen(e)}
+                  >
+                    <i className="pe-7s-close-circle text-danger" />
+                  </Button>
+                </OverlayTrigger>
+              </td>
+            </tr>
+          );
+        } else if (lista[i].status == 2) {
+          res.push(
+            <tr key={i}>
+              <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+              <td key={lista[i].lekarID}>
+                {lista[i].imeL} {lista[i].prezimeL}
+              </td>
+              <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+              <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+
+              <td align={"center"} key={lista[i].status}>
+                {" "}
+                <i className="pe-7s-close-circle text-danger" />
+              </td>
+              <td key={lista[i].sala}>
+                {lista[i].salaN} {lista[i].salaBR}
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+          );
+        }
+      }
     }
+    // } else {
+    //   console.log("===========");
+    //   console.log(pretraga);
+    //   let lista = this.state.listaKlinika;
+
+    //   for (var i = 0; i < lista.length; i++) {
+    //     var naziv = lista[i].naziv;
+    //     var adresa = lista[i].adresa;
+    //     var opis = lista[i].opis;
+    //     var ocena = lista[i].ocena;
+    //     if (
+    //       naziv.toLowerCase().includes(pretraga.toLowerCase()) ||
+    //       adresa.toLowerCase().includes(pretraga.toLowerCase()) ||
+    //       opis.toLowerCase().includes(pretraga.toLowerCase())
+    //     ) {
+    //       if (oc <= ocena) {
+    //         res.push(
+    //           <tr key={i}>
+    //             <td>
+    //               <input
+    //                 name="odabranaKlinika"
+    //                 type="radio"
+    //                 value={lista[i].id}
+    //                 checked={this.state.izabranaKlinika == lista[i].id}
+    //                 onChange={e => {
+    //                   this.promenjenOdabirKlinike(e);
+    //                 }}
+    //               ></input>
+    //             </td>
+    //             <td key={lista[i].id}>{lista[i].id}</td>
+    //             <td key={lista[i].naziv}>{lista[i].naziv}</td>
+    //             <td key={lista[i].adresa}>{lista[i].adresa}</td>
+    //             <td key={lista[i].opis}>{lista[i].opis}</td>
+    //             <td key={lista[i].ocena}>{lista[i].ocena}</td>
+    //           </tr>
+    //         );
+    //   }
+    // }
+    //   }
+    // }
+
     return res;
   }
 
@@ -188,7 +373,7 @@ class ListaZahtevaPregled extends Component {
             <Col>
               <Row>
                 <Card
-                  title="Lista zahteva za registraciju od korisnika"
+                  title="Lista zahteva za pregled"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
                   ctTableResponsive
@@ -196,22 +381,22 @@ class ListaZahtevaPregled extends Component {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th id="IdPacijenta">Id</th>
-                          <th id="LBOPacijenta">LBO</th>
-                          <th id="ImePacijenta"> Ime</th>
-                          <th id="PrezimePacijenta">Prezime</th>
-                          <th id="EmailPacijenta">Email</th>
+                          <th id="lekar">Lekar</th>
+                          <th id="tipP">tip pregleda</th>
+                          <th id="cijena"> cijena</th>
+                          <th id="PrezimePacijenta">pacijent</th>
+                        
                           {/* <th id="LozinkaPacijenta">Lozinka</th> */}
-                          <th id="AdresaPacijenta">Adresa</th>
-                          <th id="GradPacijenta">Grad</th>
-                          <th id="DrzavaPacijenta">Drzava</th>
-                          <th id="TelefonPacijenta">Telefon</th>
+                          <th id="sala">sala</th>
+                          <th id="prihvatiZ">odobri</th>
+                          <th id="odbijZ">odbij</th>
+                          {/* <th id="TelefonPacijenta">Telefon</th> */}
                           {/* {thArray.map((prop, key) => {
                             return <th key={key}>{prop}</th>;
                           })} */}
                         </tr>
                       </thead>
-                      <tbody>{this.listaZahtevaZaRegistraciju()}</tbody>
+                      <tbody>{this.listaZahtevaZaPregled()}</tbody>
                     </Table>
                   }
                 />
