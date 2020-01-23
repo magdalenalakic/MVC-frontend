@@ -1383,7 +1383,7 @@ class ListaKlinika extends Component {
                       }}
                       type="submit"
                     >
-                      DALJE
+                      ZAKAZI PREGLED
                     </Button>
                   </ButtonToolbar>
                 </Col>
