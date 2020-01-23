@@ -62,6 +62,7 @@ class PocetnaStranicaLekara extends React.Component {
     };
     this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
+    
   }
 
   handleClick = e => {

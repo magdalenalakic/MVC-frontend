@@ -5,9 +5,11 @@ import "klinickiCentar.css";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
+
 import IzmenaLekara from 'views/IzmenaProfila.jsx';
 import "klinickiCentar.css";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 class ListaSala extends Component {
@@ -19,15 +21,14 @@ class ListaSala extends Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      pretraziPoljeKlinika: "",
+      datumS: new Date(),
+      nazivIzabraneSale: "",
+      izabranaSala: 1,
       idAdmina: "",
       idKlinike: "",
-      listaLekara: [],
-      listaKlinika: [], 
-      emailLekara: "",
-      imeLekara: "",
-      prezimeLekara: "",
-      lozinkaLekara: "",
-      telefonLekara: "",
+      listaSalaKlinike: [],
+ 
       klinikaLekara: 0,
       idSale: "",
       brojSale: "",
@@ -35,7 +36,9 @@ class ListaSala extends Component {
       reirectToIzmeniLekar: false,
     };
      this.listaSalaK = this.listaSalaK.bind(this);
-    // this.dodajLekara = this.dodajLekara.bind(this);
+     this.promenjenOdabirSale = this.promenjenOdabirSale.bind(this);
+     this.handleChangeDate = this.handleChangeDate.bind(this);
+     // this.dodajLekara = this.dodajLekara.bind(this);
     // this.obrisiLekara = this.obrisiLekara.bind(this);
     // this.proslediKliniku = this.proslediKliniku.bind(this);
 
@@ -51,10 +54,18 @@ class ListaSala extends Component {
     e.preventDefault();
     
     this.setState({ [e.target.name]: e.target.value });
-    // console.log(this.state);
+   console.log(this.state);
     console.log("On change !!!");
   };
-
+  handleChangeDate = date => {
+    console.log(date)
+    this.setState(
+      {
+        datumS: date
+      },
+      () => console.log(this.state)
+    );
+  };
   
   proslediKliniku(klinika) {
     
@@ -94,7 +105,7 @@ class ListaSala extends Component {
     
                 this.setState({
                     // idKlinike: klinika.data.id,
-                    listaLekara: klinika.data,
+                    listaSalaKlinike: klinika.data,
                 
                 });
  
@@ -103,10 +114,7 @@ class ListaSala extends Component {
       
 
   }
-
-
-
-componentWillMount(){
+  componentWillMount(){
   var config = {
     headers: {
       Authorization: "Bearer " + this.state.token,
@@ -146,7 +154,7 @@ componentWillMount(){
    
             this.setState({
                 // idKlinike: klinika.data.id,
-                listaLekara: klinika.data,
+                listaSalaKlinike: klinika.data,
              
             });
                 console.log("++++++++++++++++++ Id k: " + this.state.idKlinike);
@@ -160,7 +168,7 @@ componentWillMount(){
             
                         this.setState({
                             // idKlinike: klinika.data.id,
-                            listaLekara: klinika.data,
+                            listaSalaKlinike: klinika.data,
                         
                         });
          
@@ -254,6 +262,32 @@ dodajSalu = e => {
     })
     
   }
+
+  handlePrikaziKalendar = e => {
+    this.dialog.show({
+     
+      title: 'Kalendar zauzeca sale',
+      body: [
+      <form className="formaZaDodavanjeNovogLekara">
+        
+        
+      </form> 
+      ],
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.OKAction()
+      ],
+      bsSize: 'medium',
+
+      onHide: (dialog) => {
+        dialog.hide()
+        
+        console.log('closed by clicking background.')
+      }
+    })
+
+  }
+
 handleIzmeni = e => {
     e.preventDefault();
 
@@ -394,55 +428,201 @@ obrisiLekara = e => {
   
   }
 
+  // listaSalaK() {
+  //   let res = [];
+  //   let lista = this.state.listaSalaKlinike;
+
+  //   for (var i = 0; i < lista.length; i++) {
+      
+  //     res.push(
+
+  //       <tr key={i}>
+  //           <td>
+  //             <input
+  //               name="odabranaSala"
+  //               type="radio"
+  //               value={lista[i].id}
+  //               checked={this.state.izabranaSala == lista[i].id}
+  //               onChange={e => {
+  //           //      this.promenjenOdabirKlinike(e);
+  //               }}
+  //             ></input>
+  //           </td>
+         
+  //         <td>{lista[i].naziv}</td>
+  //         <td>{lista[i].broj}</td>
+  //         <td>{lista[i].telefon}</td>   
+  //       <td >
+  //            <Button  id={lista[i].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
+  //            <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
+  //      </td>
+  //        <td>
+  //           <Button className="OdobrenZahtev" id={lista[i].id} onClick={e => this.handleIzmeni(e)}>
+  //             Izmeni
+  //           </Button>
+  //         </td>
+ 
+  //       </tr>
+  //     );
+  //   }
+  //   return res;
+  // }
+
+  odabranaSala = e => {
+    //treba redirektovati na pretragu i filtriranje lekara
+    e.preventDefault();
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .get(
+        "http://localhost:8025/api/sale/listaLekaraKlinika/" +
+          this.state.izabranaKlinika,
+          config
+      )
+      .then(Response => {
+        console.log("Preuzeta lista lekara: ");
+        console.log(Response.data);
+        this.setState({
+          listaLekara: Response.data,
+          nazivIzabranogLekara:
+            Response.data[0].ime + " " + Response.data[0].prezime,
+            redirectNext: true,
+            flag: 1
+        });
+        console.log(this.state.listaLekara);
+      })
+
+      .catch(error => {
+        console.log("lekari nisu preuzete");
+      });
+    // this.setState({
+      
+    // });
+  };
+
+  promenjenOdabirSale = e => {
+    console.log("Izabrana sala: " + e.currentTarget.value);
+    this.setState(
+      {
+        izabranaSala: e.currentTarget.value
+      },
+      () => console.log(this.state.izabranaSala)
+    );
+    if (e.currentTarget.value != 0 && e.currentTarget.value != undefined) {
+      const lista = this.state.listaSalaKlinike;
+      for (var i = 0; i < lista.length; i++) {
+        if (lista[i].id == e.currentTarget.value) {
+          this.setState(
+            {
+              nazivIzabraneSale: lista[i].nazivSale
+            },
+            () => console.log(this.state)
+          );
+          break;
+        }
+      }
+    }
+    this.listaSalaK();
+  };
+
   listaSalaK() {
     let res = [];
-    let lista = this.state.listaLekara;
+    console.log("lista sala pretraga");
 
-    for (var i = 0; i < lista.length; i++) {
+    const pretraga = this.state.pretraziPoljeKlinika;
+    // const oc = this.state.ocenaKlinike;
+    // console.log(oc);
+    let lista = this.state.listaSalaKlinike;
+    if (pretraga == "" || pretraga == undefined) {
+      for (var i = 0; i < lista.length; i++) {
+        res.push(
+          <tr key={i}>
+            <td>
+              <input
+                name="odabranaSala"
+                type="radio"
+                value={lista[i].id}
+                checked={this.state.izabranaSala == lista[i].id}
+                onChange={e => {
+                  this.promenjenOdabirSale(e);
+                }}
+              ></input>
+            </td>
+                {/* <td key={lista[i].idSale}>{lista[i].idSale}</td>
+                <td key={lista[i].nazivSale}>{lista[i].nazivSale}</td>
+                <td key={lista[i].brojSale}>{lista[i].brojSale}</td>  */}
+
+                <td>{lista[i].naziv}</td>
+                <td>{lista[i].broj}</td>
+           
+              <td >
+                    <Button  id={lista[i].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
+                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
+              </td>
+              <td>
+                  <Button className="OdobrenZahtev" id={lista[i].id} onClick={e => this.handleIzmeni(e)}>
+                    Izmeni
+                  </Button>
+              </td>
+              <td>
+                  <Button  id={lista[i].id} onClick={e => this.handlePrikaziKalendar(e)}>
+                    Prikazi kalendar
+                  </Button>
+              </td>
+          </tr>
+        );
+      }
+    } else {
+      console.log("===========");
+      console.log(pretraga);
+      let lista = this.state.listaSalaKlinike;
+      console.log("Lista sala:  ")
       
-      res.push(
+      for (var i = 0; i < lista.length; i++) {
+          console.log(lista[i]);
+      
+          var naziv = lista[i].naziv;
+          var broj = lista[i].broj.toString();
 
-        <tr key={i}>
-       
-         
-          <td>{lista[i].naziv}</td>
-          <td>{lista[i].broj}</td>
-          <td>{lista[i].telefon}</td>   
-        <td >
-             <Button  id={lista[i].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
-             <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
-       </td>
-         <td>
-            <Button className="OdobrenZahtev" id={lista[i].id} onClick={e => this.handleIzmeni(e)}>
-              Izmeni
-            </Button>
-          </td>
- 
-        </tr>
-      );
+    
+          if(naziv.toLowerCase().includes(pretraga.toLowerCase())
+          || broj.toLowerCase().includes(pretraga.toLocaleLowerCase())){
+          console.log("POSTOJIIIIIIT TAKVA")
+            res.push(
+              <tr key={i}>
+                <td>
+                  <input
+                    name="odabranaSala"
+                    type="radio"
+                    value={lista[i].id}
+                    checked={this.state.izabranaSala == lista[i].id}
+                    onChange={e => {
+                      this.promenjenOdabirSale(e);
+                    }}
+                  ></input>
+                </td>
+                <td>{lista[i].naziv}</td>
+                <td>{lista[i].broj}</td>
+        
+                {/* <td key={lista[i].opis}>{lista[i].opis}</td>
+                <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
+              </tr>
+            );
+
+        }
+      }
     }
+
     return res;
   }
 
   render() {
-//     const lista = this.state.listaKlinika;
-//     const reirectToIzmeniLekar = this.state.reirectToIzmeniLekar;
-//    console.log("LEKARRRRRRR : "  + this.state.emailLekara);
-//    const emailLekara = this.state.emailLekara;
-//     if (reirectToIzmeniLekar === true) {
-//       return (
-//         <BrowserRouter>
-//           <Switch>
-//             <Route
-            
-//               path="/izmenaProfilaLekara"
-//               render={props => <IzmenaProfila {...props} email={emailLekara} />}
-//             />
-//             <Redirect from="/" to="/izmenaProfilaLekara" />
-//           </Switch>
-//         </BrowserRouter>
-//       );
-//    }
+
     return (
       <div className="content">
         <Grid fluid>
@@ -451,11 +631,49 @@ obrisiLekara = e => {
               <Row>
                 <Card
                   title="Lista sala klinike"
-                  // category="Here is a subtitle for this table"
+                 
                   ctTableFullWidth
                   ctTableResponsive
                   content={
                     <div>
+
+                    <form>
+                        <input
+                          placeholder="Pretrazi"
+                          type="text"
+                          aria-label="Search"
+                          name="pretraziPoljeKlinika"
+                          onChange={this.handleChange}
+                        />
+                      {/* <Button onClick={e => this.pretraziSale()}>
+                        Pretrazi
+                      </Button> */}
+                  </form>
+                  <div>
+                    <h5>Datum za pregled:</h5>
+
+                    <DatePicker
+                      placeholderText="Izaberi datum"
+                      selected={this.state.datumZaPregled}
+                      onChange={date=>this.handleChangeDate(date)}
+                      // showTimeSelect
+                      minDate={new Date()}
+                      // timeCaption="Vreme"
+                      withPortal
+                      // excludeTimes={[
+                      //   setHours(setMinutes(new Date(), 0), 17)
+                      // ]}
+                      // minTime={setHours(setMinutes(new Date(), 0), 7)}
+                      // maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                      dateFormat="dd.MM.yyyy"
+
+                      // onChange={date => setStartDate(date)}
+                    />
+                    <Button onClick={this.slobodniTermini}>
+                      Pronadji salu
+                    </Button>
+                  </div>
+
                     <Button className="DodajKlinikuDugme"  onClick={e => this.dodajSalu(e)}>Dodaj salu</Button>
                     <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
                     
@@ -463,6 +681,7 @@ obrisiLekara = e => {
                     <Table striped hover>
                       <thead>
                         <tr>
+                        <th></th>
                           <th id="IdPacijenta">Naziv</th>
                          
                           <th id="ImePacijenta"> Broj</th>
@@ -476,6 +695,35 @@ obrisiLekara = e => {
                   }
                 />
               </Row>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+                <Row>
+                <Card
+                  title="Kalendar zauzeca sale"
+                 
+                  ctTableFullWidth
+                  ctTableResponsive
+                  content={
+                    <div>
+
+                    
+                   
+                    <Table striped hover>
+                      <thead>
+                        <tr>
+                        
+                  
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </Table>
+                    </div>
+                  }
+                />
+                </Row>
             </Col>
           </Row>
         </Grid>
