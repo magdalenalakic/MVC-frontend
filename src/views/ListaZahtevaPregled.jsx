@@ -210,19 +210,19 @@ class ListaZahtevaPregled extends Component {
       if (lista[i].salaN == "" || lista[i].salaN == undefined) {
         res.push(
           <tr key={i}>
-            <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+            
             <td key={lista[i].lekarID}>
               {lista[i].imeL} {lista[i].prezimeL}
             </td>
             <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
             <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-
-            <td align={"center"}>
+        <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td>
+            {/* <td align={"center"}>
               <i className="pe-7s-clock text-warning" />
             </td>
             <td align={"center"}>
               <i className="pe-7s-clock text-warning" />
-            </td>
+            </td> */}
             <td></td>
             <td></td>
           </tr>
@@ -252,18 +252,21 @@ class ListaZahtevaPregled extends Component {
         } else if (lista[i].status == 0) {
           res.push(
             <tr key={i}>
-              <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
               <td key={lista[i].lekarID}>
-                {lista[i].imeL} {lista[i].prezimeL}
-              </td>
-              <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
-              <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-              <td key={lista[i].status} align={"center"}>
+              {lista[i].imeL} {lista[i].prezimeL}
+            </td>
+            <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td >
+            {lista[i].imeP} {lista[i].prezimeP}
+            </td>
+        <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td>
+              {/* <td key={lista[i].status} align={"center"}>
                 <i className="pe-7s-timer text-warning" />
-              </td>
-              <td key={lista[i].sala}>
+              </td> */}
+              {/* <td key={lista[i].sala}>
                 {lista[i].salaN} {lista[i].salaBR}{" "}
-              </td>
+              </td> */}
               <td>
                 <OverlayTrigger placement="top" overlay={potvrdi}>
                   <Button
@@ -378,16 +381,16 @@ class ListaZahtevaPregled extends Component {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th id="IdPacijenta">Id</th>
-                          <th id="LBOPacijenta">LBO</th>
-                          <th id="ImePacijenta"> Ime</th>
-                          <th id="PrezimePacijenta">Prezime</th>
-                          <th id="EmailPacijenta">Email</th>
+                          <th id="lekar">Lekar</th>
+                          <th id="tipP">tip pregleda</th>
+                          <th id="cijena"> cijena</th>
+                          <th id="PrezimePacijenta">pacijent</th>
+                        
                           {/* <th id="LozinkaPacijenta">Lozinka</th> */}
-                          <th id="AdresaPacijenta">Adresa</th>
-                          <th id="GradPacijenta">Grad</th>
-                          <th id="DrzavaPacijenta">Drzava</th>
-                          <th id="TelefonPacijenta">Telefon</th>
+                          <th id="sala">sala</th>
+                          <th id="prihvatiZ">odobri</th>
+                          <th id="odbijZ">odbij</th>
+                          {/* <th id="TelefonPacijenta">Telefon</th> */}
                           {/* {thArray.map((prop, key) => {
                             return <th key={key}>{prop}</th>;
                           })} */}

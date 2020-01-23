@@ -11,6 +11,11 @@ import "klinickiCentar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import events from "events.js"; //ovo nece trebati  kasnije
+import moment from 'moment';
+const localizer = momentLocalizer(moment);
 
 class ListaSala extends Component {
   constructor(props) {
@@ -28,7 +33,8 @@ class ListaSala extends Component {
       idAdmina: "",
       idKlinike: "",
       listaSalaKlinike: [],
- 
+      hiddenKalendar: false,
+
       klinikaLekara: 0,
       idSale: "",
       brojSale: "",
@@ -264,27 +270,10 @@ dodajSalu = e => {
   }
 
   handlePrikaziKalendar = e => {
-    this.dialog.show({
-     
-      title: 'Kalendar zauzeca sale',
-      body: [
-      <form className="formaZaDodavanjeNovogLekara">
-        
-        
-      </form> 
-      ],
-      actions: [
-        Dialog.CancelAction(),
-        Dialog.OKAction()
-      ],
-      bsSize: 'medium',
-
-      onHide: (dialog) => {
-        dialog.hide()
-        
-        console.log('closed by clicking background.')
-      }
-    })
+    console.log("888888888888888888888888888888888888888888")
+    this.setState({
+      hiddenKalendar: true
+    });
 
   }
 
@@ -622,7 +611,9 @@ obrisiLekara = e => {
   }
 
   render() {
-
+console.log("KKad ovdjeeeeee")
+const stanjeKalendara = this.state.hiddenKalendar;
+console.log("? " + stanjeKalendara);
     return (
       <div className="content">
         <Grid fluid>
@@ -701,28 +692,51 @@ obrisiLekara = e => {
           <Row>
             <Col>
                 <Row>
+                { this.state.hiddenKalendar ?
                 <Card
                   title="Kalendar zauzeca sale"
                  
                   ctTableFullWidth
                   ctTableResponsive
                   content={
-                    <div>
+                    <div style={{ height: 400 }}  className="ct-chart">
+                      
+                    <Calendar
+                        // style={{ maxHeight: "100%" }}
+                        // localizer={localizer}
+                        // showMultiDayTimes={true}
+                        // // views={["month"]}  
+                        // defaultDate={new Date()}
+                       // events={this.state.odmor}
+                        // eventPropGetter={event => ({
+                        //   style:{
+                        //     backgroundColor: "#ebd234"
+                        //   }
+                        // })}
 
-                    
-                   
-                    <Table striped hover>
-                      <thead>
-                        <tr>
-                        
+                        localizer={localizer}
+                        events={events }
+                      //  views={["month"]}
+                        defaultDate={new Date()}
+                        // startAccessor={event.start}
+                        // endAccessor={event.end}
+                        // titleAccessor="tip"
+                        // onSelectEvent={obj => {
+                        //   this.state.objekat = obj;
+                        //   console.log(this.state.objekat);
+                        //   this.setState({
+                        //     isOpen: true
+                        //   })
+                          
+                        // }}
+                      />
+                  </div>
+
                   
-                        </tr>
-                      </thead>
-                      <tbody></tbody>
-                    </Table>
-                    </div>
                   }
                 />
+                : null
+                }
                 </Row>
             </Col>
           </Row>
