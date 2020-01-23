@@ -11,21 +11,21 @@ const dashboardRoutes = [
   {
     path: "/pocetnaStranica",
     name: "Pocetna Strana Medicinske sestre",
-    icon: "pe-7s-user",
+    icon: "pe-7s-home",
     component: PocetnaStranicaMedSestre,
     layout: "/admin"
   },
   {
     path: "/listaPacijenata",
     name: "Lista pacijenata",
-    icon: "pe-7s-user",
+    icon: "pe-7s-news-paper",
     component: ListaPacijenata,
     layout: "/admin"
   },
   {
     path: "/overavanjeRecepata",
     name: "Overavanje recepata",
-    icon: "pe-7s-user",
+    icon: "pe-7s-pen",
     component: OveravanjeRecepata,
     layout: "/admin"
   },
@@ -39,7 +39,7 @@ const dashboardRoutes = [
   {
     path: "/zahtevZaGodOdmor",
     name: "Zahtev za godisnji odmor",
-    icon: "pe-7s-user",
+    icon: "pe-7s-date", //note coffee
     component: ZahtevZaGodOdmor,
     layout: "/admin"
   }

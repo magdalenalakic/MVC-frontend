@@ -43,6 +43,7 @@ class MedicinskaSestra extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       
       _notificationSystem: null,
       // image: image,
@@ -70,6 +71,7 @@ class MedicinskaSestra extends Component {
                 handleClick={this.handleNotificationClick}
                 uloga={this.state.uloga}
                 email={this.state.email}
+                token={this.state.token}
 
               />
             )}

@@ -139,7 +139,7 @@ class Login extends Component {
             <Route
               path="/admin"
               render={props => (
-                <KlinickiCentar {...props} email={email} uloga={uloga} />
+                <KlinickiCentar {...props} email={email} uloga={uloga} token={token}/>
               )}
             />
             <Redirect from="/" to="/admin/klinickiCentar" />
@@ -168,7 +168,8 @@ class Login extends Component {
           <Switch>
             <Route
               path="/admin"
-              render={props => <Lekar {...props} email={email} uloga={uloga}  token={token} />}
+              render={props => <Lekar {...props} email={email} uloga={uloga} token={token}/>}
+
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />
           </Switch>
@@ -182,7 +183,7 @@ class Login extends Component {
             <Route
               path="/admin"
               render={props => (
-                <MedicinskaSestra {...props} email={email} uloga={uloga} />
+                <MedicinskaSestra {...props} email={email} uloga={uloga} token={token}/>
               )}
             />
             <Redirect from="/" to="/admin/pocetnaStranica" />

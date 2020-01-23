@@ -30,6 +30,7 @@ class IzmenaProfilaAdminaKC extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga,
+      token: props.token,
       ime: "",
       prezime: "",
       lozinka: "",
@@ -39,14 +40,22 @@ class IzmenaProfilaAdminaKC extends Component {
       menjanjeLozinke: "password",
       is_checked: false,
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     this.handleCheckBox = this.handleCheckBox.bind(this);
   }
 
   componentWillMount() {
+    
     const url =
-      "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC/" + this.state.email;
+      "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC";
     axios
-      .get(url)
+      .get(url, this.config)
       .then(Response => {
         console.log("Preuzet admin: ");
         console.log(Response.data);
@@ -88,7 +97,7 @@ class IzmenaProfilaAdminaKC extends Component {
         prezime: this.state.prezimeN,
         email: this.state.email,
         adresa: this.state.lozinkaN
-      })
+      }, this.config)
       .then(response => {
         console.log(response.data);
 
