@@ -86,9 +86,15 @@ class PacijentNavbarLinks extends Component {
   };
   handleToggle(toggle) {
     //you code here, change state of menuIsOpened if you want to open or close
-    this.setState({
-      menuIsOpened: true
-    });
+    if (this.state.menuIsOpened == false) {
+      this.setState({
+        menuIsOpened: true
+      });
+    } else {
+      this.setState({
+        menuIsOpened: false
+      });
+    }
   }
   handlePonistiObavestenja() {
     console.log("handle ponisti o");
@@ -328,6 +334,7 @@ class PacijentNavbarLinks extends Component {
                   <Button
                     fill
                     bsStyle="info"
+                    bsSize="lg"
                     value={poruka}
                     onClick={e => this.handleClick(e)}
                   >

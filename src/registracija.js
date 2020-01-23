@@ -43,6 +43,7 @@ class Registracija extends Component {
       registrovan: false,
       praznaPolja: false,
       poklapanjeLozinke: true,
+      redirectToLogin: false,
       formErrors: {
         ime: "",
         prezime: "",
@@ -76,40 +77,40 @@ class Registracija extends Component {
         //       redirectToReferrer: true
         //     });
 
-            // this.render(<div>Potvrdite registraciju putem maila. </div>);
-            axios
+        // this.render(<div>Potvrdite registraciju putem maila. </div>);
+        axios
 
-              .post("http://localhost:8025/api/pacijenti/register", {
-                lozinka: this.state.lozinka,
-                ime: this.state.ime,
-                prezime: this.state.prezime,
-                adresa: this.state.adresa,
-                grad: this.state.grad,
-                drzava: this.state.drzava,
-                email: this.state.email,
-                telefon: this.state.telefon,
-                lbo: this.state.brojOsiguranika
-              })
-              .then(response => {
-                console.log("slanje mejla");
-                console.log(response);
-                this.render(<div>Potvrdite registraciju putem maila. </div>);
-              })
-              .catch(error => {
-                console.log(error.response);
-              });
-              this.setState({
-                    registrovan: true
-                  });
+          .post("http://localhost:8025/api/pacijenti/register", {
+            lozinka: this.state.lozinka,
+            ime: this.state.ime,
+            prezime: this.state.prezime,
+            adresa: this.state.adresa,
+            grad: this.state.grad,
+            drzava: this.state.drzava,
+            email: this.state.email,
+            telefon: this.state.telefon,
+            lbo: this.state.brojOsiguranika
+          })
+          .then(response => {
+            console.log("slanje mejla");
+            console.log(response);
+            this.render(<div>Potvrdite registraciju putem maila. </div>);
+          })
+          .catch(error => {
+            console.log(error.response);
+          });
+        this.setState({
+          registrovan: true
+        });
 
-            // console.log(response);
-          // )}
-          // .catch(error => {
-          //   console.log(error.response);
-          // });
-      //   this.setState({
-      //     registrovan: true
-      //   });
+        // console.log(response);
+        // )}
+        // .catch(error => {
+        //   console.log(error.response);
+        // });
+        //   this.setState({
+        //     registrovan: true
+        //   });
       }
     } else {
       console.log(this.state);
@@ -119,6 +120,13 @@ class Registracija extends Component {
 
       console.error("FORM invalid");
     }
+  };
+  handleClick = e => {
+    e.preventDefault();
+    console.log("registracijaa");
+    this.setState({
+      redirectToLogin: true
+    });
   };
   handleChange = e => {
     e.preventDefault();
@@ -198,7 +206,7 @@ class Registracija extends Component {
           });
         }
         formErrors.brojOsiguranika =
-          value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
+          value.length < 11 && value.length > 0 ? "sadrzi 11 karaktera" : "";
         break;
 
       case "lozinka":
@@ -236,6 +244,16 @@ class Registracija extends Component {
               path="/login"
               render={props => <Login waitToapprove={true} {...props} />}
             />
+            <Redirect from="/" to="/login" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    if (this.state.redirectToLogin === true) {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route path="/login" render={props => <Login {...props} />} />
             <Redirect from="/" to="/login" />
           </Switch>
         </BrowserRouter>
@@ -393,6 +411,9 @@ class Registracija extends Component {
                   </span>
                 )}
                 <button type="submit">Registruj se</button>
+                <div className="signIn">
+                  <small onClick={this.handleClick}>Prijavi se</small>
+                </div>
               </div>
             </form>
           </div>
