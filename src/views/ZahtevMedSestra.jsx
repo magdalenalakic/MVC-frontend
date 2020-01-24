@@ -18,16 +18,107 @@ class ZahtevMedSestra extends React.Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      tipOdmorOdsustvo: "ODMOR",
+      datumPocetka: new Date(),
+      datumKraja : new Date(),
+      opis: "",
+      idMedSestre: 0
 
       
     };
-   
-
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
+    this.izaberiTip = this.izaberiTip.bind(this);
+    this.zahtevOdmorOdsustvo = this.zahtevOdmorOdsustvo.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeDatePocetka = this.handleChangeDatePocetka.bind(this);
+    this.handleChangeDateKraja = this.handleChangeDateKraja.bind(this);
     console.log(this.state.uloga);
     console.log(this.state.email);
   }
- 
+
+  izaberiTip(izbor) {
+    
+    console.log("izbor odmor odsustvo");
+
+    console.log(izbor.target.value);
+
+    this.setState({
+      tipOdmorOdsustvo : izbor.target.value
+      
+    },() => console.log(this.state.tipOdmorOdsustvo));
   
+  };
+  handleChange = e => {
+    e.preventDefault();
+    const { name, value } = e.target;
+
+    this.setState({ [name]: value }, () => console.log(this.state));
+  };
+  handleChangeDatePocetka = date => {
+    console.log(date)
+    this.setState(
+      {
+        datumPocetka: date
+      },
+      () => console.log(this.state)
+    );
+  };
+  handleChangeDateKraja = date => {
+    console.log(date)
+    this.setState(
+      {
+        datumKraja: date
+      },
+      () => console.log(this.state)
+      
+    );
+  };
+
+  componentWillMount() {
+    const url =
+    "http://localhost:8025/api/medicinskaSestra/medicinskaSestra" ;
+  axios
+    .get(url, this.config)
+    .then(Response => {
+      console.log("Preuzeta med sestra: ");
+      console.log(Response.data);
+
+      this.setState({
+        id: Response.data.id
+      });
+     
+    })
+    .catch(error => {
+      console.log("Med sestra nije preuzeta");
+    });
+  }
+  zahtevOdmorOdsustvo() {
+    const url = "http://localhost:8025/api/odmorodsustvo/posaljiZahtev";
+    axios
+      .post(url,{ 
+        datumOd : this.state.datumPocetka,
+        datumDo : this.state.datumKraja,
+        opis : this.state.opis,
+        idMedSestre : this.state.idMedSestre,
+        tipOdmorOdsustvo : this.state.tipOdmorOdsustvo
+      }, this.config)
+      .then(Response => {
+        
+        console.log("uspesno poslat zahtev")
+        console.log(Response.data);
+
+      })
+      .catch(error => {
+        console.log("Zahtev nije poslat");
+      });
+  };
+
   render() {
     console.log(this.props);
     return (
@@ -47,14 +138,14 @@ class ZahtevMedSestra extends React.Component {
                             <select className="izbor"
                              // name="odabir" 
                               // defaultValue={this.state.klinikaIzmenjenogAK}
-                            // onChange={e => {this.proslediKlinikuIzmena(e)}}
+                             onChange={e => {this.izaberiTip(e)}}
                             >
                               <option 
-                              //value={lista[i].id} 
+                              value="ODMOR"
                               >ODMOR</option>
 
                               <option 
-                              //value={lista[i].id} 
+                              value="ODSUSTVO"
                               >ODSUSTVO</option>
                             
                             </select>
@@ -64,20 +155,18 @@ class ZahtevMedSestra extends React.Component {
                           <h5>Datum pocetka:</h5>
                           <DatePicker
                             placeholderText="Izaberi datum"
-                            //selected={this.state.datumZaPregled}
-                            //onSelect={this.handleChangeDate}
+                            selected={this.state.datumPocetka}
+                            onSelect={this.handleChangeDatePocetka}
 
-                            // onChange={date => setStartDate(date)}
                             />
                         </Col>
                         <Col lg={3} sm={6}>
                           <h5>Datum kraja:</h5>
                           <DatePicker
                               placeholderText="Izaberi datum"
-                              //selected={this.state.datumZaPregled}
-                              //onSelect={this.handleChangeDate}
+                              selected={this.state.datumKraja}
+                              onSelect={this.handleChangeDateKraja}
 
-                              // onChange={date => setStartDate(date)}
                           />
                         </Col>
                         
@@ -87,17 +176,17 @@ class ZahtevMedSestra extends React.Component {
                         <h5 >Razlog: </h5>
                          <input className="razlogPolje"
                           type="text"
-                          name="razlog"
+                          name="opis"
                          // defaultValue={ime}
                           // placeholder={this.state.ime}
                           // noValidate
-                          //onChange={this.handleChange}
+                          onChange={this.handleChange}
                         /> 
                         </Col>
                       </Row>
                       <Row >
                         <Col lg={3} >
-                          <Button className="dugmePosalji">Pošalji</Button>
+                          <Button className="dugmePosalji" onClick={this.zahtevOdmorOdsustvo}>Pošalji</Button>
                         </Col>
                       </Row>
                     </Grid>
