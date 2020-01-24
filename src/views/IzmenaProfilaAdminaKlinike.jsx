@@ -19,7 +19,7 @@ import "izmenaProfila.css";
 import "login.js";
 import { log } from "util";
 import Login from "login";
-import slikaLekar from "assets/img/images.jpg"
+import slikaLekar from "assets/img/a.ico"
 import axios from "axios";
 
 class IzmenaProfilaAdminaKlinike extends Component {
@@ -203,6 +203,18 @@ class IzmenaProfilaAdminaKlinike extends Component {
                           // onChange={this.handleChange}
                         />
                       </div>
+                      <div className="email">
+                        <label htmlFor="klinika">Klinika: </label>
+                        <input
+                          type="klinika"
+                          name="klinika"
+                          value={this.state.imeKlinike}
+                          disabled="disabled"
+                          // placeholder="email"
+                          // noValidate
+                          // onChange={this.handleChange}
+                        />
+                      </div>
                       {/* <div className="klinikaK">
                         <label htmlFor="klinikaK">klinika: </label>
                         <input
@@ -271,11 +283,11 @@ class IzmenaProfilaAdminaKlinike extends Component {
                       <thead className="thead-dark">
                         <tr>
                           <td>E-mail:</td>
-                          <td>{email}</td>
+                          <td><label>{email}</label></td>
                         </tr>
                         <tr>
                           <td>Klinika:</td>
-                          <td>{this.state.imeKlinike}</td>
+                          <td><label>{this.state.imeKlinike}</label></td>
                         </tr>
                       </thead>
                     </Table>

@@ -19,7 +19,7 @@ import "izmenaProfila.css";
 import "login.js";
 import { log } from "util";
 import Login from "login";
-import slikaLekar from "assets/img/images.jpg"
+import slikaLekar from "assets/img/doctor-icon.ico"
 import axios from "axios";
 
 class izmenaProfila extends Component {
@@ -37,6 +37,8 @@ class izmenaProfila extends Component {
       imeN: "",
       telefonN: "",
       prezimeN: "",
+      imeKlinike: "",
+      idKlinike: ""
 
     }
 
@@ -61,20 +63,30 @@ class izmenaProfila extends Component {
         console.log(Response.data);
       
         this.setState({
-          email: Response.data.email
-        });
-        this.setState({
-          ime: Response.data.ime
-        });
-
-        this.setState({
-          prezime: Response.data.prezime
-        });
-        this.setState({
+          email: Response.data.email,
+          idKlinike: Response.data.klinikaID,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
           telefon: Response.data.telefon
         });
-      })
+  
+      console.log("ucitaj mi kliniku " + this.state.idKlinike);
+      const urlKlinike = 'http://localhost:8025/api/klinike/finKlinikaById/' + this.state.idKlinike;    
+      console.log(urlKlinike);
+      axios.get(urlKlinike, config)
+        .then(klinika => {
+          console.log("Preuzeta klinika");
+          console.log(klinika.data);
+ 
+          this.setState({
+            imeKlinike: klinika.data.naziv,
+          
+           
+          });
       
+        })
+
+    })
       .catch(error => {
         console.log("Lekar  nije preuzet")
       })
@@ -181,6 +193,18 @@ class izmenaProfila extends Component {
                           type="email"
                           name="email"
                           value={email}
+                          disabled="disabled"
+                          // placeholder="email"
+                          // noValidate
+                          // onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="email">
+                        <label htmlFor="klinika">Klinika: </label>
+                        <input
+                          type="klinika"
+                          name="klinika"
+                          value={this.state.imeKlinike}
                           disabled="disabled"
                           // placeholder="email"
                           // noValidate
@@ -334,11 +358,11 @@ class izmenaProfila extends Component {
                       <thead className="thead-dark">
                         <tr>
                           <td>E-mail:</td>
-                          <td>{email}</td>
+                          <td><label>{email}</label></td>
                         </tr>
                         <tr>
                           <td>Klinika:</td>
-                          <td>{email}</td>
+                          <td><label>{this.state.imeKlinike}</label></td>
                         </tr>
                       </thead>
                     </Table>

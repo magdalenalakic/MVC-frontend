@@ -43,7 +43,6 @@ class AdministatorKlinike extends Component {
       email: props.email,
       token: props.token,
       _notificationSystem: null,
-      // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
       color: "black",
       hasImage: true,

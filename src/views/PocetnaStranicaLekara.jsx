@@ -62,6 +62,7 @@ class PocetnaStranicaLekara extends React.Component {
     };
     this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
+    
   }
 
   handleClick = e => {
@@ -103,7 +104,7 @@ class PocetnaStranicaLekara extends React.Component {
           prezime: Response.data.prezime,
           telefon: Response.data.telefon
         });
-
+        console.log("Klinika id: " + this.state.klinikaID);
         const url1 = 'http://localhost:8025/api/klinike/pacijentiKlinike/' + this.state.klinikaID; 
         console.log(url1);
         axios.get(url1, config)

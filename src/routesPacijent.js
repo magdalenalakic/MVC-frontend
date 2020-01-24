@@ -17,7 +17,7 @@ import ZdravstveniKarton from "views/ZdravstveniKarton.jsx";
 import BrzoZakazivanje from "views/BrzoZakazivanje.jsx";
 import IstorijaPOPacijenta from "views/IstorijaPOPacijenta.jsx";
 import PotvrdaPregleda from "views/PotvrdaPregleda.jsx";
-
+import PregledKlinika from "views/PregledKlinika.jsx";
 const dashboardRoutes = [
   //za pacijenta
   {
@@ -34,6 +34,13 @@ const dashboardRoutes = [
     component: IzmenaProfilaPacijent,
     layout: "/admin"
   },
+  // {
+  //   path: "/pregledKlinika",
+  //   name: "Pregled klinika",
+  //   icon: "pe-7s-keypad",
+  //   component: PregledKlinika,
+  //   layout: "/admin"
+  // },
   {
     path: "/brzoZakazivanje",
     name: "Brzo Zakazivanje",
