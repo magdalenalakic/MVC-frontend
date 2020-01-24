@@ -50,6 +50,8 @@ class IstorijaPOPacijenta extends Component {
     this.oceniLekara = this.oceniLekara.bind(this);
     this.ocenjenaKlinika = this.ocenjenaKlinika.bind(this);
     this.ocenjenLekar = this.ocenjenLekar.bind(this);
+    this.handleSort = this.handleSort.bind(this);
+
   }
 
   componentWillMount() {
@@ -107,6 +109,84 @@ class IstorijaPOPacijenta extends Component {
       console.log("Pacijent  nije preuzet");
     });
   }
+  handleSort = sortKriterijum => {
+    console.log(sortKriterijum);
+    const lista = this.state.pregledi;
+    
+      if( sortKriterijum == "klinikaUp"){
+        this.setState(
+          {
+            pregledi: lista.sort((a, b) => a.nazivKl.localeCompare(b.nazivKl))
+          });
+      }else if(sortKriterijum == "klinikaDown"){
+        this.setState(
+          {
+            pregledi: lista.sort((b, a) => a.nazivKl.localeCompare(b.nazivKl))
+          }
+        );
+      }else if(sortKriterijum == "lekarUp"){
+        this.setState(
+          {
+            pregledi: lista.sort((a, b) => a.imeL.localeCompare(b.imeL))
+          }
+        );
+      }else if(sortKriterijum == "lekarDown"){
+        this.setState(
+          {
+            pregledi: lista.sort((b, a) => a.imeL.localeCompare(b.imeL))
+          }
+        );
+      }
+
+      else if( sortKriterijum == "tpUp"){
+        this.setState({
+          pregledi:lista.sort((a,b)=>a.nazivTP.localeCompare(b.nazivTP))
+        })
+      }
+
+      else if( sortKriterijum == "tpDown"){
+        this.setState({
+          pregledi:lista.sort((b,a)=>a.nazivTP.localeCompare(b.nazivTP))
+        })
+      }
+
+      else if( sortKriterijum == "cenaUp"){
+        this.setState({
+          pregledi:lista.sort((a,b)=>a.cena - b.cena)
+        })
+      }
+
+      else if( sortKriterijum == "cenaDown"){
+        this.setState({
+          pregledi:lista.sort((a,b)=>b.cena - a.cena)
+        })
+      }
+
+      else if( sortKriterijum == "statusUp"){
+        this.setState({
+          pregledi:lista.sort((a,b)=>a.status - b.status)
+        })
+      }
+
+      else if( sortKriterijum == "statusDown"){
+        this.setState({
+          pregledi:lista.sort((a,b)=>b.status - a.status)
+        })
+      }
+
+      else if( sortKriterijum == "salaUp"){
+        this.setState({
+          pregledi:lista.sort((a,b)=>a.salaID - b.salaID)
+        })
+      }
+
+      else if( sortKriterijum == "salaDown"){
+        this.setState({
+          pregledi:lista.sort((a,b)=>b.salaID - a.salaID)
+        })
+      }
+   
+  };
   ocenjenaKlinika(h, e, klinikaID, pregledID) {
     h.dialog.hide();
     console.log(this.state);
@@ -732,17 +812,95 @@ class IstorijaPOPacijenta extends Component {
       <div className="content">
         <Grid fluid>
           <Row>
-            <Col md={10}>
+            <Col md={12}>
               <Card
+                                        ctTableFullWidth
+                          ctTableResponsive
                 title="Pregledi"
                 content={
                   <Table striped hover style={{ width: 800 }}>
                     <thead className="thead-dark">
                       <tr>
-                        <th id="Klinika">Klinika</th>
-                        <th id="Lekar">Lekar</th>
-                        <th id="TipPregleda"> Tip Pregleda</th>
-                        <th id="Cena">Cena (RSD)</th>
+                      <th id="Klinika">Klinika
+                        <i
+                            onClick={e => {
+                              this.handleSort("klinikaUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("klinikaDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
+                        <th id="Lekar">Lekar
+                        <i
+                            onClick={e => {
+                              this.handleSort("lekarUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("lekarDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
+                        <th id="TipPregleda"> Tip Pregleda
+                        <i
+                            onClick={e => {
+                              this.handleSort("tpUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("tpDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
+                        <th id="Cena">Cena
+                        <i
+                            onClick={e => {
+                              this.handleSort("cenaUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("cenaDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
                         <th id="OcenaKlinike">Ocena Klinike</th>
                         <th id="OcenaLekara">Ocena Lekara</th>
                       </tr>
@@ -752,15 +910,93 @@ class IstorijaPOPacijenta extends Component {
                 }
               />
               <Card
+                                        ctTableFullWidth
+                          ctTableResponsive
                 title="Operacije"
                 content={
                   <Table striped hover style={{ width: 800 }}>
                     <thead className="thead-dark">
                       <tr>
-                        <th id="Klinika">Klinika</th>
-                        <th id="Lekar">Lekar</th>
-                        <th id="Pregled"> Pregled</th>
-                        <th id="Cena">Cena</th>
+                        <th id="Klinika">Klinika
+                        <i
+                            onClick={e => {
+                              this.handleSort("klinikaUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("klinikaDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
+                        <th id="Lekar">Lekar
+                        <i
+                            onClick={e => {
+                              this.handleSort("lekarUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("lekarDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
+                        <th id="TipPregleda"> Tip Pregleda
+                        <i
+                            onClick={e => {
+                              this.handleSort("tpUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("tpDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
+                        <th id="Cena">Cena
+                        <i
+                            onClick={e => {
+                              this.handleSort("cenaUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("cenaDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
                       </tr>
                     </thead>
                     {/* <tbody>{this.listaPregleda()}</tbody> */}

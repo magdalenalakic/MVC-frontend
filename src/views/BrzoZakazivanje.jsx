@@ -135,7 +135,92 @@ class BrzoZakazivanje extends Component {
         console.log("pregledi  nisu preuzeti");
       });
   }
+  handleSortKlinika(sortBy) {
+    console.log("sort funkcija");
+    console.log(sortBy);
+    const lista = this.state.listaPregleda;
+    if (sortBy === "datumUp") {
+      console.log("datum");
+      this.setState({
+        listaPregleda: lista.sort((a, b) => {
+          return new Date(a.datum).getTime() - new Date(b.datum).getTime();
+        })
+      });
+    } else if (sortBy === "datumDown") {
+      console.log("datum");
+      this.setState({
+        listaPregleda: lista.sort((b, a) => {
+          return new Date(a.datum).getTime() - new Date(b.datum).getTime();
+        })
+      });
+    } else if (sortBy === "tipPregledaUp") {
+      console.log("tipPregleda");
+      this.setState({
+        listaPregleda: lista.sort((a, b) =>
+          a.tipPregledaN.localeCompare(b.tipPregledaN)
+        )
+      });
+    } else if (sortBy === "tipPregledaDown") {
+      console.log("tipPregleda");
+      this.setState({
+        listaPregleda: lista.sort((b, a) =>
+          a.tipPregledaN.localeCompare(b.tipPregledaN)
+        )
+      });
+    } else if (sortBy === "klinikaUp") {
+      console.log("klinika");
+      this.setState({
+        listaPregleda: lista.sort((a, b) =>
+          a.klinikaN.localeCompare(b.klinikaN)
+        )
+      });
+    } else if (sortBy === "klinikaDown") {
+      console.log("klinika");
+      this.setState({
+        listaPregleda: lista.sort((b, a) =>
+          a.klinikaN.localeCompare(b.klinikaN)
+        )
+      });
+    } else if (sortBy === "lekarUp") {
+      console.log("lekar");
+      this.setState({
+        listaPregleda: lista.sort((a, b) =>
+          a.lekarIme.localeCompare(b.lekarIme)
+        )
+      });
+    } else if (sortBy === "lekarDown") {
+      console.log("lekar");
+      this.setState({
+        listaPregleda: lista.sort((b, a) =>
+          a.lekarIme.localeCompare(b.lekarIme)
+        )
+      });
+    } else if (sortBy === "cenaUp") {
+      console.log("cena");
 
+      this.setState({
+        listaPregleda: lista.sort((a, b) => a.cena - b.cena)
+      });
+    } else if (sortBy === "cenaDown") {
+      console.log("cena");
+
+      this.setState({
+        listaPregleda: lista.sort((a, b) => b.cena - a.cena)
+      });
+    } else if (sortBy === "popustUp") {
+      console.log("popust");
+
+      this.setState({
+        listaPregleda: lista.sort((a, b) => a.popust - b.popust)
+      });
+    } else if (sortBy === "popustDown") {
+      console.log("popust");
+
+      this.setState({
+        listaPregleda: lista.sort((a, b) => b.popust - a.popust)
+      });
+    }
+  }
   promenjenOdabirPregleda = e => {
     console.log("promenjen odabrir");
     console.log(e.currentTarget.value);
@@ -367,8 +452,10 @@ class BrzoZakazivanje extends Component {
         <div className="content">
           <Grid fluid>
             <Row>
-              <Col md={10}>
+              <Col md={12}>
                 <Card
+                  ctTableFullWidth
+                  ctTableResponsive
                   title="Izaberi pregled"
                   content={
                     <form
@@ -376,14 +463,14 @@ class BrzoZakazivanje extends Component {
                         this.odabranPrelged(e);
                       }}
                     >
-                      <NavDropdown
+                      {/* <NavDropdown
                         onSelect={e => {
                           this.sortMyArray(e);
                         }}
                         title="Sortiraj"
                         id="nav-item dropdown"
                       >
-                        {/* <MenuItem eventKey={"id"}>id</MenuItem> */}
+
                         <MenuItem eventKey={"tipPregleda"}>
                           Tip pregleda
                         </MenuItem>
@@ -396,53 +483,164 @@ class BrzoZakazivanje extends Component {
                         <MenuItem eventKey={"popusto"}>
                           Popust opadajuce
                         </MenuItem>
-                      </NavDropdown>
+                      </NavDropdown> */}
 
-                      <Card
-                        // category="Here is a subtitle for this table"
-                        ctTableFullWidth
-                        ctTableResponsive
-                        content={
-                          <Table striped hover style={{ width: 800 }}>
-                            <thead className="thead-dark">
-                              <tr>
-                                <th></th>
-                                <th id="Datum">Datum</th>
-                                <th id="Tip pregleda"> Tip pregleda</th>
-                                <th id="Klinika">Klinika</th>
-                                <th id="Lekar">Lekar</th>
-                                <th id="Cena">Cena</th>
-                                <th id="Popust">Popust</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {this.listaUnapredDefinisanihPregleda()}
-                            </tbody>
-                          </Table>
-                        }
-                      />
+                      <Table striped responsive hover style={{ width: 800 }}>
+                        <thead className="thead-dark">
+                          <tr>
+                            <th></th>
+                            <th id="Datum">
+                              Datum
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("datumUp");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-up"
+                              />
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("datumDown");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-down"
+                              />
+                            </th>
+                            <th id="Tip pregleda">
+                              {" "}
+                              Tip pregleda
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("tipPregledaUp");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-up"
+                              />
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("tipPregledaDown");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-down"
+                              />
+                            </th>
+                            <th id="Klinika">
+                              Klinika
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("klinikaUp");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-up"
+                              />
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("klinikaDown");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-down"
+                              />
+                            </th>
+                            <th id="Lekar">
+                              Lekar
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("lekarUp");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-up"
+                              />
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("lekarDown");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-down"
+                              />
+                            </th>
+                            <th id="Cena">
+                              Cena
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("cenaUp");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-up"
+                              />
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("cenaDown");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-down"
+                              />
+                            </th>
+                            <th id="Popust">
+                              Popust
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("popustUp");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-up"
+                              />
+                              <i
+                                onClick={e => {
+                                  this.handleSortKlinika("popustDown");
+                                }}
+                                style={{
+                                  cursor: "pointer"
+                                }}
+                                className="pe-7s-angle-down"
+                              />
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>{this.listaUnapredDefinisanihPregleda()}</tbody>
+                      </Table>
+
                       {this.redirectReferer}
-                      <Button
-                        type="submit"
-                        onClick={
-                          this.state.canClick
-                            ? this.props.handleClick("Zahtev je poslat!")
-                            : null
-                        }
-                      >
-                        Zakazi
-                      </Button>
-                      <h5>
-                        {(this.state.izabranPregled == undefined ||
-                          this.state.izabranPregled == 0) && (
-                          <span className="errorMessage">
-                            {this.state.formError}
-                          </span>
-                        )}
-                      </h5>
                     </form>
                   }
                 />
+                <Button
+                  type="submit"
+                  onClick={
+                    this.state.canClick
+                      ? this.props.handleClick("Zahtev je poslat!")
+                      : null
+                  }
+                >
+                  Zakazi
+                </Button>
+                <h5>
+                  {(this.state.izabranPregled == undefined ||
+                    this.state.izabranPregled == 0) && (
+                    <span className="errorMessage">{this.state.formError}</span>
+                  )}
+                </h5>
               </Col>
             </Row>
           </Grid>
