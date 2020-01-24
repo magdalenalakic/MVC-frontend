@@ -34,6 +34,8 @@ class ListaSala extends Component {
       idKlinike: "",
       listaSalaKlinike: [],
       hiddenKalendar: false,
+      pretragaTabela: false,
+
 
       klinikaLekara: 0,
       idSale: "",
@@ -417,9 +419,6 @@ obrisiLekara = e => {
   
   }
 
-  // listaSalaK() {
-  //   let res = [];
-  //   let lista = this.state.listaSalaKlinike;
 
   //   for (var i = 0; i < lista.length; i++) {
       
@@ -558,11 +557,11 @@ obrisiLekara = e => {
                     Izmeni
                   </Button>
               </td>
-              <td>
+              {/* <td>
                   <Button  id={lista[i].id} onClick={e => this.handlePrikaziKalendar(e)}>
                     Prikazi kalendar
                   </Button>
-              </td>
+              </td> */}
           </tr>
         );
       }
@@ -597,6 +596,20 @@ obrisiLekara = e => {
                 </td>
                 <td>{lista[i].naziv}</td>
                 <td>{lista[i].broj}</td>
+                <td> <select>
+                  <option value="1">
+                    09:00-11:00
+                  </option>
+                  <option value="2">
+                    11:00-13:00
+                  </option>
+                  <option value="3">
+                    13:00-15:00
+                  </option>
+                  <option value="4">
+                    15:00-17:00
+                  </option>
+                  </select> </td>
         
                 {/* <td key={lista[i].opis}>{lista[i].opis}</td>
                 <td key={lista[i].ocena}>{lista[i].ocena}</td> */}
@@ -611,138 +624,273 @@ obrisiLekara = e => {
   }
 
   render() {
-console.log("KKad ovdjeeeeee")
-const stanjeKalendara = this.state.hiddenKalendar;
-console.log("? " + stanjeKalendara);
-    return (
-      <div className="content">
-        <Grid fluid>
-          <Row>
-            <Col>
-              <Row>
-                <Card
-                  title="Lista sala klinike"
-                 
-                  ctTableFullWidth
-                  ctTableResponsive
-                  content={
-                    <div>
-
-                    <form>
-                        <input
-                          placeholder="Pretrazi"
-                          type="text"
-                          aria-label="Search"
-                          name="pretraziPoljeKlinika"
-                          onChange={this.handleChange}
-                        />
-                      {/* <Button onClick={e => this.pretraziSale()}>
-                        Pretrazi
-                      </Button> */}
-                  </form>
-                  <div>
-                    <h5>Datum za pregled:</h5>
-
-                    <DatePicker
-                      placeholderText="Izaberi datum"
-                      selected={this.state.datumZaPregled}
-                      onChange={date=>this.handleChangeDate(date)}
-                      // showTimeSelect
-                      minDate={new Date()}
-                      // timeCaption="Vreme"
-                      withPortal
-                      // excludeTimes={[
-                      //   setHours(setMinutes(new Date(), 0), 17)
-                      // ]}
-                      // minTime={setHours(setMinutes(new Date(), 0), 7)}
-                      // maxTime={setHours(setMinutes(new Date(), 0), 20)}
-                      dateFormat="dd.MM.yyyy"
-
-                      // onChange={date => setStartDate(date)}
-                    />
-                    <Button onClick={this.slobodniTermini}>
-                      Pronadji salu
-                    </Button>
-                  </div>
-
-                    <Button className="DodajKlinikuDugme"  onClick={e => this.dodajSalu(e)}>Dodaj salu</Button>
-                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
-                    
-                   
-                    <Table striped hover>
-                      <thead>
-                        <tr>
-                        <th></th>
-                          <th id="IdPacijenta">Naziv</th>
-                         
-                          <th id="ImePacijenta"> Broj</th>
-      
-                  
-                        </tr>
-                      </thead>
-                      <tbody>{this.listaSalaK()}</tbody>
-                    </Table>
-                    </div>
-                  }
-                />
-              </Row>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
+    console.log("KKad ovdjeeeeee")
+    const stanjeKalendara = this.state.hiddenKalendar;
+    console.log("? " + stanjeKalendara);
+    const pretraga = this.state.pretraziPoljeKlinika;
+    
+    if (pretraga == "" || pretraga == undefined) {
+      return (
+        <div className="content">
+          <Grid fluid>
+            <Row>
+              <Col>
                 <Row>
-                { this.state.hiddenKalendar ?
-                <Card
-                  title="Kalendar zauzeca sale"
-                 
-                  ctTableFullWidth
-                  ctTableResponsive
-                  content={
-                    <div style={{ height: 400 }}  className="ct-chart">
-                      
-                    <Calendar
-                        // style={{ maxHeight: "100%" }}
-                        // localizer={localizer}
-                        // showMultiDayTimes={true}
-                        // // views={["month"]}  
-                        // defaultDate={new Date()}
-                       // events={this.state.odmor}
-                        // eventPropGetter={event => ({
-                        //   style:{
-                        //     backgroundColor: "#ebd234"
-                        //   }
-                        // })}
-
-                        localizer={localizer}
-                        events={events }
-                      //  views={["month"]}
-                        defaultDate={new Date()}
-                        // startAccessor={event.start}
-                        // endAccessor={event.end}
-                        // titleAccessor="tip"
-                        // onSelectEvent={obj => {
-                        //   this.state.objekat = obj;
-                        //   console.log(this.state.objekat);
-                        //   this.setState({
-                        //     isOpen: true
-                        //   })
-                          
-                        // }}
+                  <Card
+                    title="Lista sala klinike"
+                   
+                    ctTableFullWidth
+                    ctTableResponsive
+                    content={
+                      <div>
+  
+                      <form>
+                          <input
+                            placeholder="Pretrazi"
+                            type="text"
+                            aria-label="Search"
+                            name="pretraziPoljeKlinika"
+                            onChange={this.handleChange}
+                          />
+                        {/* <Button onClick={e => this.pretraziSale()}>
+                          Pretrazi
+                        </Button> */}
+                    </form>
+                    <div>
+                      <h5>Datum za pregled:</h5>
+  
+                      <DatePicker
+                        placeholderText="Izaberi datum"
+                        selected={this.state.datumS}
+                        onChange={date=>this.handleChangeDate(date)}
+                        // showTimeSelect
+                        minDate={new Date()}
+                        // timeCaption="Vreme"
+                        withPortal
+                        // excludeTimes={[
+                        //   setHours(setMinutes(new Date(), 0), 17)
+                        // ]}
+                        // minTime={setHours(setMinutes(new Date(), 0), 7)}
+                        // maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                        dateFormat="dd.MM.yyyy"
+  
+                        // onChange={date => setStartDate(date)}
                       />
-                  </div>
-
-                  
-                  }
-                />
-                : null
-                }
+                      <Button onClick={this.slobodniTermini}>
+                        Pronadji salu
+                      </Button>
+                    </div>
+  
+                      <Button className="DodajKlinikuDugme"  onClick={e => this.dodajSalu(e)}>Dodaj salu</Button>
+                      <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+                      
+                     
+                      <Table striped hover>
+                        <thead>
+                          <tr>
+                          <th></th>
+                            <th id="IdPacijenta">Naziv</th>
+                            <th id="ImePacijenta"> Broj</th>
+                           
+                    
+                          </tr>
+                        </thead>
+                        <tbody>{this.listaSalaK()}</tbody>
+                      </Table>
+                      </div>
+                    }
+                  />
                 </Row>
-            </Col>
-          </Row>
-        </Grid>
-      </div>
-    );
+              </Col>
+            </Row>
+  
+            <Row>
+              <Col>
+                  <Row>
+                  { this.state.hiddenKalendar ?
+                  <Card
+                    title="Kalendar zauzeca sale"
+                   
+                    ctTableFullWidth
+                    ctTableResponsive
+                    content={
+                      <div style={{ height: 400 }}  className="ct-chart">
+                        
+                      <Calendar
+                          // style={{ maxHeight: "100%" }}
+                          // localizer={localizer}
+                          // showMultiDayTimes={true}
+                          // // views={["month"]}  
+                          // defaultDate={new Date()}
+                         // events={this.state.odmor}
+                          // eventPropGetter={event => ({
+                          //   style:{
+                          //     backgroundColor: "#ebd234"
+                          //   }
+                          // })}
+  
+                          localizer={localizer}
+                          events={events }
+                        //  views={["month"]}
+                          defaultDate={new Date()}
+                          // startAccessor={event.start}
+                          // endAccessor={event.end}
+                          // titleAccessor="tip"
+                          // onSelectEvent={obj => {
+                          //   this.state.objekat = obj;
+                          //   console.log(this.state.objekat);
+                          //   this.setState({
+                          //     isOpen: true
+                          //   })
+                            
+                          // }}
+                        />
+                    </div>
+  
+                    
+                    }
+                  />
+                  : null
+                  }
+                  </Row>
+              </Col>
+            </Row>
+          </Grid>
+        </div>
+      );
+    }else{
+      return (
+        <div className="content">
+          <Grid fluid>
+            <Row>
+              <Col>
+                <Row>
+                  <Card
+                    title="Lista sala klinike"
+                   
+                    ctTableFullWidth
+                    ctTableResponsive
+                    content={
+                      <div>
+  
+                      <form>
+                          <input
+                            placeholder="Pretrazi"
+                            type="text"
+                            aria-label="Search"
+                            name="pretraziPoljeKlinika"
+                            onChange={this.handleChange}
+                          />
+                        {/* <Button onClick={e => this.pretraziSale()}>
+                          Pretrazi
+                        </Button> */}
+                    </form>
+                    <div>
+                      <h5>Datum za pregled:</h5>
+  
+                      <DatePicker
+                        placeholderText="Izaberi datum"
+                        selected={this.state.datumZaPregled}
+                        onChange={date=>this.handleChangeDate(date)}
+                        // showTimeSelect
+                        minDate={new Date()}
+                        // timeCaption="Vreme"
+                        withPortal
+                        // excludeTimes={[
+                        //   setHours(setMinutes(new Date(), 0), 17)
+                        // ]}
+                        // minTime={setHours(setMinutes(new Date(), 0), 7)}
+                        // maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                        dateFormat="dd.MM.yyyy"
+  
+                        // onChange={date => setStartDate(date)}
+                      />
+                      <Button onClick={this.slobodniTermini}>
+                        Pronadji salu
+                      </Button>
+                    </div>
+  
+                      <Button className="DodajKlinikuDugme"  onClick={e => this.dodajSalu(e)}>Dodaj salu</Button>
+                      <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+                      
+                     
+                      <Table striped hover>
+                        <thead>
+                          <tr>
+                          <th></th>
+                            <th id="IdPacijenta">Naziv</th>
+                            <th id="ImePacijenta"> Broj</th>
+                            <th>Termini</th>
+                            <th>Prvi slobodan termin</th>
+                          </tr>
+                        </thead>
+                        <tbody>{this.listaSalaK()}</tbody>
+                      </Table>
+                      </div>
+                    }
+                  />
+                </Row>
+              </Col>
+            </Row>
+  
+            <Row>
+              <Col>
+                  <Row>
+                  { this.state.hiddenKalendar ?
+                  <Card
+                    title="Kalendar zauzeca sale"
+                   
+                    ctTableFullWidth
+                    ctTableResponsive
+                    content={
+                      <div style={{ height: 400 }}  className="ct-chart">
+                        
+                      <Calendar
+                          // style={{ maxHeight: "100%" }}
+                          // localizer={localizer}
+                          // showMultiDayTimes={true}
+                          // // views={["month"]}  
+                        // // views={["month"]}  
+                          // // views={["month"]}  
+                          // defaultDate={new Date()}
+                         // events={this.state.odmor}
+                          // eventPropGetter={event => ({
+                          //   style:{
+                          //     backgroundColor: "#ebd234"
+                          //   }
+                          // })}
+  
+                          localizer={localizer}
+                          events={events }
+                        //  views={["month"]}
+                          defaultDate={new Date()}
+                          // startAccessor={event.start}
+                          // endAccessor={event.end}
+                          // titleAccessor="tip"
+                          // onSelectEvent={obj => {
+                          //   this.state.objekat = obj;
+                          //   console.log(this.state.objekat);
+                          //   this.setState({
+                          //     isOpen: true
+                          //   })
+                            
+                          // }}
+                        />
+                    </div>
+  
+                    
+                    }
+                  />
+                  : null
+                  }
+                  </Row>
+              </Col>
+            </Row>
+          </Grid>
+        </div>
+      );
+    }
+    
   }
 }
 
