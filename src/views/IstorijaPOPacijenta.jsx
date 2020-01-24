@@ -38,6 +38,7 @@ class IstorijaPOPacijenta extends Component {
       formMessage: "",
       lbo: "",
       pregledi: [],
+      operacije:[],
       OnazivKl: "",
       OimeL: "",
       OprezimeL: "",
@@ -46,6 +47,7 @@ class IstorijaPOPacijenta extends Component {
       OpregledID:""
     };
     this.listaPregleda = this.listaPregleda.bind(this);
+    this.listaOperacija = this.listaOperacija.bind(this);
     this.oceniKliniku = this.oceniKliniku.bind(this);
     this.oceniLekara = this.oceniLekara.bind(this);
     this.ocenjenaKlinika = this.ocenjenaKlinika.bind(this);
@@ -103,6 +105,20 @@ class IstorijaPOPacijenta extends Component {
       console.log(res.data);
       this.setState({
         pregledi: res.data.sort((a, b) => b.id - a.id)
+      }, ()=>
+      {
+        axios
+        .get("http://localhost:8025/api/operacije/operacijePacijenta", config)
+        .then(res2 => {
+          console.log('OPERACIJE');
+          console.log(res2.data);
+          this.setState({
+            operacije:res2.data.sort((a,b) => b.id - a.id)
+          })
+        })
+        .catch(error => {
+          console.log("operacije  nisu preuzete");
+        });
       });
     })      
     .catch(error => {
@@ -733,6 +749,157 @@ class IstorijaPOPacijenta extends Component {
 
     return res;
   }
+  listaOperacija(){
+    let res = [];
+    console.log("lista kl");
+
+    // const pretraga = this.state.pretraziPoljeKlinika;
+    // const oc = this.state.ocenaKlinike;
+    // console.log(oc);
+    // if ((pretraga == "" || pretraga == undefined) && oc < 5) {
+    let lista = this.state.operacije;
+    const oceniK = <Tooltip id="oceni_tooltip">Oceni Kliniku</Tooltip>;
+    const oceniL = <Tooltip id="oceni_tooltip">Oceni Lekara</Tooltip>;
+
+    for (var i = 0; i < lista.length; i++) {
+      // if (lista[i].status == 3) {
+      //   res.push(
+      //     <tr key={i}>
+      //       <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+      //       <td key={lista[i].lekarID}>
+      //         {lista[i].imeL} {lista[i].prezimeL}
+      //       </td>
+      //       <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+      //       <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+      //       <td>
+      //         <OverlayTrigger placement="top" overlay={oceniK}>
+      //           <Button
+      //             bsStyle="info"
+      //             simple
+      //             type="button"
+      //             bsSize="sm"
+      //             value={lista[i].id}
+      //             onClick={e => this.oceniKliniku(e)}
+      //           >
+      //             <i className="pe-7s-like2 text-info" />
+      //           </Button>
+      //         </OverlayTrigger>
+      //         <Dialog
+      //           ref={el => {
+      //             this.dialog = el;
+      //           }}
+      //         ></Dialog>
+      //       </td>
+      //       <td>
+      //         <OverlayTrigger placement="top" overlay={oceniL}>
+      //           <Button
+      //             bsStyle="info"
+      //             simple
+      //             type="button"
+      //             bsSize="sm"
+      //             value={lista[i].id}
+      //             onClick={e => this.oceniLekara(e)}
+      //           >
+      //             <i className="pe-7s-like2 text-info" />
+      //           </Button>
+      //         </OverlayTrigger>
+      //         <Dialog
+      //           ref={el => {
+      //             this.dialog = el;
+      //           }}
+      //         ></Dialog>
+      //       </td>
+      //     </tr>
+      //   );
+      // }else if(lista[i].status == 4){
+      //   res.push(
+      //     <tr key={i}>
+      //       <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+      //       <td key={lista[i].lekarID}>
+      //         {lista[i].imeL} {lista[i].prezimeL}
+      //       </td>
+      //       <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+      //       <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+      //       <td>
+      //       <i className="pe-7s-like2 text-info" />
+      //       </td>
+      //       <td>
+      //         <OverlayTrigger placement="top" overlay={oceniL}>
+      //           <Button
+      //             bsStyle="info"
+      //             simple
+      //             type="button"
+      //             bsSize="sm"
+      //             value={lista[i].id}
+      //             onClick={e => this.oceniLekara(e)}
+      //           >
+      //             <i className="pe-7s-like2 text-info" />
+      //           </Button>
+      //         </OverlayTrigger>
+      //         <Dialog
+      //           ref={el => {
+      //             this.dialog = el;
+      //           }}
+      //         ></Dialog>
+      //       </td>
+      //     </tr>
+      //   );
+      // }else if(lista[i].status == 5){
+      //   res.push(
+      //     <tr key={i}>
+      //       <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+      //       <td key={lista[i].lekarID}>
+      //         {lista[i].imeL} {lista[i].prezimeL}
+      //       </td>
+      //       <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+      //       <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+      //       <td>
+      //         <OverlayTrigger placement="top" overlay={oceniK}>
+      //           <Button
+      //             bsStyle="info"
+      //             simple
+      //             type="button"
+      //             bsSize="sm"
+      //             value={lista[i].id}
+      //             onClick={e => this.oceniKliniku(e)}
+      //           >
+      //             <i className="pe-7s-like2 text-info" />
+      //           </Button>
+      //         </OverlayTrigger>
+      //         <Dialog
+      //           ref={el => {
+      //             this.dialog = el;
+      //           }}
+      //         ></Dialog>
+      //       </td>
+      //       <td>
+      //       <i className="pe-7s-like2 text-info" />
+      //       </td>
+      //     </tr>
+      //   );
+      // }else if(lista[i].status == 6){
+        res.push(
+          <tr key={i}>
+            <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+            <td key={lista[i].lekarID}>
+              {lista[i].imeL} {lista[i].prezimeL}
+            </td>
+            <td key={lista[i].nazivTP}>{lista[i].tipOperacije}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td>
+            <i className="pe-7s-like2 text-info" />
+            </td>
+            <td>
+            <i className="pe-7s-like2 text-info" />
+            </td>
+          </tr>
+        );
+      // }
+    }
+   
+
+    return res;
+  }
   handleChange = e => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
@@ -999,7 +1166,7 @@ class IstorijaPOPacijenta extends Component {
                         </th>
                       </tr>
                     </thead>
-                    {/* <tbody>{this.listaPregleda()}</tbody> */}
+                    <tbody>{this.listaOperacija()}</tbody>
                   </Table>
                 }
               />

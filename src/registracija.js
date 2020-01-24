@@ -38,6 +38,7 @@ class Registracija extends Component {
       email: null,
       telefon: null,
       brojOsiguranika: null,
+      jmbg: null,
       lozinka: null,
       potvrdaLozinke: null,
       registrovan: false,
@@ -53,6 +54,7 @@ class Registracija extends Component {
         email: "",
         telefon: "",
         brojOsiguranika: "",
+        jmbg: "",
         lozinka: "",
         potvrdaLozinke: ""
       }
@@ -89,7 +91,8 @@ class Registracija extends Component {
             drzava: this.state.drzava,
             email: this.state.email,
             telefon: this.state.telefon,
-            lbo: this.state.brojOsiguranika
+            lbo: this.state.brojOsiguranika,
+            jmbg: this.state.jmbg
           })
           .then(response => {
             console.log("slanje mejla");
@@ -206,7 +209,15 @@ class Registracija extends Component {
           });
         }
         formErrors.brojOsiguranika =
-          value.length < 11 && value.length > 0 ? "sadrzi 11 karaktera" : "";
+          value.length != 11 ? "sadrzi 11 karaktera" : "";
+        break;
+      case "jmbg":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
+        formErrors.jmbg = value.length != 13 ? "sadrzi 13 karaktera" : "";
         break;
 
       case "lozinka":
@@ -228,6 +239,7 @@ class Registracija extends Component {
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
     }
+
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   };
 
@@ -370,6 +382,19 @@ class Registracija extends Component {
                   <span className="errorMessage">
                     {formErrors.brojOsiguranika}
                   </span>
+                )}
+              </div>
+              <div className="jmbg">
+                <label htmlFor="jmbg">JMBG:* </label>
+                <input
+                  type="number"
+                  name="jmbg"
+                  placeholder="JMBG"
+                  noValidate
+                  onChange={this.handleChange}
+                />
+                {formErrors.jmbg.length > 0 && (
+                  <span className="errorMessage">{formErrors.jmbg}</span>
                 )}
               </div>
 

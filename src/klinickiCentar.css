@@ -211,3 +211,20 @@
   /* margin-right: 8px; */
   
 }
+
+/* polja za zahtev za godisnji odmor i odsustvo */
+.razlogPolje{
+  width: 610px;
+  height: 100px;
+}
+.dugmePosalji{
+  margin-top: 20px;
+}
+
+.izbor{
+  border: 1px ridge rgb(221, 220, 220);
+  width: 80%;
+}
+.formaGodOdomorOdsustvo{
+  margin-left: 150px;
+}

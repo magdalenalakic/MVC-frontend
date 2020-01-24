@@ -178,7 +178,21 @@ class ListaSala extends Component {
                             // idKlinike: klinika.data.id,
                             listaSalaKlinike: klinika.data,
                         
+                        }, ()=>{
+                          console.log('OK JE SVE');
+                          for(var i = 0;i<this.state.listaSalaKlinike.length; i++){
+                            const urlKlinike = 'http://localhost:8025/api/sale/preuzmiZauzeteTermine/' + this.state.listaSalaKlinike[i].id;    
+                            axios.get(urlKlinike, config)
+                               .then(termini => {
+                                console.log('TERMINIIII');
+                                console.log(termini.data);
+                               })
+                               .catch(error => {
+                                console.log("sale termini nisu preuzeti")
+                              })
+                          }
                         });
+                      
          
                  })
          
