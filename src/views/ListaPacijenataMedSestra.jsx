@@ -254,10 +254,10 @@ class ListaPacijenataMedSestra extends Component {
                         console.log('closed by clicking background.')
                       }
                     }));
-        })
-        .catch(error => {
-          console.log("ZK pacijenta nije preuzet");
-        })); 
+                  })
+                  .catch(error => {
+                    console.log("ZK pacijenta nije preuzet");
+                  })); 
       })
       .catch(error => {
         console.log("Pacijent nije preuzet");

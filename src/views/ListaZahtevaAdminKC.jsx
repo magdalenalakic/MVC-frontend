@@ -136,7 +136,6 @@ class ListaZahtevaAdminKC extends Component {
               console.log("Odbijanje uspelo! ");
               console.log(response.data);
               this.ucitajPonovo();
-
             })
             .catch(error => {
               console.log("Odbijanje nije uspelo! ");

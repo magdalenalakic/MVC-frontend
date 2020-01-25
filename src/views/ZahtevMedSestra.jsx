@@ -22,7 +22,9 @@ class ZahtevMedSestra extends React.Component {
       datumPocetka: new Date(),
       datumKraja : new Date(),
       opis: "",
-      idMedSestre: 0
+      idMedSestre: 0, 
+      imeMS: "",
+      prezimeMS: ""
 
       
     };
@@ -92,6 +94,13 @@ class ZahtevMedSestra extends React.Component {
       this.setState({
         id: Response.data.id
       });
+      this.setState({
+        imeMS: Response.data.ime
+      })
+      this.setState({
+        prezimeMS: Response.data.prezime
+      })
+
      
     })
     .catch(error => {
@@ -99,14 +108,19 @@ class ZahtevMedSestra extends React.Component {
     });
   }
   zahtevOdmorOdsustvo() {
+
     const url = "http://localhost:8025/api/odmorodsustvo/posaljiZahtev";
     axios
       .post(url,{ 
         datumOd : this.state.datumPocetka,
         datumDo : this.state.datumKraja,
         opis : this.state.opis,
+        status: false,
         idMedSestre : this.state.idMedSestre,
-        tipOdmorOdsustvo : this.state.tipOdmorOdsustvo
+        imeMS: this.state.imeMS,
+        prezimeMS: this.state.prezimeMS,
+        emailMS: this.state.email,
+        tip : this.state.tipOdmorOdsustvo
       }, this.config)
       .then(Response => {
         
