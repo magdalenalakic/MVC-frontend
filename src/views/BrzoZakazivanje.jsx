@@ -15,6 +15,7 @@ import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
+
 // import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
@@ -270,6 +271,36 @@ class BrzoZakazivanje extends Component {
         "Content-Type": "application/json"
       }
     };
+    var t = 0;
+    if (
+      moment(this.state.izabraniDatum)
+        .format("HH:mm")
+        .valueOf() == "09:00"
+    ) {
+      console.log("9");
+      t = 9;
+    } else if (
+      moment(this.state.izabraniDatum)
+        .format("HH:mm")
+        .valueOf() == "11:00"
+    ) {
+      console.log("11");
+      t = 11;
+    } else if (
+      moment(this.state.izabraniDatum)
+        .format("HH:mm")
+        .valueOf() == "13:00"
+    ) {
+      console.log("13");
+      t = 13;
+    } else if (
+      moment(this.state.izabraniDatum)
+        .format("HH:mm")
+        .valueOf() == "15:00"
+    ) {
+      console.log("15");
+      t = 15;
+    }
     if (ol != 0 && ol != undefined) {
       axios
 
@@ -282,7 +313,8 @@ class BrzoZakazivanje extends Component {
             pacijentEmail: this.state.email,
             cena: this.state.izabranaCena,
             datum: this.state.izabraniDatum,
-            canClick: true
+            canClick: true,
+            termin:t
           },
           config
         )
@@ -475,11 +507,7 @@ class BrzoZakazivanje extends Component {
                   ctTableResponsive
                   title="Izaberi pregled"
                   content={
-                    <form
-                      onSubmit={e => {
-                        this.odabranPrelged(e);
-                      }}
-                    >
+                    <div>
                       {/* <NavDropdown
                         onSelect={e => {
                           this.sortMyArray(e);
@@ -639,25 +667,33 @@ class BrzoZakazivanje extends Component {
                       </Table>
 
                       {this.redirectReferer}
-                    </form>
+                    </div>
                   }
                 />
-                <Button
-                  type="submit"
-                  onClick={
-                    this.state.canClick
-                      ? this.props.handleClick("Zahtev je poslat!")
-                      : null
-                  }
+                <form
+                  onSubmit={e => {
+                    this.odabranPrelged(e);
+                  }}
                 >
-                  Zakazi
-                </Button>
-                <h5>
-                  {(this.state.izabranPregled == undefined ||
-                    this.state.izabranPregled == 0) && (
-                    <span className="errorMessage">{this.state.formError}</span>
-                  )}
-                </h5>
+                  <Button
+                    type="submit"
+                    onClick={
+                      this.state.canClick
+                        ? this.props.handleClick("Zahtev je poslat!")
+                        : null
+                    }
+                  >
+                    Zakazi
+                  </Button>
+                  <h5>
+                    {(this.state.izabranPregled == undefined ||
+                      this.state.izabranPregled == 0) && (
+                      <span className="errorMessage">
+                        {this.state.formError}
+                      </span>
+                    )}
+                  </h5>
+                </form>
               </Col>
             </Row>
           </Grid>
