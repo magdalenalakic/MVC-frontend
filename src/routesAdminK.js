@@ -1,22 +1,13 @@
-import Dashboard from "views/Dashboard.jsx";
+
 import izmenaProfilaAdminaKlinike from "views/IzmenaProfilaAdminaKlinike.jsx";
 import izmenaKlinike from "views/IzmenaKlinike.jsx"
 import listaLekara from "views/ListaLekara.jsx"
-import TableList from "views/TableList.jsx";
-import Typography from "views/Typography.jsx";
-import Icons from "views/Icons.jsx";
-import Maps from "views/Maps.jsx";
-import Notifications from "views/Notifications.jsx";
-import Upgrade from "views/Upgrade.jsx";
-import Login from "login.js";
-import Registracija from "registracija";
-import KlinickiCentar from "views/KlinickiCentar.jsx";
 import PocetnaStranicaAdminaKlinike from "views/PocetnaStranicaAdminaKlinike";
 import listaPregleda from "views/ListaPregleda.jsx";
 import slobodniTermini from "views/SlobodniTermini.jsx"
 import listaSala from "views/ListaSala.jsx"
 import listaZahteva from "views/ListaZahtevaPregled.jsx"
-import izmenaProfila from "views/IzmenaProfila";
+import listaZahtevaOdmorOdsustvo from "views/ListaZahtevaOdmorOdsustvo.jsx"
 import tipoviPregleda from "views/TipoviPregleda.jsx"
 
 
@@ -87,6 +78,14 @@ const dashboardRoutes = [
     name: "Zahtevi za pregled",
     icon: "pe-7s-box1",
     component: listaZahteva,
+    layout: "/admin"
+  },
+  
+  {
+    path: "/listaZahtevaOdmorOdsustvo",
+    name: "Zahtevi za odmor/odsustvo",
+    icon: "pe-7s-box1",
+    component: listaZahtevaOdmorOdsustvo,
     layout: "/admin"
   },
   // {
