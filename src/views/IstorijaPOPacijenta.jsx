@@ -114,6 +114,9 @@ class IstorijaPOPacijenta extends Component {
           console.log(res2.data);
           this.setState({
             operacije:res2.data.sort((a,b) => b.id - a.id)
+          }, ()=>{
+            console.log("OPERACIJE")
+            console.log(this.state.operacije)
           })
         })
         .catch(error => {
@@ -749,6 +752,18 @@ class IstorijaPOPacijenta extends Component {
 
     return res;
   }
+  ispisLekaraOperacija(operacija){
+    let lista = this.state.operacije;
+    var res = [];
+    operacija.listaLekara.map(lekar=>{
+      res.push
+      (<div>
+        {lekar.ime} {lekar.prezime}
+        </div>
+      );
+    })
+    return res;
+  }
   listaOperacija(){
     let res = [];
     console.log("lista kl");
@@ -762,129 +777,12 @@ class IstorijaPOPacijenta extends Component {
     const oceniL = <Tooltip id="oceni_tooltip">Oceni Lekara</Tooltip>;
 
     for (var i = 0; i < lista.length; i++) {
-      // if (lista[i].status == 3) {
-      //   res.push(
-      //     <tr key={i}>
-      //       <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
-      //       <td key={lista[i].lekarID}>
-      //         {lista[i].imeL} {lista[i].prezimeL}
-      //       </td>
-      //       <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
-      //       <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-      //       <td>
-      //         <OverlayTrigger placement="top" overlay={oceniK}>
-      //           <Button
-      //             bsStyle="info"
-      //             simple
-      //             type="button"
-      //             bsSize="sm"
-      //             value={lista[i].id}
-      //             onClick={e => this.oceniKliniku(e)}
-      //           >
-      //             <i className="pe-7s-like2 text-info" />
-      //           </Button>
-      //         </OverlayTrigger>
-      //         <Dialog
-      //           ref={el => {
-      //             this.dialog = el;
-      //           }}
-      //         ></Dialog>
-      //       </td>
-      //       <td>
-      //         <OverlayTrigger placement="top" overlay={oceniL}>
-      //           <Button
-      //             bsStyle="info"
-      //             simple
-      //             type="button"
-      //             bsSize="sm"
-      //             value={lista[i].id}
-      //             onClick={e => this.oceniLekara(e)}
-      //           >
-      //             <i className="pe-7s-like2 text-info" />
-      //           </Button>
-      //         </OverlayTrigger>
-      //         <Dialog
-      //           ref={el => {
-      //             this.dialog = el;
-      //           }}
-      //         ></Dialog>
-      //       </td>
-      //     </tr>
-      //   );
-      // }else if(lista[i].status == 4){
-      //   res.push(
-      //     <tr key={i}>
-      //       <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
-      //       <td key={lista[i].lekarID}>
-      //         {lista[i].imeL} {lista[i].prezimeL}
-      //       </td>
-      //       <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
-      //       <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-      //       <td>
-      //       <i className="pe-7s-like2 text-info" />
-      //       </td>
-      //       <td>
-      //         <OverlayTrigger placement="top" overlay={oceniL}>
-      //           <Button
-      //             bsStyle="info"
-      //             simple
-      //             type="button"
-      //             bsSize="sm"
-      //             value={lista[i].id}
-      //             onClick={e => this.oceniLekara(e)}
-      //           >
-      //             <i className="pe-7s-like2 text-info" />
-      //           </Button>
-      //         </OverlayTrigger>
-      //         <Dialog
-      //           ref={el => {
-      //             this.dialog = el;
-      //           }}
-      //         ></Dialog>
-      //       </td>
-      //     </tr>
-      //   );
-      // }else if(lista[i].status == 5){
-      //   res.push(
-      //     <tr key={i}>
-      //       <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
-      //       <td key={lista[i].lekarID}>
-      //         {lista[i].imeL} {lista[i].prezimeL}
-      //       </td>
-      //       <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
-      //       <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-      //       <td>
-      //         <OverlayTrigger placement="top" overlay={oceniK}>
-      //           <Button
-      //             bsStyle="info"
-      //             simple
-      //             type="button"
-      //             bsSize="sm"
-      //             value={lista[i].id}
-      //             onClick={e => this.oceniKliniku(e)}
-      //           >
-      //             <i className="pe-7s-like2 text-info" />
-      //           </Button>
-      //         </OverlayTrigger>
-      //         <Dialog
-      //           ref={el => {
-      //             this.dialog = el;
-      //           }}
-      //         ></Dialog>
-      //       </td>
-      //       <td>
-      //       <i className="pe-7s-like2 text-info" />
-      //       </td>
-      //     </tr>
-      //   );
-      // }else if(lista[i].status == 6){
+        var rezultat;
         res.push(
           <tr key={i}>
-            <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
-            <td key={lista[i].lekarID}>
-              {lista[i].imeL} {lista[i].prezimeL}
-            </td>
-            <td key={lista[i].nazivTP}>{lista[i].tipOperacije}</td>
+          <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
+          <td>{this.ispisLekaraOperacija(lista[i])}</td>
+           <td key={lista[i].nazivTP}>{lista[i].tipOperacije}</td>
             <td key={lista[i].cena}>{lista[i].cena} RSD</td>
             <td>
             <i className="pe-7s-like2 text-info" />
@@ -893,7 +791,8 @@ class IstorijaPOPacijenta extends Component {
             <i className="pe-7s-like2 text-info" />
             </td>
           </tr>
-        );
+          );
+        // );
       // }
     }
    

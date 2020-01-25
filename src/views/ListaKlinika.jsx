@@ -8,6 +8,7 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import "klinickiCentar.css";
 import { Table } from "react-bootstrap";
@@ -32,6 +33,7 @@ import axios from "axios";
 import { string } from "prop-types";
 import PocetnaStranicaPacijenta from "./PocetnaStranicaPacijenta";
 import { setHours, setMinutes, subHours, subMinutes } from "date-fns";
+import moment from "moment";
 
 class ListaKlinika extends Component {
   constructor(props) {
@@ -52,8 +54,8 @@ class ListaKlinika extends Component {
       redirectNext: false,
       redirectNext2: false,
       listaLekara: [],
-      listaKlinikaPocetna:[],
-      listaLekaraPocetna:[],
+      listaKlinikaPocetna: [],
+      listaLekaraPocetna: [],
       izabranLekar: 0,
       nazivIzabranogLekara: "",
       nazivIzabraneKlinike: "",
@@ -64,7 +66,13 @@ class ListaKlinika extends Component {
       quit: false,
       uspesnoPoslatZahtev: false,
       odabranFilter: "",
-      odabranFilterL: ""
+      odabranFilterL: "",
+      terminiIzabranogLekara: [],
+      terminiZaIzabraniDatum: [],
+      prikazTerminaClick: false,
+      lekarTerminClick: 0,
+      izabranTermin: "",
+      prikazaniTerminiLekara: 0
     };
     console.log(this.state);
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
@@ -75,6 +83,7 @@ class ListaKlinika extends Component {
     this.podesiOcenuKlinike = this.podesiOcenuKlinike.bind(this);
     this.podesiOcenuLekara = this.podesiOcenuLekara.bind(this);
     this.slobodniTermini = this.slobodniTermini.bind(this);
+    this.prikazTermina = this.prikazTermina.bind(this);
     this.promenjenOdabirKlinike = this.promenjenOdabirKlinike.bind(this);
     this.promenjenOdabirLekara = this.promenjenOdabirLekara.bind(this);
     this.izaberiVrstuPregleda = this.izaberiVrstuPregleda.bind(this);
@@ -84,6 +93,8 @@ class ListaKlinika extends Component {
     this.prethodno2 = this.prethodno2.bind(this);
     this.odustani = this.odustani.bind(this);
     this.odustani2 = this.odustani2.bind(this);
+    this.vidiTermineClick = this.vidiTermineClick.bind(this);
+    this.biranjeTermina = this.biranjeTermina.bind(this);
 
     console.log(this.state.flag);
   }
@@ -104,7 +115,7 @@ class ListaKlinika extends Component {
         console.log(Response.data);
         this.setState({
           listaKlinika: Response.data,
-          listaKlinikaPocetna:Response.data,
+          listaKlinikaPocetna: Response.data,
           nazivIzabraneKlinike: Response.data[0].naziv
         });
         console.log(this.state.listaKlinika);
@@ -113,7 +124,6 @@ class ListaKlinika extends Component {
       .catch(error => {
         console.log("klinike nisu preuzete");
       });
-
     axios
       .get("http://localhost:8025/api/tipPregleda/all", config)
       .then(Response => {
@@ -331,6 +341,113 @@ class ListaKlinika extends Component {
     );
     return res;
   }
+  vidiTermineClick = e => {
+    e.preventDefault();
+
+    console.log(e.currentTarget.value);
+    const lekarid = e.currentTarget.value;
+    const url =
+      "http://localhost:8025/api/lekari/listaZauzetihTermina/" +
+      e.currentTarget.value;
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .get(url, config)
+      .then(Response => {
+        console.log("Preuzeti termini lekara: ");
+        console.log(Response.data);
+
+        this.setState(
+          {
+            terminiIzabranogLekara: Response.data
+          },
+          () => {
+            console.log(this.state.terminiIzabranogLekara);
+            console.log("TERMINI");
+            var niz = [false, false, false, false];
+            this.state.terminiIzabranogLekara.map(termin => {
+              const dat = moment(this.state.datumZaPregled).format(
+                "DD.MM.YYYY"
+              );
+              const datPoc = moment(termin.datumPocetka).format("DD.MM.YYYY");
+              console.log(moment(termin.datumZaPregled).format("HH:mm"));
+              console.log("******");
+
+              console.log(dat);
+              console.log(datPoc);
+              console.log("******");
+              if (dat.valueOf() === datPoc.valueOf()) {
+                console.log("ISTI SU");
+                if (termin.termin == 9) {
+                  niz[0] = true;
+                } else if (termin.termin == 11) {
+                  niz[1] = true;
+                } else if (termin.termin == 13) {
+                  niz[2] = true;
+                } else if (termin.termin == 15) {
+                  niz[3] = true;
+                }
+              }
+            });
+            this.setState(
+              {
+                prikazTerminaClick: true,
+                lekarTerminClick: lekarid,
+                terminiZaIzabraniDatum: niz,
+                prikazaniTerminiLekara: lekarid
+              },
+              () => console.log(this.state)
+            );
+          }
+        );
+      })
+
+      .catch(error => {
+        console.log("Nisu preuzeti termini lekara");
+      });
+  };
+  prikazTermina() {
+    var res = [];
+    if (this.state.prikazTerminaClick == true) {
+      res.push(
+        <select onChange={e => this.biranjeTermina(e)}>
+          <option value="odaberiTermin">Izaberite termin</option>
+          {this.state.terminiZaIzabraniDatum[0] == false && (
+            <option value="9">09:00 - 11:00</option>
+          )}
+          {this.state.terminiZaIzabraniDatum[1] == false && (
+            <option value="11">11:00 - 13:00</option>
+          )}
+          {this.state.terminiZaIzabraniDatum[2] == false && (
+            <option value="13">13:00 - 15:00</option>
+          )}
+          {this.state.terminiZaIzabraniDatum[3] == false && (
+            <option value="15">15:00 - 17:00</option>
+          )}
+        </select>
+      );
+    }
+
+    return res;
+  }
+  biranjeTermina = e => {
+    console.log(e.target.value);
+    const termin = e.target.value;
+    console.log("IF");
+    this.setState(
+      {
+        izabranTermin: termin
+      },
+      () => {
+        console.log(this.state.izabranTermin);
+      }
+    );
+  };
   listaLekaraKlinike() {
     let res = [];
     console.log("lista lekara");
@@ -338,6 +455,7 @@ class ListaKlinika extends Component {
     const pretraga = this.state.pretraziPoljeLekara;
     const oc = this.state.ocenaLekara;
     console.log(oc);
+    const vidiTermine = <Tooltip>Vidi termine</Tooltip>;
     if ((pretraga == "" || pretraga == undefined) && oc < 5) {
       let lista = this.state.listaLekara;
 
@@ -359,6 +477,26 @@ class ListaKlinika extends Component {
             <td key={lista[i].ime}>{lista[i].ime}</td>
             <td key={lista[i].prezime}>{lista[i].prezime}</td>
             <td key={lista[i].ocena}>{lista[i].ocena}</td>
+
+            <td>
+              <OverlayTrigger placement="top" overlay={vidiTermine}>
+                <Button
+                  bsStyle="info"
+                  // style={{ outline: "#42f5a4" }}
+                  simple
+                  type="button"
+                  bsSize="sm"
+                  value={lista[i].id}
+                  onClick={e => this.vidiTermineClick(e)}
+                >
+                  <i className="pe-7s-clock text-info" />
+                </Button>
+              </OverlayTrigger>
+            </td>
+            {this.state.lekarTerminClick == lista[i].id && (
+              <td>{this.prikazTermina()}</td>
+            )}
+            {this.state.lekarTerminClick != lista[i].id && <td></td>}
           </tr>
         );
       }
@@ -400,6 +538,22 @@ class ListaKlinika extends Component {
                 <td key={lista[i].ime}>{lista[i].ime}</td>
                 <td key={lista[i].prezime}>{lista[i].prezime}</td>
                 <td key={lista[i].ocena}>{lista[i].ocena}</td>
+
+                <td>
+                  <OverlayTrigger placement="top" overlay={vidiTermine}>
+                    <Button
+                      bsStyle="info"
+                      simple
+                      type="button"
+                      bsSize="sm"
+                      value={lista[i].id}
+                      onClick={e => this.vidiTermineClick(e)}
+                    >
+                      <i className="pe-7s-clock text-info" />
+                    </Button>
+                  </OverlayTrigger>
+                </td>
+                <td>{this.vidiTermineClick()}</td>
               </tr>
             );
           }
@@ -594,6 +748,30 @@ class ListaKlinika extends Component {
   };
   slobodniTermini() {
     //get zahtev za preuzimanje termina iz baze za zadati datum
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .get(
+        "http://localhost:8025/api/klinike/slobodneKlinike/" +
+          this.state.datumZaPregled,
+        config
+      )
+      .then(Response => {
+        console.log("Preuzeta lista klinika: ");
+        console.log(Response.data);
+        this.setState({
+          listaKlinika: Response.data
+        });
+      })
+
+      .catch(error => {
+        console.log("klinike nisu preuzete");
+      });
   }
 
   odabranaKlinika = e => {
@@ -617,7 +795,7 @@ class ListaKlinika extends Component {
         console.log(Response.data);
         this.setState({
           listaLekara: Response.data,
-          listaLekaraPocetna:Response.data,
+          listaLekaraPocetna: Response.data,
           nazivIzabranogLekara:
             Response.data[0].ime + " " + Response.data[0].prezime,
           redirectNext: true,
@@ -634,26 +812,46 @@ class ListaKlinika extends Component {
     // });
   };
   odabranLekar = e => {
-    //treba redirektovati na pretragu i filtriranje lekara
+    //treba redirektovati na pregled zahteva za pregled
     e.preventDefault();
     console.log(this.state.izabranLekar);
     console.log(this.state.flag);
     const ol = this.state.izabranLekar;
-    if (ol != 0 && ol != undefined) {
+    var porukaErr = "";
+    if (this.state.prikazaniTerminiLekara != ol) {
+      porukaErr = "Odaberite termin koji odgovara izabranom lekaru";
+    }
+    if (
+      this.state.izabranTermin == "odaberiTermin" ||
+      this.state.izabranTermin == ""
+    ) {
+      porukaErr = "Odaberite termin";
+    }
+    if (ol == 0 || ol == undefined) {
+      porukaErr = "Odaberite lekara";
+    }
+    if (
+      ol != 0 &&
+      ol != undefined &&
+      this.state.izabranTermin != "odaberiTermin" &&
+      this.state.izabranTermin != "" &&
+      this.state.prikazaniTerminiLekara == ol
+    ) {
       this.setState({
         redirectNext2: true,
         flag: 2
       });
     } else {
       console.log(this.state.back);
-      if (this.state.back == false) {
-        this.setState(
-          {
-            formError: "Odaberite Lekara"
-          },
-          () => console.log(this.state.formError)
-        );
-      }
+
+      // if (this.state.back == false) {
+      this.setState(
+        {
+          formError: porukaErr
+        },
+        () => console.log(this.state.formError)
+      );
+      // }
     }
   };
   redirectReferer() {
@@ -767,7 +965,8 @@ class ListaKlinika extends Component {
           tipPregledaID: this.state.oznaceniTipPregleda,
           pacijentEmail: this.state.email,
           cena: 500,
-          datum: this.state.datumZaPregled
+          datum: this.state.datumZaPregled,
+          termin: this.state.izabranTermin
         },
         config
       )
@@ -794,7 +993,9 @@ class ListaKlinika extends Component {
     this.setState(
       {
         back: true,
-        flag: 0
+        flag: 0,
+        prikazTerminaClick: false,
+        izabraniLekar: 0
       },
       () => console.log(this.state.back)
     );
@@ -803,19 +1004,27 @@ class ListaKlinika extends Component {
     var flag = 0;
     console.log("prethodno 2");
     if (this.state.back == true) {
-      return (
-        <Route
-          path="/registration"
-          render={props => (
-            <ListaKlinika
-              {...props}
-              flag={this.state.flag}
-              back={this.state.back}
-            />
-          )}
-        >
-          <Redirect from="/" to="/admin/klinikePacijenta" />
-        </Route>
+      this.setState(
+        {
+          prikazTerminaClick: false,
+          izabraniLekar: 0
+        },
+        () => {
+          return (
+            <Route
+              path="/registration"
+              render={props => (
+                <ListaKlinika
+                  {...props}
+                  flag={this.state.flag}
+                  back={this.state.back}
+                />
+              )}
+            >
+              <Redirect from="/" to="/admin/klinikePacijenta" />
+            </Route>
+          );
+        }
       );
     }
   }
@@ -951,90 +1160,88 @@ class ListaKlinika extends Component {
     }
   };
   clickPretraga() {
-    if(this.state.odabranFilter == "pretraga"){
+    if (this.state.odabranFilter == "pretraga") {
       this.setState({
-        odabranFilter:""
-      })
-    }else{
+        odabranFilter: ""
+      });
+    } else {
       this.setState({
         odabranFilter: "pretraga"
       });
     }
-    
   }
   clickTipPregleda() {
-    if(this.state.odabranFilter == "tipPregleda"){
+    if (this.state.odabranFilter == "tipPregleda") {
       this.setState({
-        odabranFilter:""
-      })
-    }else{
-    this.setState({
-      odabranFilter: "tipPregleda"
-    });
-  }
+        odabranFilter: ""
+      });
+    } else {
+      this.setState({
+        odabranFilter: "tipPregleda"
+      });
+    }
   }
   clickDatum() {
-    if(this.state.odabranFilter == "datum"){
+    if (this.state.odabranFilter == "datum") {
       this.setState({
-        odabranFilter:""
-      })
-    }else{
-    this.setState({
-      odabranFilter: "datum"
-    });
-  }
+        odabranFilter: ""
+      });
+    } else {
+      this.setState({
+        odabranFilter: "datum"
+      });
+    }
   }
   clickOcena() {
-    if(this.state.odabranFilter == "ocena"){
+    if (this.state.odabranFilter == "ocena") {
       this.setState({
-        odabranFilter:""
-      })
-    }else{
-    this.setState({
-      odabranFilter: "ocena"
-    });
-  }
+        odabranFilter: ""
+      });
+    } else {
+      this.setState({
+        odabranFilter: "ocena"
+      });
+    }
   }
   clickOcenaL() {
-    if(this.state.odabranFilterL == "ocena"){
+    if (this.state.odabranFilterL == "ocena") {
       this.setState({
-        odabranFilterL:""
-      })
-    }else{
-    this.setState({
-      odabranFilterL: "ocena"
-    });
-  }
+        odabranFilterL: ""
+      });
+    } else {
+      this.setState({
+        odabranFilterL: "ocena"
+      });
+    }
   }
   clickPretragaL() {
-    if(this.state.odabranFilterL == "pretraga"){
+    if (this.state.odabranFilterL == "pretraga") {
       this.setState({
-        odabranFilterL:""
-      })
-    }else{
+        odabranFilterL: ""
+      });
+    } else {
+      this.setState({
+        odabranFilterL: "pretraga"
+      });
+    }
+  }
+  ponistiFiltere() {
+    console.log("ponistavanje filtera");
     this.setState({
-      odabranFilterL: "pretraga"
+      listaKlinika: this.state.listaKlinikaPocetna,
+      odabranFilter: "",
+      ocenaKlinike: 0,
+      pretraziPoljeKlinika: ""
     });
   }
-  }
-  ponistiFiltere(){
-    console.log('ponistavanje filtera')
+  ponistiFiltereL() {
+    console.log("ponistavanje filtera");
     this.setState({
-      listaKlinika:this.state.listaKlinikaPocetna,
-      odabranFilter:"",
-      ocenaKlinike:0,
-      pretraziPoljeKlinika:""
-    })
-  }
-  ponistiFiltereL(){
-    console.log('ponistavanje filtera')
-    this.setState({
-      listaLekara:this.state.listaLekaraPocetna,
-      odabranFilterL:"",
-      ocenaLekara:0,
-      pretraziPoljeLekara:""
-    })
-
+      listaLekara: this.state.listaLekaraPocetna,
+      odabranFilterL: "",
+      ocenaLekara: 0,
+      pretraziPoljeLekara: ""
+    });
   }
   render() {
     const email = this.state.email;
@@ -1059,9 +1266,15 @@ class ListaKlinika extends Component {
                 <Card
                   title="Zahtev za pregled je uspesno poslat!"
                   content={
-                    <h3 className="successMessage">
-                      Potvrdite zahtev za pregled preko E-maila!
-                    </h3>
+                    <div>
+                      <h3 className="successMessage">
+                        Sala za pregled ce Vam biti dodeljena najkasnije sutra.
+                      </h3>
+                      <h3 className="successMessage">
+                        Bicete obavesteni putem elektronske poste, nakon cega je
+                        neophodno potvrditi pregled.
+                      </h3>
+                    </div>
                   }
                 />
               </Col>
@@ -1118,7 +1331,10 @@ class ListaKlinika extends Component {
                           <Button
                             fill
                             value="4"
-                            onClick={e => this.ponistiFiltere()}><i className="pe-7s-close"/></Button>
+                            onClick={e => this.ponistiFiltere()}
+                          >
+                            <i className="pe-7s-close" />
+                          </Button>
                         </ButtonToolbar>
                         <br></br>
                         <div>{this.prikazFiltera()}</div>
@@ -1430,7 +1646,6 @@ class ListaKlinika extends Component {
               <Row>
                 <Col md={12}>
                   <Card
-
                     content={
                       <div>
                         <ButtonToolbar>
@@ -1454,7 +1669,10 @@ class ListaKlinika extends Component {
                           <Button
                             fill
                             value="4"
-                            onClick={e => this.ponistiFiltereL()}><i className="pe-7s-close"/></Button>
+                            onClick={e => this.ponistiFiltereL()}
+                          >
+                            <i className="pe-7s-close" />
+                          </Button>
                         </ButtonToolbar>
                         <br></br>
                         <div>{this.prikazFilteraL()}</div>
@@ -1536,6 +1754,8 @@ class ListaKlinika extends Component {
                                 className="pe-7s-angle-down"
                               />
                             </th>
+                            <th></th>
+                            <th></th>
                           </tr>
                         </thead>
                         <tbody>{this.listaLekaraKlinike()}</tbody>
@@ -1564,8 +1784,7 @@ class ListaKlinika extends Component {
                     </Button>
                   </ButtonToolbar>
                   <h5>
-                    {(this.state.izabranLekar == undefined ||
-                      this.state.izabranLekar == 0) && (
+                    {this.state.formError != "" && (
                       <span className="errorMessage">
                         {this.state.formError}
                       </span>

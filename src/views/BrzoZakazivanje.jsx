@@ -109,8 +109,25 @@ class BrzoZakazivanje extends Component {
   }
 
   componentWillMount() {
-    const url = "http://localhost:8025/api/ST/unapredDef";
+    var url = "http://localhost:8025/api/lekari/listaZauzetihTermina/" + 1;
     var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    // axios
+    //   .get(url, config)
+    //   .then(Response => {
+    //     console.log("Preuzeti zauzetiTermini: ");
+    //     console.log(Response.data);
+    //   })
+    //   .catch(error => {
+    //     console.log("pregledi  nisu preuzeti");
+    //   });
+    url = "http://localhost:8025/api/ST/unapredDef";
+    config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
         Accept: "application/json",
