@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { Grid, Row, Col, Table } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import "klinickiCentar.css";
-import Button from "components/CustomButton/CustomButton.jsx";
+import { Button } from "react-bootstrap";
+// import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
 import { ButtonToolbar } from "react-bootstrap";
@@ -760,7 +761,7 @@ obrisiLekara = e => {
 
                           {/* za datum */}
 
-                        <td> <select>
+                        <td> {moment(this.state.datumS).format("DD.MM.YYYY")} <select>
                           <option value="1" disabled={zabranjeniTermini[0]}>
                             09:00-11:00
                           </option>
@@ -775,8 +776,8 @@ obrisiLekara = e => {
                           </option>
                           </select>
                           </td>
-                  <td> {moment(this.state.datumS).format("DD.MM.YYYY")}</td>
-                  <td><Button>  Rezervisi</Button>  </td> 
+                  {/* <td> </td> */}
+                  {/* <td><Button>  Rezervisi</Button>  </td>  */}
                       </tr>
                     );
          
@@ -912,7 +913,7 @@ obrisiLekara = e => {
 
                           {/* za datum */}
 
-                        <td> <select>
+                          <td> {moment(this.state.datumS).format("DD.MM.YYYY")} <select>
                           <option value="1" disabled={zabranjeniTermini[0]}>
                             09:00-11:00
                           </option>
@@ -925,9 +926,8 @@ obrisiLekara = e => {
                           <option value="4" disabled={zabranjeniTermini[3]}>
                             15:00-17:00
                           </option>
-                          </select> </td>
-                  <td> {moment(this.state.datumS).format("DD.MM.YYYY")}</td>
-                       
+                          </select>
+                          </td>
                       </tr>
                     );
          
@@ -1110,6 +1110,7 @@ obrisiLekara = e => {
     console.log(this.state.odabranFilter);
     let res = [];
     if (this.state.odabranFilter == "pretraga") {
+      console.log("Udje li vovdje- if")
       res.push(
         <h5>
           <input
@@ -1127,7 +1128,7 @@ obrisiLekara = e => {
         <h5>
           <DatePicker
             placeholderText="Izaberi datum"
-            selected={this.state.datumZaPregled}
+            selected={this.state.datumS}
             onChange={date => this.handleChangeDate(date)}
             // showTimeSelect
             minDate={new Date()}
@@ -1143,13 +1144,62 @@ obrisiLekara = e => {
             // onChange={date => setStartDate(date)}
           />
           <br></br>
-          <Button onClick={this.slobodniTermini}>Pronadji termine</Button>
+          {/* <Button onClick={this.slobodniTermini}>Pronadji termine</Button> */}
         </h5>
       );
-    } 
+    } else if(this.state.odabranFilter == "dodajSalu"){
+      res.push(
+        <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+      );
+    }
+      
+    
     return res;
   }
-
+  clickPretraga() {
+    if(this.state.odabranFilter == "pretraga"){
+      this.setState({
+        odabranFilter:""
+      })
+    }else{
+      this.setState({
+        odabranFilter: "pretraga"
+      });
+    }
+    
+  }
+  clickDatum() {
+    if(this.state.odabranFilter == "datum"){
+      this.setState({
+        odabranFilter:""
+      })
+    }else{
+    this.setState({
+      odabranFilter: "datum"
+    });
+  }
+  }
+  ponistiFiltere(){
+    console.log('ponistavanje filtera')
+    this.setState({
+      listaSalaKlinike:this.state.listaSalaKlinike,
+      odabranFilter:"",
+      izabranDatum: false,
+      pretraziPoljeKlinika:""
+    })
+  }
+  // clickDodajSalu() {
+  //   if(this.state.odabranFilter == "dodajSalu"){
+  //     this.setState({
+  //       odabranFilter:""
+  //     })
+  //   }else{
+  //     this.setState({
+  //       odabranFilter: "dodajSalu"
+  //     });
+  //   }
+    
+  // }
   render() {
 
     const pretraga = this.state.pretraziPoljeKlinika;
@@ -1167,25 +1217,29 @@ obrisiLekara = e => {
                     <ButtonToolbar>
                       <Button
                         fill
-                        bsStyle="info"
+                        // bsStyle="info"
                         value="1"
-                       // onClick={e => this.clickPretraga()}
+                       onClick={e => this.clickPretraga()}
                       >
                         Pretrazi
                       </Button>
                      
                       <Button
                         fill
-                        bsStyle="success"
+                        // bsStyle="success"
                         value="3"
                         onClick={e => this.clickDatum()}
                       >
                         Izaberi datum
                       </Button>
-                  
+                      <Button fill value="4"  onClick={e => this.dodajSalu(e)}>
+                        
+                        Dodaj salu
+                      
+                      </Button>
                       <Button
                         fill
-                        value="4"
+                        value="5"
                         onClick={e => this.ponistiFiltere()}><i className="pe-7s-close"/></Button>
                     </ButtonToolbar>
                     <br></br>
@@ -1210,22 +1264,22 @@ obrisiLekara = e => {
                       <div>
   
                       <form>
-                          <input
+                          {/* <input
                             placeholder="Pretrazi"
                             type="text"
                             aria-label="Search"
                             name="pretraziPoljeKlinika"
                             onChange={this.handleChange}
-                          />
+                          /> */}
                         {/* <Button onClick={e => this.pretraziSale()}>
                           Pretrazi
                         </Button> */}
                     </form>
                     
                     <div>
-                      <h5>Datum za pregled:</h5>
+                      {/* <h5>Datum za pregled:</h5> */}
   
-                      <DatePicker
+                      {/* <DatePicker
                         placeholderText="Izaberi datum"
                         selected={this.state.datumS}
                         onChange={date=>this.handleChangeDate(date)}
@@ -1241,10 +1295,10 @@ obrisiLekara = e => {
                         dateFormat="dd.MM.yyyy"
   
                       />
-               
+                */}
                     </div>
                       <ButtonToolbar>
-                        <Button className="DodajKlinikuDugme"  onClick={e => this.dodajSalu(e)}>Dodaj salu</Button>
+                        {/* <Button className="DodajKlinikuDugme"  onClick={e => this.dodajSalu(e)}>Dodaj salu</Button> */}
                         {/* <Button className="DodajKlinikuDugme"  onClick={this.rezervisiSalu}>Postupak rezervacicje</Button> */}
 
                       </ButtonToolbar>
@@ -1257,7 +1311,7 @@ obrisiLekara = e => {
                           <th></th>
                             <th id="IdPacijenta">Naziv</th>
                             <th id="ImePacijenta"> Broj</th>
-                            <th>Termini</th>
+                            {/* <th>Termini</th> */}
                             <th>Prvi slobodan termin</th>
                     
                           </tr>
@@ -1337,25 +1391,29 @@ obrisiLekara = e => {
                     <ButtonToolbar>
                       <Button
                         fill
-                        bsStyle="info"
+                        // bsStyle="info"
                         value="1"
-                       // onClick={e => this.clickPretraga()}
+                       onClick={e => this.clickPretraga()}
                       >
                         Pretrazi
                       </Button>
                      
                       <Button
                         fill
-                        bsStyle="success"
+                        // bsStyle="success"
                         value="3"
                         onClick={e => this.clickDatum()}
                       >
                         Izaberi datum
                       </Button>
-                  
+                      <Button fill value="4"   onClick={e => this.dodajSalu(e)}>
+                        
+                        Dodaj salu
+                      
+                      </Button>
                       <Button
                         fill
-                        value="4"
+                        value="5"
                         onClick={e => this.ponistiFiltere()}><i className="pe-7s-close"/></Button>
                     </ButtonToolbar>
                     <br></br>
@@ -1378,23 +1436,23 @@ obrisiLekara = e => {
                     // ctTableResponsive
                     content={
                       <div>
-  
+                        {/* stari naziv */}
                       <form>
-                          <input
+                          {/* <input
                             placeholder="Pretrazi"
                             type="text"
                             aria-label="Search"
                             name="pretraziPoljeKlinika"
                             onChange={this.handleChange}
-                          />
+                          /> */}
                         {/* <Button onClick={e => this.pretraziSale()}>
                           Pretrazi
                         </Button> */}
                     </form>
                     <div>
-                      <h5>Datum za pregled:</h5>
+                      {/* <h5>Datum za pregled:</h5> */}
   
-                      <DatePicker
+                      {/* <DatePicker
                         placeholderText="Izaberi datum"
                         selected={this.state.datumS}
                         onChange={date=>this.handleChangeDate(date)}
@@ -1410,14 +1468,14 @@ obrisiLekara = e => {
                         dateFormat="dd.MM.yyyy"
   
                         // onChange={date => setStartDate(date)}
-                      />
-                      <Button onClick={this.posaljiDatum}>
+                      /> */}
+                      {/* <Button onClick={this.posaljiDatum}>
                         Pronadji salu
-                      </Button>
+                      </Button> */}
                     </div>
   
-                      <Button className="DodajKlinikuDugme"  onClick={e => this.dodajSalu(e)}>Dodaj salu</Button>
-                      <Button className="DodajKlinikuDugme"  onClick={this.rezervisiSalu}>Rezervisi</Button>
+                      
+                      {/* <Button className="DodajKlinikuDugme"  onClick={this.rezervisiSalu}>Rezervisi</Button> */}
                       <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
                       
                      
