@@ -117,10 +117,11 @@ class ListaZahtevaOdmorOdsustvo extends Component {
  
   //za med sestru
   handleOdobren = e => {
-    e.preventDefault();
+
     console.log("----------------------------");
-    if(e.target.id != "" && e.target.id != null){
-      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtev/" + e.target.id;
+    console.log("HANDLE ODOBREN"+e.currentTarget.id);
+    if(e.currentTarget.id != "" && e.currentTarget.id != null){
+      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtev/" + e.currentTarget.id;
       console.log(url1);
   
       axios
@@ -158,10 +159,11 @@ class ListaZahtevaOdmorOdsustvo extends Component {
   
   };
   handleOdobrenLekar = e=> {
-    e.preventDefault();
+
     console.log("----------------------------");
-    if(e.target.id != "" && e.target.id != null){
-      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtevL/" + e.target.id;
+    console.log("HANDLE ODOBREN LEKAR"+e.currentTarget.id);
+    if(e.currentTarget.id != "" && e.currentTarget.id != null){
+      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtevL/" + e.currentTarget.id;
       console.log(url1);
   
       axios
@@ -200,11 +202,12 @@ class ListaZahtevaOdmorOdsustvo extends Component {
 
   //za med sestru
   handleOdbijen = e => {
-    e.preventDefault();
-    console.log(e.target.id)
-    if(e.target.id != "" && e.target.id != null){
+
+    console.log("ODBIJANJE MS-------------");
+    console.log(e.currentTarget.id)
+    if(e.currentTarget.id != "" && e.currentTarget.id != null){
       //pronadji ceo zahtev na osnovu id-a
-      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtev/" + e.target.id;
+      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtev/" + e.currentTarget.id;
       console.log(url1);
 
       axios
@@ -236,11 +239,12 @@ class ListaZahtevaOdmorOdsustvo extends Component {
 
   }
   handleOdbijenLekar = e => {
-    e.preventDefault();
-    console.log(e.target.id)
-    if(e.target.id  != "" && e.target.id != null){
+
+    console.log("ODBIJANJE L-------------");
+    console.log(e.currentTarget.id)
+    if(e.currentTarget.id  != "" && e.currentTarget.id != null){
       //pronadji ceo zahtev na osnovu id-a
-      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtevL/" + e.target.id;
+      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtevL/" + e.currentTarget.id;
       console.log(url1);
 
       axios
@@ -337,6 +341,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
   listaZahtevaLekar(){
     let res = [];
     let lista2 = this.state.listaZahtevaLekara;
+    console.log("-------------LISTA z LEKARA")
     
     const odbij = <Tooltip id="remove_tooltip">Odbij</Tooltip>;
     const potvrdi = <Tooltip id="remove_tooltip">Potvrdi</Tooltip>;
@@ -388,6 +393,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
             </tr>
         );     
     }
+    return res;
   }
 
     
@@ -455,11 +461,10 @@ class ListaZahtevaOdmorOdsustvo extends Component {
   prikazListeL(){
     this.setState({
       hiddenListaMS: false,
+      hiddenListaL: true
       
     });
-    this.setState({
-      hiddenListaL: true
-    })
+
 
   }
 
