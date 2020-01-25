@@ -8,6 +8,7 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import "klinickiCentar.css";
 import { Table } from "react-bootstrap";
@@ -32,6 +33,7 @@ import axios from "axios";
 import { string } from "prop-types";
 import PocetnaStranicaPacijenta from "./PocetnaStranicaPacijenta";
 import { setHours, setMinutes, subHours, subMinutes } from "date-fns";
+import moment from "moment";
 
 class ListaKlinika extends Component {
   constructor(props) {
@@ -64,7 +66,10 @@ class ListaKlinika extends Component {
       quit: false,
       uspesnoPoslatZahtev: false,
       odabranFilter: "",
-      odabranFilterL: ""
+      odabranFilterL: "",
+      terminiIzabranogLekara:[],
+      terminiZaIzabraniDatum:[],
+      prikazTerminaClick:false
     };
     console.log(this.state);
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
@@ -75,6 +80,7 @@ class ListaKlinika extends Component {
     this.podesiOcenuKlinike = this.podesiOcenuKlinike.bind(this);
     this.podesiOcenuLekara = this.podesiOcenuLekara.bind(this);
     this.slobodniTermini = this.slobodniTermini.bind(this);
+    this.prikazTermina = this.prikazTermina.bind(this);
     this.promenjenOdabirKlinike = this.promenjenOdabirKlinike.bind(this);
     this.promenjenOdabirLekara = this.promenjenOdabirLekara.bind(this);
     this.izaberiVrstuPregleda = this.izaberiVrstuPregleda.bind(this);
@@ -84,6 +90,7 @@ class ListaKlinika extends Component {
     this.prethodno2 = this.prethodno2.bind(this);
     this.odustani = this.odustani.bind(this);
     this.odustani2 = this.odustani2.bind(this);
+    this.vidiTermineClick = this.vidiTermineClick.bind(this);
 
     console.log(this.state.flag);
   }
@@ -109,11 +116,10 @@ class ListaKlinika extends Component {
         });
         console.log(this.state.listaKlinika);
       })
-
+  
       .catch(error => {
         console.log("klinike nisu preuzete");
       });
-
     axios
       .get("http://localhost:8025/api/tipPregleda/all", config)
       .then(Response => {
@@ -136,7 +142,7 @@ class ListaKlinika extends Component {
     console.log(this.state);
     console.log("On change !!!");
   };
-
+ 
   // handleSumbit = e => {
   //   e.preventDefault();
   //   console.log("KLIK SUBMITTT");
@@ -331,16 +337,76 @@ class ListaKlinika extends Component {
     );
     return res;
   }
+  vidiTermineClick = e =>{
+    e.preventDefault();
+    console.log(e.currentTarget.value);
+    
+    const url = "http://localhost:8025/api/lekari/listaZauzetihTermina/"+e.currentTarget.value;
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .get(url, config)
+      .then(Response => {
+        console.log("Preuzeti termini lekara: ");
+        console.log(Response.data);
+        var niz=[];
+        this.setState({
+          terminiIzabranogLekara:Response.data
+        },()=>{console.log(this.state.terminiIzabranogLekara)
+        console.log("TERMINI")
+        this.state.terminiIzabranogLekara.map(termin=>{
+
+          const dat = moment(this.state.datumZaPregled).format("DD.MM.YYYY");
+          const datPoc = moment(termin.datumPocetka).format("DD.MM.YYYY");
+          console.log("******")
+          console.log(dat);
+          console.log(datPoc);
+          console.log("******")
+          if( dat.valueOf() === datPoc.valueOf()){
+            console.log("ISTI SU");
+            niz = niz.concat("09:00 - 11:00");
+
+          }
+        })
+      this.setState({
+        prikazTerminaClick:true,
+        terminiZaIzabraniDatum:niz
+      })
+    })
+
+      })
+  
+      .catch(error => {
+        console.log("Nisu preuzeti termini lekara");
+      });
+  }
+  prikazTermina(){
+    var res = [];
+    if(this.state.prikazTerminaClick == true){
+
+      res.push(<select><option>{this.state.terminiZaIzabraniDatum[0]}</option></select>);
+    }
+    
+    return res;
+  }
   listaLekaraKlinike() {
+    
+
     let res = [];
     console.log("lista lekara");
 
     const pretraga = this.state.pretraziPoljeLekara;
     const oc = this.state.ocenaLekara;
     console.log(oc);
+    const vidiTermine = <Tooltip>Vidi termine</Tooltip>
     if ((pretraga == "" || pretraga == undefined) && oc < 5) {
       let lista = this.state.listaLekara;
-
+      
       for (var i = 0; i < lista.length; i++) {
         res.push(
           <tr key={i}>
@@ -359,6 +425,15 @@ class ListaKlinika extends Component {
             <td key={lista[i].ime}>{lista[i].ime}</td>
             <td key={lista[i].prezime}>{lista[i].prezime}</td>
             <td key={lista[i].ocena}>{lista[i].ocena}</td>
+
+            <td><OverlayTrigger placement="top" overlay={vidiTermine}><Button
+                    bsStyle="info"
+                    simple
+                    type="button"
+                    bsSize="sm"
+                    value={lista[i].id}
+                     onClick={e =>this.vidiTermineClick(e)}><i className="pe-7s-clock text-info"/></Button></OverlayTrigger></td>
+            <td>{this.prikazTermina()}</td>
           </tr>
         );
       }
@@ -400,6 +475,15 @@ class ListaKlinika extends Component {
                 <td key={lista[i].ime}>{lista[i].ime}</td>
                 <td key={lista[i].prezime}>{lista[i].prezime}</td>
                 <td key={lista[i].ocena}>{lista[i].ocena}</td>
+                
+                <td><OverlayTrigger placement="top" overlay={vidiTermine}><Button
+                    bsStyle="info"
+                    simple
+                    type="button"
+                    bsSize="sm"
+                    value={lista[i].id}
+                     onClick={e =>this.vidiTermineClick(e)}><i className="pe-7s-clock text-info"/></Button></OverlayTrigger></td>
+                <td>{this.vidiTermineClick()}</td>
               </tr>
             );
           }
@@ -594,6 +678,32 @@ class ListaKlinika extends Component {
   };
   slobodniTermini() {
     //get zahtev za preuzimanje termina iz baze za zadati datum
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .get(
+        "http://localhost:8025/api/klinike/slobodneKlinike/" +
+          this.state.datumZaPregled,
+        config
+      )
+      .then(Response => {
+        console.log("Preuzeta lista klinika: ");
+        console.log(Response.data);
+        this.setState({
+          listaKlinika:Response.data
+        })
+       
+      })
+
+      .catch(error => {
+        console.log("klinike nisu preuzete");
+      });
+
   }
 
   odabranaKlinika = e => {
