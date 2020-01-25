@@ -1,41 +1,17 @@
 
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import { Grid, Row, Col, Table , NavItem, Nav, NavDropdown, MenuItem} from "react-bootstrap";
-
 import { Card } from "components/Card/Card.jsx";
-import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
 import ProfilPacijenta from "views/ProfilPacijenta.jsx"
 import Button from "components/CustomButton/CustomButton.jsx";
-import Dialog from 'react-bootstrap-dialog';
-
-
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
-import slikaLekar from "assets/img/images.jpg";
-import Login from "login.js";
 import axios from "axios";
-import { render } from "react-dom";
 import events from "events.js";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css"; 
 import Slikalekari from "assets/img/lekari.jpg";
 import slikaPregledi from "assets/img/pregled.jpg"
-import slikaSala from "assets/img/sala.jpg"
-import slikaST from "assets/img/lekari.jpg"
 import kalendarSlika from "assets/img/calendar.png"
 import moment from 'moment';
  
