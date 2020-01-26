@@ -374,7 +374,7 @@ class ListaKlinika extends Component {
               const dat = moment(this.state.datumZaPregled).format(
                 "DD.MM.YYYY"
               );
-              const datPoc = moment(termin.datumPocetka).format("DD.MM.YYYY");
+              const datPoc = moment(termin.datumPocetka).format("DD.MM.YYYY.");
               console.log(moment(termin.datumZaPregled).format("HH:mm"));
               console.log("******");
 
