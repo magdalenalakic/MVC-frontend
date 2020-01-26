@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import { Grid, Row, Col, Table, NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Card } from "components/Card/Card.jsx";
 import "klinickiCentar.css";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
+import Pregled from "views/Pregled.jsx";
 
 
-class ListaPacijenataMedSestra extends Component {
+class ListaPacijenataLekar extends Component {
   constructor(props) {
     super(props);
     console.log("MEDICINSKA SESTRA");
@@ -34,7 +36,8 @@ class ListaPacijenataMedSestra extends Component {
       krvnaGrupa: "",
       ime: "",
       prezime: "",
-      lbo: ""
+      lbo: "",
+      redirectToPregled: false,
 
     };
     this.config = {
@@ -46,12 +49,13 @@ class ListaPacijenataMedSestra extends Component {
     }
     this.listaPacijenata = this.listaPacijenata.bind(this);
     this.handlePrikazZK = this.handlePrikazZK.bind(this);
+    this.handleZapocniPregled = this.handleZapocniPregled.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
   };
   componentWillMount() {
     console.log("--------pocetak");
 
-    const url1 = 'http://localhost:8025/api/medicinskaSestra/listaPacijenata' ; 
+    const url1 = 'http://localhost:8025/api/lekari/listaPacijenataLekara' ; 
 
     // console.log(url1, this.config);
     axios
@@ -76,45 +80,8 @@ class ListaPacijenataMedSestra extends Component {
       console.log("On click !!!");
   };
 
-  odobrenClick = e => {
-      
-      e.preventDefault();
-      console.log("ODOBRENO");
-      this.setState({ [e.target.name]: e.target.value });
-      console.log(this.state);
-      console.log("On click !!!");
-      // console.log(param.i)
-     
-      // this.setState({
-      //   redirectToRegistration: true
-      // });
-      // axios
-      // .post("http://localhost:8025/api/administratoriKC/potvrda", {
-
-      //   // lbo: this.state.email,
-      // })
-      // .then(response => {
-      //   console.log(response.data);
-      //   // this.setState({
-      //   //   uloga: response.data.uloga
-      //   // });
-
-      //   // this.setState({
-      //   //   email: response.data.email
-      //   // });
-
-      //   // console.log(this.state.uloga);
-      //   // this.setState({
-      //   //   redirectToReferrer: true
-      //   // });
-      // })
-      // .catch(error => {
-      //   //   console.log(error.response);
-      //   formErrors.log = "Pogresni kredencijali";
-      //   // this.setState({ formErrors }, () => console.log(this.state));
-      // });
-  };
-
+ 
+//unutar pregleda treba
   handlePrikazZK = e => {
     e.preventDefault();
     console.log( e.target.id);
@@ -272,6 +239,15 @@ class ListaPacijenataMedSestra extends Component {
     
   };
 
+  handleZapocniPregled = e=>{
+    // e.preventDefault();
+    console.log(e.currentTarget.id);
+    this.setState({
+        redirectToPregled: true
+    })
+
+  }
+
   listaPacijenata() {
     let res = [];
     
@@ -292,12 +268,18 @@ class ListaPacijenataMedSestra extends Component {
             <td >{lista[i].drzava}</td>
             <td >{lista[i].telefon}</td>
             
-            <td ><Button className="OdobrenZahtev"
+            <td >
+                
+                <Button className="OdobrenZahtev"
                 id={lista[i].email}
-                 onClick={e => this.handlePrikazZK(e)}
-                > ZK </Button>
+                 onClick={e => this.handleZapocniPregled(e)}
+                > Zapocni pregled </Button>
                 <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
             </td>
+
+            
+              
+
             
           </tr>
         );
@@ -325,9 +307,11 @@ class ListaPacijenataMedSestra extends Component {
               <td >{lista[i].drzava}</td>
               <td >{lista[i].telefon}</td>
               
-              <td ><Button className="OdobrenZahtev"
+              <td >
+              <Button className="OdobrenZahtev"
                   id={lista[i].email}
-                  onClick={e => this.handlePrikazZK(e)}> ZK </Button>
+                    onClick={e => this.handleZapocniPregled(e)}
+                 > Zapocni pregled </Button>
                   <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
               </td>
             
@@ -406,6 +390,20 @@ class ListaPacijenataMedSestra extends Component {
 
 
   render() {
+
+    if (this.state.redirectToPregled === true) {
+        return (
+          <BrowserRouter>
+            <Switch>
+              <Route
+                path="/pregled"
+                render={props => <Pregled {...props}  />}
+              />
+              <Redirect from="/" to="/pregled" />
+            </Switch>
+          </BrowserRouter>
+        );
+      }
     return (
       <div className="content">
         <Grid fluid>
@@ -448,26 +446,7 @@ class ListaPacijenataMedSestra extends Component {
                         <option value={"telefon"}>Telefon</option>
                       </select>
                     </div>
-                    {/* <NavDropdown
-                      onSelect={e => {
-                        this.sortMyArray(e);
-                      }}
-                      className="SortListePacijenata"
-                      title="Sortiraj"
-                      id="nav-item dropdown"
-                      
-                    >
-                      <MenuItem eventKey={"idRastuce"}>Id (rastuce)</MenuItem>
-                      <MenuItem eventKey={"idOpadajuce"}>Id (opadajuce)</MenuItem>
-                      <MenuItem eventKey={"lbo"}>LBO</MenuItem>
-                      <MenuItem eventKey={"ime"}>Ime</MenuItem>
-                      <MenuItem eventKey={"prezime"}>Prezime</MenuItem>
-                      <MenuItem eventKey={"email"}>Email</MenuItem>
-                      <MenuItem eventKey={"adresa"}>Adresa</MenuItem>
-                      <MenuItem eventKey={"grad"}>Grad</MenuItem>
-                      <MenuItem eventKey={"drzava"}>Drzava</MenuItem>
-                      <MenuItem eventKey={"telefon"}>Telefon</MenuItem>
-                    </NavDropdown> */}
+                    
 
                     <Card 
                       // category="Here is a subtitle for this table"
@@ -483,7 +462,6 @@ class ListaPacijenataMedSestra extends Component {
                               <th id="ImePacijenta"> Ime</th>
                               <th id="PrezimePacijenta">Prezime</th>
                               <th id="EmailPacijenta">Email</th>
-                              {/* <th id="LozinkaPacijenta">Lozinka</th> */}
                               <th id="AdresaPacijenta">Adresa</th>
                               <th id="GradPacijenta">Grad</th>
                               <th id="DrzavaPacijenta">Drzava</th>
@@ -502,19 +480,9 @@ class ListaPacijenataMedSestra extends Component {
                     
                     </form>
                 }
-              />
-                
-              
-              
-             
-              
-              
+              /> 
             </Col>
-           
-          
           </Row>
-
-         
         </Grid>
       </div>
     );
@@ -522,4 +490,4 @@ class ListaPacijenataMedSestra extends Component {
 
 }
 
-export default ListaPacijenataMedSestra;
+export default ListaPacijenataLekar;

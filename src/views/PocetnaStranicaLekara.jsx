@@ -35,9 +35,18 @@ class PocetnaStranicaLekara extends React.Component {
       redirectToProfilPacijenta: false,
       emailPacijenta: "",
       pretraziPolje: "",
+      redirectToListaPacijenata: false,
+      redirectToProfilLekara: false,
+      redirectToZahtevZaGodOdmor: false,
+      redirectToZakazivanjePregleda: false
     };
     this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
+
+    this.handleListaPacijenata = this.handleListaPacijenata.bind(this);
+    this.handleProfilLekara = this.handleProfilLekara.bind(this);
+    this.handleZahtevZaGodOdmor = this.handleZahtevZaGodOdmor.bind(this);
+    this.handleZakazivanjePregleda = this.handleZakazivanjePregleda.bind(this);
     
   }
 
@@ -114,6 +123,7 @@ class PocetnaStranicaLekara extends React.Component {
     }
     return legend;
   }
+
   handleChange = e => {
       e.preventDefault();
       this.setState({ [e.target.name]: e.target.value });
@@ -220,22 +230,51 @@ class PocetnaStranicaLekara extends React.Component {
     }
     
   }
+
+
+  renderRedirect = () => {
+  
+    if(this.state.redirectToListaPacijenata){    
+      return <Redirect from="/" to="/admin/listaPacijenataLekar"></Redirect>
+    }else if(this.state.redirectToProfilMedSestre){
+      return <Redirect from="/" to="/admin/izmenaProfilaLekara"></Redirect>
+    }else if(this.state.redirectToZahtevZaGodOdmor){
+      return <Redirect from="/" to="/admin/zahtevLekar"></Redirect>
+    }
+    //nije napravljeno
+    // else if(this.state.redirectToZakazivanjePregleda){
+    //   return <Redirect from="/" to="/admin/zakazivanjePregleda"></Redirect>
+    // }
+  };
+
+  handleListaPacijenata() {
+    this.setState({
+      redirectToListaPacijenata: true,
+    });
+  };
+  handleProfilLekara() {
+    this.setState({
+      redirectToProfilLekara: true,
+    });
+  };
+  handleZahtevZaGodOdmor(){
+    this.setState({
+      redirectToZahtevZaGodOdmor: true,
+    });
+  };
+  handleZakazivanjePregleda(){
+    this.setState({
+      redirectToZakazivanjePregleda: true,
+    });
+  }
+  
+
   render() {
-    // console.log("Ispisi  props u pocetna stranica lekara: "); 
-    // console.log(this.props);
+    
     const emailPacijenta = this.state.emailPacijenta;
     const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
-    const email = this.state.email;
-    const uloga = this.state.uloga;
-    const ime = this.state.ime;
-    const prezime = this.state.prezime;
-    const lbo = this.state.lbo;
-    const telefon = this.state.telefon;
-    // console.log("Render ps email: " + email);
-    // console.log("Render ps uloga: " + uloga);
-    // console.log("Render ps ime: " + ime);
-    // console.log("Render ps prezime: " + prezime);
-    // console.log("Render ps telefon: " + telefon)
+ 
+
     if (redirectToProfilPacijenta === true) {
       return (
         <BrowserRouter>
@@ -252,55 +291,87 @@ class PocetnaStranicaLekara extends React.Component {
 
     
     return (
+
+
       <div className="content">
         <Grid fluid>
           <Row>
             <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                // statsText="Lista pacijenata"
-                // statsValue="105GB"
-                // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Kalendar"
-                
-                //  <BigCalendar
-                //    events={events}
-                //    views={["month"]}
-                //    defaultDate={new Date(2018, 3, 1)}
-                //  />
-             
-              />
+            {this.renderRedirect()}
+              <div onClick={this.handleListaPacijenata}>
+                <StatsCard
+                  bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                  // statsText="Lista pacijenata"
+                  // statsValue="105GB"
+                  // statsIcon={<i className="fa fa-refresh" />}
+                  statsIconText="Lista pacijenata"
+                />
+              </div>
+              
             </Col>
             <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
-                // statsText="Pocetak pregleda"
-                // statsValue="$1,345"
-                // statsIcon={<i className="fa fa-calendar-o" />}
-                 statsIconText="Pocetak pregleda"
-              />
+            {this.renderRedirect()}
+              <div onClick={this.handleProfilLekara}>
+                <StatsCard
+                   bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
+                  // statsText="Lista pacijenata"
+                  // statsValue="105GB"
+                  // statsIcon={<i className="fa fa-refresh" />}
+                  statsIconText="Izmena profila"
+                />
+              </div>
+             
             </Col>
             <Col lg={3} sm={6} >
-              <StatsCard
-                bigIcon={<div> <img src = { Slikalekari} width="30" height="20" /></div>}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                 statsIconText="Zahtev za odmor/odsustvo"
-              />
+              {this.renderRedirect()}
+              <div onClick={this.handleZahtevZaGodOdmor}>
+                <StatsCard
+                   bigIcon={<div> <img src = { Slikalekari} width="30" height="20" /></div>}
+                  // statsText="Lista pacijenata"
+                  // statsValue="105GB"
+                  // statsIcon={<i className="fa fa-refresh" />}
+                  statsIconText="Zahtev za odmor/odsustvo"
+                />
+              </div>
+
+              
             </Col>
             <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
-                statsText=""
-                // statsValue="+45"
-                // statsIcon={<i className="fa fa-refresh" />}
-                 statsIconText="Zakazivanje pregleda i operacija"
-              />
+              {this.renderRedirect()}
+              <div onClick={this.handleZakazivanjePregleda}>
+                <StatsCard
+                  bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
+                  // statsText=""
+                  // statsValue="+45"
+                  // statsIcon={<i className="fa fa-refresh" />}
+                  statsIconText="Zakazivanje pregleda i operacija"
+                />
+              </div>
+             
             </Col>
           </Row>
           <Row>
-            <Col md={6}>
+          <Col >
+              <Card
+                title="Kalendar"
+                // category="24 Hours performance"
+                // stats="Updated 3 minutes ago"
+                content={
+              
+                     <div style={{ height: 500 }}  className="ct-chart">
+                       <Calendar
+                        localizer={localizer}
+                        events={events }
+                        views={["month"]}
+                        defaultDate={new Date()}
+                    />
+                    </div>
+                 
+                }
+                
+              />
+            </Col>
+            {/* <Col >
               <Card
                 title="Lista pacijenata"
                 // category="24 Hours performance"
@@ -320,7 +391,6 @@ class PocetnaStranicaLekara extends React.Component {
                         margin= "2px"
                         onChange={this.handleChange}
                       />
-
              </div>
                     <div className="pretraga">
                       <select onChange={e => {this.sortMyArray(e) }}>
@@ -344,54 +414,28 @@ class PocetnaStranicaLekara extends React.Component {
                       {listaKlinika.map((prop, key) => {
                         return <th key={key}>{prop}</th>;
                       })} */}
-                      <th id="Id">Id</th>
+                      {/* <th id="Id">Id</th>
                       <th id="Ime">Ime</th>
                       <th id="Prezime"> Prezime</th>
                       <th id="Lbo"> Lbo</th>
                       <th id="Email">Email</th>
-                  
                     </tr>
-                   
                   </thead>
                   <tbody>
-                      {this.listaPacijenataLekara()}
-                    
+                      {this.listaPacijenataLekara()} 
                   </tbody>
                 </Table>
                  }
-           
                 />
                 </form>
               }
-             />
-                
-          </Col>
-          <Col md={6} >
-              <Card
-                title=""
-                // category="24 Hours performance"
-                // stats="Updated 3 minutes ago"
-                content={
-              
-                     <div style={{ height: 500 }}  className="ct-chart">
-                       <Calendar
-                        localizer={localizer}
-                        events={events }
-                        views={["month"]}
-                        defaultDate={new Date()}
-                    />
-                    </div>
-                 
-                }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendSales)}</div>
-                // }
-              />
-            </Col>
-          </Row>
-          <Row>
+             />     
+          </Col>  */}
+            
+            
            
-            </Row>
+          </Row>
+          
         </Grid>
       </div>
     );
