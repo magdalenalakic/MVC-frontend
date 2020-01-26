@@ -7,6 +7,7 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
 import Pregled from "views/Pregled.jsx";
+import PregledProfilaPacijenta from "views/PregledProfilaPacijenta.jsx"
 
 
 class ListaPacijenataLekar extends Component {
@@ -38,6 +39,8 @@ class ListaPacijenataLekar extends Component {
       prezime: "",
       lbo: "",
       redirectToPregled: false,
+      redirectToProfilPacijenta: false,
+      emailPacijenta: ""
 
     };
     this.config = {
@@ -49,7 +52,7 @@ class ListaPacijenataLekar extends Component {
     }
     this.listaPacijenata = this.listaPacijenata.bind(this);
     this.handlePrikazZK = this.handlePrikazZK.bind(this);
-    this.handleZapocniPregled = this.handleZapocniPregled.bind(this);
+    this.handlePrikazPacijenta = this.handlePrikazPacijenta.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
   };
   componentWillMount() {
@@ -239,11 +242,15 @@ class ListaPacijenataLekar extends Component {
     
   };
 
-  handleZapocniPregled = e=>{
+  handlePrikazPacijenta = e=>{
     // e.preventDefault();
     console.log(e.currentTarget.id);
     this.setState({
-        redirectToPregled: true
+      emailPacijenta: e.currentTarget.id
+    })
+    this.setState({
+        // redirectToPregled: true,
+        redirectToProfilPacijenta: true
     })
 
   }
@@ -272,8 +279,8 @@ class ListaPacijenataLekar extends Component {
                 
                 <Button className="OdobrenZahtev"
                 id={lista[i].email}
-                 onClick={e => this.handleZapocniPregled(e)}
-                > Zapocni pregled </Button>
+                 onClick={e => this.handlePrikazPacijenta(e)}
+                > Prikaz</Button>
                 <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
             </td>
 
@@ -310,8 +317,8 @@ class ListaPacijenataLekar extends Component {
               <td >
               <Button className="OdobrenZahtev"
                   id={lista[i].email}
-                    onClick={e => this.handleZapocniPregled(e)}
-                 > Zapocni pregled </Button>
+                    onClick={e => this.handlePrikazPacijenta(e)}
+                 > Prikaz </Button>
                   <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
               </td>
             
@@ -391,15 +398,32 @@ class ListaPacijenataLekar extends Component {
 
   render() {
 
-    if (this.state.redirectToPregled === true) {
+    // if (this.state.redirectToPregled === true) {
+    //     return (
+    //       <BrowserRouter>
+    //         <Switch>
+    //           <Route
+    //             path="/pregled"
+    //             render={props => <Pregled {...props}  />}
+    //           />
+    //           <Redirect from="/" to="/pregled" />
+    //         </Switch>
+    //       </BrowserRouter>
+    //     );
+    //   }
+
+      if (this.state.redirectToProfilPacijenta === true) {
         return (
           <BrowserRouter>
             <Switch>
               <Route
-                path="/pregled"
-                render={props => <Pregled {...props}  />}
+                path="/profilPacijenta"
+                render={props => <PregledProfilaPacijenta {...props} 
+                token={this.state.token}
+                email={this.state.email} 
+                emailPacijenta={this.state.emailPacijenta} />}
               />
-              <Redirect from="/" to="/pregled" />
+              <Redirect from="/" to="/profilPacijenta" />
             </Switch>
           </BrowserRouter>
         );
@@ -409,6 +433,9 @@ class ListaPacijenataLekar extends Component {
         <Grid fluid>
           <Row>
             <Col md={12}>
+              {/* <Button className="pregledDugme">Svi pacijenti</Button>
+              <Button className="pregledDugme">Zakazani pacijenti</Button> */}
+
               <Card 
                   title="Lista pacijenata"
                   // category="Here is a subtitle for this table"
@@ -416,22 +443,12 @@ class ListaPacijenataLekar extends Component {
                   // ctResponsive
                  
                   content={
+                    
                     <form
                     onSubmit={this.handleSumbit}
                     className="formaIzmenaProfilaPacijent"
                     >
-                    <div className="pretraga">
-                      <input
-                        className="pretraga"
-                        placeholder="Pretrazi"
-                        type="text"
-                        aria-label="Search"
-                        name="pretraziPolje"
-                        margin= "2px"
-                        onChange={this.handleChange}
-                      />
-                      
-                    </div>
+                    
                     <div className="pretraga">
                       <select onChange={e => {this.sortMyArray(e) }}>
                         {/* <option value={"idRastuce"} >Rbr (rastuce)</option>
@@ -446,6 +463,20 @@ class ListaPacijenataLekar extends Component {
                         <option value={"telefon"}>Telefon</option>
                       </select>
                     </div>
+                    
+                    <div className="pretraga">
+                      <input
+                        className="pretraga"
+                        placeholder="Pretrazi"
+                        type="text"
+                        aria-label="Search"
+                        name="pretraziPolje"
+                        margin= "2px"
+                        onChange={this.handleChange}
+                      />
+                      
+                    </div>
+                    
                     
 
                     <Card 

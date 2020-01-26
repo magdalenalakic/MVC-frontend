@@ -2,11 +2,16 @@
 import React, { Component } from "react";
 import { Grid, Row, Col } from "react-bootstrap";
 import DatePicker from "react-datepicker";
+import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import "react-datepicker/dist/react-datepicker.css";
 import { Card } from "components/Card/Card.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import "klinickiCentar.css";
+
+import Slikalekari from "assets/img/lekari.jpg";
+import slikaPregledi from "assets/img/pregled.jpg"
+import kalendarSlika from "assets/img/calendar.png"
 
 
 class Pregled extends React.Component {
@@ -138,8 +143,66 @@ class Pregled extends React.Component {
     console.log(this.props);
     return (
         <Grid>
+            <Row className="linkoviPregled">
+                <Col lg={3} sm={6}>
+                    {/* {this.renderRedirect()} */}
+                    <div 
+                    // onClick={this.handleListaPacijenata}
+                    >
+                        <StatsCard
+                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                            // statsText="Lista pacijenata"
+                            // statsValue="105GB"
+                            // statsIcon={<i className="fa fa-refresh" />}
+                            statsIconText="Zdravstveni karton"
+                        />
+                    </div>                    
+                </Col>
+                <Col lg={3} sm={6}>
+                    {/* {this.renderRedirect()} */}
+                    <div 
+                    // onClick={this.handleListaPacijenata}
+                    >
+                        <StatsCard
+                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                            // statsText="Lista pacijenata"
+                            // statsValue="105GB"
+                            // statsIcon={<i className="fa fa-refresh" />}
+                            statsIconText="Informacije o pacijentu"
+                        />
+                    </div>                    
+                </Col>
+                <Col lg={3} sm={6}>
+                    {/* {this.renderRedirect()} */}
+                    <div 
+                    // onClick={this.handleListaPacijenata}
+                    >
+                        <StatsCard
+                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                            // statsText="Lista pacijenata"
+                            // statsValue="105GB"
+                            // statsIcon={<i className="fa fa-refresh" />}
+                            statsIconText="Informacije o pregledu"
+                        />
+                    </div>                    
+                </Col>  
+                <Col lg={3} sm={6}>
+                    {/* {this.renderRedirect()} */}
+                    <div 
+                    // onClick={this.handleListaPacijenata}
+                    >
+                        <StatsCard
+                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                            // statsText="Lista pacijenata"
+                            // statsValue="105GB"
+                            // statsIcon={<i className="fa fa-refresh" />}
+                            statsIconText="Zakazi pregled"
+                        />
+                    </div>                    
+                </Col>                   
+            </Row>
             <Row>
-                <div className="content">
+                <div className="formaPregleda">
 
                     <Card
                         title="Pregled"
@@ -148,63 +211,58 @@ class Pregled extends React.Component {
                         content={
                             <div className="formaPregleda" >
                             <Grid fluid>
-                                <Row>
-                                <Col lg={3} sm={6}> 
-                                    <h5>Tip (odmor/odsustvo): </h5>
-                                    <div>
-                                    <select className="izbor"
-                                    // name="odabir" 
-                                        // defaultValue={this.state.klinikaIzmenjenogAK}
-                                    onChange={e => {this.izaberiTip(e)}}
-                                    >
-                                        <option 
-                                        value="ODMOR"
-                                        >ODMOR</option>
-
-                                        <option 
-                                        value="ODSUSTVO"
-                                        >ODSUSTVO</option>
+                               
+                                <Row >
                                     
-                                    </select>
-                                    </div>
-                                </Col>
-                                <Col lg={3} sm={6}>
-                                    <h5>Datum pocetka:</h5>
-                                    <DatePicker
-                                    placeholderText="Izaberi datum"
-                                    selected={this.state.datumPocetka}
-                                    onSelect={this.handleChangeDatePocetka}
+                                        <Col md={4} lg={4} className="dijagnozaRecept">
+                                            <h4 className="poljePregled">Dodavanje dijagnoze</h4>  
+                                            
+                                            <input className="poljePregled"  disabled="disabled" ></input>
+                                            <Button className="pregledDugme" >Dodavanje dijagnoze</Button>
+                                            
+                                            
+                                        </Col>
+                                        <Col md={4} lg={4} className="dijagnozaRecept">
+                                            <h4 className="poljePregled">Izdavanje recepta</h4>
+                                            
+                                            
+                                            <input className="poljePregled"  disabled="disabled" ></input>
+                                            <Button className="pregledDugme" >Izaberi lek</Button>
 
-                                    />
-                                </Col>
-                                <Col lg={3} sm={6}>
-                                    <h5>Datum kraja:</h5>
-                                    <DatePicker
-                                        placeholderText="Izaberi datum"
-                                        selected={this.state.datumKraja}
-                                        onSelect={this.handleChangeDateKraja}
+                                            
 
-                                    />
-                                </Col>
-                                
+                                        </Col>
+                                   
                                 </Row>
                                 <Row >
-                                <Col lg={3} >
-                                <h5 >Razlog: </h5>
-                                <input className="razlogPolje"
-                                    type="text"
-                                    name="opis"
-                                // defaultValue={ime}
-                                    // placeholder={this.state.ime}
-                                    // noValidate
-                                    onChange={this.handleChange}
-                                /> 
-                                </Col>
-                                </Row>
+                                    <Col className="misljenjeOkvir">
+                                    <h4 className="poljePregled">Misljenje</h4>
+                                    <textarea
+                                    className="misljenjePolje"
+                                        type="text"
+                                        name="opis"
+                                        onChange={this.handleChange}
+                                    >
+
+                                    </textarea>
+                                    {/* <input
+                                        className="misljenjePolje"
+                                        type="text"
+                                        name="opis"
+                                        // defaultValue={ime}
+                                        // placeholder={this.state.ime}
+                                        // noValidate
+                                        onChange={this.handleChange}
+                                    />  */}
+                                    </Col>
+                            </Row>
                                 <Row >
-                                <Col lg={3} >
-                                    <Button className="dugmePosalji" onClick={this.zahtevOdmorOdsustvo}>Pošalji</Button>
-                                </Col>
+                                    <Col  >
+                                        <Button 
+                                        className="dugmeZavrsiPregled" 
+                                        // onClick={this.zahtevOdmorOdsustvo}
+                                        >Zavrsi pregled</Button>
+                                    </Col>
                                 </Row>
                             </Grid>
                         
@@ -213,6 +271,7 @@ class Pregled extends React.Component {
                     />
                 </div>
             </Row>
+            
         </Grid>
      
     );

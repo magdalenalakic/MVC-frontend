@@ -189,7 +189,7 @@ class ZahtevLekar extends React.Component {
                       <Row >
                         <Col lg={3} >
                         <h5 >Razlog: </h5>
-                         <input className="razlogPolje"
+                         <textarea className="razlogPolje"
                           type="text"
                           name="opis"
                          // defaultValue={ime}
