@@ -313,18 +313,23 @@ class BrzoZakazivanje extends Component {
             pacijentEmail: this.state.email,
             cena: this.state.izabranaCena,
             datum: this.state.izabraniDatum,
-            canClick: true,
-            termin:t
+            termin: t
           },
           config
         )
         .then(response => {
           console.log("PREGLED");
           console.log(response);
-          this.setState({
-            redirectNext: true,
-            flag: 1
-          });
+          this.setState(
+            {
+              redirectNext: true,
+              flag: 1,
+              canClick: true
+            },
+            () => {
+              this.props.handleClick("ZAHTEV JE POSLAT");
+            }
+          );
         })
         .catch(error => {
           console.log("greska pregled");
@@ -365,7 +370,7 @@ class BrzoZakazivanje extends Component {
           </td>
 
           <td key={lista[i].datum}>
-            {moment(lista[i].datum).format("DD.MM.YYYY HH:mm")}
+            {moment(lista[i].datum).format("DD.MM.YYYY. HH:mm")}
           </td>
           <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
           <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
@@ -677,11 +682,12 @@ class BrzoZakazivanje extends Component {
                 >
                   <Button
                     type="submit"
-                    onClick={
-                      this.state.canClick
-                        ? this.props.handleClick("Zahtev je poslat!")
-                        : null
-                    }
+                    bsStyle="success"
+                    // onClick={
+                    //   this.state.canClick
+                    //     ? this.props.handleClick("Zahtev je poslat!")
+                    //     : null
+                    // }
                   >
                     Zakazi
                   </Button>
