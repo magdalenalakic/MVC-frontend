@@ -1,12 +1,14 @@
 
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
-import { Grid, Row, Col } from "react-bootstrap";
-
+import Button from "components/CustomButton/CustomButton.jsx";
+import { Grid, Row, Col, Table, NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Card } from "components/Card/Card.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
+import Dialog from 'react-bootstrap-dialog';
 import axios from "axios";
 import {
   dataPie,
@@ -21,7 +23,8 @@ import {
   legendBar
 } from "variables/Variables.jsx";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
-import Login from "login.js";
+
+import Pregled from "views/Pregled.jsx";
 
 class PregledProfilaPacijenta extends React.Component {
   constructor(props) {
@@ -42,25 +45,35 @@ class PregledProfilaPacijenta extends React.Component {
       telefon: "",
       brojOsiguranika: "",
       lozinka: "",
-      listaPregleda: []
+      listaPregleda: [],
+      ZKpacijenta: [],
+      zkOpen: false,
+      redirectToPregled: false,
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
     console.log("MEJL : " + this.state.emailPacijenta);
+    this.ucitavanjePacijenta = this.ucitavanjePacijenta.bind(this);
+    this.ucitavanjeZakazanihPregleda = this.ucitavanjeZakazanihPregleda.bind(this);
+    this.handleZapocniPregled = this.handleZapocniPregled.bind(this);
+    this.listaPregleda = this.listaPregleda.bind();
   }
 
-  componentWillMount() {
-    console.log("treba get zahtev da se iskuca");
-    const emailPacijenta = this.state.emailPacijenta;
-    console.log(emailPacijenta);
-
+  ucitavanjePacijenta(){
+    console.log("OVO JE PACIJENT " + this.state.emailPacijenta)
     axios
-    .get("http://localhost:8025/api/pacijenti/findPacijentEmailMS",
-        {email: this.state.emailPacijenta}, this.config)
-
+    .get('http://localhost:8025/api/pacijenti/findPacijentLekar/' + this.state.emailPacijenta ,
+     this.config)
       .then(Response => {
         console.log("Ucitavanje pacijenta");
         console.log(Response);
         this.setState({
-            emailPacijenta: Response.data.email,
+          emailPacijenta: Response.data.id,
           ime: Response.data.ime,
           prezime: Response.data.prezime,
           telefon: Response.data.telefon,
@@ -69,21 +82,8 @@ class PregledProfilaPacijenta extends React.Component {
           drzava: Response.data.drzava,
           lbo: Response.data.lbo
         });
-        //ucitavanje zakazanih pregleda 
-        axios
-        .get("http://localhost:8025/api/pregledi/pregledPacijenta",{email: this.state.emailPacijenta}, this.config)
-        .then(odgovor=> {
-            console.log("Ucitavanje pregleda");
-            console.log(odgovor.data);
-            this.setState({
-                listaPregleda: odgovor.data
-            })
-
-        })
-        .catch(error => {
-            console.log("nije uspelo ucitavanje pregleda pacijenta");
-            console.log(error);
-        });
+        
+        
         
         console.log(this.state);
       })
@@ -93,20 +93,110 @@ class PregledProfilaPacijenta extends React.Component {
       });
   }
 
+  ucitavanjeZakazanihPregleda(){
+    axios
+        .get('http://localhost:8025/api/pregledi/pregledPacijenta/' + this.state.emailPacijenta ,
+        this.config)
+        .then(Response => {
+            console.log("Ucitavanje pregleda");
+            console.log(Response.data);
+            this.setState({
+                listaPregleda: Response.data
+            })
+
+        })
+        .catch(error => {
+            console.log("nije uspelo ucitavanje pregleda pacijenta");
+            console.log(error);
+        });
+  }
+
+  componentWillMount() {
+    console.log("treba get zahtev da se iskuca");
+    
+    console.log(this.state.emailPacijenta);
+    this.ucitavanjePacijenta();
+    this.ucitavanjeZakazanihPregleda();
+  }
+
+  handleZapocniPregled = e=>{
+    // e.preventDefault();
+    console.log(e.currentTarget.id);
+    this.setState({
+      emailPacijenta: e.currentTarget.id
+    })
+    this.setState({
+        redirectToPregled: true,
+        // redirectToProfilPacijenta: true
+    })
+
+  }
+
+  listaPregleda(){
+    let res = [];
+    
+    for (var i = 0; i < this.state.listaPregleda.length; i++) {
+      res.push(
+        <tr key = {i} >
+
+          <td >{this.state.listaPregleda[i].datum}</td>
+          <td >{this.state.listaPregleda[i].nazivTP}</td>
+          <td >{this.state.listaPregleda[i].imeL}</td>
+          <td >{this.state.listaPregleda[i].salaN}</td>
+         
+          
+          <td >
+              
+              <Button className="OdobrenZahtev"
+              id={this.state.listaPregleda[i].id}
+               onClick={e => this.handleZapocniPregled(e)}
+              > Zapocni pregled</Button>
+              {/* <Dialog ref={(el) => { this.dialog = el }} ></Dialog> */}
+          </td>
+
+          
+            
+
+          
+        </tr>
+      );
+    }
+    return res;
+  }
+
  
  
   render() {
+
+     if (this.state.redirectToPregled === true) {
+        return (
+          <BrowserRouter>
+            <Switch>
+              <Route
+                path="/pregled"
+                render={props => <Pregled {...props}
+                token={this.state.token}
+                email={this.state.email} 
+                uloga={this.state.uloga}
+               //nije emailPacijenta vec je id al dobro
+                emailPacijenta={this.state.emailPacijenta}   />}
+              />
+              <Redirect from="/" to="/pregled" />
+            </Switch>
+          </BrowserRouter>
+        );
+      }
     
     const ime = this.state.ime;
     const prezime = this.state.prezime;
     const telefon = this.state.telefon;
     
-    console.log(this.props);
+    // console.log(this.props);
     return (
       <div className="content">
         <Grid fluid>
           <Row>
-            <Col lg={3} sm={6}>
+            {/* <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-server text-warning" />}
                 // statsText="Lista pacijenata"
@@ -114,7 +204,7 @@ class PregledProfilaPacijenta extends React.Component {
                 // statsIcon={<i className="fa fa-refresh" />}
                 statsIconText="Zahtev za pregled"
               />
-            </Col>
+            </Col> */}
          
             <Col lg={3} sm={6}>
               <StatsCard
@@ -134,7 +224,7 @@ class PregledProfilaPacijenta extends React.Component {
                 statsIconText="Istorija pregleda/operacija"
               />
             </Col>
-            <Col lg={3} sm={6}>
+            {/* <Col lg={3} sm={6}>
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
                 // statsText="Profil korisnika"
@@ -142,11 +232,14 @@ class PregledProfilaPacijenta extends React.Component {
                 // statsIcon={<i className="fa fa-clock-o" />}
                 statsIconText="Brzo zakazivanje pregleda"
               />
-            </Col>
+            </Col> */}
             
           </Row>
           <Row>
-            <Col md={8}>
+            
+            {
+              this.state.zkOpen ?
+              <Col md={8}>
               <Card
                 title="Zdravstveni karton"
                 // category="24 Hours performance"
@@ -165,6 +258,47 @@ class PregledProfilaPacijenta extends React.Component {
                
               />
             </Col>
+            : <Col md={8}>
+            
+                <Card
+                  title="Lista pregleda klinike"
+                  // category="Here is a subtitle for this table"
+                  ctTableFullWidth
+                  ctTableResponsive
+                  content={
+                    <div>
+                    {/* <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj novi termin za pregled</Button>
+                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+                     */}
+                   
+                    <Table striped hover>
+                      <thead>
+                        <tr>
+                          <th id="IdPacijenta">Datum</th>
+                          <th id="ImePacijenta">Tip pregleda</th>
+                          <th id="lekar">Lekar</th>
+                          <th>Sala</th>
+                           
+                                    
+                            {/* <th id="pacijent">Pacijent</th> */}
+
+                            {/* <th id="cena">Cena</th> */}
+                                
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {/* {this.listaPregleda()} */}
+                      </tbody>
+                    </Table>
+                    </div>
+                  }
+                />
+              
+              
+            </Col>
+            }
+            
+
 
             <Col md={4}>
               <Card

@@ -6,7 +6,7 @@ import "klinickiCentar.css";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
-import Pregled from "views/Pregled.jsx";
+
 import PregledProfilaPacijenta from "views/PregledProfilaPacijenta.jsx"
 
 
@@ -38,7 +38,7 @@ class ListaPacijenataLekar extends Component {
       ime: "",
       prezime: "",
       lbo: "",
-      redirectToPregled: false,
+      
       redirectToProfilPacijenta: false,
       emailPacijenta: ""
 
@@ -249,7 +249,7 @@ class ListaPacijenataLekar extends Component {
       emailPacijenta: e.currentTarget.id
     })
     this.setState({
-        // redirectToPregled: true,
+        
         redirectToProfilPacijenta: true
     })
 
@@ -278,7 +278,7 @@ class ListaPacijenataLekar extends Component {
             <td >
                 
                 <Button className="OdobrenZahtev"
-                id={lista[i].email}
+                id={lista[i].id}
                  onClick={e => this.handlePrikazPacijenta(e)}
                 > Prikaz</Button>
                 <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
@@ -316,7 +316,7 @@ class ListaPacijenataLekar extends Component {
               
               <td >
               <Button className="OdobrenZahtev"
-                  id={lista[i].email}
+                  id={lista[i].id}
                     onClick={e => this.handlePrikazPacijenta(e)}
                  > Prikaz </Button>
                   <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
@@ -398,19 +398,7 @@ class ListaPacijenataLekar extends Component {
 
   render() {
 
-    // if (this.state.redirectToPregled === true) {
-    //     return (
-    //       <BrowserRouter>
-    //         <Switch>
-    //           <Route
-    //             path="/pregled"
-    //             render={props => <Pregled {...props}  />}
-    //           />
-    //           <Redirect from="/" to="/pregled" />
-    //         </Switch>
-    //       </BrowserRouter>
-    //     );
-    //   }
+   
 
       if (this.state.redirectToProfilPacijenta === true) {
         return (
@@ -421,6 +409,8 @@ class ListaPacijenataLekar extends Component {
                 render={props => <PregledProfilaPacijenta {...props} 
                 token={this.state.token}
                 email={this.state.email} 
+                uloga={this.state.uloga}
+               //nije emailPacijenta vec je id al dobro
                 emailPacijenta={this.state.emailPacijenta} />}
               />
               <Redirect from="/" to="/profilPacijenta" />
