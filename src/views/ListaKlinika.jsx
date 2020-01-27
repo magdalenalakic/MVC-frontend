@@ -1072,7 +1072,7 @@ class ListaKlinika extends Component {
             // ]}
             // minTime={setHours(setMinutes(new Date(), 0), 7)}
             // maxTime={setHours(setMinutes(new Date(), 0), 20)}
-            dateFormat="dd.MM.yyyy"
+            dateFormat="dd.MM.yyyy."
 
             // onChange={date => setStartDate(date)}
           />
