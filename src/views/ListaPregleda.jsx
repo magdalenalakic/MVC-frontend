@@ -399,7 +399,7 @@ class ListaPregleda extends Component {
                       <Table striped hover>
                         <thead>
                           <tr>
-                            <th id="IdPacijenta">Datum</th>
+                            <th id="IdPacijenta">Datum i vreme</th>
                             <th id="ImePacijenta">Tip pregleda</th>
 
                             <th id="lekar">Lekar</th>

@@ -93,7 +93,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
         console.log("Id klinike: " + this.state.idKlinike);
         console.log("******Id klinike: " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
-        const urlKlinike = 'http://localhost:8025/api/klinike/findKlinikaById/' + this.state.idKlinike;    
+        const urlKlinike = 'http://localhost:8025/api/klinike/' + this.state.idKlinike;    
         console.log(urlKlinike);
         axios.get(urlKlinike, config)
           .then(klinika => {

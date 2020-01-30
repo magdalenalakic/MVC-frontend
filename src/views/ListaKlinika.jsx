@@ -855,6 +855,7 @@ class ListaKlinika extends Component {
     }
   };
   redirectReferer() {
+    console.log("REDIRECT REFF")
     var flag = 1;
     console.log(this.state.izabranaKlinika);
 
