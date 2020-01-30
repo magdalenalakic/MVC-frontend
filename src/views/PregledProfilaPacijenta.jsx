@@ -1,42 +1,27 @@
 
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import Button from "components/CustomButton/CustomButton.jsx";
 import { Grid, Row, Col, Table, NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Card } from "components/Card/Card.jsx";
-import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
 import Dialog from 'react-bootstrap-dialog';
 import axios from "axios";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
-
 import Pregled from "views/Pregled.jsx";
+import ListaPacijenataLekar from "views/ListaPacijenataLekar.jsx";
 
-class PregledProfilaPacijenta extends React.Component {
+class PregledProfilaPacijenta extends Component {
   constructor(props) {
-    console.log("PROFIL PACIJENTA")
+   
     super(props);
     console.log(this.props);
     console.log(props.emailPacijenta);
     this.state = {
-        uloga: props.uloga,
-        token: props.token,
-        email: props.email,
-        emailPacijenta: props.emailPacijenta,
+      uloga: props.uloga,
+      token: props.token,
+      email: props.email,
+      emailPacijenta: props.emailPacijenta,
       ime: "",
       prezime: "",
       adresa: "",
@@ -49,6 +34,7 @@ class PregledProfilaPacijenta extends React.Component {
       ZKpacijenta: [],
       zkOpen: false,
       redirectToPregled: false,
+      redirectToListaPac: false
     };
     this.config = {
       headers: {
@@ -57,11 +43,12 @@ class PregledProfilaPacijenta extends React.Component {
         "Content-Type": "application/json"
       }
     }
-    console.log("MEJL : " + this.state.emailPacijenta);
+    
     this.ucitavanjePacijenta = this.ucitavanjePacijenta.bind(this);
     this.ucitavanjeZakazanihPregleda = this.ucitavanjeZakazanihPregleda.bind(this);
     this.handleZapocniPregled = this.handleZapocniPregled.bind(this);
-    this.listaPregleda = this.listaPregleda.bind();
+    this.listaPregledaPacijenta = this.listaPregledaPacijenta.bind(this);
+    this.handleNazad = this.handleNazad.bind(this);
   }
 
   ucitavanjePacijenta(){
@@ -101,9 +88,9 @@ class PregledProfilaPacijenta extends React.Component {
             console.log("Ucitavanje pregleda");
             console.log(Response.data);
             this.setState({
-                listaPregleda: Response.data
+              listaPregleda : Response.data
             })
-
+           
         })
         .catch(error => {
             console.log("nije uspelo ucitavanje pregleda pacijenta");
@@ -131,27 +118,33 @@ class PregledProfilaPacijenta extends React.Component {
     })
 
   }
+  handleNazad (){
+    this.setState({
+      redirectToListaPac: true,
+      
+    })
+  }
 
-  listaPregleda(){
+  listaPregledaPacijenta(){
     let res = [];
-    
-    for (var i = 0; i < this.state.listaPregleda.length; i++) {
+    let lista = this.state.listaPregleda;
+    for (var i = 0; i < lista.length; i++) {
       res.push(
         <tr key = {i} >
 
-          <td >{this.state.listaPregleda[i].datum}</td>
-          <td >{this.state.listaPregleda[i].nazivTP}</td>
-          <td >{this.state.listaPregleda[i].imeL}</td>
-          <td >{this.state.listaPregleda[i].salaN}</td>
+          <td >{lista[i].datum}</td>
+          <td >{lista[i].nazivTP}</td>
+          <td >{lista[i].imeL}</td>
+          <td >{lista[i].salaN}</td>
          
           
           <td >
               
               <Button className="OdobrenZahtev"
-              id={this.state.listaPregleda[i].id}
+              id={lista[i].id}
                onClick={e => this.handleZapocniPregled(e)}
               > Zapocni pregled</Button>
-              {/* <Dialog ref={(el) => { this.dialog = el }} ></Dialog> */}
+             
           </td>
 
           
@@ -182,6 +175,24 @@ class PregledProfilaPacijenta extends React.Component {
                 emailPacijenta={this.state.emailPacijenta}   />}
               />
               <Redirect from="/" to="/pregled" />
+            </Switch>
+          </BrowserRouter>
+        );
+      }
+      if(this.state.redirectToListaPac === true){
+        return (
+          <BrowserRouter>
+            <Switch>
+              <Route
+                path="/listaPacijenataLekar"
+                render={props => <ListaPacijenataLekar {...props}
+                    token={this.state.token}
+                    email={this.state.email} 
+                    uloga={this.state.uloga}
+                  //nije emailPacijenta vec je id al dobro
+                    emailPacijenta={this.state.emailPacijenta}   />}
+              />
+              <Redirect from="/" to="/listaPacijenataLekar" />
             </Switch>
           </BrowserRouter>
         );
@@ -223,6 +234,9 @@ class PregledProfilaPacijenta extends React.Component {
                 // statsIcon={<i className="fa fa-clock-o" />}
                 statsIconText="Istorija pregleda/operacija"
               />
+            </Col>
+            <Col>
+              <Button onClick={this.handleNazad}>Izadji iz profila</Button>
             </Col>
             {/* <Col lg={3} sm={6}>
               <StatsCard
@@ -287,7 +301,7 @@ class PregledProfilaPacijenta extends React.Component {
                         </tr>
                       </thead>
                       <tbody>
-                      {/* {this.listaPregleda()} */}
+                      {this.listaPregledaPacijenta()}
                       </tbody>
                     </Table>
                     </div>
