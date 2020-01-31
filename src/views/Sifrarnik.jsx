@@ -44,6 +44,9 @@ class Sifrarnik extends Component {
 
     this.prikazLekova = this.prikazLekova.bind(this);
     this.prikazDijagnoza = this.prikazDijagnoza.bind(this);
+    this.listaLekovaUKC = this.listaLekovaUKC.bind(this);
+    this.listaLekova = this.listaLekova.bind(this);
+
     
   }
 

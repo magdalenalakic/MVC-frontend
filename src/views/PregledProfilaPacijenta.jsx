@@ -10,6 +10,8 @@ import axios from "axios";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import Pregled from "views/Pregled.jsx";
 import ListaPacijenataLekar from "views/ListaPacijenataLekar.jsx";
+import "klinickiCentar.css";
+import moment from "moment";
 
 class PregledProfilaPacijenta extends Component {
   constructor(props) {
@@ -132,9 +134,9 @@ class PregledProfilaPacijenta extends Component {
       res.push(
         <tr key = {i} >
 
-          <td >{lista[i].datum}</td>
+          <td >{moment(lista[i].datum).format("DD.MM.YYYY HH:mm")}</td>
           <td >{lista[i].nazivTP}</td>
-          <td >{lista[i].imeL}</td>
+          
           <td >{lista[i].salaN}</td>
          
           
@@ -236,7 +238,7 @@ class PregledProfilaPacijenta extends Component {
               />
             </Col>
             <Col>
-              <Button onClick={this.handleNazad}>Izadji iz profila</Button>
+              <Button className="izadjiDugme" onClick={this.handleNazad}>Izadji iz profila</Button>
             </Col>
             {/* <Col lg={3} sm={6}>
               <StatsCard
@@ -290,7 +292,7 @@ class PregledProfilaPacijenta extends Component {
                         <tr>
                           <th id="IdPacijenta">Datum</th>
                           <th id="ImePacijenta">Tip pregleda</th>
-                          <th id="lekar">Lekar</th>
+                          
                           <th>Sala</th>
                            
                                     
