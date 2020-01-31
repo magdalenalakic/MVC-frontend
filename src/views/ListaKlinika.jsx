@@ -372,7 +372,7 @@ class ListaKlinika extends Component {
             var niz = [false, false, false, false];
             this.state.terminiIzabranogLekara.map(termin => {
               const dat = moment(this.state.datumZaPregled).format(
-                "DD.MM.YYYY"
+                "DD.MM.YYYY."
               );
               const datPoc = moment(termin.datumPocetka).format("DD.MM.YYYY.");
               console.log(moment(termin.datumZaPregled).format("HH:mm"));

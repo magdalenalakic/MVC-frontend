@@ -7,6 +7,18 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
+// import {
+//   dataPie,
+//   legendPie,
+//   dataSales,
+//   optionsSales,
+//   responsiveSales,
+//   legendSales,
+//   dataBar,
+//   optionsBar,
+//   responsiveBar,
+//   legendBar
+// } from "variables/Variables.jsx";
 import { ButtonToolbar } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
@@ -16,6 +28,7 @@ import { Form } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
+import ChartistGraph from "react-chartist";
 
 // import "izmenaProfila.css";
 
@@ -50,7 +63,16 @@ class IzvestajOPoslovanju extends Component {
       klinikaNaziv: "",
       klinikaOcena: 0,
       klinikaID: 0,
-      flag: 0
+      flag: 0,
+      nedeljniPrihod: 0,
+      mesecniPrihod: 0,
+      godisnjiPrihod: 0,
+      dataSalesMesecniNivoL: [],
+      dataSalesMesecniNivoS: [[]],
+      dataSalesNedeljniNivoL: [],
+      dataSalesNedeljniNivoS: [[]],
+      dataSalesDnevniNivoL: [],
+      dataSalesDnevniNivoS: [[]]
     };
     this.redirectReferer = this.redirectReferer.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
@@ -116,7 +138,16 @@ class IzvestajOPoslovanju extends Component {
       });
     }
   }
-
+  createLegend(json) {
+    var legend = [];
+    for (var i = 0; i < json["names"].length; i++) {
+      var type = "fa fa-circle text-" + json["types"][i];
+      legend.push(<i className={type} key={i} />);
+      legend.push(" ");
+      legend.push(json["names"][i]);
+    }
+    return legend;
+  }
   componentWillMount() {
     const url = "http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail";
     var config = {
@@ -126,80 +157,256 @@ class IzvestajOPoslovanju extends Component {
         "Content-Type": "application/json"
       }
     };
-    axios
-    .get("http://localhost:8025/api/klinike/nedeljniPrihodi/"+3, config)
-    .then(Response => {
-        console.log(Response)
-    })
-    .catch(error => {
-        console.log("pregledi  nisu preuzeti");
-      });
+
+    var klinikaID = 0;
+    var listaLekara = [];
+    var klinikaNaziv = "";
+    var klinikaOcena = "";
+    var nedeljniPrihod = 0;
+    var mesecniPrihod = 0;
+    var godisnjiPrihod = 0;
 
     axios
       .get(url, config)
       .then(Response => {
-        console.log("Preuzeti unapred def pregledi: ");
-        console.log(Response.data);
-
+        klinikaID = Response.data.idKlinike;
         this.setState(
           {
             klinikaID: Response.data.idKlinike
           },
           () => {
             console.log(this.state);
-            axios
-              .get(
-                "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
-                  this.state.klinikaID,
-                config
-              )
-              .then(Response => {
-                console.log("Preuzeti unapred def pregledi: ");
-                console.log(Response.data);
-
-                this.setState(
-                  {
-                    listaLekara: Response.data.sort((b, a) => a.ocena - b.ocena)
-                  },
-                  () => {
-                    console.log(this.state);
-                    axios
-                      .get(
-                        "http://localhost:8025/api/klinike/" +
-                          this.state.klinikaID,
-                        config
-                      )
-                      .then(Response => {
-                        console.log("Preuzeti unapred def pregledi: ");
-                        console.log(Response.data);
-
-                        this.setState(
-                          {
-                            klinikaNaziv: Response.data.naziv,
-                            klinikaOcena: Response.data.ocena
-                          },
-                          () => {
-                            console.log(this.state);
-                          }
-                        );
-                      })
-
-                      .catch(error => {
-                        console.log("pregledi  nisu preuzeti");
-                      });
-                  }
-                );
-              })
-
-              .catch(error => {
-                console.log("pregledi  nisu preuzeti");
-              });
           }
         );
-      })
+        console.log(klinikaID);
+        console.log("lekariklinike");
+        console.log(klinikaID);
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/listaLekaraKlinika/" + klinikaID,
+            config
+          )
+          .then(Response => {
+            this.setState(
+              {
+                listaLekara: Response.data.sort((b, a) => a.ocena - b.ocena)
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+            listaLekara = Response.data;
+            console.log(listaLekara);
+          })
+          .catch(error => {
+            console.log("lista lekara nije preuzeta");
+          });
+        axios
+          .get("http://localhost:8025/api/klinike/" + klinikaID, config)
+          .then(Response => {
+            klinikaNaziv = Response.data.naziv;
+            klinikaOcena = Response.data.ocena;
+            this.setState(
+              {
+                klinikaNaziv: Response.data.naziv,
+                klinikaOcena: Response.data.ocena
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+          })
+          .catch(error => {
+            console.log("klinika nije preuzeta");
+          });
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/nedeljniPrihodi/" + klinikaID,
+            config
+          )
+          .then(Response => {
+            nedeljniPrihod = Response.data;
+            console.log(nedeljniPrihod);
+            this.setState(
+              {
+                nedeljniPrihod: Response.data
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+          })
+          .catch(error => {
+            console.log("nedeljniPrihodi nisu preuzeti");
+          });
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/mesecniPrihodi/" + klinikaID,
+            config
+          )
+          .then(Response => {
+            mesecniPrihod = Response.data;
+            console.log(mesecniPrihod);
+            this.setState(
+              {
+                mesecniPrihod: Response.data
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+          })
+          .catch(error => {
+            console.log("mesecniPrihodi nisu preuzeti");
+          });
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/godisnjiPrihodi/" + klinikaID,
+            config
+          )
+          .then(Response => {
+            godisnjiPrihod = Response.data;
+            console.log(godisnjiPrihod);
+            this.setState(
+              {
+                godisnjiPrihod: Response.data
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+          })
+          .catch(error => {
+            console.log("godisnjiPrihodi nisu preuzeti");
+          });
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/godisnjiPrihodi/" + klinikaID,
+            config
+          )
+          .then(Response => {
+            godisnjiPrihod = Response.data;
+            console.log(godisnjiPrihod);
+            this.setState(
+              {
+                godisnjiPrihod: Response.data
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+          })
+          .catch(error => {
+            console.log("godisnjiPrihodi nisu preuzeti");
+          });
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/dnevniNivo/" + klinikaID,
+            config
+          )
+          .then(Response => {
+            console.log("DNEVNI NIVO");
+            console.log(Response.data);
 
+            var dnevni = [];
+            var series = [];
+            Object.entries(Response.data).sort(([a], [b]) =>  a - b).map(([key, value]) => {
+              dnevni = dnevni.concat(key);
+              series = series.concat(value);
+              // dnevni = dnevni.sort((a, b) => a - b);
+            });
+            this.setState(
+              {
+                dataSalesDnevniNivoL: dnevni,
+                dataSalesDnevniNivoS: series
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+          })
+          .catch(error => {
+            console.log("godisnjiPrihodi nisu preuzeti");
+          });
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/nedeljniNivo/" + klinikaID,
+            config
+          )
+          .then(Response => {
+            console.log("NEDELJNI NIVO");
+            console.log(Response.data);
+            // var podaci = Response.data.sort((a, b) => {
+            //   return (
+            //     new Date(Response.data[0]).getTime() -
+            //     new Date(Response.data[0]).getTime()
+            //   );
+            // });
+            var nedeljni = [];
+            var series = [];
+            Object.entries(Response.data).sort(([a], [b]) =>  new Date(a).getTime() - new Date(b).getTime()).map(([key, value]) => {
+              nedeljni = nedeljni.concat(moment(key).format("DD.MM."));
+              series = series.concat(value);
+              // nedeljni = nedeljni.sort((a, b) => {
+              //   return new Date(a).getTime() - new Date(b).getTime();
+              // });
+            });
+            this.setState(
+              {
+                dataSalesNedeljniNivoL: nedeljni,
+                dataSalesNedeljniNivoS: series
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+          })
+          .catch(error => {
+            console.log("godisnjiPrihodi nisu preuzeti");
+          });
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/mesecniNivo/" + klinikaID,
+            config
+          )
+          .then(Response => {
+            console.log("MESECNI NIVO");
+            console.log(Response.data);
+            var mesecni = [];
+            var series = [];
+            Object.entries(Response.data).sort(([a], [b]) =>  new Date(a).getTime() - new Date(b).getTime()).map(([key, value]) => {
+              mesecni = mesecni.concat(moment(key).format("DD.MM."));
+              series = series.concat(value);
+              // mesecni = mesecni.sort((a, b) => {
+              //   return new Date(a).getTime() - new Date(b).getTime();
+              // });
+            });
+            this.setState(
+              {
+                dataSalesMesecniNivoL: mesecni,
+                dataSalesMesecniNivoS: series
+              },
+              () => {
+                console.log(this.state);
+              }
+            );
+            // godisnjiPrihod = Response.data;
+            // console.log(godisnjiPrihod);
+            // this.setState(
+            //   {
+            //     godisnjiPrihod: Response.data
+            //   },
+            //   () => {
+            //     console.log(this.state);
+            //   }
+            // );
+          })
+          .catch(error => {
+            console.log("godisnjiPrihodi nisu preuzeti");
+          });
+      })
       .catch(error => {
-        console.log("pregledi  nisu preuzeti");
+        console.log("admin nije preuzet");
       });
   }
   handleSortKlinika(sortBy) {
@@ -521,6 +728,58 @@ class IzvestajOPoslovanju extends Component {
     console.log("RENDER");
     const email = this.state.email;
     const uloga = this.state.uloga;
+    var dataSalesDnevniNivo = {
+      labels: this.state.dataSalesDnevniNivoL,
+      series: [this.state.dataSalesDnevniNivoS]
+    };
+    var dataSalesNedeljniNivo = {
+      labels: this.state.dataSalesNedeljniNivoL,
+      series: [[], [], this.state.dataSalesNedeljniNivoS]
+    };
+    var dataSalesMesecniNivo = {
+      labels: this.state.dataSalesMesecniNivoL,
+      series: [[], this.state.dataSalesMesecniNivoS]
+    };
+    var optionsSales = {
+      low: 0,
+      high: 10,
+      showArea: false,
+      height: "245px",
+      axisX: {
+        showGrid: false
+      },
+      lineSmooth: true,
+      showLine: true,
+      showPoint: true,
+      fullWidth: true,
+      chartPadding: {
+        right: 50
+      }
+    };
+    var responsiveSales = [
+      [
+        "screen and (max-width: 640px)",
+        {
+          axisX: {
+            labelInterpolationFnc: function(value) {
+              return value[0];
+            }
+          }
+        }
+      ]
+    ];
+    var legendSalesDnevniNivo = {
+      names: ["Broj pregleda"],
+      types: ["info"]
+    };
+    var legendSalesNedeljniNivo = {
+      names: ["Broj pregleda"],
+      types: ["warning"]
+    };
+    var legendSalesMesecniNivo = {
+      names: ["Broj pregleda"],
+      types: ["danger"]
+    };
 
     if (this.state.flag == 0) {
       return (
@@ -535,57 +794,56 @@ class IzvestajOPoslovanju extends Component {
                   content={
                     <div id="a">
                       {/* <div className="slikaKCdiv">
-                            <h2> 
+                            <h6> 
                               <img className="slikaLekar" src={slikaLekar}></img>
-                            </h2>
+                            </h6>
                           </div> */}
                       <div className="typo-line">
-                        <h2>
+                        <h6>
                           <p className="category">Klinika:</p>
                           <label className="adresaKC">
                             {" "}
                             {this.state.klinikaNaziv}{" "}
                           </label>
-                        </h2>
+                        </h6>
                       </div>
                       <div className="typo-line">
-                        <h2>
+                        <h6>
                           <p className="category">Ocena:</p>
                           <label className="adresaKC">
                             {this.state.klinikaOcena}{" "}
                           </label>
-                        </h2>
+                        </h6>
                       </div>
-                      
-                      <div>
-                      {this.redirectReferer}
-                        <ButtonToolbar>
-                          <Button
-                            bsStyle="info"
-                            // style={{ outline: "#42f5a4" }}
-                            simple
-                            type="button"
-                            bsSize="md"
-                            onClick={this.prikaziPrihode}
-                          >
-                            Prikazi prihode
-                          </Button>
-                          <Button
-                            bsStyle="info"
-                            // style={{ outline: "#42f5a4" }}
-                            simple
-                            type="button"
-                            bsSize="md"
-                            onClick={this.prikaziGrafik}
-                          >
-                            Prikazi grafik
-                          </Button>
-                        </ButtonToolbar>
+                      <div className="typo-line">
+                        <h6>
+                          <p className="category">Nedeljni prihod:</p>
+                          <label className="adresaKC">
+                            {this.state.nedeljniPrihod} RSD
+                          </label>
+                        </h6>
                       </div>
+                      <div className="typo-line">
+                        <h6>
+                          <p className="category">Mesecni prihod:</p>
+                          <label className="adresaKC">
+                            {this.state.mesecniPrihod} RSD
+                          </label>
+                        </h6>
+                      </div>
+                      <div className="typo-line">
+                        <h6>
+                          <p className="category">godisnjiPrihod:</p>
+                          <label className="adresaKC">
+                            {this.state.godisnjiPrihod} RSD
+                          </label>
+                        </h6>
+                      </div>
+
+                      <div></div>
                     </div>
                   }
                 />
-                
               </Col>
               <Col md={8}>
                 <Card
@@ -608,13 +866,78 @@ class IzvestajOPoslovanju extends Component {
                 />
               </Col>
             </Row>
+            <Row>
+              <Col md={3}>
+                <Card
+                  statsIcon="fa fa-history"
+                  id="chartHours"
+                  title="Grafik odrzanih pregleda"
+                  category="na dnevnom nivou"
+                  content={
+                    <div className="ct-chart">
+                      <ChartistGraph
+                        data={dataSalesDnevniNivo}
+                        type="Line"
+                        options={optionsSales}
+                        responsiveOptions={responsiveSales}
+                      />
+                    </div>
+                  }
+                  legend={
+                    <div className="legend">
+                      {this.createLegend(legendSalesDnevniNivo)}
+                    </div>
+                  }
+                />
+              </Col>
+              <Col md={6}>
+                <Card
+                  statsIcon="fa fa-history"
+                  id="chartHours"
+                  title="Grafik odrzanih pregleda"
+                  category="na nedeljnom nivou"
+                  content={
+                    <div className="ct-chart">
+                      <ChartistGraph
+                        data={dataSalesNedeljniNivo}
+                        type="Line"
+                        options={optionsSales}
+                        responsiveOptions={responsiveSales}
+                      />
+                    </div>
+                  }
+                  legend={
+                    <div className="legend">
+                      {this.createLegend(legendSalesNedeljniNivo)}
+                    </div>
+                  }
+                />
+              </Col>
+              <Col md={3}>
+                <Card
+                  statsIcon="fa fa-history"
+                  id="chartHours"
+                  title="Grafik odrzanih pregleda"
+                  category="na mesecnom nivou"
+                  content={
+                    <div className="ct-chart">
+                      <ChartistGraph
+                        data={dataSalesMesecniNivo}
+                        type="Line"
+                        options={optionsSales}
+                        responsiveOptions={responsiveSales}
+                      />
+                    </div>
+                  }
+                  legend={
+                    <div className="legend">
+                      {this.createLegend(legendSalesMesecniNivo)}
+                    </div>
+                  }
+                />
+              </Col>
+            </Row>
           </Grid>
-        </div>
-      );
-    } else if (this.state.flag == 1) {
-      return (
-        <div>
-          <h1>PRIHOD</h1>
         </div>
       );
     }
