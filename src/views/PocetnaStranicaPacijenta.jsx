@@ -103,13 +103,13 @@ class PocetnaStranicaPacijenta extends Component {
 
   renderRedirect = () => {
     if (this.state.redirectToZahtevZaPregled == true) {
-      return <Redirect from="/" to="/admin/klinikePacijenta" />;
+      return <Redirect from="/" to="/pacijent/klinikePacijenta" />;
     } else if (this.state.redirectBrzoZakazivanje == true) {
-      return <Redirect from="/" to="/admin/brzoZakazivanje" />;
+      return <Redirect from="/" to="/pacijent/brzoZakazivanje" />;
     } else if (this.state.redirectIstorijaPO == true) {
-      return <Redirect from="/" to="/admin/istorija" />;
+      return <Redirect from="/" to="/pacijent/istorija" />;
     } else if (this.state.redirectZdravstveniKarton == true) {
-      return <Redirect from="/" to="/admin/zdravstveniKarton" />;
+      return <Redirect from="/" to="/pacijent/zdravstveniKarton" />;
     }
   };
 

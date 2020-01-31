@@ -8,13 +8,12 @@ import "klinickiCentar.css";
 
 // import ChartistGraph from "react-chartist";
 // import { Grid, Row, Col, Table } from "react-bootstrap";
-// import NotificationSystem from "react-notification-system";
-
+import NotificationSystem from "react-notification-system";
 
 // import axios from "axios";
 // import FixedPlugin from "components/FixedPlugin/FixedPlugin.jsx";
 
-// import { style } from "variables/Variables.jsx";
+import { style } from "variables/Variables.jsx";
 
 // import { Card } from "components/Card/Card.jsx";
 // import { StatsCard } from "components/StatsCard/StatsCard.jsx";
@@ -44,7 +43,7 @@ class MedicinskaSestra extends Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
-      
+
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -52,16 +51,14 @@ class MedicinskaSestra extends Component {
       hasImage: true,
       fixedClasses: "dropdown show-dropdown open"
     };
-    console.log("MEDICINSKA SESTRA")
+    console.log("MEDICINSKA SESTRA");
     console.log(this.state.uloga);
     console.log(this.state.email);
-  
   }
-
 
   getRoutes = routes => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/medses") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -72,7 +69,6 @@ class MedicinskaSestra extends Component {
                 uloga={this.state.uloga}
                 email={this.state.email}
                 token={this.state.token}
-
               />
             )}
             key={key}
@@ -102,18 +98,18 @@ class MedicinskaSestra extends Component {
       default:
         break;
     }
-    // this.state._notificationSystem.addNotification({
-    //   title: <span data-notify="icon" className="pe-7s-gift" />,
-    //   message: (
-    //     <div>
-    //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-    //       every web developer.
-    //     </div>
-    //   ),
-    //   level: level,
-    //   position: position,
-    //   autoDismiss: 15
-    // });
+    this.state._notificationSystem.addNotification({
+      title: <span data-notify="icon" className="pe-7s-gift" />,
+      message: (
+        <div>
+          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
+          every web developer.
+        </div>
+      ),
+      level: level,
+      position: position,
+      autoDismiss: 15
+    });
   };
   getBrandText = path => {
     for (let i = 0; i < routes.length; i++) {
@@ -143,7 +139,49 @@ class MedicinskaSestra extends Component {
       this.setState({ fixedClasses: "dropdown" });
     }
   };
- 
+  componentWillMount() {
+    console.log("WILL MOUNT");
+    if (this.state.email == "" || this.state.email == undefined) {
+      this.setState({
+        email: JSON.parse(localStorage.getItem("email") || "{}"),
+        token: JSON.parse(localStorage.getItem("token") || "{}")
+      });
+    }
+  }
+  componentDidMount() {
+    console.log("-----------------------");
+    console.log("DID MOUNT");
+    localStorage.setItem("email", JSON.stringify(this.state.email));
+    localStorage.setItem("token", JSON.stringify(this.state.token));
+    console.log(this.refs);
+    this.setState({ _notificationSystem: this.refs.notificationSystem });
+    var _notificationSystem = this.refs.notificationSystem;
+    var color = 4;
+    var level;
+    switch (color) {
+      case 1:
+        level = "success";
+        break;
+      case 2:
+        level = "warning";
+        break;
+      case 3:
+        level = "error";
+        break;
+      case 4:
+        level = "info";
+        break;
+      default:
+        break;
+    }
+    _notificationSystem.addNotification({
+      title: <span data-notify="icon" className="pe-7s-gift" />,
+      message: <div>Dobrodosli, {this.state.email}</div>,
+      level: level,
+      position: "tr",
+      autoDismiss: 15
+    });
+  }
   componentDidUpdate(e) {
     if (
       window.innerWidth < 993 &&
@@ -161,9 +199,8 @@ class MedicinskaSestra extends Component {
   render() {
     // const {listaKlinika} = this.state.listaKlinika
     return (
-      
       <div className="wrapper">
-        {/* <NotificationSystem ref="notificationSystem" style={style} /> */}
+        <NotificationSystem ref="notificationSystem" style={style} />
         <Sidebar
           {...this.props}
           routes={routes}
@@ -181,7 +218,6 @@ class MedicinskaSestra extends Component {
           <Footer />
         </div>
       </div>
-      
     );
   }
 }

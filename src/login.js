@@ -137,12 +137,17 @@ class Login extends Component {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/admin"
+              path="/kc"
               render={props => (
-                <KlinickiCentar {...props} email={email} uloga={uloga} token={token}/>
+                <KlinickiCentar
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                />
               )}
             />
-            <Redirect from="/" to="/admin/klinickiCentar" />
+            <Redirect from="/" to="/kc/klinickiCentar" />
           </Switch>
         </BrowserRouter>
       );
@@ -152,12 +157,17 @@ class Login extends Component {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/admin"
+              path="/admink"
               render={props => (
-                <AdministatorKlinike {...props} email={email} uloga={uloga} token={token}/>
+                <AdministatorKlinike
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                />
               )}
             />
-            <Redirect from="/" to="/admin/pocetnaStranica" />
+            <Redirect from="/" to="/admink/pocetnaStranica" />
           </Switch>
         </BrowserRouter>
       );
@@ -167,11 +177,12 @@ class Login extends Component {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/admin"
-              render={props => <Lekar {...props} email={email} uloga={uloga} token={token}/>}
-
+              path="/lekar"
+              render={props => (
+                <Lekar {...props} email={email} uloga={uloga} token={token} />
+              )}
             />
-            <Redirect from="/" to="/admin/pocetnaStranica" />
+            <Redirect from="/" to="/lekar/pocetnaStranica" />
           </Switch>
         </BrowserRouter>
       );
@@ -181,12 +192,17 @@ class Login extends Component {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/admin"
+              path="/medses"
               render={props => (
-                <MedicinskaSestra {...props} email={email} uloga={uloga} token={token}/>
+                <MedicinskaSestra
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                />
               )}
             />
-            <Redirect from="/" to="/admin/pocetnaStranica" />
+            <Redirect from="/" to="/medses/pocetnaStranica" />
           </Switch>
         </BrowserRouter>
       );
@@ -196,7 +212,7 @@ class Login extends Component {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/admin"
+              path="/pacijent"
               render={props => (
                 <Pacijent
                   {...props}
@@ -206,7 +222,7 @@ class Login extends Component {
                 />
               )}
             />
-            <Redirect from="/" to="/admin/pocetnaStranica" />
+            <Redirect from="/" to="/pacijent/pocetnaStranica" />
           </Switch>
         </BrowserRouter>
       );

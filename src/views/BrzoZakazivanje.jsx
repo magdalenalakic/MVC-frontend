@@ -492,7 +492,7 @@ class BrzoZakazivanje extends Component {
             />
           )}
         >
-          <Redirect from="/" to="/admin/klinikePacijenta" />
+          <Redirect from="/" to="/pacijent/klinikePacijenta" />
         </Route>
       );
     }
@@ -706,7 +706,7 @@ class BrzoZakazivanje extends Component {
         </div>
       );
     } else if (this.state.flag == 1) {
-      return <Redirect from="/" to="/admin/pocetnaStranica" />;
+      return <Redirect from="/" to="/pacijent/pocetnaStranica" />;
     }
     //   return (
     //     <div className="content">
