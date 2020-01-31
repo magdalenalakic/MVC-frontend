@@ -24,6 +24,7 @@ class PregledProfilaPacijenta extends Component {
       token: props.token,
       email: props.email,
       emailPacijenta: props.emailPacijenta,
+      idPregleda: 0,
       ime: "",
       prezime: "",
       adresa: "",
@@ -108,16 +109,20 @@ class PregledProfilaPacijenta extends Component {
     this.ucitavanjeZakazanihPregleda();
   }
 
-  handleZapocniPregled = e=>{
+  handleZapocniPregled = e =>{
     // e.preventDefault();
     console.log(e.currentTarget.id);
+    // this.setState({
+    //   emailPacijenta: e.currentTarget.id
+    // })
     this.setState({
-      emailPacijenta: e.currentTarget.id
-    })
-    this.setState({
+      idPregleda : e.currentTarget.id
+    }, ()=> {
+      this.setState({
         redirectToPregled: true,
-        // redirectToProfilPacijenta: true
     })
+    })
+    
 
   }
   handleNazad (){
@@ -143,8 +148,8 @@ class PregledProfilaPacijenta extends Component {
           <td >
               
               <Button className="OdobrenZahtev"
-              id={lista[i].id}
-               onClick={e => this.handleZapocniPregled(e)}
+                id={lista[i].id}
+                onClick={e => this.handleZapocniPregled(e)}
               > Zapocni pregled</Button>
              
           </td>
@@ -173,6 +178,7 @@ class PregledProfilaPacijenta extends Component {
                 token={this.state.token}
                 email={this.state.email} 
                 uloga={this.state.uloga}
+                idPregleda ={this.state.idPregleda}
                //nije emailPacijenta vec je id al dobro
                 emailPacijenta={this.state.emailPacijenta}   />}
               />

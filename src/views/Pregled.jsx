@@ -26,6 +26,7 @@ class Pregled extends React.Component {
       email: props.email,
       token: props.token,
       emailPacijenta: props.emailPacijenta,
+      idPregleda : props.idPregleda,
       id: "",  
       opis: "",
       idMedSestre: 0, 
@@ -37,8 +38,10 @@ class Pregled extends React.Component {
       sifraOznaceneDijagnoze: "",
       nazivOznaceneDijagnoze: "",
       listaLekova: [],
-      izabraniLekovi: [],
-      izabranLek: null
+      izabraniLekovi:[],
+      recepti: [],
+      izabranLek: null,
+      misljenje: "",
 
 
       
@@ -50,11 +53,9 @@ class Pregled extends React.Component {
         "Content-Type": "application/json"
       }
     }
-    this.izaberiTip = this.izaberiTip.bind(this);
-    this.zahtevOdmorOdsustvo = this.zahtevOdmorOdsustvo.bind(this);
+    
     this.handleChange = this.handleChange.bind(this);
-    this.handleChangeDatePocetka = this.handleChangeDatePocetka.bind(this);
-    this.handleChangeDateKraja = this.handleChangeDateKraja.bind(this);
+    
     this.handleOdustani = this.handleOdustani.bind(this);
 
     //dijagnoze
@@ -70,46 +71,19 @@ class Pregled extends React.Component {
     this.biranjeLeka = this.biranjeLeka.bind(this);
     this.izabraniLekovi = this.izabraniLekovi.bind(this);
 
+    this.zavrsiPregled = this.zavrsiPregled.bind(this);
+
     
   }
 
-  izaberiTip(izbor) {
-    
-    console.log("izbor odmor odsustvo");
 
-    console.log(izbor.target.value);
-
-    this.setState({
-      tipOdmorOdsustvo : izbor.target.value
-      
-    },() => console.log(this.state.tipOdmorOdsustvo));
-  
-  };
   handleChange = e => {
     e.preventDefault();
     const { name, value } = e.target;
 
     this.setState({ [name]: value }, () => console.log(this.state));
   };
-  handleChangeDatePocetka = date => {
-    console.log(date)
-    this.setState(
-      {
-        datumPocetka: date
-      },
-      () => console.log(this.state)
-    );
-  };
-  handleChangeDateKraja = date => {
-    console.log(date)
-    this.setState(
-      {
-        datumKraja: date
-      },
-      () => console.log(this.state)
-      
-    );
-  };
+ 
   handleOdustani(){
     this.setState({
       redirectToOdustani: true
@@ -145,31 +119,6 @@ class Pregled extends React.Component {
       console.log("Med sestra nije preuzeta");
     });
   }
-  zahtevOdmorOdsustvo() {
-
-    const url = "http://localhost:8025/api/odmorodsustvo/posaljiZahtevLekar";
-    axios
-      .post(url,{ 
-        datumOd : this.state.datumPocetka,
-        datumDo : this.state.datumKraja,
-        opis : this.state.opis,
-        status: false,
-        idLekara : this.state.id,
-        imeL: this.state.imeMS,
-        prezimeL: this.state.prezimeMS,
-        emailL: this.state.email,
-        tip : this.state.tipOdmorOdsustvo
-      }, this.config)
-      .then(Response => {
-        
-        console.log("uspesno poslat zahtev")
-        console.log(Response.data);
-
-      })
-      .catch(error => {
-        console.log("Zahtev nije poslat");
-      });
-  };
  
 
   listaDijagnozaUKC(){
@@ -305,57 +254,113 @@ class Pregled extends React.Component {
   }
 
   biranjeLeka(lek){
-    console.log("lek izabran : " + lek.target.value);
+    console.log("BIRANJE LEKA : " + lek.target.value);
     
     //nije potrebno
     this.setState({
       izabranLek: lek.target.value
-    });
+    }, ()=> console.log("izabran lek : " + this.state.izabranLek));
 
-    // console.log("Value id:" + dijagnoza.target.value);
+
+    let zaBrisanje = 0;
     let lista1 = this.state.izabraniLekovi;
-    let zaBrisanje = null;
-    for(var i = 0; i < lista1.length; i++){
+    let lista = this.state.listaLekova;
 
-      if(lista1[i].id == lek.target.value){
-        console.log("brise se")
-        zaBrisanje = lista1[i].id;
-
-
-      }else{
-        console.log("dodaje se")
-        let lista = this.state.listaLekova;
-
-        for (var i = 0; i < lista.length; i++) {
-
-          var naziv = lista[i].naziv;
-          var id = lista[i].id;
-          var sifra = lista[i].sifra;
-
-          if (id == lek.target.value) {
-            
-            this.state.izabraniLekovi.push({
-              id: id,
-              sifra: sifra,
-              naziv: naziv
-            })
-            // this.setState({
-            //   nazivOznaceneDijagnoze: naziv,
-            //   sifraOznaceneDijagnoze: sifra
-            // }, ()=> this.dialog.hide());
-    
-          }
+    if(lista1.length == 0){
+      console.log("dodaje se")
           
+  
+          for (var i = 0; i < lista.length; i++) {
+  
+            var naziv = lista[i].naziv;
+            var id = lista[i].id;
+            var sifra = lista[i].sifra;
+  
+            if (id == lek.target.value) {
+              this.state.izabraniLekovi.push({
+                id: lista[i].id,
+                sifra: lista[i].sifra,
+                naziv: lista[i].naziv
+              }, ()=> {
+  
+                
+                for(var i = 0; i < this.state.izabraniLekovi.length; i++){
+                  console.log("lek : " + this.state.izabraniLekovi[i]);
+                }
+                this.state.recepti.push({
+                  lekID: lista[i].id
+                }, ()=> console.log(this.state.recepti))
+  
+              })
+  
+              
+  
+            }
+            
+          }
+    }else{
+      for(var i = 0; i < lista1.length; i++){
+        // console.log("lek : " + lista1[i]);
+  
+        if(lista1[i].id === lek.target.value){
+          console.log("brise se")
+          zaBrisanje = lista1[i].id;
+          console.log(zaBrisanje);
+  
+  
+        }else{
+          console.log("dodaje se")
+          
+  
+          for (var i = 0; i < lista.length; i++) {
+  
+            var naziv = lista[i].naziv;
+            var id = lista[i].id;
+            var sifra = lista[i].sifra;
+  
+            if (id == lek.target.value) {
+              this.state.izabraniLekovi.push({
+                id: lista[i].id,
+                sifra: lista[i].sifra,
+                naziv: lista[i].naziv
+              }, ()=> {
+  
+                
+                for(var i = 0; i < this.state.izabraniLekovi.length; i++){
+                  console.log("lek : " + this.state.izabraniLekovi[i]);
+                }
+                this.state.recepti.push({
+                  lekID: lista[i].id
+                }, ()=> console.log(this.state.recepti))
+  
+              })
+  
+              
+  
+            }
+            
+          }
+        }
+  
+      }
+      if(zaBrisanje != lek.target.value){
+      let l1 = [];
+      console.log(zaBrisanje);
+      for(var i = 0; i < this.state.izabraniLekovi.length; i++){
+        if(zaBrisanje != this.state.izabraniLekovi[i].id){
+          l1.push({
+            id: this.state.izabraniLekovi[i].id,
+            sifra: this.state.izabraniLekovi[i].sifra,
+            naziv: this.state.izabraniLekovi[i].naziv
+          })
         }
       }
+      this.state.izabraniLekovi = l1;
+      //treba izbrisati i iz druge liste taj id
     }
-    if(zaBrisanje != null){
-      lista1.pop({
-        id: id,
-        sifra: sifra,
-        naziv: naziv
-      })
+
     }
+
     
     
   }
@@ -454,6 +459,36 @@ class Pregled extends React.Component {
         console.log('closed by clicking background.')
       }
     })
+  }
+
+  zavrsiPregled(){
+    
+    console.log("PREGLED: ");
+    console.log("Dijagnoza: "+this.state.izabranaDijagnoza);
+    console.log("Sadrzaj: "+this.state.misljenje);
+    console.log("Recepti broj: "+this.state.recepti.length);
+    console.log("Pregled : " + this.state.idPregleda);
+    
+      // const url3 = "http://localhost:8025/api/izvestajOP/zavrsetakPregleda";
+      // axios
+      //   .post(url3, { 
+      //     dijagnozaID : this.state.izabranaDijagnoza,
+      //     sadrzaj: this.state.misljenje,
+      //     pregledID: this.state.idPregleda,
+      //     recepti: this.state.recepti
+      //   }, this.config)
+      //   .then(response => {
+      //     console.log("ZAVRSEN PREGLED! ");
+      //     console.log(response.data);
+      //     this.setState({
+      //       redirectToOdustani: true
+      //     })
+
+      //   })
+      //   .catch(error => {
+      //     console.log("NIJE USPEO PREGLED DA SE ZAVRSI! ");
+      //   });
+    
   }
 
 
@@ -604,38 +639,32 @@ class Pregled extends React.Component {
                                         </Col>
                                    
                                 </Row>
+
                                 <Row >
-                                    <Col className="misljenjeOkvir">
+                                  <Col className="misljenjeOkvir">
                                     <h4 className="poljePregled">Misljenje</h4>
                                     <textarea
                                     className="misljenjePolje"
                                         type="text"
-                                        name="opis"
+                                        name="misljenje"
                                         onChange={this.handleChange}
                                     >
-
-                                    </textarea>
-                                    {/* <input
-                                        className="misljenjePolje"
-                                        type="text"
-                                        name="opis"
-                                        // defaultValue={ime}
-                                        // placeholder={this.state.ime}
-                                        // noValidate
-                                        onChange={this.handleChange}
-                                    />  */}
-                                    </Col>
+                                    </textarea>  
+                                  </Col>
                             </Row>
                                 <Row >
-                                    <Col  >
+                                    <Col>
+
                                         <Button 
                                         className="dugmeZavrsiPregled" 
                                         onClick={this.handleOdustani}
                                         >Odustani</Button>
+
                                         <Button 
                                         className="dugmeZavrsiPregled" 
-                                        // onClick={this.zahtevOdmorOdsustvo}
+                                        onClick={this.zavrsiPregled}
                                         >Zavrsi pregled</Button>
+
                                     </Col>
                                 </Row>
                             </Grid>
