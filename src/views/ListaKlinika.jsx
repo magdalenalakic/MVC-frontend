@@ -372,7 +372,7 @@ class ListaKlinika extends Component {
             var niz = [false, false, false, false];
             this.state.terminiIzabranogLekara.map(termin => {
               const dat = moment(this.state.datumZaPregled).format(
-                "DD.MM.YYYY"
+                "DD.MM.YYYY."
               );
               const datPoc = moment(termin.datumPocetka).format("DD.MM.YYYY.");
               console.log(moment(termin.datumZaPregled).format("HH:mm"));
@@ -855,6 +855,7 @@ class ListaKlinika extends Component {
     }
   };
   redirectReferer() {
+    console.log("REDIRECT REFF")
     var flag = 1;
     console.log(this.state.izabranaKlinika);
 
@@ -1072,7 +1073,7 @@ class ListaKlinika extends Component {
             // ]}
             // minTime={setHours(setMinutes(new Date(), 0), 7)}
             // maxTime={setHours(setMinutes(new Date(), 0), 20)}
-            dateFormat="dd.MM.yyyy"
+            dateFormat="dd.MM.yyyy."
 
             // onChange={date => setStartDate(date)}
           />

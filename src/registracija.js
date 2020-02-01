@@ -82,7 +82,7 @@ class Registracija extends Component {
         // this.render(<div>Potvrdite registraciju putem maila. </div>);
         axios
 
-          .post("http://localhost:8025/api/pacijenti/register", {
+          .post("http://localhost:8025/api/korisnici/register", {
             lozinka: this.state.lozinka,
             ime: this.state.ime,
             prezime: this.state.prezime,

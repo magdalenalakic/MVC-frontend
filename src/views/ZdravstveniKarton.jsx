@@ -324,15 +324,15 @@ class ZdravstveniKarton extends Component {
           <Row>
             <Col md={8}>
               <Card
-                title="Zdravstveni karton"
+                title="Posete lekarima"
                 content={
                   <div>
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th>Datum:</th>
-                          <th>Lekar:</th>
-                          <th>Sadrzaj:</th>
+                          <th>Datum</th>
+                          <th>Lekar</th>
+                          <th>Izvestaj</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -366,8 +366,8 @@ class ZdravstveniKarton extends Component {
                     <Table striped hover>
                       <thead className="thead-dark">
                         <tr>
-                          <th>Datum:</th>
-                          <th>Bolest:</th>
+                          <th>Datum</th>
+                          <th>Bolest</th>
                         </tr>
                       </thead>
                       <tbody>
