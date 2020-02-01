@@ -256,110 +256,129 @@ class Pregled extends React.Component {
   biranjeLeka(lek){
     console.log("BIRANJE LEKA : " + lek.target.value);
     
-    //nije potrebno
-    this.setState({
-      izabranLek: lek.target.value
-    }, ()=> console.log("izabran lek : " + this.state.izabranLek));
+   
 
 
-    let zaBrisanje = 0;
+    // let zaBrisanje = 0;
     let lista1 = this.state.izabraniLekovi;
     let lista = this.state.listaLekova;
 
-    if(lista1.length == 0){
-      console.log("dodaje se")
-          
-  
-          for (var i = 0; i < lista.length; i++) {
-  
-            var naziv = lista[i].naziv;
-            var id = lista[i].id;
-            var sifra = lista[i].sifra;
-  
-            if (id == lek.target.value) {
+    console.log("duzina niza lekova: " + lista1.length);
+    for (var i = 0; i < lista.length; i++) {
+        if (lista[i].id == lek.target.value) {
+              
               this.state.izabraniLekovi.push({
                 id: lista[i].id,
                 sifra: lista[i].sifra,
                 naziv: lista[i].naziv
               }, ()=> {
   
-                
-                for(var i = 0; i < this.state.izabraniLekovi.length; i++){
-                  console.log("lek : " + this.state.izabraniLekovi[i]);
-                }
+                console.log("lek: " + lista[i].id + " " + lista[i].sifra);
+                // for(var i = 0; i < this.state.izabraniLekovi.length; i++){
+                //   console.log("lek : " + this.state.izabraniLekovi[i]);
+                // }
                 this.state.recepti.push({
                   lekID: lista[i].id
-                }, ()=> console.log(this.state.recepti))
+                })
   
               })
-  
-              
-  
-            }
-            
-          }
-    }else{
-      for(var i = 0; i < lista1.length; i++){
-        // console.log("lek : " + lista1[i]);
-  
-        if(lista1[i].id === lek.target.value){
-          console.log("brise se")
-          zaBrisanje = lista1[i].id;
-          console.log(zaBrisanje);
-  
-  
-        }else{
-          console.log("dodaje se")
-          
-  
-          for (var i = 0; i < lista.length; i++) {
-  
-            var naziv = lista[i].naziv;
-            var id = lista[i].id;
-            var sifra = lista[i].sifra;
-  
-            if (id == lek.target.value) {
-              this.state.izabraniLekovi.push({
-                id: lista[i].id,
-                sifra: lista[i].sifra,
-                naziv: lista[i].naziv
-              }, ()=> {
-  
-                
-                for(var i = 0; i < this.state.izabraniLekovi.length; i++){
-                  console.log("lek : " + this.state.izabraniLekovi[i]);
-                }
-                this.state.recepti.push({
-                  lekID: lista[i].id
-                }, ()=> console.log(this.state.recepti))
-  
-              })
-  
-              
-  
-            }
-            
-          }
-        }
-  
-      }
-      if(zaBrisanje != lek.target.value){
-      let l1 = [];
-      console.log(zaBrisanje);
-      for(var i = 0; i < this.state.izabraniLekovi.length; i++){
-        if(zaBrisanje != this.state.izabraniLekovi[i].id){
-          l1.push({
-            id: this.state.izabraniLekovi[i].id,
-            sifra: this.state.izabraniLekovi[i].sifra,
-            naziv: this.state.izabraniLekovi[i].naziv
-          })
-        }
-      }
-      this.state.izabraniLekovi = l1;
-      //treba izbrisati i iz druge liste taj id
+        } 
     }
 
-    }
+
+    // if(lista1.length == 0){
+    //   console.log("dodaje se")
+          
+  
+    //   for (var i = 0; i < lista.length; i++) {
+
+    //     if (lista[i].id == lek.target.value) {
+              
+    //           this.state.izabraniLekovi.push({
+    //             id: lista[i].id,
+    //             sifra: lista[i].sifra,
+    //             naziv: lista[i].naziv
+    //           }, ()=> {
+  
+    //             console.log("lek: " + lista[i].id + " " + lista[i].sifra);
+    //             // for(var i = 0; i < this.state.izabraniLekovi.length; i++){
+    //             //   console.log("lek : " + this.state.izabraniLekovi[i]);
+    //             // }
+    //             this.state.recepti.push({
+    //               lekID: lista[i].id
+    //             })
+  
+    //           })
+  
+              
+  
+    //     }
+            
+    //   }
+
+
+    // }
+    // else{
+    //   for(var i = 0; i < lista1.length; i++){
+    //     // console.log("lek : " + lista1[i]);
+  
+    //     if(lista1[i].id == lek.target.value){
+    //       console.log("brise se")
+    //       zaBrisanje = lista1[i].id;
+    //       console.log(zaBrisanje);
+  
+  
+    //     }else{
+    //       console.log("dodaje se2")
+          
+  
+    //       for (var i = 0; i < lista.length; i++) {
+  
+           
+  
+    //         if (lista[i].id == lek.target.value) {
+    //           this.state.izabraniLekovi.push({
+    //             id: lista[i].id,
+    //             sifra: lista[i].sifra,
+    //             naziv: lista[i].naziv
+    //           }, ()=> {
+  
+    //             console.log("lek: " + lista[i].id + " " + lista[i].sifra);
+    //             // for(var i = 0; i < this.state.izabraniLekovi.length; i++){
+    //             //   console.log("lek : " + this.state.izabraniLekovi[i]);
+    //             // }
+                
+    //             this.state.recepti.push({
+    //               lekID: lista[i].id
+    //             })
+  
+    //           })
+  
+              
+  
+    //         }
+            
+    //       }
+    //     }
+  
+    //   }
+    // //   if(zaBrisanje != lek.target.value){
+    // //   let l1 = [];
+    // //   console.log(zaBrisanje);
+    // //   for(var i = 0; i < this.state.izabraniLekovi.length; i++){
+    // //     if(zaBrisanje != this.state.izabraniLekovi[i].id){
+    // //       l1.push({
+    // //         id: this.state.izabraniLekovi[i].id,
+    // //         sifra: this.state.izabraniLekovi[i].sifra,
+    // //         naziv: this.state.izabraniLekovi[i].naziv
+    // //       })
+    // //     }
+    // //   }
+    // //   this.state.izabraniLekovi = l1;
+    // //   //treba izbrisati i iz druge liste taj id
+    // // }
+
+    // }
 
     
     
