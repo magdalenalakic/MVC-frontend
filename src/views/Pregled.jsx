@@ -17,6 +17,7 @@ import slikaPregledi from "assets/img/pregled.jpg"
 import kalendarSlika from "assets/img/calendar.png"
 
 
+
 class Pregled extends React.Component {
   constructor(props) {
     super(props);
@@ -66,6 +67,7 @@ class Pregled extends React.Component {
 
     //za lekove
     this.listaLekova = this.listaLekova.bind(this);
+    this.prekopirajListu = this.prekopirajListu.bind(this);
     this.listaLekovaUKC = this.listaLekovaUKC.bind(this);
     this.dodavanjeLeka = this.dodavanjeLeka.bind(this);
     this.biranjeLeka = this.biranjeLeka.bind(this);
@@ -93,6 +95,7 @@ class Pregled extends React.Component {
   componentWillMount() {
     this.listaDijagnoza();
     this.listaLekova();
+    
 
 
     const url = "http://localhost:8025/api/lekari/getLekarByEmail";
@@ -155,10 +158,8 @@ class Pregled extends React.Component {
   }
   listaLekovaUKC(){
     let res=[];
-    let lista = this.state.listaLekova;
-    // for (var i = 0; i < lista.length; i++) {
-    //   res.push(<option value={lista[i].id}>{lista[i].oznaka}, {lista[i].naziv}, {lista[i].opis} </option>);
-    // }
+    let lista = this.state.izabraniLekovi;
+    
 
     for(var i=0; i< lista.length;i++){
       res.push(
@@ -169,23 +170,16 @@ class Pregled extends React.Component {
                 name="odabranaSala"
                 type="checkbox"
                 value={lista[i].id}
-                // checked={this.state.izabranaDijagnoza == lista[i].id}
-                // onChange={e => {
-                //   this.biranjeDijagnoze(e);
-                // }}
-                
+                checked={lista[i].oznacen}
                 onChange={e=> this.biranjeLeka(e)}
-                // onChange={e => this.biranjeDijagnoze(e)}
+                
               ></input>
             </td>
            <td >{lista[i].sifra}</td>
            <td >{lista[i].naziv}</td>
-          
-          
-          
          </tr>
        )
-     }
+    }
     return res;
   }
   listaDijagnoza(){
@@ -215,12 +209,25 @@ class Pregled extends React.Component {
         console.log(response);
         this.setState({
           listaLekova: response.data
-        });
+        }, ()=> this.prekopirajListu());
+        
       })
       .catch(error => {
           console.log("nije uspeo url lekova");
           console.log(error);
       })
+  }
+  prekopirajListu(){
+    for(var i = 0; i < this.state.listaLekova.length; i++){
+      this.state.izabraniLekovi.push({
+        
+        id: this.state.listaLekova[i].id,
+        sifra: this.state.listaLekova[i].sifra,
+        naziv: this.state.listaLekova[i].naziv,
+        oznacen: false
+        
+      })
+    }
   }
 
   biranjeDijagnoze(dijagnoza){
@@ -256,112 +263,51 @@ class Pregled extends React.Component {
   biranjeLeka(lek){
     console.log("BIRANJE LEKA : " + lek.target.value);
     
-   
+    let lista = this.state.izabraniLekovi;
+    console.log("duzina niza lekova: " + lista.length);
 
-
-    // let zaBrisanje = 0;
-    let lista1 = this.state.izabraniLekovi;
-    let lista = this.state.listaLekova;
-
-    console.log("duzina niza lekova: " + lista1.length);
     for (var i = 0; i < lista.length; i++) {
         if (lista[i].id == lek.target.value) {
-              
-              this.state.izabraniLekovi.push({
-                id: lista[i].id,
-                sifra: lista[i].sifra,
-                naziv: lista[i].naziv
-              }, ()=> {
-  
-                console.log("lek: " + lista[i].id + " " + lista[i].sifra);
-                // for(var i = 0; i < this.state.izabraniLekovi.length; i++){
-                //   console.log("lek : " + this.state.izabraniLekovi[i]);
-                // }
-                this.state.recepti.push({
-                  lekID: lista[i].id
-                })
-  
-              })
+          if(lista[i].oznacen == false){
+            console.log("PRE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
+            lista[i].oznacen = true;
+            console.log("POSLE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
+            this.izabraniLekovi();
+            // this.state.recepti.push({
+            //   lekID: lista[i].id
+            // }, ()=> this.dialog.hide())
+            
+
+          }else{
+            console.log("PRE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
+            lista[i].oznacen = false;
+            console.log("POSLE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
+            
+            //treba da se izbrise taj lek
+            // let rec = []
+            // for(var j=0; j < this.state.recepti.length; j++){
+            //   if(lista[i].id == this.state.recepti[j].id){
+
+            //   }
+            // }
+            // this.state.recepti.push({
+            //   lekID: lista[i].id
+            // })
+            // this.izabraniLekovi();
+          }    
         } 
+
+        
+        if(lista[i].oznacen == true){
+          this.state.recepti = [];
+          this.state.recepti.push({
+            lekID: lista[i].id
+          })
+        }
+        this.dialog.hide();
+
     }
 
-
-    // if(lista1.length == 0){
-    //   console.log("dodaje se")
-          
-  
-    //   for (var i = 0; i < lista.length; i++) {
-
-    //     if (lista[i].id == lek.target.value) {
-              
-    //           this.state.izabraniLekovi.push({
-    //             id: lista[i].id,
-    //             sifra: lista[i].sifra,
-    //             naziv: lista[i].naziv
-    //           }, ()=> {
-  
-    //             console.log("lek: " + lista[i].id + " " + lista[i].sifra);
-    //             // for(var i = 0; i < this.state.izabraniLekovi.length; i++){
-    //             //   console.log("lek : " + this.state.izabraniLekovi[i]);
-    //             // }
-    //             this.state.recepti.push({
-    //               lekID: lista[i].id
-    //             })
-  
-    //           })
-  
-              
-  
-    //     }
-            
-    //   }
-
-
-    // }
-    // else{
-    //   for(var i = 0; i < lista1.length; i++){
-    //     // console.log("lek : " + lista1[i]);
-  
-    //     if(lista1[i].id == lek.target.value){
-    //       console.log("brise se")
-    //       zaBrisanje = lista1[i].id;
-    //       console.log(zaBrisanje);
-  
-  
-    //     }else{
-    //       console.log("dodaje se2")
-          
-  
-    //       for (var i = 0; i < lista.length; i++) {
-  
-           
-  
-    //         if (lista[i].id == lek.target.value) {
-    //           this.state.izabraniLekovi.push({
-    //             id: lista[i].id,
-    //             sifra: lista[i].sifra,
-    //             naziv: lista[i].naziv
-    //           }, ()=> {
-  
-    //             console.log("lek: " + lista[i].id + " " + lista[i].sifra);
-    //             // for(var i = 0; i < this.state.izabraniLekovi.length; i++){
-    //             //   console.log("lek : " + this.state.izabraniLekovi[i]);
-    //             // }
-                
-    //             this.state.recepti.push({
-    //               lekID: lista[i].id
-    //             })
-  
-    //           })
-  
-              
-  
-    //         }
-            
-    //       }
-    //     }
-  
-    //   }
     // //   if(zaBrisanje != lek.target.value){
     // //   let l1 = [];
     // //   console.log(zaBrisanje);
@@ -388,13 +334,16 @@ class Pregled extends React.Component {
     let rez=[];
     let lista = this.state.izabraniLekovi;
 
-    for(var i=0; i< lista.length;i++){
-      rez.push(
-        <tr key = {i}>
-           <td >{lista[i].sifra}</td>
-           <td >{lista[i].naziv}</td>
-         </tr>
-       )
+    for(var i=0; i< lista.length; i++){
+      if(lista[i].oznacen == true){
+        rez.push(
+          <tr key = {i}>
+             <td >{lista[i].sifra}</td>
+             <td >{lista[i].naziv}</td>
+           </tr>
+         )
+      }
+      
      }
     return rez;
   }
@@ -499,9 +448,9 @@ class Pregled extends React.Component {
       //   .then(response => {
       //     console.log("ZAVRSEN PREGLED! ");
       //     console.log(response.data);
-      //     this.setState({
-      //       redirectToOdustani: true
-      //     })
+      //     // this.setState({
+      //     //   redirectToOdustani: true
+      //     // })
 
       //   })
       //   .catch(error => {
@@ -628,13 +577,13 @@ class Pregled extends React.Component {
                                             <h4 className="poljePregled">Izdavanje recepta</h4>
                                             
                                             {/* mozda bolje tabela sa jednom kolonom  */}
-                                            <input className="poljePregled"  disabled="disabled"
+                                            {/* <input className="poljePregled"  disabled="disabled"
                                              type="text"
                                               name="lekNaziv"
                                               // defaultValue = "" 
                                               // value={this.state. + " " + this.state.nazivOznaceneDijagnoze}
                                                 // onChange={this.handleChange}
-                                            ></input>
+                                            ></input> */}
                                             <Table striped hover>
                                               <thead>
                                                 <tr>
@@ -645,7 +594,7 @@ class Pregled extends React.Component {
                                                 </tr>
                                               </thead>
                                               <tbody>
-                                                {/* {this.state.izabraniLekovi()} */}
+                                                {this.izabraniLekovi()}
                                               </tbody>
                                           </Table>
                                             <Button className="pregledDugme" 
