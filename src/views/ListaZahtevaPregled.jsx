@@ -6,6 +6,10 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import moment from 'moment';
+import ListaSala from "./ListaSala.jsx";
+
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 class ListaZahtevaPregled extends Component {
   constructor(props) {
     super(props);
@@ -16,13 +20,18 @@ class ListaZahtevaPregled extends Component {
       email: props.email,
       token: props.token,
       idKlinike: "",
-      listaZahtevaZaOregled: []
+      redirectToListaSala: false,
+      listaZahtevaZaOregled: [], 
+      
+      salaN: "", 
+      salaBR: "",
+      datumPregleda: "",
+      idPregleda: "",
+
     };
     this.listaZahtevaZaPregled = this.listaZahtevaZaPregled.bind(this);
-    // this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(this);
-    // this.handleOdobren = this.handleOdobren.bind(this);
-    // this.handleOdbijen = this.handleOdbijen.bind(this);
-    // this.handleChange = this.handleChange.bind(this);
+
+   
   }
 
   ucitajPonovo(){
@@ -45,6 +54,54 @@ class ListaZahtevaPregled extends Component {
         console.log(error);
       });
   }
+  handleClickDodeliSalu = e => {
+    e.preventDefault();
+    console.log("CLICK *** ");  
+    console.log("Dodijeli salu pregledu sa id-em: " + e.target.id);
+    // this.props.onClick(this.props.value);
+    // console.log(e.lista.email);
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const urlPRegled = 'http://localhost:8025/api/pregledi/' +  e.target.id;    
+    axios.get(urlPRegled, config)
+      .then(pregled => {
+        console.log("*******************************Preuzeti PREGLEDDDDD");
+        console.log(pregled.data);
+
+        this.setState({
+            // idKlinike: klinika.data.id,
+            datumPregleda: pregled.data.datum,
+            salaN: pregled.data.salaN,
+            salaBR: pregled.data.salaBR,
+         
+        }, () => {console.log(pregled.data); 
+          console.log(moment(pregled.data.datum).format("DD.MM.YYYY"))
+         
+          console.log(this.state.salaN);
+        });
+          
+        console.log("*******************************Preuzeti PREGLEDDDDD");
+        console.log(pregled.data);
+        console.log(pregled.data.salaN);
+        console.log(pregled.data.salaBR);
+        console.log(moment(pregled.data.datum).format("DD.MM.YYYY"));
+
+      })
+   
+
+    this.setState({
+      redirectToListaSala: true,
+      idPregleda: e.target.id,
+  
+    });
+    console.log("----------------------------------------------------");
+
+  };
   componentWillMount(){
     console.log("wmount")
     console.log("Preuzimanje admina klinike.....")
@@ -206,6 +263,7 @@ class ListaZahtevaPregled extends Component {
     let lista = this.state.listaZahtevaZaOregled;
 
     for (var i = 0; i < lista.length; i++) {
+
       console.log(lista[i]);
       if (lista[i].salaN == "" || lista[i].salaN == undefined) {
         res.push(
@@ -215,16 +273,23 @@ class ListaZahtevaPregled extends Component {
               {lista[i].imeL} {lista[i].prezimeL}
             </td>
             <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+        <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
             <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-        <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td>
+        <td>{lista[i].imeP} {lista[i].prezimeP}</td>
+        <td>
+                <Button id={lista[i].id} onClick={e => this.handleClickDodeliSalu(e)}> 
+                  Dodeli salu
+                </Button>  
+              </td>
+        {/* <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td> */}
             {/* <td align={"center"}>
               <i className="pe-7s-clock text-warning" />
             </td>
             <td align={"center"}>
               <i className="pe-7s-clock text-warning" />
             </td> */}
-            <td></td>
-            <td></td>
+            {/* <td></td>
+            <td></td> */}
           </tr>
         );
       } else {
@@ -236,38 +301,42 @@ class ListaZahtevaPregled extends Component {
                 {lista[i].imeL} {lista[i].prezimeL}
               </td>
               <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+              <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
               <td key={lista[i].cena}>{lista[i].cena} RSD</td>
 
               <td align={"center"} key={lista[i].status}>
                 {" "}
                 <i className="pe-7s-check text-success" />
               </td>
-              <td key={lista[i].sala}>
+              {/* <td key={lista[i].sala}>
                 {lista[i].salaN} {lista[i].salaBR}
-              </td>
+              </td> */}
               <td></td>
               <td></td>
             </tr>
           );
         } else if (lista[i].status == 0) {
+          console.log("LISTAAAAAAA PREGLEDAAA");
+          console.log(lista[i].id);
           res.push(
             <tr key={i}>
               <td key={lista[i].lekarID}>
               {lista[i].imeL} {lista[i].prezimeL}
             </td>
             <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
-            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RD</td>
             <td >
-            {lista[i].imeP} {lista[i].prezimeP}
+                {lista[i].imeP} {lista[i].prezimeP}
             </td>
-        <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td>
+            {/* <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td> */}
               {/* <td key={lista[i].status} align={"center"}>
                 <i className="pe-7s-timer text-warning" />
               </td> */}
               {/* <td key={lista[i].sala}>
                 {lista[i].salaN} {lista[i].salaBR}{" "}
               </td> */}
-              <td>
+              {/* <td>
                 <OverlayTrigger placement="top" overlay={potvrdi}>
                   <Button
                     bsStyle="success"
@@ -280,8 +349,8 @@ class ListaZahtevaPregled extends Component {
                     <i className="pe-7s-check text-success" />
                   </Button>
                 </OverlayTrigger>
-              </td>
-              <td>
+              </td> */}
+              {/* <td>
                 <OverlayTrigger placement="top" overlay={odbij}>
                   <Button
                     bsStyle="danger"
@@ -294,6 +363,11 @@ class ListaZahtevaPregled extends Component {
                     <i className="pe-7s-close-circle text-danger" />
                   </Button>
                 </OverlayTrigger>
+              </td> */}
+              <td>
+                <Button id={lista[i].id} onClick={e => this.handleClickDodeliSalu(e)}> 
+                  Dodeli salu
+                </Button>  
               </td>
             </tr>
           );
@@ -305,15 +379,16 @@ class ListaZahtevaPregled extends Component {
                 {lista[i].imeL} {lista[i].prezimeL}
               </td>
               <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+              <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
               <td key={lista[i].cena}>{lista[i].cena} RSD</td>
 
               <td align={"center"} key={lista[i].status}>
                 {" "}
                 <i className="pe-7s-close-circle text-danger" />
               </td>
-              <td key={lista[i].sala}>
+              {/* <td key={lista[i].sala}>
                 {lista[i].salaN} {lista[i].salaBR}
-              </td>
+              </td> */}
               <td></td>
               <td></td>
             </tr>
@@ -366,7 +441,29 @@ class ListaZahtevaPregled extends Component {
   }
 
   render() {
+    const redirectToListaSala = this.state.redirectToListaSala;
+    // console.log("-----LISTA ZAHTJVEVA ZA PREGLED = PROVJERI PROPS")
+    // console.log(this.state.salaN);
+    // console.log(this.state.salaBR);
+    // console.log(moment(this.state.datumPregleda).format("DD.MM.YYYY"));
+
+    if (redirectToListaSala === true) {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/listaSala"
+              // salaN={this.state.salaN} salaBR={this.state.salaBR}
+              render={props => <ListaSala {...props} idKlinike={this.state.idKlinike}  datumPregleda={this.state.datumPregleda} redirectToListaSala={this.state.redirectToListaSala} token={this.state.token} />}
+            />
+            <Redirect from="/" to="/listaSala" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+
     return (
+
       <div className="content">
         <Grid fluid>
           <Row>
@@ -383,13 +480,14 @@ class ListaZahtevaPregled extends Component {
                         <tr>
                           <th id="lekar">Lekar</th>
                           <th id="tipP">tip pregleda</th>
+                          <th>datum</th>
                           <th id="cijena"> cijena</th>
                           <th id="PrezimePacijenta">pacijent</th>
                         
                           {/* <th id="LozinkaPacijenta">Lozinka</th> */}
-                          <th id="sala">sala</th>
-                          <th id="prihvatiZ">odobri</th>
-                          <th id="odbijZ">odbij</th>
+                          {/* <th id="sala">sala</th> */}
+                          {/* <th id="prihvatiZ">odobri</th>
+                          <th id="odbijZ">odbij</th> */}
                           {/* <th id="TelefonPacijenta">Telefon</th> */}
                           {/* {thArray.map((prop, key) => {
                             return <th key={key}>{prop}</th>;
