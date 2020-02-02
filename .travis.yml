@@ -10,4 +10,4 @@ deploy:
   token: $GITHUB_TOKEN
   local_dir: build
   on:
-    branch: V_15_OcenjivanjeKlinika
+    branch: master
