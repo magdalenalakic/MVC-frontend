@@ -95,6 +95,7 @@ class Pregled extends React.Component {
   componentWillMount() {
     this.listaDijagnoza();
     this.listaLekova();
+
     
 
 
@@ -228,6 +229,7 @@ class Pregled extends React.Component {
         
       })
     }
+    this.izabraniLekovi();
   }
 
   biranjeDijagnoze(dijagnoza){
@@ -265,17 +267,14 @@ class Pregled extends React.Component {
     
     let lista = this.state.izabraniLekovi;
     console.log("duzina niza lekova: " + lista.length);
-
+    
     for (var i = 0; i < lista.length; i++) {
         if (lista[i].id == lek.target.value) {
           if(lista[i].oznacen == false){
             console.log("PRE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
             lista[i].oznacen = true;
             console.log("POSLE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
-            this.izabraniLekovi();
-            // this.state.recepti.push({
-            //   lekID: lista[i].id
-            // }, ()=> this.dialog.hide())
+            
             
 
           }else{
@@ -283,59 +282,28 @@ class Pregled extends React.Component {
             lista[i].oznacen = false;
             console.log("POSLE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
             
-            //treba da se izbrise taj lek
-            // let rec = []
-            // for(var j=0; j < this.state.recepti.length; j++){
-            //   if(lista[i].id == this.state.recepti[j].id){
-
-            //   }
-            // }
-            // this.state.recepti.push({
-            //   lekID: lista[i].id
-            // })
-            // this.izabraniLekovi();
+            
+            
           }    
         } 
-
-        
-        if(lista[i].oznacen == true){
-          this.state.recepti = [];
-          this.state.recepti.push({
-            lekID: lista[i].id
-          })
-        }
-        this.dialog.hide();
-
     }
-
-    // //   if(zaBrisanje != lek.target.value){
-    // //   let l1 = [];
-    // //   console.log(zaBrisanje);
-    // //   for(var i = 0; i < this.state.izabraniLekovi.length; i++){
-    // //     if(zaBrisanje != this.state.izabraniLekovi[i].id){
-    // //       l1.push({
-    // //         id: this.state.izabraniLekovi[i].id,
-    // //         sifra: this.state.izabraniLekovi[i].sifra,
-    // //         naziv: this.state.izabraniLekovi[i].naziv
-    // //       })
-    // //     }
-    // //   }
-    // //   this.state.izabraniLekovi = l1;
-    // //   //treba izbrisati i iz druge liste taj id
-    // // }
-
-    // }
-
+    this.izabraniLekovi();
+    this.dialog.hide();
     
-    
+
   }
 
   izabraniLekovi(){
     let rez=[];
     let lista = this.state.izabraniLekovi;
-
+    this.state.recepti = [];
     for(var i=0; i< lista.length; i++){
       if(lista[i].oznacen == true){
+        this.state.recepti.push({
+          lekID: lista[i].id
+        })
+
+
         rez.push(
           <tr key = {i}>
              <td >{lista[i].sifra}</td>
@@ -344,7 +312,10 @@ class Pregled extends React.Component {
          )
       }
       
+      
+      
      }
+    
     return rez;
   }
 
@@ -355,13 +326,7 @@ class Pregled extends React.Component {
       body: [
         
         <div>  
-            {/* <select
-            // className="lekarTelefonLabel"
-            //   name="lekadID"
-              onChange={e => this.biranjeDijagnoze(e)}
-            >
-                {this.listaDijagnozaUKC()}
-            </select>       */}
+            
             <Table striped hover>
               <thead>
                 <tr>
@@ -397,13 +362,7 @@ class Pregled extends React.Component {
       body: [
         
         <div>  
-            {/* <select
-            // className="lekarTelefonLabel"
-            //   name="lekadID"
-              onChange={e => this.biranjeDijagnoze(e)}
-            >
-                {this.listaDijagnozaUKC()}
-            </select>       */}
+           
             <Table striped hover>
               <thead>
                 <tr>
@@ -435,27 +394,31 @@ class Pregled extends React.Component {
     console.log("Dijagnoza: "+this.state.izabranaDijagnoza);
     console.log("Sadrzaj: "+this.state.misljenje);
     console.log("Recepti broj: "+this.state.recepti.length);
+    console.log("Svi oznaceni recepti:  ");
+    for(var i= 0; i < this.state.recepti.length; i++){
+      console.log(this.state.recepti[i].lekID);
+    }
     console.log("Pregled : " + this.state.idPregleda);
     
-      // const url3 = "http://localhost:8025/api/izvestajOP/zavrsetakPregleda";
-      // axios
-      //   .post(url3, { 
-      //     dijagnozaID : this.state.izabranaDijagnoza,
-      //     sadrzaj: this.state.misljenje,
-      //     pregledID: this.state.idPregleda,
-      //     recepti: this.state.recepti
-      //   }, this.config)
-      //   .then(response => {
-      //     console.log("ZAVRSEN PREGLED! ");
-      //     console.log(response.data);
-      //     // this.setState({
-      //     //   redirectToOdustani: true
-      //     // })
+      const url3 = "http://localhost:8025/api/izvestajOP/zavrsetakPregleda";
+      axios
+        .post(url3, { 
+          dijagnozaID : this.state.izabranaDijagnoza,
+          sadrzaj: this.state.misljenje,
+          pregledID: this.state.idPregleda,
+          recepti: this.state.recepti
+        }, this.config)
+        .then(response => {
+          console.log("ZAVRSEN PREGLED! ");
+          console.log(response.data);
+          // this.setState({
+          //   redirectToOdustani: true
+          // })
 
-      //   })
-      //   .catch(error => {
-      //     console.log("NIJE USPEO PREGLED DA SE ZAVRSI! ");
-      //   });
+        })
+        .catch(error => {
+          console.log("NIJE USPEO PREGLED DA SE ZAVRSI! ");
+        });
     
   }
 
