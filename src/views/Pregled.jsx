@@ -299,21 +299,17 @@ class Pregled extends React.Component {
     this.state.recepti = [];
     for(var i=0; i< lista.length; i++){
       if(lista[i].oznacen == true){
-        this.state.recepti.push({
-          lekID: lista[i].id
-        })
-
-
+        this.state.recepti.push( lista[i].id);
+        
         rez.push(
           <tr key = {i}>
              <td >{lista[i].sifra}</td>
              <td >{lista[i].naziv}</td>
            </tr>
          )
+
       }
-      
-      
-      
+
      }
     
     return rez;
@@ -343,6 +339,7 @@ class Pregled extends React.Component {
         </div>
               
       ],
+      
       
       bsSize: 'medium',
       onHide: (dialog) => {
@@ -396,29 +393,75 @@ class Pregled extends React.Component {
     console.log("Recepti broj: "+this.state.recepti.length);
     console.log("Svi oznaceni recepti:  ");
     for(var i= 0; i < this.state.recepti.length; i++){
-      console.log(this.state.recepti[i].lekID);
+      console.log(this.state.recepti[i]);
+    }
+    let lekovi = "";
+    for(var i=0; i < this.state.izabraniLekovi.length; i++){
+      if(this.state.izabraniLekovi[i].oznacen == true){
+        lekovi += this.state.izabraniLekovi[i].naziv + ", ";
+      }
     }
     console.log("Pregled : " + this.state.idPregleda);
     
-      const url3 = "http://localhost:8025/api/izvestajOP/zavrsetakPregleda";
-      axios
-        .post(url3, { 
-          dijagnozaID : this.state.izabranaDijagnoza,
-          sadrzaj: this.state.misljenje,
-          pregledID: this.state.idPregleda,
-          recepti: this.state.recepti
-        }, this.config)
-        .then(response => {
-          console.log("ZAVRSEN PREGLED! ");
-          console.log(response.data);
-          // this.setState({
-          //   redirectToOdustani: true
-          // })
-
+    this.dialog.show({
+      title: 'Izvestaj o pregledu',
+      body: [
+        
+        <div>  
+          <Grid>
+            <Row>
+              <h4>Misljenje: </h4>
+              <h5>{this.state.misljenje}</h5>
+            </Row>
+            <Row>
+              <h4>Dijagnoza: </h4>
+              <h5>{this.state.sifraOznaceneDijagnoze + " " + this.state.nazivOznaceneDijagnoze}</h5>
+            </Row>
+            <Row>
+              <h4>Recepti: </h4>
+              <h5>{lekovi}</h5>
+            </Row>
+          </Grid>
+            
+        </div>
+              
+      ],
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.OKAction(() => {
+          console.log("OK je kliknuto!");
+          const url3 = "http://localhost:8025/api/izvestajOP/zavrsetakPregleda";
+          axios
+            .post(url3, { 
+              dijagnozaID : this.state.izabranaDijagnoza,
+              sadrzaj: this.state.misljenje,
+              pregledID: this.state.idPregleda,
+              recepti: this.state.recepti
+            }, this.config)
+            .then(response => {
+              console.log("ZAVRSEN PREGLED! ");
+              console.log(response.data);
+              this.setState({
+                redirectToOdustani: true
+              })
+              
+    
+            })
+            .catch(error => {
+              console.log("NIJE USPEO PREGLED DA SE ZAVRSI! ");
+            });
+          
+         
         })
-        .catch(error => {
-          console.log("NIJE USPEO PREGLED DA SE ZAVRSI! ");
-        });
+      ], 
+      bsSize: 'medium',
+      onHide: (dialog) => {
+        dialog.hide()
+        console.log('closed by clicking background.')
+      }
+    })
+
+     
     
   }
 

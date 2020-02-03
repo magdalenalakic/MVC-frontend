@@ -17,6 +17,8 @@ import moment from 'moment';
  
 
 const localizer = momentLocalizer(moment);
+
+
 class PocetnaStranicaLekara extends React.Component {
   constructor(props){
     super(props);
@@ -38,8 +40,17 @@ class PocetnaStranicaLekara extends React.Component {
       redirectToListaPacijenata: false,
       redirectToProfilLekara: false,
       redirectToZahtevZaGodOdmor: false,
-      redirectToZakazivanjePregleda: false
+      redirectToZakazivanjePregleda: false,
+      listaPregleda: [],
+      preglediUKalendaru: []
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
     this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
 
@@ -47,7 +58,9 @@ class PocetnaStranicaLekara extends React.Component {
     this.handleProfilLekara = this.handleProfilLekara.bind(this);
     this.handleZahtevZaGodOdmor = this.handleZahtevZaGodOdmor.bind(this);
     this.handleZakazivanjePregleda = this.handleZakazivanjePregleda.bind(this);
-    
+    this.preuzimanjeLekara = this.preuzimanjeLekara.bind(this);
+
+    this.dodavanjeListePregledaUKalendar = this.dodavanjeListePregledaUKalendar.bind(this);
   }
 
   handleClick = e => {
@@ -66,19 +79,9 @@ class PocetnaStranicaLekara extends React.Component {
     console.log(this.state.emailPacijenta);
   };
 
-  componentWillMount(){
-    console.log("wmount")
-    var config = {
-      headers: {
-        Authorization: "Bearer " + this.state.token,
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    };
+  preuzimanjeLekara(){
     const url = 'http://localhost:8025/api/lekari/getLekarByEmail';
-    // console.log('Email: ' + this.state.email);
-    // console.log('url: ' + url);
-    axios.get(url, config)
+    axios.get(url, this.config)
       .then(Response => {
         console.log("Preuzet lekar: //////////////////////////////////////////");
         console.log(Response.data);
@@ -89,10 +92,11 @@ class PocetnaStranicaLekara extends React.Component {
           prezime: Response.data.prezime,
           telefon: Response.data.telefon
         });
+        //PREUZIMANJE PACIJENATA KLINIKE
         console.log("Klinika id: " + this.state.klinikaID);
         const url1 = 'http://localhost:8025/api/klinike/pacijentiKlinike/' + this.state.klinikaID; 
         console.log(url1);
-        axios.get(url1, config)
+        axios.get(url1, this.config)
           .then(response => {
             console.log("URL 111");
             console.log(response);
@@ -104,12 +108,53 @@ class PocetnaStranicaLekara extends React.Component {
               console.log("nisu preuzeti pacijenti klinike");
               console.log(error);
           })
+
+        //PREUZIMANJE LISTE PREGLEDA LEKARA
+        
+        axios.get("http://localhost:8025/api/pregledi/getPreglediLekara", this.config)
+          .then(response => {
+            console.log("PREUZETI PREGLEDI");
+           
+            console.log(response.data)
+            this.setState({
+              listaPregleda: response.data
+            }, ()=> this.dodavanjeListePregledaUKalendar());
+            
+          })
+          .catch(error => {
+              console.log("nisu preuzeti pregledi");
+              console.log(error);
+          })
       })
       
       .catch(error => {
         console.log("Lekar  nije preuzet")
       })
+  }
+  dodavanjeListePregledaUKalendar(){
+    let lista = this.state.listaPregleda;
+    for(var i = 0; i < lista.length; i++){
+      let start = new Date(lista[i].datumOd);
+      // let end = new Date(lista[i].datumDo);
+      this.state.preglediUKalendaru.push(
+        {
+          id: i,
+          title: lista[i].nazivTP ,
+          start: start,
+          // end: end,
+          desc: lista[i].imeP + " " + lista[i].prezimeP,
+          up_down_ind: "Y",
+          
+        }
+      )
+      
+       
+    }
+  }
 
+  componentWillMount(){
+    this.preuzimanjeLekara();
+    
   }
 
 
@@ -361,9 +406,30 @@ class PocetnaStranicaLekara extends React.Component {
                      <div style={{ height: 500 }}  className="ct-chart">
                        <Calendar
                         localizer={localizer}
-                        events={events }
-                        views={["month"]}
+                        events={this.state.preglediUKalendaru }
+                        // views={["month"]}
                         defaultDate={new Date()}
+                        style={{ maxHeight: "100%" }}
+                        showMultiDayTimes={true}
+                          
+                        eventPropGetter={event => ({
+                          style:{
+                            backgroundColor: "rgb(92, 185, 240)"
+                          }
+                        })}
+
+                
+                        // startAccessor={event.start}
+                        // endAccessor={event.end}
+                        // titleAccessor="tip"
+                        onSelectEvent={obj => {
+                            //this.state.objekat = obj;
+                            console.log(obj);
+                            // this.setState({
+                            //   isOpen: true
+                            // })
+                            
+                        }}
                     />
                     </div>
                  
