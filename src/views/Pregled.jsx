@@ -9,7 +9,8 @@ import { Card } from "components/Card/Card.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
-import ListaPacijenataLekar from "views/ListaPacijenataLekar.jsx";
+import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
+
 import "klinickiCentar.css";
 
 import Slikalekari from "assets/img/lekari.jpg";
@@ -273,6 +274,12 @@ class Pregled extends React.Component {
           if(lista[i].oznacen == false){
             console.log("PRE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
             lista[i].oznacen = true;
+            this.setState({
+              izabraniLekovi: lista
+            }, ()=> {
+              this.izabraniLekovi();
+              this.dialog.hide();
+            })
             console.log("POSLE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
             
             
@@ -280,6 +287,12 @@ class Pregled extends React.Component {
           }else{
             console.log("PRE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
             lista[i].oznacen = false;
+            this.setState({
+              izabraniLekovi: lista
+            }, ()=> {
+              this.izabraniLekovi();
+              this.dialog.hide();
+            })
             console.log("POSLE: " + lista[i].id + " " + lista[i].sifra + " oznacen " + lista[i].id);
             
             
@@ -287,8 +300,7 @@ class Pregled extends React.Component {
           }    
         } 
     }
-    this.izabraniLekovi();
-    this.dialog.hide();
+    
     
 
   }
@@ -475,16 +487,16 @@ class Pregled extends React.Component {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/listaPacijenataLekar"
-              render={props => <ListaPacijenataLekar {...props}
+              path="/pocetnaStranicaLekara"
+              render={props => <PocetnaStranicaLekara {...props}
                   token={this.state.token}
                   email={this.state.email} 
                   uloga={this.state.uloga}
                 //nije emailPacijenta vec je id al dobro
                   emailPacijenta={this.state.emailPacijenta}  
-                   />}
+                />}
             />
-            <Redirect from="/" to="/listaPacijenataLekar" />
+            <Redirect from="/" to="/pocetnaStranicaLekara" />
           </Switch>
         </BrowserRouter>
       );

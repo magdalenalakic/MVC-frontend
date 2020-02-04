@@ -14,6 +14,7 @@ import Slikalekari from "assets/img/lekari.jpg";
 import slikaPregledi from "assets/img/pregled.jpg"
 import kalendarSlika from "assets/img/calendar.png"
 import moment from 'moment';
+import Pregled from "views/Pregled.jsx";
  
 
 const localizer = momentLocalizer(moment);
@@ -45,7 +46,12 @@ class PocetnaStranicaLekara extends React.Component {
       preglediUKalendaru: [],
       listaOdmorOdsustvo: [],
       odmorodsustvoUKalendaru: [],
-      dogadjajiKalendar: []
+      dogadjajiKalendar: [],
+      isOdmorOdsustvo: false,
+      isPregled: false,
+      isOperacija: false,
+      objekat: null,
+      redirectToPregled: false
     };
     this.config = {
       headers: {
@@ -62,11 +68,10 @@ class PocetnaStranicaLekara extends React.Component {
     this.handleZakazivanjePregleda = this.handleZakazivanjePregleda.bind(this);
     this.preuzimanjeLekara = this.preuzimanjeLekara.bind(this);
 
-    this.dodavanjeListePregledaUKalendar = this.dodavanjeListePregledaUKalendar.bind(this);
+    // this.dodavanjeListePregledaUKalendar = this.dodavanjeListePregledaUKalendar.bind(this);
     this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(this);
     this.ucitavanjeListePregleda = this.ucitavanjeListePregleda.bind(this);
-    this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(this);
-
+    // this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(this);
     this.dodavanjeListaUKalendar = this.dodavanjeListaUKalendar.bind(this);
   }
 
@@ -168,111 +173,111 @@ class PocetnaStranicaLekara extends React.Component {
     //treba dodati i jednu i drugu listu hahahha 
     this.state.dogadjajiKalendar = [];
 
-    // let lista = this.state.listaPregleda;
-    // var i = 0;
-    // if(lista.length != 0){
-    //   for(i; i < lista.length; i++){
-    //     console.log("datum!!!")
-    //     console.log(i);
-    //     let start = new Date(lista[i].datum);
-    //     let end = new Date(lista[i].datum);
+    let lista = this.state.listaPregleda;
+    
+    if(lista.length != 0){
+      for(var i = 0; i < lista.length; i++){
+        console.log("datum!!!")
+        console.log(i);
+        let start = new Date(lista[i].datum);
+        let end = new Date(lista[i].datum);
       
-    //     start.setHours(lista[i].termin);
-    //     end.setHours(lista[i].termin + 2);
-    //     // let kraj = new Date(lista[i].datum);
-    //     // console.log(kraj.getFullYear());
-    //     // console.log(kraj.getMonth())   
-    //     // console.log(kraj.getDate());
-    //     // console.log(kraj.getHours());
-    //     // console.log(lista[i].termin);
+        start.setHours(lista[i].termin);
+        end.setHours(lista[i].termin + 2);
+        // let kraj = new Date(lista[i].datum);
+        // console.log(kraj.getFullYear());
+        // console.log(kraj.getMonth())   
+        // console.log(kraj.getDate());
+        // console.log(kraj.getHours());
+        // console.log(lista[i].termin);
         
-    //     this.state.dogadjajiKalendar.push(
-    //       {
-    //         id: i,
-    //         title: lista[i].nazivTP ,
-    //         start: start ,
-    //         end: end,
-    //         desc: lista[i],
-    //         // up_down_ind: "Y",
+        this.state.dogadjajiKalendar.push(
+          {
+            // id: i,
+            title: lista[i].nazivTP ,
+            start: start ,
+            end: end,
+            desc: lista[i],
+            up_down_ind: "Y",
             
-    //       }
-    //     )
+          }
+        )
         
          
-    //   }
-    // }
+      }
+    }
 
-    // var i = lista.length;
+    
 
-    // let lista2 = this.state.listaOdmorOdsustvo;
-    // if(lista2.length != 0){
-    //   for(i; i < lista2.length+lista.length; i++){
-    //     console.log(i);
-    //     let start2 = new Date(lista2[i].datumOd);
-    //     let end2 = new Date(lista2[i].datumDo);
-    //     this.state.dogadjajiKalendar.push(
-    //       {
-    //         id: i,
-    //         title: lista2[i].tip,
-    //         start: start2,
-    //         end: end2,
-    //         desc: lista2[i].opis,
-    //         // up_down_ind: "Y",
-    //       }
-    //     )
-    //   }
-    // }
+    let lista2 = this.state.listaOdmorOdsustvo;
+    if(lista2.length != 0){
+      for(var i = 0; i < lista2.length; i++){
+        console.log(i);
+        let start2 = new Date(lista2[i].datumOd);
+        let end2 = new Date(lista2[i].datumDo);
+        this.state.dogadjajiKalendar.push(
+          {
+            // id: i,
+            title: lista2[i].tip,
+            start: start2,
+            end: end2,
+            desc: lista2[i],
+            up_down_ind: "Y",
+          }
+        )
+      }
+    }
    
   }
 
-  dodavanjeListePregledaUKalendar(){
-    let lista = this.state.listaPregleda;
-    for(var i = 0; i < lista.length; i++){
-      console.log("datum!!!")
-      let start = new Date(lista[i].datum);
-      let end = new Date(lista[i].datum);
+  // dodavanjeListePregledaUKalendar(){
+  //   let lista = this.state.listaPregleda;
+  //   for(var i = 0; i < lista.length; i++){
+  //     console.log("datum!!!")
+  //     let start = new Date(lista[i].datum);
+  //     let end = new Date(lista[i].datum);
     
-      start.setHours(lista[i].termin);
-      end.setHours(lista[i].termin + 2);
-      // let kraj = new Date(lista[i].datum);
-      // console.log(kraj.getFullYear());
-      // console.log(kraj.getMonth())   
-      // console.log(kraj.getDate());
-      // console.log(kraj.getHours());
-      // console.log(lista[i].termin);
+  //     start.setHours(lista[i].termin);
+  //     end.setHours(lista[i].termin + 2);
+  //     // let kraj = new Date(lista[i].datum);
+  //     // console.log(kraj.getFullYear());
+  //     // console.log(kraj.getMonth())   
+  //     // console.log(kraj.getDate());
+  //     // console.log(kraj.getHours());
+  //     // console.log(lista[i].termin);
       
-      this.state.preglediUKalendaru.push(
-        {
-          id: i,
-          title: lista[i].nazivTP ,
-          start: start ,
-          end: end,
-          desc: lista[i],
-          // up_down_ind: "Y",
+  //     this.state.preglediUKalendaru.push(
+  //       {
+  //         id: i,
+  //         title: lista[i].nazivTP ,
+  //         start: start ,
+  //         end: end,
+  //         desc: lista[i],
+  //         // up_down_ind: "Y",
           
-        }
-      )
+  //       }
+  //     )
       
        
-    }
-  }
-  dodavanjeListeOdmorOdsustvoUKalendar(){
-    let lista = this.state.listaOdmorOdsustvo;
-    for(var i = 0; i < lista.length; i++){
-      let start = new Date(lista[i].datumOd);
-      let end = new Date(lista[i].datumDo);
-      this.state.odmorodsustvoUKalendaru.push(
-        {
-          id: i,
-          title: lista[i].tip,
-          start: start,
-          end: end,
-          desc: lista[i].opis,
-          up_down_ind: "Y",
-        }
-      )
-    }
-  }
+  //   }
+  // }
+  // dodavanjeListeOdmorOdsustvoUKalendar(){
+  //   let lista = this.state.listaOdmorOdsustvo;
+  //   for(var i = 0; i < lista.length; i++){
+  //     let start = new Date(lista[i].datumOd);
+  //     let end = new Date(lista[i].datumDo);
+  //     this.state.odmorodsustvoUKalendaru.push(
+  //       {
+  //         // id: i,
+  //         title: lista[i].tip,
+  //         start: start,
+  //         end: end,
+  //         desc: lista[i].opis,
+  //         up_down_ind: "Y",
+  //       }
+  //     )
+  //   }
+  // }
 
   componentWillMount(){
     this.preuzimanjeLekara();
@@ -395,15 +400,33 @@ class PocetnaStranicaLekara extends React.Component {
     const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
  
 
-    if (redirectToProfilPacijenta === true) {
+    // if (redirectToProfilPacijenta === true) {
+    //   return (
+    //     <BrowserRouter>
+    //       <Switch>
+    //         <Route
+    //           path="/profilPacijenta"
+    //           render={props => <ProfilPacijenta {...props} emailPacijenta={emailPacijenta} />}
+    //         />
+    //         <Redirect from="/" to="/profilPacijenta" />
+    //       </Switch>
+    //     </BrowserRouter>
+    //   );
+    // }
+    if (this.state.redirectToPregled === true) {
       return (
         <BrowserRouter>
           <Switch>
             <Route
-              path="/profilPacijenta"
-              render={props => <ProfilPacijenta {...props} emailPacijenta={emailPacijenta} />}
+              path="/pregled"
+              render={props => <Pregled {...props}
+              token={this.state.token}
+              email={this.state.email} 
+              uloga={this.state.uloga}
+              idPregleda ={this.state.objekat.desc.id}
+              emailPacijenta={this.state.objekat.desc.pacijentEmail}   />}
             />
-            <Redirect from="/" to="/profilPacijenta" />
+            <Redirect from="/" to="/pregled" />
           </Switch>
         </BrowserRouter>
       );
@@ -477,10 +500,149 @@ class PocetnaStranicaLekara extends React.Component {
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
                 content={
-              
-                     <div style={{ height: 500 }}  className="ct-chart">
+                  <Grid fluid>
+                    <Row>
+                    {
+                      this.state.isOdmorOdsustvo ?
+                      
+                          <Card
+                            // category="Dogadjaj"
+                            ctTableFullWidth
+                            ctTableResponsive
+                            content={
+                              <div>
+                                
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Dogadjaj: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.title}</label>  
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Opis: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.desc.opis}</label>
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Pocetak: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.start.toLocaleDateString()}</label>
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Kraj: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.end.toLocaleDateString()}</label>
+                                  
+                                </div>
+                                <Button className="izlaz" 
+                                 onClick={()=>  this.setState({
+                                    isPregled: false, 
+                                   isOperacija: false,
+                                   isOdmorOdsustvo: false 
+                                  })}
+                                >X</Button>
+                                
+
+                              </div>
+                              
+                            }
+                          />
+                        : null
+                      }
+                    </Row>
+                    <Row>
+                    {
+                      this.state.isOperacija ?
+                      
+                          <Card
+                            // category="Dogadjaj"
+                            ctTableFullWidth
+                            ctTableResponsive
+                            content={
+                              <div>
+                                
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Dogadjaj: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.title}</label>  
+                                </div>
+                                {/* <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Opis: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.desc}</label>
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Pocetak: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.start.toLocaleDateString()}</label>
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Kraj: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.end.toLocaleDateString()}</label>
+                                  
+                                </div> */}
+                                <Button className="izlaz" 
+                                 onClick={()=>  this.setState({
+                                    isPregled: false, 
+                                   isOperacija: false,
+                                   isOdmorOdsustvo: false
+                                  })}
+                                >X</Button>
+                                
+
+                              </div>
+                              
+                            }
+                          />
+                        : null
+                      }
+                    </Row>
+                    <Row>
+                    {
+                      this.state.isPregled ?
+                      
+                          <Card
+                            // category="Dogadjaj"
+                            ctTableFullWidth
+                            ctTableResponsive
+                            content={
+                              <div>
+                                
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Dogadjaj: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.title}</label>  
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Pacijent: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.desc.imeP + " " + this.state.objekat.desc.prezimeP}</label>
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Pocetak: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.start.toLocaleDateString()}</label>
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Kraj: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.end.toLocaleDateString()}</label>
+                                  
+                                </div>
+                                <Button className="izlaz" 
+                                 onClick={()=>  this.setState({
+                                   isPregled: false, 
+                                   isOperacija: false,
+                                   isOdmorOdsustvo: false
+                                  })}
+                                >X</Button>
+                                <Button className="izlaz" 
+                                  onClick={()=>  this.setState({
+                                    redirectToPregled: true
+                                  })}
+                                >Zapocni pregled</Button>
+                                
+
+                              </div>
+                              
+                            }
+                          />
+                        : null
+                      }
+                    </Row>
+                    <Row>
+                    <div style={{ height: 500 }}  className="ct-chart">
                        <Calendar
                         localizer={localizer}
+                        // culture="en"
                         events={this.state.dogadjajiKalendar }
                         // views={["month"]}
                         // defaultDate={new Date()}
@@ -494,87 +656,59 @@ class PocetnaStranicaLekara extends React.Component {
                         })}
 
                 
-                        startAccessor={e=> e.start}
-                        endAccessor={e=> e.end}
+                        // startAccessor={e=> e.start}
+                        // endAccessor={e=> e.end}
                         // titleAccessor="tip"
                         onSelectEvent={obj => {
-                            //this.state.objekat = obj;
-                            console.log(obj);
-                            // this.setState({
-                            //   isOpen: true
-                            // })
+                            this.state.objekat = obj;
+                            console.log(obj.desc);
+                            if(obj.title === "ODMOR"){
+                              console.log("odmor");
+                              this.setState({
+                                isOdmorOdsustvo: true
+                              })
+                            }else if(obj.title === "ODSUSTVO"){
+                              console.log("odsustvo")
+                              this.setState({
+                                isOdmorOdsustvo: true,
+                                isPregled: false, 
+                                isOperacija: false
+                                
+                              })
+                            }else if(obj.title === "OPERACIJA"){
+                              console.log("operacija")
+                              this.setState({
+                                isOperacija: true,
+                                isPregled: false, 
+                                isOdmorOdsustvo: false
+                              })
+                            }else{
+                              // if(obj.)
+                              console.log("pregled")
+                              this.setState({
+                                isPregled: true,
+                                isOperacija: false,
+                                isOdmorOdsustvo: false
+                              })
+                            }
+                            
                             
                         }}
                     />
                     </div>
+
+
+                  
+                    </Row>
+                  </Grid>
+                    
+                     
                  
                 }
                 
               />
             </Col>
-            {/* <Col >
-              <Card
-                title="Lista pacijenata"
-                // category="24 Hours performance"
-                // stats="Updated 3 minutes ago"
-                content={
-                  <form
-                  onSubmit={this.handleSumbit}
-                  className="formaIzmenaProfilaPacijent"
-                  >
-                     <div className="pretraga">
-                      <input
-                        className="pretraga"
-                        placeholder="Pretrazi"
-                        type="text"
-                        aria-label="Search"
-                        name="pretraziPolje"
-                        margin= "2px"
-                        onChange={this.handleChange}
-                      />
-             </div>
-                    <div className="pretraga">
-                      <select onChange={e => {this.sortMyArray(e) }}>
-                        <option value={"idRastuce"} >Id (rastuce)</option>
-                        <option value={"idOpadajuce"} >Id (opadajuce)</option>
-                        <option value={"lbo"}>LBO</option>
-                        <option value={"ime"}>Ime</option>
-                        <option value={"prezime"}>Prezime</option>
-                        <option value={"email"}>Email</option>
-                      </select>
-              </div>
-             <Card 
-                ctTableFullWidth
-               // ctTableResponsive
-                className="pretraga"
-                 content={
-                  <Table className="TabelaListePacijenata" striped hover style={{ width: 100 }}>
-                  <thead>
-                    <tr>
-                      {/*                             
-                      {listaKlinika.map((prop, key) => {
-                        return <th key={key}>{prop}</th>;
-                      })} */}
-                      {/* <th id="Id">Id</th>
-                      <th id="Ime">Ime</th>
-                      <th id="Prezime"> Prezime</th>
-                      <th id="Lbo"> Lbo</th>
-                      <th id="Email">Email</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      {this.listaPacijenataLekara()} 
-                  </tbody>
-                </Table>
-                 }
-                />
-                </form>
-              }
-             />     
-          </Col>  */}
-            
-            
-           
+   
           </Row>
           
         </Grid>

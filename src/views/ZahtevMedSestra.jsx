@@ -7,6 +7,8 @@ import { Card } from "components/Card/Card.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import "klinickiCentar.css";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import PocetnaStranicaMedSestre from "views/PocetnaStranicaMedSestre.jsx";
 
 
 class ZahtevMedSestra extends React.Component {
@@ -24,7 +26,8 @@ class ZahtevMedSestra extends React.Component {
       opis: "",
       idMedSestre: 0, 
       imeMS: "",
-      prezimeMS: ""
+      prezimeMS: "",
+      renderToPocetna: false
 
       
     };
@@ -127,6 +130,10 @@ class ZahtevMedSestra extends React.Component {
         console.log("uspesno poslat zahtev")
         console.log(Response.data);
 
+        this.setState({
+          renderToPocetna: true
+        })
+
       })
       .catch(error => {
         console.log("Zahtev nije poslat");
@@ -135,6 +142,27 @@ class ZahtevMedSestra extends React.Component {
 
   render() {
     console.log(this.props);
+    if(this.state.renderToPocetna === true){
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/pocetnaStranica"
+              render={props => <PocetnaStranicaMedSestre {...props}
+                  token={this.state.token}
+                  email={this.state.email} 
+                  uloga={this.state.uloga}
+                //nije emailPacijenta vec je id al dobro
+                  // emailPacijenta={this.state.emailPacijenta}  
+                />}
+            />
+            <Redirect from="/" to="/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+
+
     return (
       <div className="content">
               <Card
@@ -171,6 +199,7 @@ class ZahtevMedSestra extends React.Component {
                             placeholderText="Izaberi datum"
                             selected={this.state.datumPocetka}
                             onSelect={this.handleChangeDatePocetka}
+                            minDate={new Date()}
 
                             />
                         </Col>
@@ -180,6 +209,7 @@ class ZahtevMedSestra extends React.Component {
                               placeholderText="Izaberi datum"
                               selected={this.state.datumKraja}
                               onSelect={this.handleChangeDateKraja}
+                              minDate={this.state.datumPocetka}
 
                           />
                         </Col>

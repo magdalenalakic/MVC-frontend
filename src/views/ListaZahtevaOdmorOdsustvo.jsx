@@ -93,6 +93,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
         this.setState({
             listaZahtevaLekara: response.data
         });
+
         })
         .catch(error => {
         console.log("nije uspelo ucitavanje zahteva lekara");
@@ -144,7 +145,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
               .then(response => {
                 console.log("ODOBRENOOOO");
                 console.log(response);
-                // this.listaZahteva();
+                this.ucitajZahteveMedSestre();
               })
               .catch(error => {
                   console.log(error.response);
@@ -186,7 +187,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
               .then(response => {
                 console.log("ODOBRENOOOO");
                 console.log(response);
-                // this.listaZahtevaLekar();
+                this.ucitajZahteveLekara();
               })
               .catch(error => {
                   console.log(error.response);
@@ -227,7 +228,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
               this.setState({           
                 isOpen: true,
               })
-              // this.listaZahteva();
+              this.ucitajZahteveMedSestre();
 
             });
           })
@@ -265,7 +266,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
             this.setState({           
               isOpenL: true,
             })
-            // this.listaZahtevaLekar();
+            this.ucitajZahteveLekara();
 
           });
           })
