@@ -164,14 +164,14 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
   renderRedirect = () => {
     // console.log("aaaaaaa")
     if(this.state.redirectToListaLekara){
-      return <Redirect from="/" to="/admin/lekari"/>;
+      return <Redirect from="/" to="/admink/lekari"/>;
     }else  if(this.state.redirectToListaSala){
       console.log("redirect SALA//////////////")
-      return <Redirect from="/" to="/admin/Sale"> </Redirect>
+      return <Redirect from="/" to="/admink/Sale"> </Redirect>
     }else if(this.state.redirectToSlobodniTermini){
-      return <Redirect from="/" to="/admin/slobodniTermini"></Redirect>
+      return <Redirect from="/" to="/admink/slobodniTermini"></Redirect>
     }else if(this.state.redirectToListaPregleda){
-      return <Redirect from="/" to="/admin/Pregledi"></Redirect>
+      return <Redirect from="/" to="/admink/Pregledi"></Redirect>
     }
   };
 

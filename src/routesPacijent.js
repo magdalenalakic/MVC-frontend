@@ -1,4 +1,3 @@
-
 import IzmenaProfilaPacijent from "views/IzmenaProfilaPacijent.jsx";
 import PocetnaStranaPacijenta from "views/PocetnaStranicaPacijenta.jsx";
 import ListaKlinika from "views/ListaKlinika.jsx";
@@ -14,28 +13,28 @@ const dashboardRoutes = [
     name: "Pocetna Strana",
     icon: "pe-7s-home",
     component: PocetnaStranaPacijenta,
-    layout: "/admin"
+    layout: "/pacijent"
   },
   {
     path: "/izmenaProfilaPacijenta",
     name: "Izmena profila",
     icon: "pe-7s-user",
     component: IzmenaProfilaPacijent,
-    layout: "/admin"
+    layout: "/pacijent"
   },
   // {
   //   path: "/pregledKlinika",
   //   name: "Pregled klinika",
   //   icon: "pe-7s-keypad",
   //   component: PregledKlinika,
-  //   layout: "/admin"
+  //   layout: "/pacijent"
   // },
   {
     path: "/brzoZakazivanje",
     name: "Brzo Zakazivanje",
     icon: "pe-7s-next",
     component: BrzoZakazivanje,
-    layout: "/admin"
+    layout: "/pacijent"
   },
 
   {
@@ -43,35 +42,35 @@ const dashboardRoutes = [
     name: "Klinike",
     icon: "pe-7s-menu",
     component: ListaKlinika,
-    layout: "/admin"
+    layout: "/pacijent"
   },
   {
     path: "/zdravstveniKarton",
     name: "Zdravstveni karton",
     icon: "pe-7s-note2",
     component: ZdravstveniKarton,
-    layout: "/admin"
+    layout: "/pacijent"
   },
   {
     path: "/istorija",
     name: "Istorija pregleda",
     icon: "pe-7s-news-paper",
     component: IstorijaPOPacijenta,
-    layout: "/admin"
+    layout: "/pacijent"
   },
   {
     path: "/potvrdaPregleda",
     name: "Potvrda pregleda",
     icon: "pe-7s-check",
     component: PotvrdaPregleda,
-    layout: "/admin"
+    layout: "/pacijent"
   }
   // {
   //   path: "/notifications",
   //   name: "Notifications",
   //   icon: "pe-7s-bell",
   //   component: Notifications,
-  //   layout: "/admin"
+  //   layout: "/pacijent"
   // }
 ];
 
