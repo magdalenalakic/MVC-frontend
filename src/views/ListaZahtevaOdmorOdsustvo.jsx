@@ -144,7 +144,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
               .then(response => {
                 console.log("ODOBRENOOOO");
                 console.log(response);
-                this.ucitajZahteveMedSestre();
+                // this.listaZahteva();
               })
               .catch(error => {
                   console.log(error.response);
@@ -186,7 +186,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
               .then(response => {
                 console.log("ODOBRENOOOO");
                 console.log(response);
-                this.ucitajZahteveLekara();
+                // this.listaZahtevaLekar();
               })
               .catch(error => {
                   console.log(error.response);
@@ -213,22 +213,23 @@ class ListaZahtevaOdmorOdsustvo extends Component {
       axios
           .get(url1, this.config)
           .then(response => {
-          console.log("URL zahtev neki");
-          console.log(response);
+            console.log("URL zahtev neki");
+            console.log(response);
 
-          this.setState({
-            trenutniZahtev: response.data
-          }, ()=> {
-
-            console.log(this.state.trenutniZahtev.emailMS)
             this.setState({
-              emailMS : this.state.trenutniZahtev.emailMS
-            });
-            this.setState({           
-              isOpen: true,
-            })
+              trenutniZahtev: response.data
+            }, ()=> {
 
-          });
+              console.log(this.state.trenutniZahtev.emailMS)
+              this.setState({
+                emailMS : this.state.trenutniZahtev.emailMS
+              });
+              this.setState({           
+                isOpen: true,
+              })
+              // this.listaZahteva();
+
+            });
           })
           .catch(error => {
             console.log("nije uspelo ucitavanje zahteva med sestre");
@@ -264,6 +265,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
             this.setState({           
               isOpenL: true,
             })
+            // this.listaZahtevaLekar();
 
           });
           })

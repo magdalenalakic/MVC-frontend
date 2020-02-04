@@ -115,7 +115,7 @@ class ZahtevMedSestra extends React.Component {
         datumOd : this.state.datumPocetka,
         datumDo : this.state.datumKraja,
         opis : this.state.opis,
-        status: false,
+        // status: false,
         idMedSestre : this.state.idMedSestre,
         imeMS: this.state.imeMS,
         prezimeMS: this.state.prezimeMS,

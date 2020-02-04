@@ -116,7 +116,7 @@ class ZahtevLekar extends React.Component {
         datumOd : this.state.datumPocetka,
         datumDo : this.state.datumKraja,
         opis : this.state.opis,
-        status: false,
+        // status: false,
         idLekara : this.state.id,
         imeL: this.state.imeMS,
         prezimeL: this.state.prezimeMS,

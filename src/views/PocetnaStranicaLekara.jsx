@@ -42,7 +42,10 @@ class PocetnaStranicaLekara extends React.Component {
       redirectToZahtevZaGodOdmor: false,
       redirectToZakazivanjePregleda: false,
       listaPregleda: [],
-      preglediUKalendaru: []
+      preglediUKalendaru: [],
+      listaOdmorOdsustvo: [],
+      odmorodsustvoUKalendaru: [],
+      dogadjajiKalendar: []
     };
     this.config = {
       headers: {
@@ -52,7 +55,6 @@ class PocetnaStranicaLekara extends React.Component {
       }
     }
     this.listaPacijenataLekara = this.listaPacijenataLekara.bind(this);
-    this.sortMyArray = this.sortMyArray.bind(this);
 
     this.handleListaPacijenata = this.handleListaPacijenata.bind(this);
     this.handleProfilLekara = this.handleProfilLekara.bind(this);
@@ -61,6 +63,11 @@ class PocetnaStranicaLekara extends React.Component {
     this.preuzimanjeLekara = this.preuzimanjeLekara.bind(this);
 
     this.dodavanjeListePregledaUKalendar = this.dodavanjeListePregledaUKalendar.bind(this);
+    this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(this);
+    this.ucitavanjeListePregleda = this.ucitavanjeListePregleda.bind(this);
+    this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(this);
+
+    this.dodavanjeListaUKalendar = this.dodavanjeListaUKalendar.bind(this);
   }
 
   handleClick = e => {
@@ -109,41 +116,139 @@ class PocetnaStranicaLekara extends React.Component {
               console.log(error);
           })
 
-        //PREUZIMANJE LISTE PREGLEDA LEKARA
-        
-        axios.get("http://localhost:8025/api/pregledi/getPreglediLekara", this.config)
-          .then(response => {
-            console.log("PREUZETI PREGLEDI");
-           
-            console.log(response.data)
-            this.setState({
-              listaPregleda: response.data
-            }, ()=> this.dodavanjeListePregledaUKalendar());
-            
-          })
-          .catch(error => {
-              console.log("nisu preuzeti pregledi");
-              console.log(error);
-          })
+       
       })
       
       .catch(error => {
         console.log("Lekar  nije preuzet")
       })
   }
+  ucitavanjeListeOdmorOdsustvo(){
+    const url1 = 'http://localhost:8025/api/lekari/listaOdmorOdsustvo';
+    console.log(url1);
+    axios
+      .get(url1, this.config)
+      .then(response => {
+        console.log("ucitana lista odmor odsustvo");
+        console.log(response);
+        this.setState({
+          listaOdmorOdsustvo: response.data
+        }
+        ,()=> this.dodavanjeListaUKalendar()
+        );
+      })
+      .catch(error => {
+        console.log("nije ucitana lista odmor odsustvo");
+        console.log(error);
+      });
+    
+  
+  };
+  ucitavanjeListePregleda(){
+     //PREUZIMANJE LISTE PREGLEDA LEKARA
+        
+     axios.get("http://localhost:8025/api/pregledi/getPreglediLekara", this.config)
+     .then(response => {
+       console.log("PREUZETI PREGLEDI");
+      
+       console.log(response.data)
+       this.setState({
+         listaPregleda: response.data
+       }
+       , ()=> this.dodavanjeListaUKalendar()
+       );
+       
+     })
+     .catch(error => {
+         console.log("nisu preuzeti pregledi");
+         console.log(error);
+     })
+  }
+  dodavanjeListaUKalendar(){
+    //treba dodati i jednu i drugu listu hahahha 
+    this.state.dogadjajiKalendar = [];
+
+    // let lista = this.state.listaPregleda;
+    // var i = 0;
+    // if(lista.length != 0){
+    //   for(i; i < lista.length; i++){
+    //     console.log("datum!!!")
+    //     console.log(i);
+    //     let start = new Date(lista[i].datum);
+    //     let end = new Date(lista[i].datum);
+      
+    //     start.setHours(lista[i].termin);
+    //     end.setHours(lista[i].termin + 2);
+    //     // let kraj = new Date(lista[i].datum);
+    //     // console.log(kraj.getFullYear());
+    //     // console.log(kraj.getMonth())   
+    //     // console.log(kraj.getDate());
+    //     // console.log(kraj.getHours());
+    //     // console.log(lista[i].termin);
+        
+    //     this.state.dogadjajiKalendar.push(
+    //       {
+    //         id: i,
+    //         title: lista[i].nazivTP ,
+    //         start: start ,
+    //         end: end,
+    //         desc: lista[i],
+    //         // up_down_ind: "Y",
+            
+    //       }
+    //     )
+        
+         
+    //   }
+    // }
+
+    // var i = lista.length;
+
+    // let lista2 = this.state.listaOdmorOdsustvo;
+    // if(lista2.length != 0){
+    //   for(i; i < lista2.length+lista.length; i++){
+    //     console.log(i);
+    //     let start2 = new Date(lista2[i].datumOd);
+    //     let end2 = new Date(lista2[i].datumDo);
+    //     this.state.dogadjajiKalendar.push(
+    //       {
+    //         id: i,
+    //         title: lista2[i].tip,
+    //         start: start2,
+    //         end: end2,
+    //         desc: lista2[i].opis,
+    //         // up_down_ind: "Y",
+    //       }
+    //     )
+    //   }
+    // }
+   
+  }
+
   dodavanjeListePregledaUKalendar(){
     let lista = this.state.listaPregleda;
     for(var i = 0; i < lista.length; i++){
-      let start = new Date(lista[i].datumOd);
-      // let end = new Date(lista[i].datumDo);
+      console.log("datum!!!")
+      let start = new Date(lista[i].datum);
+      let end = new Date(lista[i].datum);
+    
+      start.setHours(lista[i].termin);
+      end.setHours(lista[i].termin + 2);
+      // let kraj = new Date(lista[i].datum);
+      // console.log(kraj.getFullYear());
+      // console.log(kraj.getMonth())   
+      // console.log(kraj.getDate());
+      // console.log(kraj.getHours());
+      // console.log(lista[i].termin);
+      
       this.state.preglediUKalendaru.push(
         {
           id: i,
           title: lista[i].nazivTP ,
-          start: start,
-          // end: end,
-          desc: lista[i].imeP + " " + lista[i].prezimeP,
-          up_down_ind: "Y",
+          start: start ,
+          end: end,
+          desc: lista[i],
+          // up_down_ind: "Y",
           
         }
       )
@@ -151,23 +256,33 @@ class PocetnaStranicaLekara extends React.Component {
        
     }
   }
+  dodavanjeListeOdmorOdsustvoUKalendar(){
+    let lista = this.state.listaOdmorOdsustvo;
+    for(var i = 0; i < lista.length; i++){
+      let start = new Date(lista[i].datumOd);
+      let end = new Date(lista[i].datumDo);
+      this.state.odmorodsustvoUKalendaru.push(
+        {
+          id: i,
+          title: lista[i].tip,
+          start: start,
+          end: end,
+          desc: lista[i].opis,
+          up_down_ind: "Y",
+        }
+      )
+    }
+  }
 
   componentWillMount(){
     this.preuzimanjeLekara();
-    
+    this.ucitavanjeListePregleda();
+    this.ucitavanjeListeOdmorOdsustvo();
+    // this.dodavanjeListaUKalendar();
   }
 
 
-  createLegend(json) {
-    var legend = [];
-    for (var i = 0; i < json["names"].length; i++) {
-      var type = "fa fa-circle text-" + json["types"][i];
-      legend.push(<i className={type} key={i} />);
-      legend.push(" ");
-      legend.push(json["names"][i]);
-    }
-    return legend;
-  }
+  
 
   handleChange = e => {
       e.preventDefault();
@@ -234,47 +349,7 @@ class PocetnaStranicaLekara extends React.Component {
   }
     return res;
   }
-  sortMyArray(sortBy) {
-    console.log("sort funkcija");
-    console.log(sortBy.target.value);
-    const lista = this.state.listaPacijenata;
-    if (sortBy.target.value  === "lbo") {
-      console.log("lbo");
-      this.setState({
-        listaPacijenata: lista.sort((a, b) => a.lbo - b.lbo)
-      });
-    } else if (sortBy.target.value  === "ime") {
-      console.log("ime");
-      this.setState({
-        listaPacijenata: lista.sort((a, b) => a.ime.localeCompare(b.ime))
-      });
-    } else if (sortBy.target.value  === "prezime") {
-      console.log("prezime");
-      this.setState({
-        listaPacijenata: lista.sort((a, b) => a.prezime.localeCompare(b.prezime))
-      });
-    } else if (sortBy.target.value  === "email") {
-      console.log("email");
-
-      this.setState({
-        listaPacijenata: lista.sort((a, b) => a.email.localeCompare(b.email))
-      });
-    
-    } else if (sortBy.target.value  === "idOpadajuce") {
-      console.log("idOpadajuce");
-
-      this.setState({
-        listaPacijenata: lista.sort((a, b) => b.id - a.id)
-      });
-    } else if (sortBy.target.value  === "idRastuce") {
-      console.log("idRastuce");
-
-      this.setState({
-        listaPacijenata: lista.sort((a, b) => a.id - b.id)
-      });
-    }
-    
-  }
+  
 
 
   renderRedirect = () => {
@@ -406,10 +481,10 @@ class PocetnaStranicaLekara extends React.Component {
                      <div style={{ height: 500 }}  className="ct-chart">
                        <Calendar
                         localizer={localizer}
-                        events={this.state.preglediUKalendaru }
+                        events={this.state.dogadjajiKalendar }
                         // views={["month"]}
-                        defaultDate={new Date()}
-                        style={{ maxHeight: "100%" }}
+                        // defaultDate={new Date()}
+                        // style={{ maxHeight: "100%" }}
                         showMultiDayTimes={true}
                           
                         eventPropGetter={event => ({
@@ -419,8 +494,8 @@ class PocetnaStranicaLekara extends React.Component {
                         })}
 
                 
-                        // startAccessor={event.start}
-                        // endAccessor={event.end}
+                        startAccessor={e=> e.start}
+                        endAccessor={e=> e.end}
                         // titleAccessor="tip"
                         onSelectEvent={obj => {
                             //this.state.objekat = obj;
