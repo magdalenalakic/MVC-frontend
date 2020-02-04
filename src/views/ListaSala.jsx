@@ -16,12 +16,13 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import events from "events.js"; //ovo nece trebati  kasnije
 import moment from 'moment';
+import ListaZahtevaPregled from "views/ListaZahtevaPregled.jsx"
 const localizer = momentLocalizer(moment);
 
 class ListaSala extends Component {
   constructor(props) {
     super(props);
-    console.log("LISTA SALA");
+    console.log("LISTA SALAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa -----------------------------")
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
@@ -38,75 +39,145 @@ class ListaSala extends Component {
       pretragaTabela:  false,
       listaTermina: [],
       noviNiz: [], //termin od 9 do 11 i dalje
-      noviNiz2: [],
-      noviNiz3: [],
-      noviNiz4: [],
+
       disabled: [false, false, false, false],
+      
+      listaSlobodnihSala: [],
+      listaZauzetihTerminaSale: [],
+      rezervisanaSala: false,
+
+      listaLekara: [],
       velikiNiz: [],
       aktivaniDugmici: false,
       izabranDatum: false,
       prikaziDatumaTermina: false,
       prikazPretraga: false,
       odabranFilter: "",
+      terminPregleda: props.termrinPregleda,
+      idPregleda: props.idPregleda,
+      idLekar: props.idLekar,
+      idPacijent: props.idPacijent,
+     // datumPregleda: props.datumPregleda,
+      //redirekcija od lista sala, mijenjam izgled i setujem datum
+      // redirectFromListaSala: false,
 
+      datum666: "",
+      selectValue:"",
       klinikaLekara: 0,
       idSale: "",
       brojSale: "",
       nazivSale: "",
       reirectToIzmeniLekar: false,
     };
+     
+      console.log(this.state)
+      console.log(this.props.datumPregleda);
+      // console.log(this.state.datumPregleda);
      this.listaSalaK = this.listaSalaK.bind(this);
+     
      this.promenjenOdabirSale = this.promenjenOdabirSale.bind(this);
      this.handleChangeDate = this.handleChangeDate.bind(this);
      this.posaljiDatum = this.posaljiDatum.bind(this);
-     this.rezervisiSalu = this.rezervisiSalu.bind(this);
-     // this.dodajLekara = this.dodajLekara.bind(this);
-    // this.obrisiLekara = this.obrisiLekara.bind(this);
-    // this.proslediKliniku = this.proslediKliniku.bind(this);
-
-    // this.getKlinikaValue = this.getKlinikaValue.bind(this);
+     this.handleDropdownChange = this.handleDropdownChange.bind(this);
+     this.dodeliLekara = this.dodeliLekara.bind(this);
+  //   this.rezervisiSalu = this.rezervisiSalu.bind(this);
 
   }
 
   getKlinikaValue(){
-    console.log('get klinika value');
+
     return this.state.idKlinike;
   }
   handleChange = e => {
     e.preventDefault();
     
     this.setState({ [e.target.name]: e.target.value });
-   console.log(this.state);
-    console.log("On change !!!");
+
   };
   handleChangeDate = date => {
-    console.log(date)
+
+    //provjeri mi zauzeti  termin
+    let lista = this.state.listaSalaKlinike;
+    let listaT = this.state.listaTermina;
+
+
+
+      // for (var i = 0; i < lista.length; i++) {
+
+
+      //     var zabranjeniTermini = [false, false, false, false];
+      //     for(var j = 0; j < listaT.length; j++){
+      //       if(lista[i].id == listaT[j].salaID){
+      
+             
+                
+      //       var dT = moment(listaT[j].datumPocetka).format("DD.MM.YYYY.")
+      
+      //       var dDP = moment(this.state.datumS).format("DD.MM.YYYY.");
+      //         if(dT.valueOf()===dDP.valueOf()){
+             
+      //           var pocetakTerminaZauzetog = this.state.listaTermina[j].termin;
+             
+      //               if(pocetakTerminaZauzetog==9){
+                    
+      //                   zabranjeniTermini[0] = true;
+                      
+      //               } else  if(pocetakTerminaZauzetog==11){
+                     
+      //                   zabranjeniTermini[1] = true;
+                     
+      //               }else  if(pocetakTerminaZauzetog==13){
+                      
+      //                   zabranjeniTermini[2] = true;
+                     
+      //               } else  if(pocetakTerminaZauzetog==15){
+                      
+      //                   zabranjeniTermini[3] = true;
+                     
+      //               }
+
+
+      //         }else{
+      //           continue;
+      //         }
+             
+      //       }else{
+      //         continue;
+      //       }
+
+
+      //     }
+       
+    // }      
+       
+
+                
+
     this.setState(
       {
         datumS: date,
-        izabranDatum: true
+        datum666: date,
+        izabranDatum: true,
+        
       },
       () => {
-        console.log(this.state)
         this.pretraziPoDatumu();
+        
       }
         );
 
 
   };
   pretraziPoDatumu(){
-      console.log("Pretraga po datumu")
   } 
   proslediKliniku(klinika) {
     
-    console.log("prosledjena klinika");
 
-    console.log("I==================D" + klinika.target.value);
-    console.log("-------------------------" + this.state.idKlinike);
+  
     this.setState({
       klinikaLekara : klinika.target.value
       
-    },() => console.log(this.state));
+    });
    
 
 
@@ -115,8 +186,7 @@ class ListaSala extends Component {
 
 
     
-        console.log("ID KLINIKE OD KOJE TRAZIM LEKARE: " + this.state.idKlinike);
-        console.log("ucitaj mi kliniku");
+     
         var config = {
           headers: {
             Authorization: "Bearer " + this.state.token,
@@ -124,15 +194,11 @@ class ListaSala extends Component {
             "Content-Type": "application/json"
           }
         };
-        console.log("++++++++++++++++++ Id k: " + this.state.idKlinike);
-         
-        console.log("Preuzmi mi sale za tu kliniku");
+       
         const urlKlinike = 'http://localhost:8025/api/sale/preuzmiSaleKlinike/' + this.state.idKlinike;    
          axios.get(urlKlinike, config)
             .then(klinika => {
-                console.log("Preuzeta lista klinika");
-                console.log(klinika.data);
-    
+               
                 this.setState({
                     // idKlinike: klinika.data.id,
                     listaSalaKlinike: klinika.data,
@@ -152,8 +218,7 @@ class ListaSala extends Component {
       "Content-Type": "application/json"
     }
   };
-    console.log("wmount")
-    console.log("Preuzimanje admina klinike.....")
+
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -164,8 +229,7 @@ class ListaSala extends Component {
     const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
     axios.get(url, config)
       .then(Response => {
-        console.log("Preuzet admin klinike: ");
-        console.log(Response.data);
+
 
         this.setState({
           email: Response.data.email,
@@ -174,27 +238,22 @@ class ListaSala extends Component {
         //   telefon: Response.data.telefon,
         idKlinike: Response.data.idKlinike,
         });
-        console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
-        console.log("ucitaj mi kliniku");
+
         const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
         axios.get(urlKlinike, config)
           .then(klinika => {
-            console.log("Preuzeta klinika");
-            console.log(klinika.data);
+
    
             this.setState({
                 // idKlinike: klinika.data.id,
                 listaSalaKlinike: klinika.data,
              
             });
-                console.log("++++++++++++++++++ Id k: " + this.state.idKlinike);
-         
-                console.log("Preuzmi mi sale za tu kliniku");
+              
                 const urlKlinike = 'http://localhost:8025/api/sale/preuzmiSaleKlinike/' + this.state.idKlinike;    
                  axios.get(urlKlinike, config)
                     .then(klinika => {
-                        console.log("Preuzeta lista klinika");
-                        console.log(klinika.data);
+                       
             
                         this.setState({
                             // idKlinike: klinika.data.id,
@@ -202,48 +261,13 @@ class ListaSala extends Component {
                             
                         
                         }, ()=>{
-                          console.log("-*-***-*-*-*-*-*-*-*-*-*-*-*-*")
-                          var velikiNiz = [];
-                          var salaNiz =[];
-                          for(var i = 0; i<this.state.listaSalaKlinike.length; i++){
-                           
-                                // console.log(this.state.listaSalaKlinike[i]);
-                                salaNiz = [{
-                                    id: this.state.listaSalaKlinike[i].id,
-                                    disabled: [false, false, false, false]
-                                }];
-                                velikiNiz = velikiNiz.concat(salaNiz)
-                            
-                           
-                          }
-
-                            console.log(velikiNiz);
-
-                          this.setState({ velikiNiz:velikiNiz }
-                          ,()=> {console.log("//--- VELIKI NIZ: ");
-                                console.log(this.state.velikiNiz)})
-                          console.log('OK JE SVE');
-                          console.log(this.state.listaSalaKlinike)
-                          // for(var i = 0;i<this.state.listaSalaKlinike.length; i++){
-                          //   const urlKlinike = 'http://localhost:8025/api/sale/preuzmiZauzeteTermine/' + this.state.listaSalaKlinike[i].id;    
-                          //   axios.get(urlKlinike, config)
-                          //      .then(termini => {
-                          //       console.log('TERMINIIII');
-                          //       console.log(termini.data);
-                          //         this.state({
-                          //             listaTermina: termini.data
-                          //         });
-
-                          //      })
-                          //      .catch(error => {
-                          //       console.log("sale termini nisu preuzeti")
-                          //     })
-
-                          //}
+                         
+                         
+                       
                           const urlKlinike = 'http://localhost:8025/api/sale/allTermini';    
                             axios.get(urlKlinike, config)
                                .then(termini => {
-                                console.log('TERMINIIII');
+                            
                                 console.log(termini.data);
                                   this.setState({
                                       listaTermina: termini.data
@@ -251,15 +275,13 @@ class ListaSala extends Component {
                                         for(var j = 0; j < this.state.listaTermina.length; j++){
                                             var dis = [];
                                             var pocetakTerminaZauzetog = this.state.listaTermina[j].termin;
-                                            console.log("////////////////    " + pocetakTerminaZauzetog)
+                                          
                                          
                                                 if(pocetakTerminaZauzetog==9){
                                                 
                                                     dis = [true, false, false, false];
                                                    
-                                                    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@---------------------------")
-                                                    console.log(this.state.disabled);
-                                                    console.log(this.state.velikiNiz);
+                                                  
                                                 } else  if(pocetakTerminaZauzetog==11){
                                                   this.setState({
                                                     disabled: [false, true, false, false]
@@ -293,19 +315,71 @@ class ListaSala extends Component {
       .catch(error => {
         console.log("Administrator klinike  nije preuzet")
       })
-      console.log("************* ID KLINIKE JE:" + this.state.idKlinike);
+  if(this.props.redirectToListaSala==true){
+    const urlPRegled = 'http://localhost:8025/api/sale/pronadjiSaleZaTajTermin/' + this.props.idPregleda;    
+    axios.get(urlPRegled,  config)
+      .then(pregled => {
+        console.log(pregled.data);
+        this.setState({
+          listaSlobodnihSala: pregled.data,
+        });
+       
+      });
+  }
+   
 
-    
+
+  this.setState({
+    datum666: this.props.datumPregleda
+  }, ()=> {console.log("DADSDSADSADASDADDSA DATUM ~~~~~~~~~~~~~~~~~"); console.log(this.state.datum666)})
+
+
+
+  const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' +3;    
+  axios.get(urlKlinike, config)
+    .then(klinika => {
+      console.log("Preuzeta klinika");
+      console.log(klinika.data);
+
+      this.setState({
+         
+          listaLekara: klinika.data,
+       
+      });
+ 
+    })
+
   }
  
-  onDropdownSelected(e) {
-    console.log("THE VAL", e.target.value);
-    //here you will see the current selected value of the select input
-}
+
+  ispisiSlobodneLekare() {
+    let res = [];
+    let lista = this.state.listaLekara;
+
+    for (var i = 0; i < lista.length; i++) {
+      
+      res.push(
+
+        <tr key={i}>
+          <td>{lista[i].id}</td>
+         
+          <td>{lista[i].ime}</td>
+          <td>{lista[i].prezime}</td>
+          <td>{lista[i].email}</td>
+       
+          <td>{lista[i].telefon}</td>   
+       
+ 
+        </tr>
+      );
+    }
+    return res;
+  }
+
   dodajSalu = e => {
     e.preventDefault();
 
-    console.log("--------------------------------");
+
     this.dialog.show({
       title: 'Dodaj salu',
       body: [
@@ -337,7 +411,6 @@ class ListaSala extends Component {
         Dialog.CancelAction(),
         Dialog.OKAction(() => {
           
-          console.log('OK je kliknuto!');
           var config = {
             headers: {
               Authorization: "Bearer " + this.state.token,
@@ -355,13 +428,11 @@ class ListaSala extends Component {
             }, config)
             .then(response => {
               
-              console.log("Dodavanje sale je uspjelo! ");
-              console.log(response.data);
+           
               this.listaSalaIspisi();
 
             })
             .catch(error => {
-              console.log("Dodavanje nove sale nije uspjelo! ");
             });
            
         })
@@ -369,24 +440,15 @@ class ListaSala extends Component {
       bsSize: 'medium',
       onHide: (dialog) => {
         dialog.hide()
-        console.log('closed by clicking background.')
       }
     })
     
   }
 
-  handlePrikaziKalendar = e => {
-    console.log("888888888888888888888888888888888888888888")
-    this.setState({
-      hiddenKalendar: true
-    });
-
-  }
 
 handleIzmeni = e => {
     e.preventDefault();
 
-    console.log("handle IZMENIIII SALU : ")
     this.setState({
         idSale: e.target.id
     });
@@ -397,21 +459,17 @@ handleIzmeni = e => {
         "Content-Type": "application/json"
       }
     };
-    console.log("Id sale koje mijenjamo: " + e.target.id);
     const url = 'http://localhost:8025/api/sale/' + e.target.id;
     axios.get(url, config)
       .then(Response => {
-        console.log("Preuzeta  sala: ");
-        console.log(Response.data);
+
 
         this.setState({
           brojSale: Response.data.broj,
           nazivSale: Response.data.naziv,
           idKlinike: Response.data.klinikaID
          });
-      console.log(this.state.brojSale);
-      console.log(this.state.nazivSale);
-      console.log(this.state.idKlinike)
+
         this.dialog.show({
           title: 'Izmeni salu',
           body: [
@@ -442,8 +500,7 @@ handleIzmeni = e => {
           actions: [
             Dialog.CancelAction(),
             Dialog.OKAction(() => {
-              
-              console.log('OK je kliknuto!');
+
               var config = {
                 headers: {
                   Authorization: "Bearer " + this.state.token,
@@ -462,13 +519,12 @@ handleIzmeni = e => {
                 }, config)
                 .then(response => {
                   
-                  console.log("Izmjena sale je uspjela! ");
-                  console.log(response.data);
+          
+            
                   this.listaSalaIspisi();
     
                 })
                 .catch(error => {
-                  console.log("Izmjena sale nije uspjela! ");
                 });
               
             })
@@ -476,14 +532,12 @@ handleIzmeni = e => {
           bsSize: 'medium',
           onHide: (dialog) => {
             dialog.hide()
-            console.log('closed by clicking background.')
           }
         })
   
     }) 
 
     .catch(error => {
-      console.log("Izmjena sale nije uspela! " + e.target.id);
     });
     
 
@@ -491,10 +545,7 @@ handleIzmeni = e => {
 
 obrisiLekara = e => {
     e.preventDefault();
-    console.log("CLick brisanje sale  ");
     
-    console.log("Sala za brisanje: " + e.target.id);
-    console.log("--------------------------------");
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -512,20 +563,87 @@ obrisiLekara = e => {
             
             }, config)
             .then(response => {
-              console.log("Brisanje sale uspelo! ");
-              console.log(response.data);
+
               this.listaSalaIspisi();
   
             })
             .catch(error => {
-              console.log("Brisanje sale nije uspelo! ");
             });
   
   }
 
+  dodeliLekara= e => {
+     console.log("Dijalog sa slobodnim lekarima za taj datum i termin");
+     console.log(e.target.id + " " + e.target.value);
+     this.dialog.show({
+      title: 'Lista slobodnih lekara',
+      body: [
+      <form className="formaZaDodavanjeNovogLekara">
+         
+         <Table striped hover>
+                      <thead>
+                        <tr>
+                          <th id="IdPacijenta">Id</th>
+                         
+                          <th id="ImePacijenta"> Ime</th>
+                          <th id="PrezimePacijenta">Prezime</th>
+                          <th id="EmailPacijenta">Email</th>
+                         
+                          <th id="TelefonPacijenta">Telefon</th>
+                  
+                        </tr>
+                      </thead>
+                      <tbody>{this.ispisiSlobodneLekare()}</tbody>
+                    </Table>
+      </form> 
+      ],
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.OKAction(() => {
+          
+          console.log('OK je kliknuto!');
+          var config = {
+            headers: {
+              Authorization: "Bearer " + this.state.token,
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            }
+          };
+          const url3 = "http://localhost:8025/api/adminKlinike/dodavanjeLekara";
+          axios
+            .post(url3, {
+              ime: this.state.imeLekara,
+              prezime: this.state.prezimeLekara,
+              telefon: this.state.telefonLekara,
+              lozinka: this.state.lozinkaLekara,
+              email: this.state.emailLekara,
+              klinikaID: this.state.idKlinike,
+            }, config)
+            .then(response => {
+              
+              console.log("Dodavanje lekra je uspjelo! ");
+              console.log(response.data);
+              this.listaLekaraPonovo();
+
+            })
+            .catch(error => {
+              console.log("Dodavanje novog lekaara nije uspjelo! ");
+              console.log("+++++++++++" + this.state.idKlinike);
+            });
+           
+        })
+      ],
+      bsSize: 'medium',
+      onHide: (dialog) => {
+        dialog.hide()
+        console.log('closed by clicking background.')
+      }
+    })
+  }
+
   odabranaSala = e => {
     //treba redirektovati na pretragu i filtriranje lekara
-    e.preventDefault();
+    console.log(e.target.value);
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -535,88 +653,218 @@ obrisiLekara = e => {
     };
     axios
       .get(
-        "http://localhost:8025/api/sale/listaLekaraKlinika/" +
-          this.state.izabranaKlinika,
+        "http://localhost:8025/api/sale/" +
+          this.state.izabranaSala,
           config
       )
       .then(Response => {
-        console.log("Preuzeta lista lekara: ");
-        console.log(Response.data);
+    
         this.setState({
-          listaLekara: Response.data,
-          nazivIzabranogLekara:
-            Response.data[0].ime + " " + Response.data[0].prezime,
-            redirectNext: true,
-            flag: 1
-        });
-        console.log(this.state.listaLekara);
+          nazivSale: Response.data.naziv,
+          brojSale: Response.data.broj,
+          idSale: Response.data.id,
+          idKlinike: Response.data.klinikaID
+        }, () => {
+          const url =  "http://localhost:8025/api/pregledi/rezervisanje" ;
+            axios
+              .post(url, {
+                id: this.props.idPregleda,
+                salaN : this.state.nazivSale,
+                salaBR: this.state.brojSale,
+                salaID: this.state.idSale,
+                datum: this.state.datumS,
+                klinikaID: this.state.idKlinike
+                
+              }, config)
+              .then(response => {
+             
+              })
+              .catch(error => {
+          
+              });
+          })
+        
+
       })
 
       .catch(error => {
-        console.log("lekari nisu preuzete");
       });
-    // this.setState({
-      
-    // });
+
+
+
   };
 
   promenjenOdabirSale = e => {
-    console.log("Izabrana sala: " + e.currentTarget.value);
+    console.log ("SALAAA : *********************** "   + e.target.value );
     this.setState(
       {
-        izabranaSala: e.currentTarget.value
-      },
-      () => console.log(this.state.izabranaSala)
-    );
-    if (e.currentTarget.value != 0 && e.currentTarget.value != undefined) {
-      const lista = this.state.listaSalaKlinike;
-      for (var i = 0; i < lista.length; i++) {
-        if (lista[i].id == e.currentTarget.value) {
-          this.setState(
-            {
-              nazivIzabraneSale: lista[i].nazivSale
-            },
-            () => console.log(this.state)
-          );
-          break;
-        }
+        izabranaSala: e.target.value
       }
-    }
+
+
+
+
+      );
+
+
+    // if (e.currentTarget.value != 0 && e.currentTarget.value != undefined) {
+    //   const lista = this.state.listaSalaKlinike;
+    //   for (var i = 0; i < lista.length; i++) {
+    //     if (lista[i].id == e.currentTarget.value) {
+    //       this.setState(
+    //         {
+    //           nazivIzabraneSale: lista[i].nazivSale
+    //         });
+    //       break;
+    //     }
+    //   }
+    // }
     this.listaSalaK();
   };
 
+ 
+  handleDropdownChange(e) {
+    this.setState({ selectValue: e.target.value });
+  }
   listaSalaK() {
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
     let res = [];
-    console.log("lista sala pretraga");
 
     const pretraga = this.state.pretraziPoljeKlinika;
-    // const oc = this.state.ocenaKlinike;
-    // console.log(oc);
+ 
     let lista = this.state.listaSalaKlinike;
-
     let listaT = this.state.listaTermina;
-    console.log("Lista termina: ");
-    console.log(this.state.listaTermina)
 
-    if ((pretraga == "" || pretraga == undefined) && this.state.izabranDatum == false ) {
+    let listaSlobodnihSala = this.state.listaSlobodnihSala;
+
+
+    
+    if(this.props.redirectToListaSala==true){
+          var prikaz1 =  false;
+          for (var i = 0; i < this.state.listaSlobodnihSala.length; i++) {
+            var zauzetiTermin = [];
+            zauzetiTermin = listaSlobodnihSala[i].zauzetiTermini;
+           
+            var zabranjeniTermini = [false, false, false, false];
+            for(var j = 0; j < zauzetiTermin.length; j++){
+              var preuzmiPocTermina = [];
+              preuzmiPocTermina = zauzetiTermin[j].termin; 
+
+              
+                var datumP = zauzetiTermin[j].datumPocetka;
+                // console.log("Prikaz 1 : " + prikaz1);
+                if(datumP.valueOf()===this.props.datumPregleda.valueOf()){
+                  if(preuzmiPocTermina===this.props.terminPregleda){
+                    prikaz1 = true;
+                    // console.log("Prikaz 1 - 1 : " + prikaz1);
+
+                  }
+
+                }
+                
+                if(preuzmiPocTermina==9){
+                       
+                 zabranjeniTermini[0] = true;
+               
+             } else  if(preuzmiPocTermina==11){
+              
+                 zabranjeniTermini[1] = true;
+              
+             }else  if(preuzmiPocTermina==13){
+               
+                 zabranjeniTermini[2] = true;
+              
+             } else  if(preuzmiPocTermina==15){
+               
+                 zabranjeniTermini[3] = true;
+              
+             }
+
+            }
+            
+            var naziv = this.state.listaSlobodnihSala[i].naziv;
+            var broj = this.state.listaSlobodnihSala[i].broj;
+
+        
       
+              
+           if(prikaz1==false){
+            var krajT = this.props.terminPregleda + 2;
+            res.push(
+              <tr key={i}>
+                     {/* <td>
+                      <input
+                        name="odabranaSala"
+                        type="radio"
+                        value={listaSlobodnihSala[i].id}
+                        checked={this.state.izabranaSala == listaSlobodnihSala[i].id}
+                        onChange={e => {
+                          this.promenjenOdabirSale(e);
+                        }}
+                      ></input>
+                    </td> */}
+                <td>{naziv}</td>
+                <td>{broj}</td>
+                <td> {moment(this.props.datumPregleda).format("DD.MM.YYYY.")}
+                {this.props.terminPregleda} : 00 - {krajT} : 00
+                 </td>
+                 <td><Button id={listaSlobodnihSala[i].id}  value= {this.state.selectValue}  onClick={e => this.rezervisiSalu(e) }>  Rezervisi</Button>  </td> 
+               
+              </tr>
+            );
+           }else{
+            res.push(
+              <tr key={i}>
+                     {/* <td>
+                      <input
+                        name="odabranaSala"
+                        type="radio"
+                        value={listaSlobodnihSala[i].id}
+                        checked={this.state.izabranaSala == listaSlobodnihSala[i].id}
+                        onChange={e => {
+                          this.promenjenOdabirSale(e);
+                        }}
+                      ></input>
+                    </td> */}
+                <td>{naziv}</td>
+                <td>{broj}</td>
+                <td> {moment(this.props.datumPregleda).format("DD.MM.YYYY.")}
+                 <select id="selectTermin" onChange={this.handleDropdownChange}>
+                          <option value={9} disabled={zabranjeniTermini[0]}>
+                            09:00-11:00
+                          </option>
+                          <option value={11} disabled={zabranjeniTermini[1]}> 
+                            11:00-13:00
+                          </option>
+                          <option value={13} disabled={zabranjeniTermini[2]}>
+                            13:00-15:00
+                          </option>
+                          <option value={15} disabled={zabranjeniTermini[3]}>
+                            15:00-17:00
+                          </option>
+                   </select>
+                 </td>
+                 <td><Button id={listaSlobodnihSala[i].id}  value= {this.state.selectValue}  onClick={e => this.dodeliLekara(e) }>Dodeli lekara</Button>  </td> 
+               
+              </tr>
+            );
+           }
+
+            
+          }
+       
+
+    } else if ((pretraga == "" || pretraga == undefined) && this.state.izabranDatum == false ) {
       for (var i = 0; i < lista.length; i++) {
         res.push(
           <tr key={i}>
-            <td>
-              <input
-                name="odabranaSala"
-                type="radio"
-                value={lista[i].id}
-                checked={this.state.izabranaSala == lista[i].id}
-                onChange={e => {
-                  this.promenjenOdabirSale(e);
-                }}
-              ></input>
-            </td>
-                {/* <td key={lista[i].idSale}>{lista[i].idSale}</td>
-                <td key={lista[i].nazivSale}>{lista[i].nazivSale}</td>
-                <td key={lista[i].brojSale}>{lista[i].brojSale}</td>  */}
+           
 
                 <td>{lista[i].naziv}</td>
                 <td>{lista[i].broj}</td>
@@ -630,20 +878,14 @@ obrisiLekara = e => {
                     Izmeni
                   </Button>
               </td>
-              {/* <td>
-                  <Button  id={lista[i].id} onClick={e => this.handlePrikaziKalendar(e)}>
-                    Prikazi kalendar
-                  </Button>
-              </td> */}
+              
           </tr>
         );
       }
     } else if((pretraga == "" || pretraga == undefined) && this.state.izabranDatum == true ){
-
-      console.log("===========");
-      console.log(pretraga);
+     
       let lista = this.state.listaSalaKlinike;
-      console.log("Lista sala:  ")
+     
  
       for (var i = 0; i < lista.length; i++) {
       
@@ -654,63 +896,24 @@ obrisiLekara = e => {
 
 
 
-              // console.log("Sala: " + naziv + " " + broj);
-              //       console.log("POSTOJIIIIIIT TAKVA")
-                    
-              //       res.push(
-              //         <tr key={i}>
-              //           <td>
-              //             <input
-              //               name="odabranaSala"
-              //               type="radio"
-              //               value={lista[i].id}
-              //               checked={this.state.izabranaSala == lista[i].id}
-              //               onChange={e => {
-              //                 this.promenjenOdabirSale(e);
-              //               }}
-              //             ></input>
-              //           </td>
-              //           <td>{lista[i].naziv}</td>
-              //           <td>{lista[i].broj}</td>
-
-              //             {/* za datum  */}
-
-              //            <td> <select>
-              //             <option value="1" disabled={zabranjeniTermini[0]}>
-              //               09:00-11:00
-              //             </option>
-              //             <option value="2" disabled={zabranjeniTermini[1]}> 
-              //               11:00-13:00
-              //             </option>
-              //             <option value="3" disabled={zabranjeniTermini[2]}>
-              //               13:00-15:00
-              //             </option>
-              //             <option value="4" disabled={zabranjeniTermini[3]}>
-              //               15:00-17:00
-              //             </option>
-              //             </select> </td>
-              //     <td> {moment(this.state.datumS).format("DD.MM.YYYY")}</td>
-                       
-              //         </tr>
-              //       );
+           
          
 
 
               var zabranjeniTermini = [false, false, false, false];
               for(var j = 0; j < listaT.length; j++){
                 if(lista[i].id == listaT[j].salaID){
-                  console.log(moment(listaT[j].datumPocetka).format("DD.MM.YYYY"));
-                  console.log(moment(this.state.datumS).format("DD.MM.YYYY"));
+                
 
                 var dT = moment(listaT[j].datumPocetka).format("DD.MM.YYYY");
                 var dDP = moment(this.state.datumS).format("DD.MM.YYYY");
            
-                  console.log(dT.valueOf())
+               
                   if(dT.valueOf()===dDP.valueOf()){
-                    console.log("********************************************************Datum!!!")
+                   
 
                     var pocetakTerminaZauzetog = this.state.listaTermina[j].termin;
-                    console.log("////////////////    " + pocetakTerminaZauzetog)
+                  
                  
                         if(pocetakTerminaZauzetog==9){
                         
@@ -740,12 +943,10 @@ obrisiLekara = e => {
 
             }
            
-                    console.log("Sala: " + naziv + " " + broj);
-                    console.log("POSTOJIIIIIIT TAKVA")
                     
                     res.push(
                       <tr key={i}>
-                        <td>
+                        {/* <td>
                           <input
                             name="odabranaSala"
                             type="radio"
@@ -755,13 +956,13 @@ obrisiLekara = e => {
                               this.promenjenOdabirSale(e);
                             }}
                           ></input>
-                        </td>
+                        </td> */}
                         <td>{lista[i].naziv}</td>
                         <td>{lista[i].broj}</td>
 
                           {/* za datum */}
-
-                        <td> {moment(this.state.datumS).format("DD.MM.YYYY")} <select>
+ 
+                       <td> {moment(this.state.datumS).format("DD.MM.YYYY")} <select>
                           <option value="1" disabled={zabranjeniTermini[0]}>
                             09:00-11:00
                           </option>
@@ -786,83 +987,32 @@ obrisiLekara = e => {
         
       }
     } else if((pretraga != "" || pretraga != undefined) && this.state.izabranDatum == true){
-      console.log("===========");
-      console.log(pretraga);
+    
       let lista = this.state.listaSalaKlinike;
-      console.log("Lista sala:  ")
+   
  
       for (var i = 0; i < lista.length; i++) {
       
-            console.log(lista[i]);
         
             var naziv = lista[i].naziv;
             var broj = lista[i].broj.toString();
   
-            // var datumZauzeca = this.state.listaTermina[j].datumPocetka;
-            // var nazivSaleT = this.state.listaTermina[j].salaN;
-            // console.log(datumZauzeca);
-            // console.log(nazivSaleT);
             if(naziv.toLowerCase().includes(pretraga.toLowerCase())
             || broj.toLowerCase().includes(pretraga.toLocaleLowerCase())){
-
-
-              // console.log("Sala: " + naziv + " " + broj);
-              //       console.log("POSTOJIIIIIIT TAKVA")
-                    
-              //       res.push(
-              //         <tr key={i}>
-              //           <td>
-              //             <input
-              //               name="odabranaSala"
-              //               type="radio"
-              //               value={lista[i].id}
-              //               checked={this.state.izabranaSala == lista[i].id}
-              //               onChange={e => {
-              //                 this.promenjenOdabirSale(e);
-              //               }}
-              //             ></input>
-              //           </td>
-              //           <td>{lista[i].naziv}</td>
-              //           <td>{lista[i].broj}</td>
-
-              //             {/* za datum  */}
-
-              //            <td> <select>
-              //             <option value="1" disabled={zabranjeniTermini[0]}>
-              //               09:00-11:00
-              //             </option>
-              //             <option value="2" disabled={zabranjeniTermini[1]}> 
-              //               11:00-13:00
-              //             </option>
-              //             <option value="3" disabled={zabranjeniTermini[2]}>
-              //               13:00-15:00
-              //             </option>
-              //             <option value="4" disabled={zabranjeniTermini[3]}>
-              //               15:00-17:00
-              //             </option>
-              //             </select> </td>
-              //     <td> {moment(this.state.datumS).format("DD.MM.YYYY")}</td>
-                       
-              //         </tr>
-              //       );
          
-
 
               var zabranjeniTermini = [false, false, false, false];
               for(var j = 0; j < listaT.length; j++){
                 if(lista[i].id == listaT[j].salaID){
-                  console.log(moment(listaT[j].datumPocetka).format("DD.MM.YYYY"));
-                  console.log(moment(this.state.datumS).format("DD.MM.YYYY"));
+                 
 
                 var dT = moment(listaT[j].datumPocetka).format("DD.MM.YYYY");
                 var dDP = moment(this.state.datumS).format("DD.MM.YYYY");
            
-                  console.log(dT.valueOf())
+                
                   if(dT.valueOf()===dDP.valueOf()){
-                    console.log("********************************************************Datum!!!")
 
                     var pocetakTerminaZauzetog = this.state.listaTermina[j].termin;
-                    console.log("////////////////    " + pocetakTerminaZauzetog)
                  
                         if(pocetakTerminaZauzetog==9){
                         
@@ -892,22 +1042,10 @@ obrisiLekara = e => {
 
             }
            
-                    console.log("Sala: " + naziv + " " + broj);
-                    console.log("POSTOJIIIIIIT TAKVA")
                     
                     res.push(
                       <tr key={i}>
-                        <td>
-                          <input
-                            name="odabranaSala"
-                            type="radio"
-                            value={lista[i].id}
-                            checked={this.state.izabranaSala == lista[i].id}
-                            onChange={e => {
-                              this.promenjenOdabirSale(e);
-                            }}
-                          ></input>
-                        </td>
+                        
                         <td>{lista[i].naziv}</td>
                         <td>{lista[i].broj}</td>
 
@@ -936,6 +1074,7 @@ obrisiLekara = e => {
         
       }
     } else if((pretraga != "" || pretraga != undefined) && this.state.izabranDatum == false){
+     
       for (var i = 0; i < lista.length; i++) {
         var naziv = lista[i].naziv;
             var broj = lista[i].broj.toString();
@@ -944,21 +1083,7 @@ obrisiLekara = e => {
         || broj.toLowerCase().includes(pretraga.toLocaleLowerCase())){
           res.push(
             <tr key={i}>
-              <td>
-                <input
-                  name="odabranaSala"
-                  type="radio"
-                  value={lista[i].id}
-                  checked={this.state.izabranaSala == lista[i].id}
-                  onChange={e => {
-                    this.promenjenOdabirSale(e);
-                  }}
-                ></input>
-              </td>
-                  {/* <td key={lista[i].idSale}>{lista[i].idSale}</td>
-                  <td key={lista[i].nazivSale}>{lista[i].nazivSale}</td>
-                  <td key={lista[i].brojSale}>{lista[i].brojSale}</td>  */}
-  
+            
                   <td>{lista[i].naziv}</td>
                   <td>{lista[i].broj}</td>
              
@@ -971,146 +1096,79 @@ obrisiLekara = e => {
                       Izmeni
                     </Button>
                 </td>
-                {/* <td>
-                    <Button  id={lista[i].id} onClick={e => this.handlePrikaziKalendar(e)}>
-                      Prikazi kalendar
-                    </Button>
-                </td> */}
+                
             </tr>
           );
         }
         
       }
-    }
-
+    } 
     return res;
   }
 
-  rezervisiSalu(){
-    console.log("Rezegvisi")
-    this.setState({
-      aktivaniDugmici: false
-    })
-    // let res = [];
+
+  rezervisiSalu = e =>{
+    console.log("SALU REEZERVISEE : " + e.target.id + " " + e.target.value);
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/sale/' + e.target.id;
+    axios.get(url, config)
+      .then(Response => {
+        console.log("SALA PREUZEO JE");
+        console.log(Response.data);
+
+        this.setState({
+          brojSale: Response.data.broj,
+          nazivSale: Response.data.naziv,
+          idKlinike: Response.data.klinikaID,
+          idSale: Response.data.id
+         }, ()=> {
+           console.log(this.props.idLekar);
+          console.log("111111111111111111111111111111111111111111111111")
+          const url3 = "http://localhost:8025/api/sale/rezervisanjeSale";
+          axios
+            .post(url3, {
+              salaID: this.state.idSale,
+              klinikaID: this.state.idKlinike,
+              datum: this.state.datumS,
+              termin: this.state.selectValue,
+              id: this.props.idPregleda,
+              lekarID: this.props.idLekar,
+              
+            }, config)
+            .then(response => {
+              
+              console.log("USPJEEEEEH< REZ SALAAAA")
+              this.setState({
+                rezervisanaSala: true
+              }, ()=> {console.log(this.state.rezervisanaSala)
+                
+                
+
+              })
+      
+            })
+            .catch(error => {
+            });
+          
+         });
+    });
     
-    //   console.log("===========");
-    //   let listaT = this.state.listaTermina;
-    //   let lista = this.state.listaSalaKlinike;
-    //   console.log("Lista sala:  ")
- 
-    //   for (var i = 0; i < lista.length; i++) {
-
-    //         console.log(lista[i]);
-        
-    //         var naziv = lista[i].naziv;
-    //         var broj = lista[i].broj.toString();
-  
-    //         // var datumZauzeca = this.state.listaTermina[j].datumPocetka;
-    //         // var nazivSaleT = this.state.listaTermina[j].salaN;
-    //         // console.log(datumZauzeca);
-    //         // console.log(nazivSaleT);
-   
-    //           var zabranjeniTermini = [false, false, false, false];
-    //           for(var j = 0; j < listaT.length; j++){
-    //             if(lista[i].id == listaT[j].salaID){
-    //               console.log(moment(listaT[j].datumPocetka).format("DD.MM.YYYY"));
-    //               console.log(moment(this.state.datumS).format("DD.MM.YYYY"));
-
-    //             var dT = moment(listaT[j].datumPocetka).format("DD.MM.YYYY");
-    //             var dDP = moment(this.state.datumS).format("DD.MM.YYYY");
-           
-    //               console.log(dT.valueOf())
-    //               if(dT.valueOf()===dDP.valueOf()){
-    //                 console.log("********************************************************Datum!!!")
-
-    //                 var pocetakTerminaZauzetog = this.state.listaTermina[j].termin;
-    //                 console.log("////////////////    " + pocetakTerminaZauzetog)
-                 
-    //                     if(pocetakTerminaZauzetog==9){
-                        
-    //                         zabranjeniTermini[0] = true;
-                          
-    //                     } else  if(pocetakTerminaZauzetog==11){
-                         
-    //                         zabranjeniTermini[1] = true;
-                         
-    //                     }else  if(pocetakTerminaZauzetog==13){
-                          
-    //                         zabranjeniTermini[2] = true;
-                         
-    //                     } else  if(pocetakTerminaZauzetog==15){
-                          
-    //                         zabranjeniTermini[3] = true;
-                         
-    //                     }
-
-
-    //               }
-                  
-    //             }else{
-    //               continue;
-    //             }
-
-
-    //           }
-           
-    //            console.log("Sala: " + naziv + " " + broj);
-    //                 console.log("POSTOJIIIIIIT TAKVA")
-    //                 console.log(zabranjeniTermini);
-    //                 res.push(
-    //                   <tr key={i}>
-    //                     <td>
-    //                       <input
-    //                         name="odabranaSala"
-    //                         type="radio"
-    //                         value={lista[i].id}
-    //                         checked={this.state.izabranaSala == lista[i].id}
-    //                         onChange={e => {
-    //                           this.promenjenOdabirSale(e);
-    //                         }}
-    //                       ></input>
-    //                     </td>
-    //                     <td>{lista[i].naziv}</td>
-    //                     <td>{lista[i].broj}</td>
-    //                     <td> <select>
-    //                       <option value="1" disabled={zabranjeniTermini[0]}>
-    //                         09:00-11:00
-    //                       </option>
-    //                       <option value="2" disabled={zabranjeniTermini[1]}> 
-    //                         11:00-13:00
-    //                       </option>
-    //                       <option value="3" disabled={zabranjeniTermini[2]}>
-    //                         13:00-15:00
-    //                       </option>
-    //                       <option value="4" disabled={zabranjeniTermini[3]}>
-    //                         15:00-17:00
-    //                       </option>
-    //                       </select> </td>
-    //               <td> {moment(this.state.datumS).format("DD.MM.YYYY")}</td>
-                    
-    //                   </tr>
-    //                 );
-         
-        
-            
-        
-    //   }
-    
-
-    // return res;
-
   }
 
   posaljiDatum(){
-    console.log("Ipisi mi datum ");
+   
     console.log(this.state.datumS);
   }
 
   prikazFiltera() {
-    console.log(this.state.odabranFilter);
     let res = [];
     if (this.state.odabranFilter == "pretraga") {
-      console.log("Udje li vovdje- if")
       res.push(
         <h5>
           <input
@@ -1124,29 +1182,58 @@ obrisiLekara = e => {
         </h5>
       );
     } else if (this.state.odabranFilter == "datum") {
-      res.push(
-        <h5>
-          <DatePicker
-            placeholderText="Izaberi datum"
-            selected={this.state.datumS}
-            onChange={date => this.handleChangeDate(date)}
-            // showTimeSelect
-            minDate={new Date()}
-            // timeCaption="Vreme"
-            withPortal
-            // excludeTimes={[
-            //   setHours(setMinutes(new Date(), 0), 17)
-            // ]}
-            // minTime={setHours(setMinutes(new Date(), 0), 7)}
-            // maxTime={setHours(setMinutes(new Date(), 0), 20)}
-            dateFormat="dd.MM.yyyy"
-
-            // onChange={date => setStartDate(date)}
-          />
-          <br></br>
-          {/* <Button onClick={this.slobodniTermini}>Pronadji termine</Button> */}
-        </h5>
-      );
+      if(this.props.redirectToListaSala==true){
+      
+          res.push(
+            <h5>
+              <DatePicker
+                placeholderText="Izaberi datum"
+                selected={this.state.datumPregleda}
+                onChange={date => this.handleChangeDate(date)}
+                // showTimeSelect
+                minDate={new Date()}
+                // timeCaption="Vreme"
+                withPortal
+                // excludeTimes={[
+                //   setHours(setMinutes(new Date(), 0), 17)
+                // ]}
+                // minTime={setHours(setMinutes(new Date(), 0), 7)}
+                // maxTime={setHours(setMinutes(new Date(), 0), 20)}
+                dateFormat="dd.MM.yyyy"
+    
+                // onChange={date => setStartDate(date)}
+              />
+              <br></br>
+              {/* <Button onClick={this.slobodniTermini}>Pronadji termine</Button> */}
+            </h5>
+          );
+      
+      }else{
+        res.push(
+          <h5>
+            <DatePicker
+              placeholderText="Izaberi datum"
+              selected={this.state.datumS}
+              onChange={date => this.handleChangeDate(date)}
+              // showTimeSelect
+              minDate={new Date()}
+              // timeCaption="Vreme"
+              withPortal
+              // excludeTimes={[
+              //   setHours(setMinutes(new Date(), 0), 17)
+              // ]}
+              // minTime={setHours(setMinutes(new Date(), 0), 7)}
+              // maxTime={setHours(setMinutes(new Date(), 0), 20)}
+              dateFormat="dd.MM.yyyy"
+  
+              // onChange={date => setStartDate(date)}
+            />
+            <br></br>
+            {/* <Button onClick={this.slobodniTermini}>Pronadji termine</Button> */}
+          </h5>
+        );
+      }
+      
     } else if(this.state.odabranFilter == "dodajSalu"){
       res.push(
         <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
@@ -1180,7 +1267,6 @@ obrisiLekara = e => {
   }
   }
   ponistiFiltere(){
-    console.log('ponistavanje filtera')
     this.setState({
       listaSalaKlinike:this.state.listaSalaKlinike,
       odabranFilter:"",
@@ -1188,23 +1274,137 @@ obrisiLekara = e => {
       pretraziPoljeKlinika:""
     })
   }
-  // clickDodajSalu() {
-  //   if(this.state.odabranFilter == "dodajSalu"){
-  //     this.setState({
-  //       odabranFilter:""
-  //     })
-  //   }else{
-  //     this.setState({
-  //       odabranFilter: "dodajSalu"
-  //     });
-  //   }
-    
-  // }
-  render() {
 
+
+  render() {
+    // console.log(this.props);
     const pretraga = this.state.pretraziPoljeKlinika;
+    const redirectFromListaSala = this.props.redirectToListaSala;
+    const datumPregleda = this.state.datumPregleda;
+    const salaN = this.props.salaN;
+    const salaBR = this.props.salaBR;
+    // const datumPRegleda = this.props.datumPregleda;
+    const reditectListaZah = this.state.rezervisanaSala
+    // console.log("ispisi  mi redirect: " + reditectListaZah);
+    if(this.state.rezervisanaSala==true){
+      console.log("if");
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/listaZahtevaPregled"
+              render={props => <ListaZahtevaPregled  token={this.state.token} />}
+            />
+            <Redirect from="/" to="/listaZahtevaPregled" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    if(redirectFromListaSala==true){
+      var krajT = this.props.terminPregleda + 2;
+      return (
+        
+        <div className="content">
+        <Grid fluid>
+          <Row>
+            <Col md={12}>
+              <Card
+                content={
+                  <div>
+                    <ButtonToolbar>
+                      <Button
+                        fill
+                        // bsStyle="info"
+                        value="1"
+                       onClick={e => this.clickPretraga()}
+                      >
+                        Pretrazi
+                      </Button>
+                     
+                      <Button
+                        fill
+                        // bsStyle="success"
+                        value="3"
+                        onClick={e => this.clickDatum()}
+                      >
+                        Izaberi datum
+                      </Button>
+                      {/* <Button fill value="4"  onClick={e => this.dodajSalu(e)}>
+                        
+                        Dodaj salu
+                      
+                      </Button> */}
+                      <Button
+                        fill
+                        value="5"
+                        onClick={e => this.ponistiFiltere()}><i className="pe-7s-close"/> Prikazi sve sale </Button>
+                    </ButtonToolbar>
+                <p> Zahtevani pregled sale za datum: {moment(this.props.datumPregleda).format("DD.MM.YYYY.")} i termin {this.props.terminPregleda} : 00 - {krajT} : 00</p> 
+                    <br></br>
+                    <div>{this.prikazFiltera()}</div>
+                   
+                  </div>
+                }
+              />
+    
+             </Col>
+            </Row>
+ 
+            <Row>
+              <Col md={12}>
+                <Row>
+                  <Card
+                    // title="Lista sala klinike"
+                   
+                    // ctTableFullWidth
+                    // ctTableResponsive
+                    content={
+                      <div>
   
+                      <form>
+                        
+                    </form>
+                    
+                    <div>
+                    
+                    </div>
+                      <ButtonToolbar>
+                      
+                      </ButtonToolbar>
+                       <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+                      
+                     
+                      <Table striped hover>
+                        <thead>
+                          <tr>
+                          {/* <th></th> */}
+                            <th id="IdPacijenta">Naziv</th>
+                            <th id="ImePacijenta"> Broj</th>
+                          
+                            <th>Prvi slobodan termin</th>
+                    
+                          </tr>
+                          
+                        </thead>
+                       
+                        <tbody>{this.listaSalaK()}</tbody>
+                      </Table>
+                       
+                      </div>
+                    }
+                  />
+                </Row>
+              </Col>
+            </Row>
   
+      
+          </Grid>
+        </div>
+      );
+      
+    }
+
+   
     if (this.state.izabranDatum==true) {
       return (
         <div className="content">
@@ -1277,38 +1477,16 @@ obrisiLekara = e => {
                     </form>
                     
                     <div>
-                      {/* <h5>Datum za pregled:</h5> */}
-  
-                      {/* <DatePicker
-                        placeholderText="Izaberi datum"
-                        selected={this.state.datumS}
-                        onChange={date=>this.handleChangeDate(date)}
-                        // showTimeSelect
-                        minDate={new Date()}
-                        // timeCaption="Vreme"
-                        withPortal
-                        // excludeTimes={[
-                        //   setHours(setMinutes(new Date(), 0), 17)
-                        // ]}
-                        // minTime={setHours(setMinutes(new Date(), 0), 7)}
-                        // maxTime={setHours(setMinutes(new Date(), 0), 20)}
-                        dateFormat="dd.MM.yyyy"
-  
-                      />
-                */}
+             
                     </div>
-                      <ButtonToolbar>
-                        {/* <Button className="DodajKlinikuDugme"  onClick={e => this.dodajSalu(e)}>Dodaj salu</Button> */}
-                        {/* <Button className="DodajKlinikuDugme"  onClick={this.rezervisiSalu}>Postupak rezervacicje</Button> */}
-
-                      </ButtonToolbar>
+                      
                        <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
                       
                      
                       <Table striped hover>
                         <thead>
                           <tr>
-                          <th></th>
+                          {/* <th></th> */}
                             <th id="IdPacijenta">Naziv</th>
                             <th id="ImePacijenta"> Broj</th>
                             {/* <th>Termini</th> */}
@@ -1354,17 +1532,7 @@ obrisiLekara = e => {
                           events={events }
                         //  views={["month"]}
                           defaultDate={new Date()}
-                          // startAccessor={event.start}
-                          // endAccessor={event.end}
-                          // titleAccessor="tip"
-                          // onSelectEvent={obj => {
-                          //   this.state.objekat = obj;
-                          //   console.log(this.state.objekat);
-                          //   this.setState({
-                          //     isOpen: true
-                          //   })
-                            
-                          // }}
+
                         />
                     </div>
   
@@ -1449,40 +1617,16 @@ obrisiLekara = e => {
                           Pretrazi
                         </Button> */}
                     </form>
-                    <div>
-                      {/* <h5>Datum za pregled:</h5> */}
-  
-                      {/* <DatePicker
-                        placeholderText="Izaberi datum"
-                        selected={this.state.datumS}
-                        onChange={date=>this.handleChangeDate(date)}
-                        // showTimeSelect
-                        minDate={new Date()}
-                        // timeCaption="Vreme"
-                        withPortal
-                        // excludeTimes={[
-                        //   setHours(setMinutes(new Date(), 0), 17)
-                        // ]}
-                        // minTime={setHours(setMinutes(new Date(), 0), 7)}
-                        // maxTime={setHours(setMinutes(new Date(), 0), 20)}
-                        dateFormat="dd.MM.yyyy"
-  
-                        // onChange={date => setStartDate(date)}
-                      /> */}
-                      {/* <Button onClick={this.posaljiDatum}>
-                        Pronadji salu
-                      </Button> */}
-                    </div>
+                    
   
                       
-                      {/* <Button className="DodajKlinikuDugme"  onClick={this.rezervisiSalu}>Rezervisi</Button> */}
                       <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
                       
                      
                       <Table striped hover>
                         <thead>
                           <tr>
-                          <th></th>
+                          {/* <th></th> */}
                             <th id="IdPacijenta">Naziv</th>
                             <th id="ImePacijenta"> Broj</th>
                          
@@ -1528,17 +1672,7 @@ obrisiLekara = e => {
                           events={events }
                         //  views={["month"]}
                           defaultDate={new Date()}
-                          // startAccessor={event.start}
-                          // endAccessor={event.end}
-                          // titleAccessor="tip"
-                          // onSelectEvent={obj => {
-                          //   this.state.objekat = obj;
-                          //   console.log(this.state.objekat);
-                          //   this.setState({
-                          //     isOpen: true
-                          //   })
-                            
-                          // }}
+               
                         />
                     </div>
   

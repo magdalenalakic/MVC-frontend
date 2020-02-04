@@ -6,6 +6,10 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import moment from 'moment';
+import ListaSala from "./ListaSala.jsx";
+
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 class ListaZahtevaPregled extends Component {
   constructor(props) {
     super(props);
@@ -16,13 +20,22 @@ class ListaZahtevaPregled extends Component {
       email: props.email,
       token: props.token,
       idKlinike: "",
-      listaZahtevaZaOregled: []
+      redirectToListaSala: false,
+      listaZahtevaZaOregled: [], 
+      
+      salaN: "", 
+      salaBR: "",
+      datumPregleda: "",
+      idPregleda: "",
+      terminPregleda: "",
+      idLekar: "",
+      idPacijent:""
+
+
     };
     this.listaZahtevaZaPregled = this.listaZahtevaZaPregled.bind(this);
-    // this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(this);
-    // this.handleOdobren = this.handleOdobren.bind(this);
-    // this.handleOdbijen = this.handleOdbijen.bind(this);
-    // this.handleChange = this.handleChange.bind(this);
+
+   
   }
 
   ucitajPonovo(){
@@ -30,24 +43,62 @@ class ListaZahtevaPregled extends Component {
       "http://localhost:8025/api/pregledi/listaZahtevaZaRegistraciju/" +
       this.state.email;
 
-    console.log(url1);
     axios
       .get(url1)
       .then(response => {
-        console.log("URL zahtevi za reg");
-        console.log(response);
         this.setState({
           listaZahtevaZaRegistraciju: response.data
         });
       })
       .catch(error => {
         console.log("nije uspeo url1");
-        console.log(error);
       });
   }
+  handleClickDodeliSalu = e => {
+    // e.preventDefault();
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const urlPRegled = 'http://localhost:8025/api/pregledi/' +  e.target.id;    
+    axios.get(urlPRegled, config)
+      .then(pregled => {
+        console.log(pregled.data);
+
+        this.setState({
+            // idKlinike: klinika.data.id,
+            datumPregleda: pregled.data.datum,
+            salaN: pregled.data.salaN,
+            salaBR: pregled.data.salaBR,
+            terminPregleda: pregled.data.termin,
+            idPregleda: pregled.data.id,
+            idLekar: pregled.data.lekarID,
+            idPacijent: pregled.data.pacijentID
+         
+        }, ()=> {
+          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+          console.log(this.state.idPregleda);
+          console.log(this.state.idLekar);
+          console.log(this.state.datumPregleda);
+          
+
+        });
+
+      })
+   
+
+    this.setState({
+      redirectToListaSala: true,
+      idPregleda: e.target.id,
+  
+    });
+
+  };
   componentWillMount(){
-    console.log("wmount")
-    console.log("Preuzimanje admina klinike.....")
+    
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -58,8 +109,7 @@ class ListaZahtevaPregled extends Component {
     const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
     axios.get(url, config)
       .then(Response => {
-        console.log("Preuzet admin klinike: ");
-        console.log(Response.data);
+      
 
         this.setState({
           email: Response.data.email,
@@ -68,16 +118,12 @@ class ListaZahtevaPregled extends Component {
         //   telefon: Response.data.telefon,
          idKlinike: Response.data.idKlinike,
         }, () => {
-          console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
-          console.log("ucitaj mi kliniku");
+         
           const urlKlinike = 'http://localhost:8025/api/pregledi/preuzmiZahtevePregledaKlinike/' + this.state.idKlinike;    
           axios.get(urlKlinike, config)
             .then(k => {
-              console.log("Preuzeti zahtjevi");
-              console.log(k.data);
-     
+             
               this.setState({
-                  // idKlinike: klinika.data.id,
                   listaZahtevaZaOregled: k.data,
                
               });
@@ -94,7 +140,6 @@ class ListaZahtevaPregled extends Component {
       .catch(error => {
         console.log("Administrator klinike  nije preuzet")
       })
-      console.log("************* ID KLINIKE JE:" + this.state.idKlinike);
 
     
   }
@@ -102,23 +147,19 @@ class ListaZahtevaPregled extends Component {
     e.preventDefault();
     
     this.setState({ [e.target.name]: e.target.value });
-    console.log(this.state);
-    console.log("On change !!!");
+   
   };
  
   handleOdobren = e => {
     e.preventDefault();
-    console.log(e.target.id);
     const url2 = "http://localhost:8025/api/administratoriKC/potvrda/" + e.target.id;
     axios
     .post(url2, {})
     .then(response => {
-      console.log("ODOBRENOOOO");
-      console.log(response);
+     
       this.ucitajPonovo();
     })
     .catch(error => {
-        console.log(error.response);
     });
 
   };
@@ -133,7 +174,6 @@ class ListaZahtevaPregled extends Component {
     this.setState({
       razlogOdbijanja : raz
     })
-    console.log("--------------------------------");
 
     this.dialog.show({
       title: 'Odbijanje zahteva za registraciju',
@@ -166,16 +206,12 @@ class ListaZahtevaPregled extends Component {
       actions: [
         Dialog.CancelAction(),
         Dialog.OKAction(() => {
-          console.log('OK je kliknuto!');
-          console.log("Poslat razlog : ---------------");
-          console.log(this.state.za);
-          console.log(this.state.razlogOdbijanja);
+        
           const url3 = "http://localhost:8025/api/administratoriKC/odbijanje/" + this.state.za + "/" + this.state.razlogOdbijanja;
           axios
             .post(url3, {})
             .then(response => {
-              console.log("Odbijanje uspelo! ");
-              console.log(response.data);
+           
               this.ucitajPonovo();
 
             })
@@ -187,7 +223,6 @@ class ListaZahtevaPregled extends Component {
       bsSize: 'medium',
       onHide: (dialog) => {
         dialog.hide()
-        console.log('closed by clicking background.')
       }
     })
     
@@ -195,18 +230,14 @@ class ListaZahtevaPregled extends Component {
 
   listaZahtevaZaPregled() {
     let res = [];
-    console.log("lista kl");
     const odbij = <Tooltip id="remove_tooltip">Odbij</Tooltip>;
     const potvrdi = <Tooltip id="remove_tooltip">Potvrdi</Tooltip>;
 
-    // const pretraga = this.state.pretraziPoljeKlinika;
-    // const oc = this.state.ocenaKlinike;
-    // console.log(oc);
-    // if ((pretraga == "" || pretraga == undefined) && oc < 5) {
+   
     let lista = this.state.listaZahtevaZaOregled;
 
     for (var i = 0; i < lista.length; i++) {
-      console.log(lista[i]);
+
       if (lista[i].salaN == "" || lista[i].salaN == undefined) {
         res.push(
           <tr key={i}>
@@ -215,16 +246,15 @@ class ListaZahtevaPregled extends Component {
               {lista[i].imeL} {lista[i].prezimeL}
             </td>
             <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+        <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
             <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-        <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td>
-            {/* <td align={"center"}>
-              <i className="pe-7s-clock text-warning" />
-            </td>
-            <td align={"center"}>
-              <i className="pe-7s-clock text-warning" />
-            </td> */}
-            <td></td>
-            <td></td>
+        <td>{lista[i].imeP} {lista[i].prezimeP}</td>
+        <td>
+                <Button id={lista[i].id} onClick={e => this.handleClickDodeliSalu(e)}> 
+                  Dodeli salu
+                </Button>  
+              </td>
+     
           </tr>
         );
       } else {
@@ -236,64 +266,37 @@ class ListaZahtevaPregled extends Component {
                 {lista[i].imeL} {lista[i].prezimeL}
               </td>
               <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+              <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
               <td key={lista[i].cena}>{lista[i].cena} RSD</td>
 
               <td align={"center"} key={lista[i].status}>
                 {" "}
                 <i className="pe-7s-check text-success" />
               </td>
-              <td key={lista[i].sala}>
-                {lista[i].salaN} {lista[i].salaBR}
-              </td>
+           
               <td></td>
               <td></td>
             </tr>
           );
         } else if (lista[i].status == 0) {
+         
           res.push(
             <tr key={i}>
               <td key={lista[i].lekarID}>
               {lista[i].imeL} {lista[i].prezimeL}
             </td>
             <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
-            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
+            <td key={lista[i].cena}>{lista[i].cena} RD</td>
             <td >
-            {lista[i].imeP} {lista[i].prezimeP}
+                {lista[i].imeP} {lista[i].prezimeP}
             </td>
-        <td key={lista[i].salaID}>{lista[i].salaN} {lista[i].salaBR}</td>
-              {/* <td key={lista[i].status} align={"center"}>
-                <i className="pe-7s-timer text-warning" />
-              </td> */}
-              {/* <td key={lista[i].sala}>
-                {lista[i].salaN} {lista[i].salaBR}{" "}
-              </td> */}
+           
+             
               <td>
-                <OverlayTrigger placement="top" overlay={potvrdi}>
-                  <Button
-                    bsStyle="success"
-                    simple
-                    type="button"
-                    bsSize="sm"
-                    value={lista[i].id}
-                    onClick={e => this.handleOdobren(e)}
-                  >
-                    <i className="pe-7s-check text-success" />
-                  </Button>
-                </OverlayTrigger>
-              </td>
-              <td>
-                <OverlayTrigger placement="top" overlay={odbij}>
-                  <Button
-                    bsStyle="danger"
-                    simple
-                    type="button"
-                    bsSize="sm"
-                    value={lista[i].id}
-                    onClick={e => this.handleOdbijen(e)}
-                  >
-                    <i className="pe-7s-close-circle text-danger" />
-                  </Button>
-                </OverlayTrigger>
+                <Button id={lista[i].id} onClick={e => this.handleClickDodeliSalu(e)}> 
+                  Dodeli salu
+                </Button>  
               </td>
             </tr>
           );
@@ -305,15 +308,14 @@ class ListaZahtevaPregled extends Component {
                 {lista[i].imeL} {lista[i].prezimeL}
               </td>
               <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+              <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
               <td key={lista[i].cena}>{lista[i].cena} RSD</td>
 
               <td align={"center"} key={lista[i].status}>
                 {" "}
                 <i className="pe-7s-close-circle text-danger" />
               </td>
-              <td key={lista[i].sala}>
-                {lista[i].salaN} {lista[i].salaBR}
-              </td>
+            
               <td></td>
               <td></td>
             </tr>
@@ -321,52 +323,33 @@ class ListaZahtevaPregled extends Component {
         }
       }
     }
-    // } else {
-    //   console.log("===========");
-    //   console.log(pretraga);
-    //   let lista = this.state.listaKlinika;
-
-    //   for (var i = 0; i < lista.length; i++) {
-    //     var naziv = lista[i].naziv;
-    //     var adresa = lista[i].adresa;
-    //     var opis = lista[i].opis;
-    //     var ocena = lista[i].ocena;
-    //     if (
-    //       naziv.toLowerCase().includes(pretraga.toLowerCase()) ||
-    //       adresa.toLowerCase().includes(pretraga.toLowerCase()) ||
-    //       opis.toLowerCase().includes(pretraga.toLowerCase())
-    //     ) {
-    //       if (oc <= ocena) {
-    //         res.push(
-    //           <tr key={i}>
-    //             <td>
-    //               <input
-    //                 name="odabranaKlinika"
-    //                 type="radio"
-    //                 value={lista[i].id}
-    //                 checked={this.state.izabranaKlinika == lista[i].id}
-    //                 onChange={e => {
-    //                   this.promenjenOdabirKlinike(e);
-    //                 }}
-    //               ></input>
-    //             </td>
-    //             <td key={lista[i].id}>{lista[i].id}</td>
-    //             <td key={lista[i].naziv}>{lista[i].naziv}</td>
-    //             <td key={lista[i].adresa}>{lista[i].adresa}</td>
-    //             <td key={lista[i].opis}>{lista[i].opis}</td>
-    //             <td key={lista[i].ocena}>{lista[i].ocena}</td>
-    //           </tr>
-    //         );
-    //   }
-    // }
-    //   }
-    // }
-
+   
     return res;
   }
 
   render() {
+    const redirectToListaSala = this.state.redirectToListaSala;
+   
+    if (redirectToListaSala === true) {
+     console.log("|||||||||||||||||||||||||||||||||||||")
+     console.log(this.state.datumPregleda);
+     console.log(this.state.terminPregleda);
+     
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/listaSala"
+              render={props => <ListaSala {...props} idLekar={this.state.idLekar} idPacijent={this.state.idPacijent} idPregleda={this.state.idPregleda} idKlinike={this.state.idKlinike}  terminPregleda={this.state.terminPregleda} datumPregleda={this.state.datumPregleda} redirectToListaSala={this.state.redirectToListaSala} token={this.state.token} />}
+            />
+            <Redirect from="/" to="/listaSala" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+
     return (
+
       <div className="content">
         <Grid fluid>
           <Row>
@@ -383,13 +366,14 @@ class ListaZahtevaPregled extends Component {
                         <tr>
                           <th id="lekar">Lekar</th>
                           <th id="tipP">tip pregleda</th>
+                          <th>datum</th>
                           <th id="cijena"> cijena</th>
                           <th id="PrezimePacijenta">pacijent</th>
                         
                           {/* <th id="LozinkaPacijenta">Lozinka</th> */}
-                          <th id="sala">sala</th>
-                          <th id="prihvatiZ">odobri</th>
-                          <th id="odbijZ">odbij</th>
+                          {/* <th id="sala">sala</th> */}
+                          {/* <th id="prihvatiZ">odobri</th>
+                          <th id="odbijZ">odbij</th> */}
                           {/* <th id="TelefonPacijenta">Telefon</th> */}
                           {/* {thArray.map((prop, key) => {
                             return <th key={key}>{prop}</th>;
