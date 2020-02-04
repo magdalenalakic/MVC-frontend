@@ -93,6 +93,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
         this.setState({
             listaZahtevaLekara: response.data
         });
+
         })
         .catch(error => {
         console.log("nije uspelo ucitavanje zahteva lekara");
@@ -213,22 +214,23 @@ class ListaZahtevaOdmorOdsustvo extends Component {
       axios
           .get(url1, this.config)
           .then(response => {
-          console.log("URL zahtev neki");
-          console.log(response);
+            console.log("URL zahtev neki");
+            console.log(response);
 
-          this.setState({
-            trenutniZahtev: response.data
-          }, ()=> {
-
-            console.log(this.state.trenutniZahtev.emailMS)
             this.setState({
-              emailMS : this.state.trenutniZahtev.emailMS
-            });
-            this.setState({           
-              isOpen: true,
-            })
+              trenutniZahtev: response.data
+            }, ()=> {
 
-          });
+              console.log(this.state.trenutniZahtev.emailMS)
+              this.setState({
+                emailMS : this.state.trenutniZahtev.emailMS
+              });
+              this.setState({           
+                isOpen: true,
+              })
+              this.ucitajZahteveMedSestre();
+
+            });
           })
           .catch(error => {
             console.log("nije uspelo ucitavanje zahteva med sestre");
@@ -264,6 +266,7 @@ class ListaZahtevaOdmorOdsustvo extends Component {
             this.setState({           
               isOpenL: true,
             })
+            this.ucitajZahteveLekara();
 
           });
           })

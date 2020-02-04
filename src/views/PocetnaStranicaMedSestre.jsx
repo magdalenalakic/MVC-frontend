@@ -60,7 +60,7 @@ class PocetnaStranicaMedSestre extends React.Component {
 
     this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(this);
     this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(this);
-    // this.ucitavanjeListeOdmorOdsustvo();
+  
 
   }
  

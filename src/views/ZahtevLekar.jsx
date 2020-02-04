@@ -7,6 +7,8 @@ import { Card } from "components/Card/Card.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import "klinickiCentar.css";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
 
 
 class ZahtevLekar extends React.Component {
@@ -25,7 +27,8 @@ class ZahtevLekar extends React.Component {
       opis: "",
       idMedSestre: 0, 
       imeMS: "",
-      prezimeMS: ""
+      prezimeMS: "", 
+      redirectToPocetna: false
 
       
     };
@@ -116,7 +119,7 @@ class ZahtevLekar extends React.Component {
         datumOd : this.state.datumPocetka,
         datumDo : this.state.datumKraja,
         opis : this.state.opis,
-        status: false,
+        // status: false,
         idLekara : this.state.id,
         imeL: this.state.imeMS,
         prezimeL: this.state.prezimeMS,
@@ -127,14 +130,41 @@ class ZahtevLekar extends React.Component {
         
         console.log("uspesno poslat zahtev")
         console.log(Response.data);
+        this.setState({
+          redirectToPocetna: true
+          
+        })
+        
 
-      })
-      .catch(error => {
-        console.log("Zahtev nije poslat");
       });
+      // .catch(error => {
+      //   console.log("nije dobro odabran datum");
+
+      // });
   };
 
   render() {
+
+    if(this.state.redirectToPocetna === true){
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/pocetnaStranicaLekara"
+              render={props => <PocetnaStranicaLekara {...props}
+                  token={this.state.token}
+                  email={this.state.email} 
+                  uloga={this.state.uloga}
+                //nije emailPacijenta vec je id al dobro
+                  // emailPacijenta={this.state.emailPacijenta}  
+                />}
+            />
+            <Redirect from="/" to="/pocetnaStranicaLekara" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+
     console.log(this.props);
     return (
       <div className="content">
@@ -172,6 +202,7 @@ class ZahtevLekar extends React.Component {
                             placeholderText="Izaberi datum"
                             selected={this.state.datumPocetka}
                             onSelect={this.handleChangeDatePocetka}
+                            minDate={new Date()}
 
                             />
                         </Col>
@@ -181,6 +212,7 @@ class ZahtevLekar extends React.Component {
                               placeholderText="Izaberi datum"
                               selected={this.state.datumKraja}
                               onSelect={this.handleChangeDateKraja}
+                              minDate={this.state.datumPocetka}
 
                           />
                         </Col>
