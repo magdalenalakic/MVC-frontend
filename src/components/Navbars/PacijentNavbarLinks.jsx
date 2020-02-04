@@ -224,9 +224,9 @@ class PacijentNavbarLinks extends Component {
     console.log("renderredirect");
     if (this.state.redirectToPotvrdaPregleda == true) {
       console.log("the same");
-      return <Redirect from="/" to="/admin/potvrdaPregleda" />;
+      return <Redirect from="/" to="/pacijent/potvrdaPregleda" />;
     } else if (this.state.redirectToIstorijaPO == true) {
-      return <Redirect from="/" to="/admin/istorija" />;
+      return <Redirect from="/" to="/pacijent/istorija" />;
     }
   }
   handleC() {

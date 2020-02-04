@@ -707,7 +707,7 @@ class IzvestajOPoslovanju extends Component {
           path="/registration"
           render={props => <IzvestajOPoslovanju {...props} flag={flag} />}
         >
-          <Redirect from="/" to="/admin/izvestaj" />
+          <Redirect from="/" to="/admink/izvestaj" />
         </Route>
       );
     } else if (this.state.redirectGrafik == true && this.state.flag == 0) {
@@ -718,7 +718,7 @@ class IzvestajOPoslovanju extends Component {
           path="/registration"
           render={props => <IzvestajOPoslovanju {...props} flag={flag} />}
         >
-          <Redirect from="/" to="/admin/izvestaj" />
+          <Redirect from="/" to="/admink/izvestaj" />
         </Route>
       );
     }

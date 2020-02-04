@@ -1,4 +1,3 @@
-
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -34,27 +33,17 @@ class Sidebar extends Component {
         data-color={this.props.color}
         data-image={this.props.image}
       >
-          {this.props.hasImage ? (
-            <div className="sidebar-background" style={sidebarBackground} />
-          ) : (
-            null
-          )}
+        {this.props.hasImage ? (
+          <div className="sidebar-background" style={sidebarBackground} />
+        ) : null}
         <div className="logo">
-          <a
-            href="/"
-            className="simple-text logo-mini"
-          >
-          <div className="logo-img">
+          <a className="simple-text logo-mini">
+            <div className="logo-img">
               {/* <img src={logo} alt="logo_image" /> */}
               <img src={logo} alt="logo_image" />
-          </div>
+            </div>
           </a>
-          <a
-            href="/"
-            className="simple-text logo-normal"
-          >          
-          Klinicki centar 
-          </a>
+          <a className="simple-text logo-normal">Klinicki centar</a>
         </div>
         <div className="sidebar-wrapper">
           <ul className="nav">

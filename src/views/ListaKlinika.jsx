@@ -873,7 +873,7 @@ class ListaKlinika extends Component {
             />
           )}
         >
-          <Redirect from="/" to="/admin/klinikePacijenta" />
+          <Redirect from="/" to="/pacijent/klinikePacijenta" />
         </Route>
       );
     }
@@ -913,7 +913,7 @@ class ListaKlinika extends Component {
             />
           )}
         >
-          <Redirect from="/" to="/admin/klinikePacijenta" />
+          <Redirect from="/" to="/pacijent/klinikePacijenta" />
         </Route>
       );
     }
@@ -1022,7 +1022,7 @@ class ListaKlinika extends Component {
                 />
               )}
             >
-              <Redirect from="/" to="/admin/klinikePacijenta" />
+              <Redirect from="/" to="/pacijent/klinikePacijenta" />
             </Route>
           );
         }
@@ -1157,7 +1157,7 @@ class ListaKlinika extends Component {
   odustani2 = () => {
     console.log("odustani 2");
     if (this.state.quit == true) {
-      return <Redirect from="/" to="/admin/pocetnaStranica" />;
+      return <Redirect from="/" to="/pacijent/pocetnaStranica" />;
     }
   };
   clickPretraga() {

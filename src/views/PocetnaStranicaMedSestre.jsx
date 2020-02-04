@@ -1,27 +1,24 @@
-
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Grid, Row, Col } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import axios from "axios";
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import "react-big-calendar/lib/css/react-big-calendar.css"; 
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import "klinickiCentar.css";
 
-import moment from 'moment';
+import moment from "moment";
 
 import Button from "components/CustomButton/CustomButton.jsx";
-import Dialog from 'react-bootstrap-dialog';
-
+import Dialog from "react-bootstrap-dialog";
 
 const localizer = momentLocalizer(moment);
-
 
 class PocetnaStranicaMedSestre extends React.Component {
   constructor(props) {
     super(props);
-    
+
     console.log("ADMINISTRATOR KLINICKOG CENTRA");
     console.log(this.props);
     this.state = {
@@ -33,16 +30,14 @@ class PocetnaStranicaMedSestre extends React.Component {
       redirectToZahtevZaGodOdmor: false,
       redirectToOveraRecepata: false,
       redirectToPocetnaStranica: false,
-      listaOdmor : [],
+      listaOdmor: [],
       listaOdsustvo: [],
       //vezano za kalendar
       odmor: [],
       odsustvo: [],
       events: [],
       objekat: null,
-      isOpen: false,
-      
-    
+      isOpen: false
     };
     this.config = {
       headers: {
@@ -50,103 +45,96 @@ class PocetnaStranicaMedSestre extends React.Component {
         Accept: "application/json",
         "Content-Type": "application/json"
       }
-    }
-    
+    };
+
     this.handleListaPacijenata = this.handleListaPacijenata.bind(this);
     this.handleProfilMedSestre = this.handleProfilMedSestre.bind(this);
     this.handleZahtevZaGodOdmor = this.handleZahtevZaGodOdmor.bind(this);
     this.handleOveraRecepata = this.handleOveraRecepata.bind(this);
-    
 
-    this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(this);
-    this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(this);
-  
-
+    this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(
+      this
+    );
+    this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(
+      this
+    );
+    // this.ucitavanjeListeOdmorOdsustvo();
   }
- 
+
   handleListaPacijenata() {
     this.setState({
-      redirectToListaPacijenata: true,
+      redirectToListaPacijenata: true
     });
-  };
+  }
   handleProfilMedSestre() {
     this.setState({
-      redirectToProfilMedSestre: true,
+      redirectToProfilMedSestre: true
     });
-  };
-  handleZahtevZaGodOdmor(){
+  }
+  handleZahtevZaGodOdmor() {
     this.setState({
-      redirectToZahtevZaGodOdmor: true,
+      redirectToZahtevZaGodOdmor: true
     });
-  };
-  handleOveraRecepata(){
+  }
+  handleOveraRecepata() {
     this.setState({
-      redirectToOveraRecepata: true,
+      redirectToOveraRecepata: true
     });
-  };
+  }
 
-  ucitavanjeListeOdmorOdsustvo(){
-    const url1 = 'http://localhost:8025/api/medicinskaSestra/listaOdmor';
+  ucitavanjeListeOdmorOdsustvo() {
+    const url1 = "http://localhost:8025/api/medicinskaSestra/listaOdmor";
     console.log(url1);
     axios
       .get(url1, this.config)
       .then(response => {
         console.log("ucitana lista odmor odsustvo");
         console.log(response);
-        this.setState({
-          listaOdmor: response.data
-        },()=> this.dodavanjeListeOdmorOdsustvoUKalendar());
+        this.setState(
+          {
+            listaOdmor: response.data
+          },
+          () => this.dodavanjeListeOdmorOdsustvoUKalendar()
+        );
       })
       .catch(error => {
         console.log("nije ucitana lista odmor odsustvo");
         console.log(error);
       });
-    
-  
-  };
-  dodavanjeListeOdmorOdsustvoUKalendar(){
+  }
+  dodavanjeListeOdmorOdsustvoUKalendar() {
     let lista = this.state.listaOdmor;
-    for(var i = 0; i < lista.length; i++){
+    for (var i = 0; i < lista.length; i++) {
       let start = new Date(lista[i].datumOd);
       let end = new Date(lista[i].datumDo);
-      this.state.odmor.push(
-        {
-          id: i,
-          title: lista[i].tip,
-          start: start,
-          end: end,
-          desc: lista[i].opis,
-          up_down_ind: "Y",
-          
-        }
-      )
-      
-       
+      this.state.odmor.push({
+        id: i,
+        title: lista[i].tip,
+        start: start,
+        end: end,
+        desc: lista[i].opis,
+        up_down_ind: "Y"
+      });
     }
   }
-  
-  componentWillMount(){
+
+  componentWillMount() {
     this.ucitavanjeListeOdmorOdsustvo();
   }
 
- 
   renderRedirect = () => {
-  
-    if(this.state.redirectToListaPacijenata){    
-      return <Redirect from="/" to="/admin/listaPacijenata"></Redirect>
-    }else if(this.state.redirectToProfilMedSestre){
-      return <Redirect from="/" to="/admin/izmenaProfila"></Redirect>
-    }else if(this.state.redirectToZahtevZaGodOdmor){
-      return <Redirect from="/" to="/admin/zahtevZaGodOdmor"></Redirect>
-    }else if(this.state.redirectToOveraRecepata){
-      return <Redirect from="/" to="/admin/overavanjeRecepata"></Redirect>
+    if (this.state.redirectToListaPacijenata) {
+      return <Redirect from="/" to="/medses/listaPacijenata"></Redirect>;
+    } else if (this.state.redirectToProfilMedSestre) {
+      return <Redirect from="/" to="/medses/izmenaProfila"></Redirect>;
+    } else if (this.state.redirectToZahtevZaGodOdmor) {
+      return <Redirect from="/" to="/medses/zahtevZaGodOdmor"></Redirect>;
+    } else if (this.state.redirectToOveraRecepata) {
+      return <Redirect from="/" to="/medses/overavanjeRecepata"></Redirect>;
     }
   };
 
- 
-  
   render() {
-    
     return (
       <div className="content">
         <Grid fluid>
@@ -162,7 +150,7 @@ class PocetnaStranicaMedSestre extends React.Component {
                   statsIconText="Lista pacijenata"
                 />
               </div>
-            </Col> 
+            </Col>
             <Col lg={3} sm={6}>
               {this.renderRedirect()}
               <div onClick={this.handleOveraRecepata}>
@@ -174,7 +162,7 @@ class PocetnaStranicaMedSestre extends React.Component {
                   statsIconText="Overa recepata"
                 />
               </div>
-            </Col>         
+            </Col>
             <Col lg={3} sm={6}>
               {this.renderRedirect()}
               <div onClick={this.handleProfilMedSestre}>
@@ -199,11 +187,9 @@ class PocetnaStranicaMedSestre extends React.Component {
                 />
               </div>
             </Col>
-            
           </Row>
           <Row>
-            <Col >
-              
+            <Col>
               <Card
                 title="Kalendar"
                 // category="24 Hours performance"
@@ -211,62 +197,62 @@ class PocetnaStranicaMedSestre extends React.Component {
                 content={
                   <Grid fluid>
                     <Row>
-                    {
-                      this.state.isOpen ?
-                      
-                          <Card
-                            // category="Dogadjaj"
-                            ctTableFullWidth
-                            ctTableResponsive
-                            content={
-                              <div>
-                                
-                                <div className="dogadjaj" >
-                                  <label className="dogadjaj1">Dogadjaj: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.title}</label>  
-                                </div>
-                                <div className="dogadjaj" >
-                                  <label className="dogadjaj1">Opis: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.desc}</label>
-                                </div>
-                                <div className="dogadjaj" >
-                                  <label className="dogadjaj1">Pocetak: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.start.toLocaleDateString()}</label>
-                                </div>
-                                <div className="dogadjaj" >
-                                  <label className="dogadjaj1">Kraj: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.end.toLocaleDateString()}</label>
-                                  
-                                </div>
-                                <Button className="izlaz" 
-                                 onClick={()=>  this.setState({isOpen: false })}
-                                >X</Button>
-                                
-
+                      {this.state.isOpen ? (
+                        <Card
+                          // category="Dogadjaj"
+                          ctTableFullWidth
+                          ctTableResponsive
+                          content={
+                            <div>
+                              <div className="dogadjaj">
+                                <label className="dogadjaj1">Dogadjaj: </label>
+                                <label className="dogadjaj2">
+                                  {this.state.objekat.title}
+                                </label>
                               </div>
-                              
-                            }
-                          />
-                        : null
-                      }
+                              <div className="dogadjaj">
+                                <label className="dogadjaj1">Opis: </label>
+                                <label className="dogadjaj2">
+                                  {this.state.objekat.desc}
+                                </label>
+                              </div>
+                              <div className="dogadjaj">
+                                <label className="dogadjaj1">Pocetak: </label>
+                                <label className="dogadjaj2">
+                                  {this.state.objekat.start.toLocaleDateString()}
+                                </label>
+                              </div>
+                              <div className="dogadjaj">
+                                <label className="dogadjaj1">Kraj: </label>
+                                <label className="dogadjaj2">
+                                  {this.state.objekat.end.toLocaleDateString()}
+                                </label>
+                              </div>
+                              <Button
+                                className="izlaz"
+                                onClick={() => this.setState({ isOpen: false })}
+                              >
+                                X
+                              </Button>
+                            </div>
+                          }
+                        />
+                      ) : null}
                     </Row>
                     <Row>
-                    <div style={{ height: 400 }}  className="ct-chart">
-                      
-                      <Calendar
+                      <div style={{ height: 400 }} className="ct-chart">
+                        <Calendar
                           style={{ maxHeight: "100%" }}
                           localizer={localizer}
                           showMultiDayTimes={true}
-                          // views={["month"]}  
+                          // views={["month"]}
                           defaultDate={new Date()}
                           events={this.state.odmor}
                           eventPropGetter={event => ({
-                            style:{
+                            style: {
                               backgroundColor: "#ebd234"
                             }
                           })}
-
-                
                           // startAccessor={event.start}
                           // endAccessor={event.end}
                           // titleAccessor="tip"
@@ -275,23 +261,16 @@ class PocetnaStranicaMedSestre extends React.Component {
                             console.log(this.state.objekat);
                             this.setState({
                               isOpen: true
-                            })
-                            
+                            });
                           }}
                         />
-                    </div>
+                      </div>
                     </Row>
                   </Grid>
-                  
                 }
-                
               />
-                
             </Col>
-            
-            
           </Row>
-
         </Grid>
       </div>
     );
