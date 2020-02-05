@@ -14,15 +14,25 @@ class Sifrarnik extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       listaLekova:[],
       listaDijagnoza:[],
       lekNaziv: "",
       lekSifra: "",
       dijagnozaOznaka: "",
       dijagnozaOpis: "",
-      dijagnozaNaziv: ""
+      dijagnozaNaziv: "",
+      hiddenLekovi: true,
+      hiddenDijagnoza: false
       
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
     this.listaLekovaUKC = this.listaLekovaUKC.bind(this);
     this.listaDijagnozaUKC = this.listaDijagnozaUKC.bind(this);
     this.dodajLek = this.dodajLek.bind(this);
@@ -31,10 +41,13 @@ class Sifrarnik extends Component {
     this.obrisiLek = this.obrisiLek.bind(this);
     this.izmeniDijagnozu = this.izmeniDijagnozu.bind(this);
     this.obrisiDijagnozu = this.obrisiDijagnozu.bind(this);
-    
-    console.log(this.state.uloga);
-    console.log(this.state.email);
 
+    this.prikazLekova = this.prikazLekova.bind(this);
+    this.prikazDijagnoza = this.prikazDijagnoza.bind(this);
+    this.listaLekovaUKC = this.listaLekovaUKC.bind(this);
+    this.listaLekova = this.listaLekova.bind(this);
+
+    
   }
 
   listaLekovaUKC(){
@@ -43,11 +56,11 @@ class Sifrarnik extends Component {
     for(var i=0; i< lista.length;i++){
       res.push(
         <tr key = {i}>
-          <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].sifra}>{lista[i].sifra}</td>
-          <td key={lista[i].naziv}>{lista[i].naziv}</td>
+          <td >{i+1}</td>
+          <td >{lista[i].sifra}</td>
+          <td >{lista[i].naziv}</td>
           <td >
-          <Button id={lista[i].id} onClick={e => this.izmeniLek(e)}>Izmeni</Button>
+          <Button id={lista[i].id} onClick={e => this.izmeniLek(e)} >Izmeni</Button>
           <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
           </td>
           <td >
@@ -66,10 +79,10 @@ class Sifrarnik extends Component {
     for(var i=0; i< lista.length;i++){
       res.push(
         <tr key = {i}>
-          <td key={lista[i].id}>{lista[i].id}</td>
-          <td key={lista[i].oznaka}>{lista[i].oznaka}</td>
-          <td key={lista[i].naziv}>{lista[i].naziv}</td>
-          <td key={lista[i].opis}>{lista[i].opis}</td>
+          <td>{i+1}</td>
+          <td >{lista[i].oznaka}</td>
+          <td >{lista[i].naziv}</td>
+          <td >{lista[i].opis}</td>
           <td >
           <Button id={lista[i].id} onClick={e => this.izmeniDijagnozu(e)}>Izmeni</Button>
           <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
@@ -85,9 +98,9 @@ class Sifrarnik extends Component {
   }
   listaLekova(){
     console.log("--------lista lekova");
-    const url1 = 'http://localhost:8025/api/administratoriKC/listaLekova/' + this.state.email; 
+    const url1 = 'http://localhost:8025/api/lekovi/listaLekova/'; 
     console.log(url1);
-    axios.get(url1)
+    axios.get(url1, this.config)
       .then(response => {
         console.log("URL Lek");
         console.log(response);
@@ -103,9 +116,9 @@ class Sifrarnik extends Component {
 
   listaDijagnoza(){
     console.log("--------lista dijagnoza");
-  const url2 = 'http://localhost:8025/api/administratoriKC/listaDijagnoza/' + this.state.email; 
+  const url2 = 'http://localhost:8025/api/dijagnoze/listaDijagnoza/'; 
   console.log(url2);
-  axios.get(url2)
+  axios.get(url2, this.config)
       .then(response => {
         console.log("URL Dijagnoza");
         console.log(response);
@@ -168,15 +181,15 @@ class Sifrarnik extends Component {
       actions: [
         Dialog.CancelAction(),
         Dialog.OKAction(() => {
-          
+         
           console.log('OK je kliknuto!');
-          const url3 = "http://localhost:8025/api/administratoriKC/dodavanjeLeka";
+          
+          const url3 = "http://localhost:8025/api/lekovi/dodavanjeLeka";
           axios
-            .post(url3, {
-              naziv : this.state.lekNaziv,
-              sifra : this.state.lekSifra
-              
-            })
+            .post(url3, { 
+              naziv: this.state.lekNaziv, 
+              sifra : this.state.lekSifra 
+            }, this.config)
             .then(response => {
               console.log("Dodavanje leka uspelo! ");
               console.log(response.data);
@@ -244,14 +257,13 @@ class Sifrarnik extends Component {
         Dialog.OKAction(() => {
           
           console.log('OK je kliknuto!');
-          const url3 = "http://localhost:8025/api/administratoriKC/dodavanjeDijagnoze";
+          const url3 = "http://localhost:8025/api/dijagnoze/dodavanjeDijagnoze";
           axios
             .post(url3, {
               naziv : this.state.dijagnozaNaziv,
               oznaka : this.state.dijagnozaOznaka,
-              opis : this.state.dijagnozaOpis
-              
-            })
+              opis : this.state.dijagnozaOpis       
+            }, this.config)
             .then(response => {
               console.log("Dodavanje dijagnoze uspelo! ");
               console.log(response.data);
@@ -276,9 +288,9 @@ class Sifrarnik extends Component {
     console.log(e.target.id);
     console.log("--------------------------------");
     
-    const url7 = "http://localhost:8025/api/administratoriKC/getLek/" + e.target.id;
+    const url7 = "http://localhost:8025/api/lekovi/getLek/" + e.target.id;
     axios
-      .get(url7)
+      .get(url7, this.config)
       .then(response => {
               console.log("Preuzimanje leka uspelo! ");
               console.log(response.data);
@@ -322,14 +334,14 @@ class Sifrarnik extends Component {
                 Dialog.OKAction(() => {
                   
                   console.log('OK je kliknuto!');
-                  const url3 = "http://localhost:8025/api/administratoriKC/izmenaLeka";
+                  const url3 = "http://localhost:8025/api/lekovi/izmenaLeka";
                   axios
                     .put(url3, {
                       id : response.data.id,
                       naziv : this.state.lekNaziv,
                       sifra : this.state.lekSifra
                       
-                    })
+                    }, this.config)
                     .then(response2 => {
                       console.log("Izmena leka uspela! ");
                       console.log(response2.data);
@@ -359,26 +371,15 @@ class Sifrarnik extends Component {
     e.preventDefault();
     console.log("brisanje leka");
     console.log(e.target.id);
-    // const url7 = "http://localhost:8025/api/administratoriKC/getLek/" + e.target.id;
-    // axios
-    //   .get(url7)
-    //   .then(response => {
-    //           console.log("Preuzimanje leka uspelo! ");
-    //           console.log(response.data);
-    //           // this.listaLekova();
-
-    //   })
-    //   .catch(error => {
-    //       console.log("Preuzimanje leka nije uspelo! ");
-    //    });
+    
 
     console.log("--------------------------------");
-    const url6 = "http://localhost:8025/api/administratoriKC/brisanjeLeka";
+    const url6 = "http://localhost:8025/api/lekovi/brisanjeLeka";
           axios
             .post(url6, {
               id : e.target.id
               
-            })
+            }, this.config)
             .then(response => {
               console.log("Brisanje leka uspelo! ");
               console.log(response.data);
@@ -395,9 +396,9 @@ class Sifrarnik extends Component {
     console.log("izmena dijagnoze");
     console.log(e.target.id);
     console.log("--------------------------------");
-    const url7 = "http://localhost:8025/api/administratoriKC/getDijagnoza/" + e.target.id;
+    const url7 = "http://localhost:8025/api/dijagnoze/getDijagnoza/" + e.target.id;
     axios
-      .get(url7)
+      .get(url7, this.config)
       .then(response => {
               console.log("Preuzimanje dijagnoze uspelo! ");
               console.log(response.data);
@@ -453,7 +454,7 @@ class Sifrarnik extends Component {
                 Dialog.OKAction(() => {
                   
                   console.log('OK je kliknuto!');
-                  const url3 = "http://localhost:8025/api/administratoriKC/izmenaDijagnoze";
+                  const url3 = "http://localhost:8025/api/dijagnoze/izmenaDijagnoze";
                   axios
                     .put(url3, {
                       id : response.data.id,
@@ -461,7 +462,7 @@ class Sifrarnik extends Component {
                       oznaka : this.state.dijagnozaOznaka,
                       opis : this.state.dijagnozaOpis
                       
-                    })
+                    }, this.config)
                     .then(response2 => {
                       console.log("Izmena dijagnoze uspela! ");
                       console.log(response2.data);
@@ -492,12 +493,12 @@ class Sifrarnik extends Component {
     console.log("brisanje dijagnoze");
     console.log(e.target.id);
     console.log("--------------------------------");
-    const url5 = "http://localhost:8025/api/administratoriKC/brisanjeDijagnoze";
+    const url5 = "http://localhost:8025/api/dijagnoze/brisanjeDijagnoze";
           axios
             .post(url5, {
               id : e.target.id
               
-            })
+            }, this.config)
             .then(response => {
               console.log("Brisanje dijagnoze uspelo! ");
               console.log(response.data);
@@ -510,12 +511,30 @@ class Sifrarnik extends Component {
 
   }
 
+  prikazLekova(){
+    this.setState({
+      hiddenLekovi: true,
+      hiddenDijagnoza: false
+    });
+  }
+  prikazDijagnoza(){
+    this.setState({
+      hiddenLekovi: false,
+      hiddenDijagnoza: true
+    });
+  }
+
   render() {
     return (
       <div className="content">
         <Grid fluid>
           <Row>
-               <Card
+              <Button className="DodajKlinikuDugme"  onClick={this.prikazLekova}>LEKOVI</Button> 
+              <Button className="DodajKlinikuDugme"  onClick={this.prikazDijagnoza}>DIJAGNOZE</Button>  
+          </Row>
+          <Row>
+          { this.state.hiddenLekovi ?
+            <Card
                   title="Lista lekova"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
@@ -528,36 +547,25 @@ class Sifrarnik extends Component {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th id="IdLeka">Id</th>
+                          <th id="IdLeka">Rbr</th>
                           <th id="SifraLeka">Sifra</th>
                           <th id="NazivLeka">Naziv</th>
-                          
-                          {/* {thArray.map((prop, key) => {
-                            return <th key={key}>{prop}</th>;
-                          })} */}
                         </tr>
                       </thead>
                       <tbody>
                         {this.listaLekovaUKC()}
-                        {/* {tdArray.map((prop, key) => {
-                          return (
-                            <tr key={key}>
-                              {prop.map((prop, key) => {
-                                return <td key={key}>{prop}</td>;
-                              })}
-                            </tr>
-                          );
-                        })} */}
+                        
                       </tbody>
                     </Table>
                     </div>
                   }
-                />
-
-            
+            />
+            : null
+          }
           </Row>
           <Row>
-            <Card
+            { this.state.hiddenDijagnoza ?
+              <Card
                   title="Lista dijagnoza"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
@@ -570,7 +578,7 @@ class Sifrarnik extends Component {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th id="Idijagnoze">Id</th>
+                          <th id="Idijagnoze">Rbr</th>
                           <th id="OznakaDijagnoze">Oznaka</th>
                           <th id="NazivDijagnoze">Naziv</th>
                           <th id="OpisDijagnoze">Opis</th>
@@ -584,10 +592,10 @@ class Sifrarnik extends Component {
                     </Table>
                     </div>
                   }
-                />
-          </Row>
-
-         
+              />
+              : null
+            }
+          </Row>       
         </Grid>
       </div>
     );

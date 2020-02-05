@@ -15,7 +15,6 @@ import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
-
 // import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
@@ -25,15 +24,17 @@ import { log } from "util";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
 import moment from "moment";
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
 
-class BrzoZakazivanje extends Component {
+class PregledKlinika extends Component {
   constructor(props) {
     super(props);
     this.state = {
       email: props.email,
       uloga: props.uloga,
       token: props.token,
-      listaPregleda: [],
+      listaKlinika: [],
+      listaLekara: [],
       redirectNext: false,
       flag: 0,
       izabranPregled: 0,
@@ -46,8 +47,9 @@ class BrzoZakazivanje extends Component {
       izabraniPopust: 0,
       canClick: false
     };
-    this.redirectReferer = this.redirectReferer.bind(this);
+    // this.redirectReferer = this.redirectReferer.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
+    this.handlePrikaziZaposlene = this.handlePrikaziZaposlene.bind(this);
   }
   sortMyArray(sortBy) {
     console.log("sort funkcija");
@@ -110,25 +112,8 @@ class BrzoZakazivanje extends Component {
   }
 
   componentWillMount() {
-    var url = "http://localhost:8025/api/lekari/listaZauzetihTermina/" + 1;
+    const url = "http://localhost:8025/api/klinike/all";
     var config = {
-      headers: {
-        Authorization: "Bearer " + this.state.token,
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    };
-    // axios
-    //   .get(url, config)
-    //   .then(Response => {
-    //     console.log("Preuzeti zauzetiTermini: ");
-    //     console.log(Response.data);
-    //   })
-    //   .catch(error => {
-    //     console.log("pregledi  nisu preuzeti");
-    //   });
-    url = "http://localhost:8025/api/ST/unapredDef";
-    config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
         Accept: "application/json",
@@ -138,19 +123,16 @@ class BrzoZakazivanje extends Component {
     axios
       .get(url, config)
       .then(Response => {
-        console.log("Preuzeti unapred def pregledi: ");
+        console.log("Preuzeta lista klinika: ");
         console.log(Response.data);
-
-        this.setState(
-          {
-            listaPregleda: Response.data
-          },
-          () => console.log(this.state.listaPregleda)
-        );
+        this.setState({
+          listaKlinika: Response.data
+        });
+        console.log(this.state.listaKlinika);
       })
 
       .catch(error => {
-        console.log("pregledi  nisu preuzeti");
+        console.log("klinike nisu preuzete");
       });
   }
   handleSortKlinika(sortBy) {
@@ -271,36 +253,6 @@ class BrzoZakazivanje extends Component {
         "Content-Type": "application/json"
       }
     };
-    var t = 0;
-    if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "09:00"
-    ) {
-      console.log("9");
-      t = 9;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "11:00"
-    ) {
-      console.log("11");
-      t = 11;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "13:00"
-    ) {
-      console.log("13");
-      t = 13;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "15:00"
-    ) {
-      console.log("15");
-      t = 15;
-    }
     if (ol != 0 && ol != undefined) {
       axios
 
@@ -313,23 +265,17 @@ class BrzoZakazivanje extends Component {
             pacijentEmail: this.state.email,
             cena: this.state.izabranaCena,
             datum: this.state.izabraniDatum,
-            termin: t
+            canClick: true
           },
           config
         )
         .then(response => {
           console.log("PREGLED");
           console.log(response);
-          this.setState(
-            {
-              redirectNext: true,
-              flag: 1,
-              canClick: true
-            },
-            () => {
-              this.props.handleClick("ZAHTEV JE POSLAT");
-            }
-          );
+          this.setState({
+            redirectNext: true,
+            flag: 1
+          });
         })
         .catch(error => {
           console.log("greska pregled");
@@ -370,7 +316,7 @@ class BrzoZakazivanje extends Component {
           </td>
 
           <td key={lista[i].datum}>
-            {moment(lista[i].datum).format("DD.MM.YYYY. HH:mm")}
+            {moment(lista[i].datum).format("DD.MM.YYYY HH:mm")}
           </td>
           <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
           <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
@@ -432,7 +378,34 @@ class BrzoZakazivanje extends Component {
     console.log(this.state);
     console.log("On change !!!");
   };
+  handlePrikaziZaposlene = kl => {
+    console.log(kl);
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    axios
+      .get(
+        "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
+          kl,
+        config
+      )
+      .then(Response => {
+        console.log("Preuzeta lista lekara: ");
+        console.log(Response.data);
+        this.setState({
+          listaLekara: Response.data
+        });
+        console.log(this.state.listaLekara);
+      })
 
+      .catch(error => {
+        console.log("lekari nisu preuzete");
+      });
+  };
   // handleSumbit = e => {
   //   e.preventDefault();
   //   console.log("KLIK SUBMITTT");
@@ -478,256 +451,79 @@ class BrzoZakazivanje extends Component {
   //       console.log("Izmena nije uspela! ");
   //     });
   // };
-  redirectReferer() {
-    var flag = 1;
-    if (this.state.redirectNext == true) {
-      return (
-        <Route
-          path="/registration"
-          render={props => (
-            <BrzoZakazivanje
-              {...props}
-              flag={flag}
-              izabranPregled={this.state.izabranaKlinika}
-            />
-          )}
-        >
-          <Redirect from="/" to="/pacijent/klinikePacijenta" />
-        </Route>
-      );
-    }
-  }
+  //   redirectReferer() {
+  //     var flag = 1;
+  //     if (this.state.redirectNext == true) {
+  //       return (
+  //         <Route
+  //           path="/registration"
+  //           render={props => (
+  //             <BrzoZakazivanje
+  //               {...props}
+  //               flag={flag}
+  //               izabranPregled={this.state.izabranaKlinika}
+  //             />
+  //           )}
+  //         >
+  //           <Redirect from="/" to="/admin/klinikePacijenta" />
+  //         </Route>
+  //       );
+  //     }
+  //   }
 
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;
-    if (this.state.flag == 0) {
-      return (
-        <div className="content">
-          <Grid fluid>
-            <Row>
-              <Col md={12}>
-                <Card
-                  ctTableFullWidth
-                  ctTableResponsive
-                  title="Izaberi pregled"
-                  content={
-                    <div>
-                      {/* <NavDropdown
-                        onSelect={e => {
-                          this.sortMyArray(e);
-                        }}
-                        title="Sortiraj"
-                        id="nav-item dropdown"
-                      >
+    const prikaziZaposlene = (
+      <Tooltip id="zaposleni_tooltip">Prikazi Zaposlene</Tooltip>
+    );
 
-                        <MenuItem eventKey={"tipPregleda"}>
-                          Tip pregleda
-                        </MenuItem>
-                        <MenuItem eventKey={"klinika"}>Klinika</MenuItem>
-                        <MenuItem eventKey={"lekarI"}>Lekar Ime</MenuItem>
-                        <MenuItem eventKey={"lekarP"}>Lekar Prezime</MenuItem>
-                        <MenuItem eventKey={"cenar"}>Cena rastuce</MenuItem>
-                        <MenuItem eventKey={"cenao"}>Cena opadajuce</MenuItem>
-                        <MenuItem eventKey={"popustr"}>Popust rastuce</MenuItem>
-                        <MenuItem eventKey={"popusto"}>
-                          Popust opadajuce
-                        </MenuItem>
-                      </NavDropdown> */}
-
-                      <Table striped responsive hover style={{ width: 800 }}>
-                        <thead className="thead-dark">
-                          <tr>
-                            <th></th>
-                            <th id="Datum">
-                              Datum
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("datumUp");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-up"
-                              />
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("datumDown");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-down"
-                              />
-                            </th>
-                            <th id="Tip pregleda">
-                              {" "}
-                              Tip pregleda
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("tipPregledaUp");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-up"
-                              />
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("tipPregledaDown");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-down"
-                              />
-                            </th>
-                            <th id="Klinika">
-                              Klinika
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("klinikaUp");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-up"
-                              />
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("klinikaDown");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-down"
-                              />
-                            </th>
-                            <th id="Lekar">
-                              Lekar
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("lekarUp");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-up"
-                              />
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("lekarDown");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-down"
-                              />
-                            </th>
-                            <th id="Cena">
-                              Cena
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("cenaUp");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-up"
-                              />
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("cenaDown");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-down"
-                              />
-                            </th>
-                            <th id="Popust">
-                              Popust
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("popustUp");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-up"
-                              />
-                              <i
-                                onClick={e => {
-                                  this.handleSortKlinika("popustDown");
-                                }}
-                                style={{
-                                  cursor: "pointer"
-                                }}
-                                className="pe-7s-angle-down"
-                              />
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>{this.listaUnapredDefinisanihPregleda()}</tbody>
-                      </Table>
-
-                      {this.redirectReferer}
-                    </div>
-                  }
-                />
-                <form
-                  onSubmit={e => {
-                    this.odabranPrelged(e);
-                  }}
-                >
-                  <Button
-                    type="submit"
-                    bsStyle="success"
-                    // onClick={
-                    //   this.state.canClick
-                    //     ? this.props.handleClick("Zahtev je poslat!")
-                    //     : null
-                    // }
-                  >
-                    Zakazi
-                  </Button>
-                  <h5>
-                    {(this.state.izabranPregled == undefined ||
-                      this.state.izabranPregled == 0) && (
-                      <span className="errorMessage">
-                        {this.state.formError}
-                      </span>
-                    )}
-                  </h5>
-                </form>
-              </Col>
-            </Row>
-          </Grid>
-        </div>
-      );
-    } else if (this.state.flag == 1) {
-      return <Redirect from="/" to="/pacijent/pocetnaStranica" />;
-    }
-    //   return (
-    //     <div className="content">
-    //       <Grid fluid>
-    //         <Row>
-    //           <Col md={10}>
-    //             <Card
-    //               title="Zahtev za pregled je uspesno poslat!"
-    //               content={
-    //                 <h3 className="successMessage">
-    //                   Potvrdite zahtev za pregled preko E-maila!
-    //                 </h3>
-    //               }
-    //             />
-    //           </Col>
-    //         </Row>
-    //       </Grid>
-    //     </div>
-    //   );
-    // }
+    return (
+      <div className="content">
+        <Grid fluid>
+          <Row>
+            <Col md={12}>
+              <div>
+                {this.state.listaKlinika.map(klinika => {
+                  return (
+                    <Card
+                      title={klinika.naziv}
+                      content={
+                        <div>
+                          <Grid fluid>
+                            <Row>
+                              <Col md={8}>
+                                <h5>Adresa: {klinika.adresa}</h5>
+                              </Col>
+                              <Col md={4}>
+                                <h5>Ocena: {klinika.ocena}</h5>
+                                <OverlayTrigger
+                                  placement="top"
+                                  overlay={prikaziZaposlene}
+                                >
+                                  <i
+                                    value={klinika.id}
+                                    onClick={() =>
+                                      this.handlePrikaziZaposlene(klinika.id)
+                                    }
+                                    className="pe-7s-id text-info"
+                                  ></i>
+                                </OverlayTrigger>
+                              </Col>
+                            </Row>
+                          </Grid>
+                        </div>
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </Col>
+          </Row>
+        </Grid>
+      </div>
+    );
   }
 }
 
-export default BrzoZakazivanje;
+export default PregledKlinika;

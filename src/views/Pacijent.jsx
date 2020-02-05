@@ -30,7 +30,6 @@ import {
 import "klinickiCentar.css";
 import UserCard from "components/UserCard/UserCard";
 import slikaKC from "assets/img/klinickiCentar.jpg";
-
 class Pacijent extends Component {
   constructor(props) {
     super(props);
@@ -39,6 +38,7 @@ class Pacijent extends Component {
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      // email: JSON.parse(localStorage.getItem("email") || props.email),
       token: props.token,
       _notificationSystem: null,
       // image: image,
@@ -52,7 +52,23 @@ class Pacijent extends Component {
 
   getRoutes = routes => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      console.log("RUTEEEEEEEEEEEEE");
+      if (prop.layout === "/pacijent") {
+        // if (prop.path === "/pocetnaStranica") {
+        //   <Route
+        //     path={prop.layout + prop.path}
+        //     render={props => (
+        //       <prop.component
+        //         {...props}
+        //         handleClick={this.handleNotificationClick}
+        //         uloga={this.state.uloga}
+        //         email={this.state.email}
+        //         token={this.state.token}
+        //       />
+        //     )}
+        //     key={key}
+        //   />;
+        // } else {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -68,11 +84,13 @@ class Pacijent extends Component {
             key={key}
           />
         );
+        // }
       } else {
         return null;
       }
     });
   };
+
   handleNotificationClick = poruka => {
     var color = 1;
     var level;
@@ -83,7 +101,8 @@ class Pacijent extends Component {
       poruka == "USPESNA IZMENA" ||
       poruka == "ZAHTEV JE POTVRDJEN" ||
       poruka == "OCENJEN LEKAR" ||
-      poruka == "OCENJENA KLINIKA"
+      poruka == "OCENJENA KLINIKA" ||
+      poruka == "ZAHTEV JE POSLAT"
     ) {
       level = "success";
       klasa = "pe-7s-check";
@@ -143,7 +162,21 @@ class Pacijent extends Component {
       this.setState({ fixedClasses: "dropdown" });
     }
   };
+  componentWillMount() {
+    console.log("WILL MOUNT");
+    if (this.state.email == "" || this.state.email == undefined) {
+      this.setState({
+        email: JSON.parse(localStorage.getItem("email") || "{}"),
+        token: JSON.parse(localStorage.getItem("token") || "{}")
+      });
+    }
+  }
   componentDidMount() {
+    console.log("-----------------------");
+    console.log("DID MOUNT");
+    localStorage.setItem("email", JSON.stringify(this.state.email));
+    localStorage.setItem("token", JSON.stringify(this.state.token));
+    console.log(this.refs);
     this.setState({ _notificationSystem: this.refs.notificationSystem });
     var _notificationSystem = this.refs.notificationSystem;
     var color = 4;

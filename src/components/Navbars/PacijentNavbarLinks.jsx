@@ -86,9 +86,15 @@ class PacijentNavbarLinks extends Component {
   };
   handleToggle(toggle) {
     //you code here, change state of menuIsOpened if you want to open or close
-    this.setState({
-      menuIsOpened: true
-    });
+    if (this.state.menuIsOpened == false) {
+      this.setState({
+        menuIsOpened: true
+      });
+    } else {
+      this.setState({
+        menuIsOpened: false
+      });
+    }
   }
   handlePonistiObavestenja() {
     console.log("handle ponisti o");
@@ -218,9 +224,9 @@ class PacijentNavbarLinks extends Component {
     console.log("renderredirect");
     if (this.state.redirectToPotvrdaPregleda == true) {
       console.log("the same");
-      return <Redirect from="/" to="/admin/potvrdaPregleda" />;
+      return <Redirect from="/" to="/pacijent/potvrdaPregleda" />;
     } else if (this.state.redirectToIstorijaPO == true) {
-      return <Redirect from="/" to="/admin/istorija" />;
+      return <Redirect from="/" to="/pacijent/istorija" />;
     }
   }
   handleC() {
@@ -328,6 +334,7 @@ class PacijentNavbarLinks extends Component {
                   <Button
                     fill
                     bsStyle="info"
+                    bsSize="lg"
                     value={poruka}
                     onClick={e => this.handleClick(e)}
                   >

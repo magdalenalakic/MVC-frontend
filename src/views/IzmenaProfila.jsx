@@ -7,7 +7,7 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
-
+import { Table } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
@@ -15,26 +15,30 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
-import avatar from "assets/img/faces/face-3.jpg";
+
 import "login.js";
 import { log } from "util";
 import Login from "login";
-import slikaLekar from "assets/img/images.jpg"
+import slikaLekar from "assets/img/doctor-icon.ico"
 import axios from "axios";
 
 class izmenaProfila extends Component {
   constructor(props){
     super(props);
     console.log("IZMENA PROFILA LEKARA LEKARA");
+    console.log(this.props.token)
     this.state = {
       email: props.email,
       uloga: props.uloga, 
+      token: props.token,
       ime: "",
       telefon: "",
       prezime: "",
       imeN: "",
       telefonN: "",
       prezimeN: "",
+      imeKlinike: "",
+      idKlinike: ""
 
     }
 
@@ -42,32 +46,52 @@ class izmenaProfila extends Component {
 
 
   componentWillMount(){
+
     console.log("wmount")
     console.log("LEKAR SA EMAIL-OM: " + this.state.email)
-    const url = 'http://localhost:8025/api/lekari/getLekarByEmail/' + this.state.email;
-    axios.get(url)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/lekari/getLekarByEmail';
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet lekar: ");
         console.log(Response.data);
       
         this.setState({
-          email: Response.data.email
-        });
-        this.setState({
-          ime: Response.data.ime
-        });
-
-        this.setState({
-          prezime: Response.data.prezime
-        });
-        this.setState({
+          email: Response.data.email,
+          idKlinike: Response.data.klinikaID,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
           telefon: Response.data.telefon
         });
-      })
+  
+      console.log("ucitaj mi kliniku " + this.state.idKlinike);
+      const urlKlinike = 'http://localhost:8025/api/klinike/finKlinikaById/' + this.state.idKlinike;    
+      console.log(urlKlinike);
+      axios.get(urlKlinike, config)
+        .then(klinika => {
+          console.log("Preuzeta klinika");
+          console.log(klinika.data);
+ 
+          this.setState({
+            imeKlinike: klinika.data.naziv,
+          
+           
+          });
       
+        })
+
+    })
       .catch(error => {
         console.log("Lekar  nije preuzet")
       })
+
+      
   }
   handleChange = e => {
     e.preventDefault();
@@ -84,13 +108,20 @@ class izmenaProfila extends Component {
       console.log("Izmjena : ---------------")  
       console.log(this.state.ime);
       console.log(this.state.prezime);
+      var config = {
+        headers: {
+          Authorization: "Bearer " + this.state.token,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      };
     axios
       .put("http://localhost:8025/api/lekari/update", {
-        ime: this.state.imeN,
-        prezime: this.state.prezimeN,
-        telefon: this.state.telefonN,
+        ime: this.state.ime,
+        prezime: this.state.prezime,
+        telefon: this.state.telefon,
         email: this.state.email
-      })
+      }, config)
       .then(response => {
         console.log(response.data);
  
@@ -137,7 +168,7 @@ class izmenaProfila extends Component {
                         <label htmlFor="ime">Ime: </label>
                         <input
                           type="text"
-                          name="imeN"
+                          name="ime"
                           
                           defaultValue={ime}
                           // placeholder={this.state.ime}
@@ -149,7 +180,7 @@ class izmenaProfila extends Component {
                         <label htmlFor="prezime">Prezime: </label>
                         <input
                           type="text"
-                          name="prezimeN"
+                          name="prezime"
                           defaultValue={prezime}
                           // placeholder="prezime"
                           // noValidate
@@ -162,6 +193,18 @@ class izmenaProfila extends Component {
                           type="email"
                           name="email"
                           value={email}
+                          disabled="disabled"
+                          // placeholder="email"
+                          // noValidate
+                          // onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="email">
+                        <label htmlFor="klinika">Klinika: </label>
+                        <input
+                          type="klinika"
+                          name="klinika"
+                          value={this.state.imeKlinike}
                           disabled="disabled"
                           // placeholder="email"
                           // noValidate
@@ -192,7 +235,7 @@ class izmenaProfila extends Component {
                         <label htmlFor="telefon">Broj telefona: </label>
                         <input
                           type="text"
-                          name="telefonN"
+                          name="telefon"
                           defaultValue={this.state.telefon}
                           // placeholder="telefon"
                           // noValidate
@@ -209,8 +252,8 @@ class izmenaProfila extends Component {
                           // onChange={this.handleChange}
                         />*/}
                       </div> 
-                      <div className="izmeniPodatkeLekar">
-                         <button type="submit">Izmeni podatke</button>
+                      <div className="izmeniPodatkePacijent">
+                         <Button type="submit">Izmeni podatke</Button>
                       </div>
                   </form>
                   // <form className="formUserProfile">
@@ -299,7 +342,7 @@ class izmenaProfila extends Component {
                         <label className="adresaKC">ucitati data</label>
                       </h2>
                     </div> */}
-                    <div className="typo-line">
+                    {/* <div className="typo-line">
                       <h2>
                         <p className="category">Ime:</p>
                   <label className="opisKC">{this.state.ime}</label>
@@ -310,8 +353,19 @@ class izmenaProfila extends Component {
                         <p className="category">Prezime:</p>
                   <label className="opisKC">{this.state.prezime}</label>
                       </h2>
-                    </div>
-                    
+                    </div> */}
+                      <Table striped hover>
+                      <thead className="thead-dark">
+                        <tr>
+                          <td>E-mail:</td>
+                          <td><label>{email}</label></td>
+                        </tr>
+                        <tr>
+                          <td>Klinika:</td>
+                          <td><label>{this.state.imeKlinike}</label></td>
+                        </tr>
+                      </thead>
+                    </Table>
                     
                     
                   </div>

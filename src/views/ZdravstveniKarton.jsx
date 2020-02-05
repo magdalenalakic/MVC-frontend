@@ -16,11 +16,12 @@ import Button from "components/CustomButton/CustomButton.jsx";
 // import "izmenaProfila.css";
 
 //dodam link za sliku  mozda od doktora!!
-import avatar from "assets/img/faces/face-3.jpg";
+// import avatar from "assets/img/faces/face-3.jpg";
 
 import { log } from "util";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
+import moment from "moment";
 
 class ZdravstveniKarton extends Component {
   constructor(props) {
@@ -33,8 +34,11 @@ class ZdravstveniKarton extends Component {
       tezina: "",
       krvnaGrupa: "",
       lbo: "",
+      jmbg: "",
       ime: "",
-      prezime: ""
+      prezime: "",
+      telefon: "",
+      listaIzvestaja: []
     };
   }
 
@@ -53,13 +57,17 @@ class ZdravstveniKarton extends Component {
         console.log("Preuzet pacijent: ");
         console.log(Response.data);
 
-        this.setState({
-          tezina: Response.data.tezina
-        });
-        this.setState({
-          visina: Response.data.visina,
-          krvnaGrupa: Response.data.krvnaGrupa
-        });
+        this.setState(
+          {
+            tezina: Response.data.tezina,
+            visina: Response.data.visina,
+            krvnaGrupa: Response.data.krvnaGrupa,
+            listaIzvestaja: Response.data.listaIzvestaja
+          },
+          () => {
+            console.log(this.state.listaIzvestaja);
+          }
+        );
         var config = {
           headers: {
             Authorization: "Bearer " + this.state.token,
@@ -76,7 +84,9 @@ class ZdravstveniKarton extends Component {
             this.setState({
               ime: Response.data.ime,
               prezime: Response.data.prezime,
-              lbo: Response.data.lbo
+              lbo: Response.data.lbo,
+              jmbg: Response.data.jmbg,
+              telefon: Response.data.telefon
             });
             console.log(this.state);
           })
@@ -296,7 +306,105 @@ class ZdravstveniKarton extends Component {
                           <td>LBO:</td>
                           <td>{lbo}</td>
                         </tr>
+                        <tr>
+                          <td>JMBG:</td>
+                          <td>{this.state.jmbg}</td>
+                        </tr>
+                        <tr>
+                          <td>Telefon:</td>
+                          <td>{this.state.telefon}</td>
+                        </tr>
                       </thead>
+                    </Table>
+                  </div>
+                }
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={8}>
+              <Card
+                title="Posete lekarima"
+                content={
+                  <div>
+                    <Table striped hover>
+                      <thead>
+                        <tr>
+                          <th>Datum</th>
+                          <th>Lekar</th>
+                          <th>Izvestaj</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.listaIzvestaja.map(izvestaj => {
+                          return (
+                            <tr>
+                              <td>
+                                {moment(izvestaj.datum).format("DD.MM.YYYY.")}
+                              </td>
+                              <td>
+                                {izvestaj.imeL} {izvestaj.prezimeL}
+                              </td>
+                              <td>{izvestaj.sadrzaj}</td>
+                              <td>
+                                {Object.entries(izvestaj.recepti).map(
+                                  (key, value) => {
+                                    console.log(key);
+                                    console.log(value);
+                                    return (
+                                      <div>
+                                        <div>{key[1]}</div>
+                                      </div>
+                                    );
+                                  }
+                                )}
+
+                                {/* {izvestaj.listaRecepata.map(recept => {
+                                  return (
+                                    <div>
+                                      {recept.lek.overen && (
+                                        <div>{recept.lek.naziv}</div>
+                                      )}
+                                    </div>
+                                  );
+                                })} */}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  </div>
+                }
+              />
+            </Col>
+
+            <Col md={4}>
+              <Card
+                // statsIcon="fa fa-clock-o"
+                title="Istorija bolesti"
+                // category="Ime"
+                content={
+                  <div id="a">
+                    <Table striped hover>
+                      <thead className="thead-dark">
+                        <tr>
+                          <th>Datum</th>
+                          <th>Bolest</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.listaIzvestaja.map(izvestaj => {
+                          return (
+                            <tr>
+                              <td>
+                                {moment(izvestaj.datum).format("DD.MM.YYYY.")}
+                              </td>
+                              <td>{izvestaj.dijagnozaN}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
                     </Table>
                   </div>
                 }

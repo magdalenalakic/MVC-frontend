@@ -26,6 +26,7 @@ class IzmenaProfilaMedSestre extends Component {
     this.state = {
       email: props.email,
       uloga: props.uloga,
+      token: props.token,
       ime: "",
       prezime: "",
       lozinka: "", 
@@ -38,15 +39,22 @@ class IzmenaProfilaMedSestre extends Component {
       adresaN: "",
       is_checked: false
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
 
     this.handleCheckBox = this.handleCheckBox.bind(this);
   }
 
   componentWillMount() {
     const url =
-      "http://localhost:8025/api/medicinskaSestra/medicinskaSestra/" + this.state.email;
+      "http://localhost:8025/api/medicinskaSestra/medicinskaSestra" ;
     axios
-      .get(url)
+      .get(url, this.config)
       .then(Response => {
         console.log("Preuzeta med sestra: ");
         console.log(Response.data);
@@ -88,9 +96,8 @@ class IzmenaProfilaMedSestre extends Component {
         prezime: this.state.prezimeN,
         email: this.state.email,
         lozinka: this.state.lozinkaN,
-      
         brTelefona: this.state.brTelefonaN
-      })
+      }, this.config)
       .then(response => {
         console.log(response.data);
 

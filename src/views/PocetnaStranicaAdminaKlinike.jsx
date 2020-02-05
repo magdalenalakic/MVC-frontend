@@ -33,10 +33,12 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
   constructor(props){
     super(props);
     console.log("POCETNA STRANICA ADMINA KLINIKE");
-    console.log(props);
+    console.log(this.props);
+    console.log("TOKEN"  + this.props.token);
     this.state = {
       email: props.email,
       uloga: props.uloga, 
+      token: props.token,
       ime: "",
       telefon: "",
       prezime: "",
@@ -45,6 +47,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
       adresa: "",
       opis: "",
       ocena: "",
+      lozinka: "",
       listaPacijenata:[],
       redirectToListaLekara: false,
       redirectToListaSala: false,
@@ -57,13 +60,23 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
    this.handleListaSala = this.handleListaSala.bind(this);
   this.handleSlobodniTermini = this.handleSlobodniTermini.bind(this);
   this.handleLisaPregleda = this.handleLisaPregleda.bind(this);
-  }
+  console.log(this.state.token);
+}
 
   componentWillMount(){
     console.log("wmount")
     console.log("Preuzimanje admina klinike.....")
-    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail/' + this.state.email;
-    axios.get(url)
+    // console.log("TOKEN: "  + this.state.token)
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+
+    axios.get(url, config)
       .then(Response => {
         console.log("Preuzet admin klinike: ");
         console.log(Response.data);
@@ -74,12 +87,15 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           prezime: Response.data.prezime,
           telefon: Response.data.telefon,
           idKlinike: Response.data.idKlinike,
+          
         });
+        console.log(this.state);
         console.log("Id klinike: " + this.state.idKlinike);
+        console.log("******Id klinike: " + this.state.idKlinike);
         console.log("ucitaj mi kliniku");
         const urlKlinike = 'http://localhost:8025/api/klinike/' + this.state.idKlinike;    
         console.log(urlKlinike);
-        axios.get(urlKlinike)
+        axios.get(urlKlinike, config)
           .then(klinika => {
             console.log("Preuzeta klinika");
             console.log(klinika.data);
@@ -93,6 +109,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             });
        
           })
+          
+      .catch(error => {
+        console.log("Klinika nije preuzeta!!!!")
+      })
       
       })
       
@@ -142,16 +162,16 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     
   }
   renderRedirect = () => {
-    console.log("aaaaaaa")
+    // console.log("aaaaaaa")
     if(this.state.redirectToListaLekara){
-      return <Redirect from="/" to="/admin/lekari"/>;
+      return <Redirect from="/" to="/admink/lekari"/>;
     }else  if(this.state.redirectToListaSala){
       console.log("redirect SALA//////////////")
-      return <Redirect from="/" to="/admin/Sale"> </Redirect>
+      return <Redirect from="/" to="/admink/Sale"> </Redirect>
     }else if(this.state.redirectToSlobodniTermini){
-      return <Redirect from="/" to="/admin/slobodniTermini"></Redirect>
+      return <Redirect from="/" to="/admink/slobodniTermini"></Redirect>
     }else if(this.state.redirectToListaPregleda){
-      return <Redirect from="/" to="/admin/Pregledi"></Redirect>
+      return <Redirect from="/" to="/admink/Pregledi"></Redirect>
     }
   };
 

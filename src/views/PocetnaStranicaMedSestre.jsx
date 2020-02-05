@@ -1,231 +1,140 @@
-
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
-
 import { Card } from "components/Card/Card.jsx";
-import { UserCard } from "components/UserCard/UserCard.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
-import slikaLekar from "assets/img/images.jpg";
-import Login from "login.js";
 import axios from "axios";
-import ListaPacijenata from "views/ListaPacijenataMedSestra.jsx";
-import events from "events.js";
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import "react-big-calendar/lib/css/react-big-calendar.css"; 
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "klinickiCentar.css";
 
-import moment from 'moment';
+import moment from "moment";
 
 import Button from "components/CustomButton/CustomButton.jsx";
-import Dialog from 'react-bootstrap-dialog';
-
+import Dialog from "react-bootstrap-dialog";
 
 const localizer = momentLocalizer(moment);
-const listaRadnihDana = [];
-const listaPregleda = [
-  {
-    title: "Odsustvo/Odmor",
-    start: "2019-12-03 02:00",
-    end: "2019-12-06 06:59",
-    up_down_ind: "N"
-  }
-  ,
-    {
-      title: "Radni dani",
-      start: "2019-12-09 13:00",
-      end: "2019-12-13 13:59",
-      up_down_ind: "Y"
-    },
-    {
-      title: "Radni dani",
-      start: "2019-12-02 13:00",
-      end: "2019-12-02 13:59",
-      up_down_ind: "Y"
-    }
-    ,{
-      title: "Radni dani",
-      start: "2019-12-16 13:00",
-      end: "2019-12-20 13:59",
-      up_down_ind: "Y"
-    }
-    ,{
-      title: "Radni dani",
-      start: "2019-12-23 13:00",
-      end: "2019-12-27 13:59",
-      up_down_ind: "Y"
-    }
-  //   {
-  //     title: "Zakazan pregled",
-  //     start: "2019-12-11 14:00",
-  //     end: "2019-12-11 14:59",
-  //     up_down_ind: "Y"
-  //   }
-];
 
 class PocetnaStranicaMedSestre extends React.Component {
   constructor(props) {
     super(props);
+
     console.log("ADMINISTRATOR KLINICKOG CENTRA");
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
       email: props.email,
+      token: props.token,
       redirectToListaPacijenata: false,
       redirectToProfilMedSestre: false,
       redirectToZahtevZaGodOdmor: false,
       redirectToOveraRecepata: false,
       redirectToPocetnaStranica: false,
-      listaRadnihDana : []
+      listaOdmor: [],
+      listaOdsustvo: [],
       //vezano za kalendar
-      
-      
+      odmor: [],
+      odsustvo: [],
+      events: [],
+      objekat: null,
+      isOpen: false
     };
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+
     this.handleListaPacijenata = this.handleListaPacijenata.bind(this);
     this.handleProfilMedSestre = this.handleProfilMedSestre.bind(this);
     this.handleZahtevZaGodOdmor = this.handleZahtevZaGodOdmor.bind(this);
     this.handleOveraRecepata = this.handleOveraRecepata.bind(this);
-    this.ucitavanjeRadnihDana = this.ucitavanjeRadnihDana.bind(this);
-    this.dodavanjeRadnihDanaUKalendar = this.dodavanjeRadnihDanaUKalendar.bind(this);
-    this.prikaziRadneDane = this.prikaziRadneDane.bind(this);
 
-    // console.log(this.state.uloga);
-    // console.log(this.state.email);
+    this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(
+      this
+    );
+    this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(
+      this
+    );
+    // this.ucitavanjeListeOdmorOdsustvo();
   }
- 
+
   handleListaPacijenata() {
     this.setState({
-      redirectToListaPacijenata: true,
+      redirectToListaPacijenata: true
     });
-  };
+  }
   handleProfilMedSestre() {
     this.setState({
-      redirectToProfilMedSestre: true,
+      redirectToProfilMedSestre: true
     });
-  };
-  handleZahtevZaGodOdmor(){
+  }
+  handleZahtevZaGodOdmor() {
     this.setState({
-      redirectToZahtevZaGodOdmor: true,
+      redirectToZahtevZaGodOdmor: true
     });
-  };
-  handleOveraRecepata(){
+  }
+  handleOveraRecepata() {
     this.setState({
-      redirectToOveraRecepata: true,
+      redirectToOveraRecepata: true
     });
-  };
-  ucitavanjeRadnihDana(){
-    const url1 = 'http://localhost:8025/api/medicinskaSestra/listaRadnihDana/' + this.state.email; 
+  }
 
+  ucitavanjeListeOdmorOdsustvo() {
+    const url1 = "http://localhost:8025/api/medicinskaSestra/listaOdmor";
     console.log(url1);
     axios
-      .get(url1)
+      .get(url1, this.config)
       .then(response => {
-        console.log("ucitana lista radnih dana");
+        console.log("ucitana lista odmor odsustvo");
         console.log(response);
-        this.setState({
-          listaRadnihDana: response.data
-        }
-       , ()=> this.dodavanjeRadnihDanaUKalendar()
+        this.setState(
+          {
+            listaOdmor: response.data
+          },
+          () => this.dodavanjeListeOdmorOdsustvoUKalendar()
         );
       })
       .catch(error => {
-        console.log("nije ucitana lista radnih dana");
+        console.log("nije ucitana lista odmor odsustvo");
         console.log(error);
       });
   }
-  dodavanjeRadnihDanaUKalendar(){
-    
-    let lista = this.state.listaRadnihDana;
+  dodavanjeListeOdmorOdsustvoUKalendar() {
+    let lista = this.state.listaOdmor;
     for (var i = 0; i < lista.length; i++) {
-      
-      let start = lista[i].datumPocetka;
-      console.log(start);
-      let datum= start.split('T')[0];
-      let sat = start.split('T')[1].split(':')[0];
-      let minut = start.split('T')[1].split(':')[1];
-      let vreme = sat + ":" + minut;
-      console.log(datum);
-      console.log(vreme);
-      start = datum + " " + vreme;
-      console.log(start);
-      
-      let end = lista[i].datumKraja;
-      let datumend= end.split('T')[0];
-      let satend = end.split('T')[1].split(':')[0];
-      let minutend = end.split('T')[1].split(':')[1];
-      let vremeend = satend + ":" + minutend;
-      end = datumend + " " + vremeend;
-      console.log(end);
-
-      listaPregleda.push({
-        title: "radni dan",
+      let start = new Date(lista[i].datumOd);
+      let end = new Date(lista[i].datumDo);
+      this.state.odmor.push({
+        id: i,
+        title: lista[i].tip,
         start: start,
         end: end,
+        desc: lista[i].opis,
         up_down_ind: "Y"
       });
-      
-     
     }
-    
   }
-  // componentWillMount(){
-  //   ;
-    
-  // }
 
- 
+  componentWillMount() {
+    this.ucitavanjeListeOdmorOdsustvo();
+  }
+
   renderRedirect = () => {
-  
-    if(this.state.redirectToListaPacijenata){    
-      return <Redirect from="/" to="/admin/listaPacijenata"></Redirect>
-    }else if(this.state.redirectToProfilMedSestre){
-      return <Redirect from="/" to="/admin/izmenaProfila"></Redirect>
-    }else if(this.state.redirectToZahtevZaGodOdmor){
-      return <Redirect from="/" to="/admin/zahtevZaGodOdmor"></Redirect>
-    }else if(this.state.redirectToOveraRecepata){
-      return <Redirect from="/" to="/admin/overavanjeRecepata"></Redirect>
+    if (this.state.redirectToListaPacijenata) {
+      return <Redirect from="/" to="/medses/listaPacijenata"></Redirect>;
+    } else if (this.state.redirectToProfilMedSestre) {
+      return <Redirect from="/" to="/medses/izmenaProfila"></Redirect>;
+    } else if (this.state.redirectToZahtevZaGodOdmor) {
+      return <Redirect from="/" to="/medses/zahtevZaGodOdmor"></Redirect>;
+    } else if (this.state.redirectToOveraRecepata) {
+      return <Redirect from="/" to="/medses/overavanjeRecepata"></Redirect>;
     }
   };
-  
-  dodajDogadjaj = e => {
-    e.preventDefault();
-    console.log("dodavanje dogadjaja");
-    listaPregleda.push({
-      title: "dogadjaj",
-      start: "2019-12-09 14:00",
-      end: "2019-12-09 14:59",
-      up_down_ind: "Y"
-    });
-    
-  };
-  prikaziRadneDane = e => {
-    e.preventDefault();
-    console.log("dodavanje dogadjaja");
-    
-    this.ucitavanjeRadnihDana();
-  }
-  
-
-  
 
   render() {
-
-    console.log(this.props);
-    
-   
     return (
       <div className="content">
         <Grid fluid>
@@ -241,7 +150,7 @@ class PocetnaStranicaMedSestre extends React.Component {
                   statsIconText="Lista pacijenata"
                 />
               </div>
-            </Col> 
+            </Col>
             <Col lg={3} sm={6}>
               {this.renderRedirect()}
               <div onClick={this.handleOveraRecepata}>
@@ -253,7 +162,7 @@ class PocetnaStranicaMedSestre extends React.Component {
                   statsIconText="Overa recepata"
                 />
               </div>
-            </Col>         
+            </Col>
             <Col lg={3} sm={6}>
               {this.renderRedirect()}
               <div onClick={this.handleProfilMedSestre}>
@@ -278,88 +187,90 @@ class PocetnaStranicaMedSestre extends React.Component {
                 />
               </div>
             </Col>
-            
           </Row>
           <Row>
-            <Col >
-              
+            <Col>
               <Card
                 title="Kalendar"
                 // category="24 Hours performance"
                 // stats="Updated 3 minutes ago"
                 content={
-              
-                  <div style={{ height: 400 }}  className="ct-chart">
-                    
-                    {/* <Button onClick={this.prikaziRadneDane}>Radni dani</Button> */}
-                    {/* <Button onClick={this.dodajDogadjaj}>Dodaj dogadjaj</Button> */}
-                    <Calendar
-
-                        localizer={localizer}
-                        //events={events}
-                        
-                        events={listaPregleda}
-                        views={["month"]}   
-                        defaultDate={new Date()}
-                      />
-                    
-                  </div>
-                 
+                  <Grid fluid>
+                    <Row>
+                      {this.state.isOpen ? (
+                        <Card
+                          // category="Dogadjaj"
+                          ctTableFullWidth
+                          ctTableResponsive
+                          content={
+                            <div>
+                              <div className="dogadjaj">
+                                <label className="dogadjaj1">Dogadjaj: </label>
+                                <label className="dogadjaj2">
+                                  {this.state.objekat.title}
+                                </label>
+                              </div>
+                              <div className="dogadjaj">
+                                <label className="dogadjaj1">Opis: </label>
+                                <label className="dogadjaj2">
+                                  {this.state.objekat.desc}
+                                </label>
+                              </div>
+                              <div className="dogadjaj">
+                                <label className="dogadjaj1">Pocetak: </label>
+                                <label className="dogadjaj2">
+                                  {this.state.objekat.start.toLocaleDateString()}
+                                </label>
+                              </div>
+                              <div className="dogadjaj">
+                                <label className="dogadjaj1">Kraj: </label>
+                                <label className="dogadjaj2">
+                                  {this.state.objekat.end.toLocaleDateString()}
+                                </label>
+                              </div>
+                              <Button
+                                className="izlaz"
+                                onClick={() => this.setState({ isOpen: false })}
+                              >
+                                X
+                              </Button>
+                            </div>
+                          }
+                        />
+                      ) : null}
+                    </Row>
+                    <Row>
+                      <div style={{ height: 400 }} className="ct-chart">
+                        <Calendar
+                          style={{ maxHeight: "100%" }}
+                          localizer={localizer}
+                          showMultiDayTimes={true}
+                          // views={["month"]}
+                          defaultDate={new Date()}
+                          events={this.state.odmor}
+                          eventPropGetter={event => ({
+                            style: {
+                              backgroundColor: "#ebd234"
+                            }
+                          })}
+                          // startAccessor={event.start}
+                          // endAccessor={event.end}
+                          // titleAccessor="tip"
+                          onSelectEvent={obj => {
+                            this.state.objekat = obj;
+                            console.log(this.state.objekat);
+                            this.setState({
+                              isOpen: true
+                            });
+                          }}
+                        />
+                      </div>
+                    </Row>
+                  </Grid>
                 }
-                // legend={
-                //   <div className="legend">{this.createLegend(legendSales)}</div>
-                // }
               />
-                
             </Col>
-            
-            {/* <Col md={4}>
-            <Card
-                // statsIcon="fa fa-clock-o"
-                title="O lekaru"
-                // category="Ime"
-                content={
-                  <div id="a">
-                    <div className="slikaKCdiv">
-                      <h2> 
-                        <img className="slikaLekar" src={slikaLekar}></img>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Ime:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Prezime:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Klinika:</p>
-                        <label className="adresaKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Opis posla:</p>
-                        <label className="opisKC">ucitati data</label>
-                      </h2>
-                    </div>
-                    
-                    
-                    
-                  </div>
-                }
-                
-                
-              />
-            </Col> */}
           </Row>
-
         </Grid>
       </div>
     );

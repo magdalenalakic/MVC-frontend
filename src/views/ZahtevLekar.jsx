@@ -8,26 +8,27 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import "klinickiCentar.css";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-import PocetnaStranicaMedSestre from "views/PocetnaStranicaMedSestre.jsx";
+import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
 
 
-class ZahtevMedSestra extends React.Component {
+class ZahtevLekar extends React.Component {
   constructor(props) {
     super(props);
-    console.log("MED SESTRA");
+    console.log("LEKAR");
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      id: "",
       tipOdmorOdsustvo: "ODMOR",
       datumPocetka: new Date(),
       datumKraja : new Date(),
       opis: "",
       idMedSestre: 0, 
       imeMS: "",
-      prezimeMS: "",
-      renderToPocetna: false
+      prezimeMS: "", 
+      redirectToPocetna: false
 
       
     };
@@ -87,11 +88,11 @@ class ZahtevMedSestra extends React.Component {
 
   componentWillMount() {
     const url =
-    "http://localhost:8025/api/medicinskaSestra/medicinskaSestra" ;
+    "http://localhost:8025/api/lekari/getLekarByEmail" ;
   axios
     .get(url, this.config)
     .then(Response => {
-      console.log("Preuzeta med sestra: ");
+      console.log("Preuzet lekar: ");
       console.log(Response.data);
 
       this.setState({
@@ -112,43 +113,45 @@ class ZahtevMedSestra extends React.Component {
   }
   zahtevOdmorOdsustvo() {
 
-    const url = "http://localhost:8025/api/odmorodsustvo/posaljiZahtev";
+    const url = "http://localhost:8025/api/odmorodsustvo/posaljiZahtevLekar";
     axios
       .post(url,{ 
         datumOd : this.state.datumPocetka,
         datumDo : this.state.datumKraja,
         opis : this.state.opis,
         // status: false,
-        idMedSestre : this.state.idMedSestre,
-        imeMS: this.state.imeMS,
-        prezimeMS: this.state.prezimeMS,
-        emailMS: this.state.email,
+        idLekara : this.state.id,
+        imeL: this.state.imeMS,
+        prezimeL: this.state.prezimeMS,
+        emailL: this.state.email,
         tip : this.state.tipOdmorOdsustvo
       }, this.config)
       .then(Response => {
         
         console.log("uspesno poslat zahtev")
         console.log(Response.data);
-
         this.setState({
-          renderToPocetna: true
+          redirectToPocetna: true
+          
         })
+        
 
-      })
-      .catch(error => {
-        console.log("Zahtev nije poslat");
       });
+      // .catch(error => {
+      //   console.log("nije dobro odabran datum");
+
+      // });
   };
 
   render() {
-    console.log(this.props);
-    if(this.state.renderToPocetna === true){
+
+    if(this.state.redirectToPocetna === true){
       return (
         <BrowserRouter>
           <Switch>
             <Route
-              path="/pocetnaStranica"
-              render={props => <PocetnaStranicaMedSestre {...props}
+              path="/pocetnaStranicaLekara"
+              render={props => <PocetnaStranicaLekara {...props}
                   token={this.state.token}
                   email={this.state.email} 
                   uloga={this.state.uloga}
@@ -156,13 +159,13 @@ class ZahtevMedSestra extends React.Component {
                   // emailPacijenta={this.state.emailPacijenta}  
                 />}
             />
-            <Redirect from="/" to="/pocetnaStranica" />
+            <Redirect from="/" to="/pocetnaStranicaLekara" />
           </Switch>
         </BrowserRouter>
       );
     }
 
-
+    console.log(this.props);
     return (
       <div className="content">
               <Card
@@ -249,4 +252,4 @@ class ZahtevMedSestra extends React.Component {
   }
 }
 
-export default ZahtevMedSestra;
+export default ZahtevLekar;
