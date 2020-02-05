@@ -109,6 +109,7 @@ class IzmenaProfilaAdminaKlinike extends Component {
   handleSumbit = e => {
     e.preventDefault();
     console.log("KLIK SUBMITTT")
+    this.props.handleClick("USPESNA IZMENA");
     // let formErrors = { ...this.state.formErrors };
       console.log("Izmjena : ---------------")  
       console.log(this.state.ime);

@@ -76,38 +76,38 @@ class AdministatorKlinike extends Component {
       }
     });
   };
-  handleNotificationClick = position => {
-    var color = Math.floor(Math.random() * 4 + 1);
-    var level;
-    switch (color) {
-      case 1:
-        level = "success";
-        break;
-      case 2:
-        level = "warning";
-        break;
-      case 3:
-        level = "error";
-        break;
-      case 4:
-        level = "info";
-        break;
-      default:
-        break;
-    }
-    this.state._notificationSystem.addNotification({
-      title: <span data-notify="icon" className="pe-7s-gift" />,
-      message: (
-        <div>
-          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-          every web developer.
-        </div>
-      ),
-      level: level,
-      position: position,
-      autoDismiss: 15
-    });
-  };
+  // handleNotificationClick = position => {
+  //   var color = Math.floor(Math.random() * 4 + 1);
+  //   var level;
+  //   switch (color) {
+  //     case 1:
+  //       level = "success";
+  //       break;
+  //     case 2:
+  //       level = "warning";
+  //       break;
+  //     case 3:
+  //       level = "error";
+  //       break;
+  //     case 4:
+  //       level = "info";
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  //   this.state._notificationSystem.addNotification({
+  //     title: <span data-notify="icon" className="pe-7s-gift" />,
+  //     message: (
+  //       <div>
+  //         Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
+  //         every web developer.
+  //       </div>
+  //     ),
+  //     level: level,
+  //     position: position,
+  //     autoDismiss: 15
+  //   });
+  // };
   getBrandText = path => {
     for (let i = 0; i < routes.length; i++) {
       if (
@@ -119,6 +119,50 @@ class AdministatorKlinike extends Component {
       }
     }
     return "Brand";
+  };
+  handleNotificationClick = poruka => {
+    var color = 1;
+    var level;
+    console.log("handle not click");
+    console.log("PORUKA: ", poruka);
+    var klasa = "pe-7s-gift";
+    if (
+      poruka == "USPESNA IZMENA" ||
+      poruka == "ZAHTEV JE POTVRDJEN" ||
+      poruka == "OCENJEN LEKAR" ||
+      poruka == "OCENJENA KLINIKA" ||
+      poruka == "ZAHTEV JE POSLAT" ||
+      poruka == "USPESNA REZERVACIJA"
+    ) {
+      level = "success";
+      klasa = "pe-7s-check";
+    } else if (poruka == "ZAHTEV JE ODBIJEN") {
+      level = "error";
+      klasa = "pe-7s-close";
+    }
+    // switch (poruka) {
+    //   case "USPESNA IZMENA":
+    //     level = "success";
+    //     break;
+    //   case 2:
+    //     level = "warning";
+    //     break;
+    //   case 3:
+    //     level = "error";
+    //     break;
+    //   case 4:
+    //     level = "info";
+    //     break;
+    //   default:
+    //     break;
+    // }
+    this.state._notificationSystem.addNotification({
+      title: <span data-notify="icon" className={klasa} />,
+      message: <div>{poruka}</div>,
+      level: level,
+      position: "tr",
+      autoDismiss: 15
+    });
   };
   handleImageClick = image => {
     this.setState({ image: image });
