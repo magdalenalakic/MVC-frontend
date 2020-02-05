@@ -7,7 +7,7 @@ import {
   ControlLabel,
   FormControl
 } from "react-bootstrap";
-import sortUp from "assets/img/icons8-slide-up-50.png";
+import moment from "moment";
 import sortDown from "assets/img/icons8-down-button-50.png";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { Button } from "react-bootstrap";
@@ -43,6 +43,7 @@ class PotvrdaPregleda extends Component {
     this.listaPregleda = this.listaPregleda.bind(this);
     this.handleOdobren = this.handleOdobren.bind(this);
     this.handleOdbijen = this.handleOdbijen.bind(this);
+    this.handleOtkazan = this.handleOtkazan.bind(this);
     this.handleSort = this.handleSort.bind(this);
   }
 
@@ -103,7 +104,15 @@ class PotvrdaPregleda extends Component {
       .then(res => {
         console.log(res.data);
         this.setState({
-          pregledi: res.data.sort((a, b) => b.id - a.id)
+          pregledi: res.data.sort((a, b) => {
+            let startA = new Date(a.datum);
+            startA.setHours(a.termin);
+
+            let startB = new Date(b.datum);
+            startB.setHours(b.termin);
+
+            return new Date(startA).getTime() - new Date(startB).getTime();
+          })
         });
       })
       .catch(error => {
@@ -161,12 +170,40 @@ class PotvrdaPregleda extends Component {
         console.log(error.response);
       });
   };
+  handleOtkazan = e => {
+    e.preventDefault();
+    console.log("otkazan");
+    console.log(e.currentTarget.value);
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const url2 =
+      "http://localhost:8025/api/pregledi/otkazivanje/" + e.currentTarget.value;
+    axios
+      .put(url2, {}, config)
+      .then(response => {
+        console.log("OTKAZANO");
+        console.log(response);
+        console.log(response.status);
+        this.props.handleClick("ZAHTEV JE OTKAZAN");
+        this.ucitaj();
+      })
+      .catch(error => {
+        // if (error.status == 409) {
+        this.props.handleClick("ZAHTEV SE NE MOZE OTKAZATI");
+        // }
+      });
+  };
   listaPregleda() {
     let res = [];
     console.log("lista kl");
     const odbij = <Tooltip id="remove_tooltip">Odbij</Tooltip>;
     const potvrdi = <Tooltip id="remove_tooltip">Potvrdi</Tooltip>;
-
+    const otkazi = <Tooltip id="remove_tooltip">Otkazi</Tooltip>;
     // const pretraga = this.state.pretraziPoljeKlinika;
     // const oc = this.state.ocenaKlinike;
     // console.log(oc);
@@ -178,6 +215,9 @@ class PotvrdaPregleda extends Component {
       if (lista[i].salaN == "" || lista[i].salaN == undefined) {
         res.push(
           <tr key={i}>
+            <td key={lista[i].datum}>
+              {moment(lista[i].datum).format("DD.MM.YYYY.")} {lista[i].termin} h
+            </td>
             <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
             <td key={lista[i].lekarID}>
               {lista[i].imeL} {lista[i].prezimeL}
@@ -199,6 +239,10 @@ class PotvrdaPregleda extends Component {
         if (lista[i].status == 1) {
           res.push(
             <tr key={i}>
+              <td key={lista[i].datum}>
+                {moment(lista[i].datum).format("DD.MM.YYYY.")} {lista[i].termin}{" "}
+                h
+              </td>
               <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
               <td key={lista[i].lekarID}>
                 {lista[i].imeL} {lista[i].prezimeL}
@@ -215,11 +259,29 @@ class PotvrdaPregleda extends Component {
               </td>
               <td></td>
               <td></td>
+              <td>
+                <OverlayTrigger placement="top" overlay={otkazi}>
+                  <Button
+                    bsStyle="warning"
+                    simple
+                    type="button"
+                    bsSize="sm"
+                    value={lista[i].id}
+                    onClick={e => this.handleOtkazan(e)}
+                  >
+                    <i className="pe-7s-trash text-warning" />
+                  </Button>
+                </OverlayTrigger>
+              </td>
             </tr>
           );
         } else if (lista[i].status == 0) {
           res.push(
             <tr key={i}>
+              <td key={lista[i].datum}>
+                {moment(lista[i].datum).format("DD.MM.YYYY.")} {lista[i].termin}{" "}
+                h
+              </td>
               <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
               <td key={lista[i].lekarID}>
                 {lista[i].imeL} {lista[i].prezimeL}
@@ -265,6 +327,10 @@ class PotvrdaPregleda extends Component {
         } else if (lista[i].status == 2) {
           res.push(
             <tr key={i}>
+              <td key={lista[i].datum}>
+                {moment(lista[i].datum).format("DD.MM.YYYY.")} {lista[i].termin}{" "}
+                h
+              </td>
               <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
               <td key={lista[i].lekarID}>
                 {lista[i].imeL} {lista[i].prezimeL}
@@ -286,46 +352,6 @@ class PotvrdaPregleda extends Component {
         }
       }
     }
-    // } else {
-    //   console.log("===========");
-    //   console.log(pretraga);
-    //   let lista = this.state.listaKlinika;
-
-    //   for (var i = 0; i < lista.length; i++) {
-    //     var naziv = lista[i].naziv;
-    //     var adresa = lista[i].adresa;
-    //     var opis = lista[i].opis;
-    //     var ocena = lista[i].ocena;
-    //     if (
-    //       naziv.toLowerCase().includes(pretraga.toLowerCase()) ||
-    //       adresa.toLowerCase().includes(pretraga.toLowerCase()) ||
-    //       opis.toLowerCase().includes(pretraga.toLowerCase())
-    //     ) {
-    //       if (oc <= ocena) {
-    //         res.push(
-    //           <tr key={i}>
-    //             <td>
-    //               <input
-    //                 name="odabranaKlinika"
-    //                 type="radio"
-    //                 value={lista[i].id}
-    //                 checked={this.state.izabranaKlinika == lista[i].id}
-    //                 onChange={e => {
-    //                   this.promenjenOdabirKlinike(e);
-    //                 }}
-    //               ></input>
-    //             </td>
-    //             <td key={lista[i].id}>{lista[i].id}</td>
-    //             <td key={lista[i].naziv}>{lista[i].naziv}</td>
-    //             <td key={lista[i].adresa}>{lista[i].adresa}</td>
-    //             <td key={lista[i].opis}>{lista[i].opis}</td>
-    //             <td key={lista[i].ocena}>{lista[i].ocena}</td>
-    //           </tr>
-    //         );
-    //   }
-    // }
-    //   }
-    // }
 
     return res;
   }
@@ -380,6 +406,33 @@ class PotvrdaPregleda extends Component {
     } else if (sortKriterijum == "salaDown") {
       this.setState({
         pregledi: lista.sort((a, b) => b.salaID - a.salaID)
+      });
+    } else if (sortKriterijum == "datumUp") {
+      console.log("datum");
+
+      this.setState({
+        pregledi: lista.sort((a, b) => {
+          let startA = new Date(a.datum);
+          startA.setHours(a.termin);
+
+          let startB = new Date(b.datum);
+          startB.setHours(b.termin);
+
+          return new Date(startA).getTime() - new Date(startB).getTime();
+        })
+      });
+    } else if (sortKriterijum == "datumDown") {
+      console.log("datum");
+      this.setState({
+        pregledi: lista.sort((b, a) => {
+          let startA = new Date(a.datum);
+          startA.setHours(a.termin);
+
+          let startB = new Date(b.datum);
+          startB.setHours(b.termin);
+
+          return new Date(startA).getTime() - new Date(startB).getTime();
+        })
       });
     }
   };
@@ -469,9 +522,30 @@ class PotvrdaPregleda extends Component {
                 ctTableResponsive
                 title="Pregledi"
                 content={
-                  <Table striped hover style={{ width: 800 }}>
+                  <Table striped hover>
                     <thead className="thead-dark">
                       <tr>
+                        <th id="datum">
+                          Datum
+                          <i
+                            onClick={e => {
+                              this.handleSort("datumUp");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-up"
+                          />
+                          <i
+                            onClick={e => {
+                              this.handleSort("datumDown");
+                            }}
+                            style={{
+                              cursor: "pointer"
+                            }}
+                            className="pe-7s-angle-down"
+                          />
+                        </th>
                         <th id="Klinika">
                           Klinika
                           <i
@@ -606,7 +680,7 @@ class PotvrdaPregleda extends Component {
                   </Table>
                 }
               />
-              <Card
+              {/* <Card
                 ctTableFullWidth
                 ctTableResponsive
                 title="Operacije"
@@ -620,10 +694,10 @@ class PotvrdaPregleda extends Component {
                         <th id="Cena">Cena</th>
                       </tr>
                     </thead>
-                    {/* <tbody>{this.listaPregleda()}</tbody> */}
+                    <tbody>{this.listaPregleda()}</tbody>
                   </Table>
                 }
-              />
+              /> */}
             </Col>
           </Row>
         </Grid>

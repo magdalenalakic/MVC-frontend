@@ -102,11 +102,13 @@ class Pacijent extends Component {
       poruka == "ZAHTEV JE POTVRDJEN" ||
       poruka == "OCENJEN LEKAR" ||
       poruka == "OCENJENA KLINIKA" ||
-      poruka == "ZAHTEV JE POSLAT"
+      poruka == "ZAHTEV JE POSLAT" ||
+      poruka == "ZAHTEV JE ODBIJEN" ||
+      poruka == "ZAHTEV JE OTKAZAN"
     ) {
       level = "success";
       klasa = "pe-7s-check";
-    } else if (poruka == "ZAHTEV JE ODBIJEN") {
+    } else if (poruka == "ZAHTEV SE NE MOZE OTKAZATI") {
       level = "error";
       klasa = "pe-7s-close";
     }

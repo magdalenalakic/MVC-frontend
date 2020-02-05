@@ -9,6 +9,7 @@ import "./assets/sass/light-bootstrap-dashboard-react.scss?v=1.3.0";
 import "./assets/css/demo.css";
 import "./assets/css/pe-icon-7-stroke.css";
 import Login from "login.js";
+import PotvrdaRegistracije from "potvrdaRegistracije.jsx";
 import Pacijent from "views/Pacijent.jsx";
 import AdministatorKlinike from "views/AdministatorKlinike.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
@@ -95,6 +96,24 @@ if (
           render={props => <AdministatorKlinike {...props} />}
         />
         {/* <Redirect from="/" to="/login" /> */}
+        {/* <Route path="/admin" render={props => <AdminLayout {...props} />} />
+        <Redirect from="/" to="/admin/" /> */}
+      </Switch>
+    </BrowserRouter>,
+    document.getElementById("root")
+  );
+} else if (
+  document.documentURI.includes("http://localhost:3000/potvrdaRegistracije")
+) {
+  console.log("potvrda registracije");
+  ReactDOM.render(
+    <BrowserRouter>
+      <Switch>
+        <Route
+          path="/potvrdaRegistracije"
+          render={props => <PotvrdaRegistracije {...props} />}
+        />
+        <Redirect from="/" to="/potvrdaRegistracije" />
         {/* <Route path="/admin" render={props => <AdminLayout {...props} />} />
         <Redirect from="/" to="/admin/" /> */}
       </Switch>
