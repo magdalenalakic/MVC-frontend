@@ -346,6 +346,29 @@ class ZdravstveniKarton extends Component {
                                 {izvestaj.imeL} {izvestaj.prezimeL}
                               </td>
                               <td>{izvestaj.sadrzaj}</td>
+                              <td>
+                                {Object.entries(izvestaj.recepti).map(
+                                  (key, value) => {
+                                    console.log(key);
+                                    console.log(value);
+                                    return (
+                                      <div>
+                                        <div>{key[1]}</div>
+                                      </div>
+                                    );
+                                  }
+                                )}
+
+                                {/* {izvestaj.listaRecepata.map(recept => {
+                                  return (
+                                    <div>
+                                      {recept.lek.overen && (
+                                        <div>{recept.lek.naziv}</div>
+                                      )}
+                                    </div>
+                                  );
+                                })} */}
+                              </td>
                             </tr>
                           );
                         })}

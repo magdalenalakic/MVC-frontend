@@ -5,7 +5,7 @@ import ZdravstveniKarton from "views/ZdravstveniKarton.jsx";
 import BrzoZakazivanje from "views/BrzoZakazivanje.jsx";
 import IstorijaPOPacijenta from "views/IstorijaPOPacijenta.jsx";
 import PotvrdaPregleda from "views/PotvrdaPregleda.jsx";
-
+import PregledKlinika from "views/PregledKlinika.jsx";
 const dashboardRoutes = [
   //za pacijenta
   {
@@ -64,14 +64,14 @@ const dashboardRoutes = [
     icon: "pe-7s-check",
     component: PotvrdaPregleda,
     layout: "/pacijent"
+  },
+  {
+    path: "/pregledKlinika",
+    name: "Pregled Klinika",
+    icon: "pe-7s-bell",
+    component: PregledKlinika,
+    layout: "/pacijent"
   }
-  // {
-  //   path: "/notifications",
-  //   name: "Notifications",
-  //   icon: "pe-7s-bell",
-  //   component: Notifications,
-  //   layout: "/pacijent"
-  // }
 ];
 
 export default dashboardRoutes;
