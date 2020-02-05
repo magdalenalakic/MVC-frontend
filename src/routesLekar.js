@@ -20,29 +20,22 @@ const dashboardRoutes = [
     name: "Lista pacijenata",
     icon: "pe-7s-news-paper",
     component: ListaPacijenata,
-    layout: "/admin"
+    layout: "/lekar"
   },
   {
     path: "/izmenaProfilaLekara",
     name: "Izmena profila",
     icon: "pe-7s-user",
     component: IzmenaProfila,
-    layout: "/admin"
+    layout: "/lekar"
   },
   {
     path: "/zahtevLekar",
     name: "Zahtev za odmor odsustvo",
     icon: "pe-7s-date",
     component: ZahtevZaGodOdmor,
-    layout: "/admin"
-  },
-  // {
-  //   path: "/zakazivanjePregleda",
-  //   name: "Zakazivanje pregleda",
-  //   icon: "pe-7s-date",
-  //   component: ZakazivanjePregleda,
-  //   layout: "/admin"
-  // }
+    layout: "/lekar"
+  }
 ];
 
 export default dashboardRoutes;

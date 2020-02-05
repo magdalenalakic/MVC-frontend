@@ -51,7 +51,8 @@ class PocetnaStranicaLekara extends React.Component {
       isPregled: false,
       isOperacija: false,
       objekat: null,
-      redirectToPregled: false
+      redirectToPregled: false, 
+      listaOperacija: []
     };
     this.config = {
       headers: {
@@ -73,6 +74,8 @@ class PocetnaStranicaLekara extends React.Component {
     this.ucitavanjeListePregleda = this.ucitavanjeListePregleda.bind(this);
     // this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(this);
     this.dodavanjeListaUKalendar = this.dodavanjeListaUKalendar.bind(this);
+    this.ucitavanjeListeOperacija = this.ucitavanjeListeOperacija.bind(this);
+
   }
 
   handleClick = e => {
@@ -104,22 +107,22 @@ class PocetnaStranicaLekara extends React.Component {
           prezime: Response.data.prezime,
           telefon: Response.data.telefon
         });
-        //PREUZIMANJE PACIJENATA KLINIKE
-        console.log("Klinika id: " + this.state.klinikaID);
-        const url1 = 'http://localhost:8025/api/klinike/pacijentiKlinike/' + this.state.klinikaID; 
-        console.log(url1);
-        axios.get(url1, this.config)
-          .then(response => {
-            console.log("URL 111");
-            console.log(response);
-            this.setState({
-              listaPacijenata: response.data
-            });
-          })
-          .catch(error => {
-              console.log("nisu preuzeti pacijenti klinike");
-              console.log(error);
-          })
+        // //PREUZIMANJE PACIJENATA KLINIKE
+        // console.log("Klinika id: " + this.state.klinikaID);
+        // const url1 = 'http://localhost:8025/api/klinike/pacijentiKlinike/' + this.state.klinikaID; 
+        // console.log(url1);
+        // axios.get(url1, this.config)
+        //   .then(response => {
+        //     console.log("URL 111");
+        //     console.log(response);
+        //     this.setState({
+        //       listaPacijenata: response.data
+        //     });
+        //   })
+        //   .catch(error => {
+        //       console.log("nisu preuzeti pacijenti klinike");
+        //       console.log(error);
+        //   })
 
        
       })
@@ -169,16 +172,35 @@ class PocetnaStranicaLekara extends React.Component {
          console.log(error);
      })
   }
+  ucitavanjeListeOperacija(){
+    //PREUZIMANJE LISTE PREGLEDA LEKARA
+       
+    axios.get("http://localhost:8025/api/operacije/operacijeLekara", this.config)
+    .then(response => {
+      console.log("PREUZETE OPERACIJE");
+     
+      console.log(response.data)
+      this.setState({
+        listaOperacija: response.data
+      }
+      , ()=> this.dodavanjeListaUKalendar()
+      );
+      
+    })
+    .catch(error => {
+        console.log("nisu preuzete operacije");
+        console.log(error);
+    })
+ }
   dodavanjeListaUKalendar(){
     //treba dodati i jednu i drugu listu hahahha 
     this.state.dogadjajiKalendar = [];
 
     let lista = this.state.listaPregleda;
-    
     if(lista.length != 0){
       for(var i = 0; i < lista.length; i++){
-        console.log("datum!!!")
-        console.log(i);
+        // console.log("datum!!!")
+        // console.log(i);
         let start = new Date(lista[i].datum);
         let end = new Date(lista[i].datum);
       
@@ -207,12 +229,38 @@ class PocetnaStranicaLekara extends React.Component {
       }
     }
 
-    
+    let lista3 = this.state.listaOperacija;
+    if(lista3.length != 0){
+      for(var i = 0; i < lista3.length; i++){
+        console.log("datum!!!")
+        console.log(i);
+        
+        let start = new Date(lista3[i].datum) ; 
+        let end = new Date(lista3[i].datum);
+        console.log(start);
+        console.log(end);
+        start.setHours(lista3[i].termin);
+        end.setHours(lista3[i].termin + 2);
 
+        this.state.dogadjajiKalendar.push(
+          {
+            // id: i,
+            title: "OPERACIJA" ,
+            start: start ,
+            end: end,
+            desc: lista3[i],
+            up_down_ind: "Y",
+            
+          }
+        )
+        
+         
+      }
+    }
     let lista2 = this.state.listaOdmorOdsustvo;
     if(lista2.length != 0){
       for(var i = 0; i < lista2.length; i++){
-        console.log(i);
+        // console.log(i);
         let start2 = new Date(lista2[i].datumOd);
         let end2 = new Date(lista2[i].datumDo);
         this.state.dogadjajiKalendar.push(
@@ -230,60 +278,11 @@ class PocetnaStranicaLekara extends React.Component {
    
   }
 
-  // dodavanjeListePregledaUKalendar(){
-  //   let lista = this.state.listaPregleda;
-  //   for(var i = 0; i < lista.length; i++){
-  //     console.log("datum!!!")
-  //     let start = new Date(lista[i].datum);
-  //     let end = new Date(lista[i].datum);
-    
-  //     start.setHours(lista[i].termin);
-  //     end.setHours(lista[i].termin + 2);
-  //     // let kraj = new Date(lista[i].datum);
-  //     // console.log(kraj.getFullYear());
-  //     // console.log(kraj.getMonth())   
-  //     // console.log(kraj.getDate());
-  //     // console.log(kraj.getHours());
-  //     // console.log(lista[i].termin);
-      
-  //     this.state.preglediUKalendaru.push(
-  //       {
-  //         id: i,
-  //         title: lista[i].nazivTP ,
-  //         start: start ,
-  //         end: end,
-  //         desc: lista[i],
-  //         // up_down_ind: "Y",
-          
-  //       }
-  //     )
-      
-       
-  //   }
-  // }
-  // dodavanjeListeOdmorOdsustvoUKalendar(){
-  //   let lista = this.state.listaOdmorOdsustvo;
-  //   for(var i = 0; i < lista.length; i++){
-  //     let start = new Date(lista[i].datumOd);
-  //     let end = new Date(lista[i].datumDo);
-  //     this.state.odmorodsustvoUKalendaru.push(
-  //       {
-  //         // id: i,
-  //         title: lista[i].tip,
-  //         start: start,
-  //         end: end,
-  //         desc: lista[i].opis,
-  //         up_down_ind: "Y",
-  //       }
-  //     )
-  //   }
-  // }
-
   componentWillMount(){
     this.preuzimanjeLekara();
     this.ucitavanjeListePregleda();
     this.ucitavanjeListeOdmorOdsustvo();
-    // this.dodavanjeListaUKalendar();
+    this.ucitavanjeListeOperacija();
   }
 
 
@@ -360,11 +359,11 @@ class PocetnaStranicaLekara extends React.Component {
   renderRedirect = () => {
   
     if(this.state.redirectToListaPacijenata){    
-      return <Redirect from="/" to="/admin/listaPacijenataLekar"></Redirect>
-    }else if(this.state.redirectToProfilMedSestre){
-      return <Redirect from="/" to="/admin/izmenaProfilaLekara"></Redirect>
+      return <Redirect from="/" to="/lekar/listaPacijenataLekar"></Redirect>
+    }else if(this.state.redirectToProfilLekara){
+      return <Redirect from="/" to="/lekar/izmenaProfilaLekara"></Redirect>
     }else if(this.state.redirectToZahtevZaGodOdmor){
-      return <Redirect from="/" to="/admin/zahtevLekar"></Redirect>
+      return <Redirect from="/" to="/lekar/zahtevLekar"></Redirect>
     }
     //nije napravljeno
     // else if(this.state.redirectToZakazivanjePregleda){
@@ -395,24 +394,8 @@ class PocetnaStranicaLekara extends React.Component {
   
 
   render() {
-    
-    const emailPacijenta = this.state.emailPacijenta;
-    const redirectToProfilPacijenta = this.state.redirectToProfilPacijenta;
+  
  
-
-    // if (redirectToProfilPacijenta === true) {
-    //   return (
-    //     <BrowserRouter>
-    //       <Switch>
-    //         <Route
-    //           path="/profilPacijenta"
-    //           render={props => <ProfilPacijenta {...props} emailPacijenta={emailPacijenta} />}
-    //         />
-    //         <Redirect from="/" to="/profilPacijenta" />
-    //       </Switch>
-    //     </BrowserRouter>
-    //   );
-    // }
     if (this.state.redirectToPregled === true) {
       return (
         <BrowserRouter>
@@ -431,11 +414,7 @@ class PocetnaStranicaLekara extends React.Component {
         </BrowserRouter>
       );
     }
-
-    
     return (
-
-
       <div className="content">
         <Grid fluid>
           <Row>
@@ -479,7 +458,7 @@ class PocetnaStranicaLekara extends React.Component {
 
               
             </Col>
-            <Col lg={3} sm={6}>
+            {/* <Col lg={3} sm={6}>
               {this.renderRedirect()}
               <div onClick={this.handleZakazivanjePregleda}>
                 <StatsCard
@@ -491,7 +470,7 @@ class PocetnaStranicaLekara extends React.Component {
                 />
               </div>
              
-            </Col>
+            </Col> */}
           </Row>
           <Row>
           <Col >
@@ -522,11 +501,11 @@ class PocetnaStranicaLekara extends React.Component {
                                 </div>
                                 <div className="dogadjaj" >
                                   <label className="dogadjaj1">Pocetak: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.start.toLocaleDateString()}</label>
+                                  <label className="dogadjaj2">{moment(this.state.objekat.start).format("DD.MM.YYYY.")}</label>
                                 </div>
                                 <div className="dogadjaj" >
                                   <label className="dogadjaj1">Kraj: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.end.toLocaleDateString()}</label>
+                                  <label className="dogadjaj2">{moment(this.state.objekat.end).format("DD.MM.YYYY.")}</label>
                                   
                                 </div>
                                 <Button className="izlaz" 
@@ -560,19 +539,23 @@ class PocetnaStranicaLekara extends React.Component {
                                   <label className="dogadjaj1">Dogadjaj: </label>
                                   <label className="dogadjaj2">{this.state.objekat.title}</label>  
                                 </div>
-                                {/* <div className="dogadjaj" >
+                                <div className="dogadjaj" >
                                   <label className="dogadjaj1">Opis: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.desc}</label>
+                                  <label className="dogadjaj2">{this.state.objekat.desc.tipOperacije}</label>
+                                </div>
+                                <div className="dogadjaj" >
+                                  <label className="dogadjaj1">Pacijent: </label>
+                                  <label className="dogadjaj2">{this.state.objekat.desc.imeP + " " + this.state.objekat.desc.prezimeP}</label>
                                 </div>
                                 <div className="dogadjaj" >
                                   <label className="dogadjaj1">Pocetak: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.start.toLocaleDateString()}</label>
+                                  <label className="dogadjaj2">{moment(this.state.objekat.start).format("DD.MM.YYYY. HH:mm")}</label>
                                 </div>
                                 <div className="dogadjaj" >
                                   <label className="dogadjaj1">Kraj: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.end.toLocaleDateString()}</label>
+                                  <label className="dogadjaj2">{moment(this.state.objekat.end).format("DD.MM.YYYY. HH:mm")}</label>
                                   
-                                </div> */}
+                                </div>
                                 <Button className="izlaz" 
                                  onClick={()=>  this.setState({
                                     isPregled: false, 
@@ -610,11 +593,11 @@ class PocetnaStranicaLekara extends React.Component {
                                 </div>
                                 <div className="dogadjaj" >
                                   <label className="dogadjaj1">Pocetak: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.start.toLocaleDateString()}</label>
+                                  <label className="dogadjaj2">{moment(this.state.objekat.start).format("DD.MM.YYYY. HH:mm")}</label>
                                 </div>
                                 <div className="dogadjaj" >
                                   <label className="dogadjaj1">Kraj: </label>
-                                  <label className="dogadjaj2">{this.state.objekat.end.toLocaleDateString()}</label>
+                                  <label className="dogadjaj2">{moment(this.state.objekat.end).format("DD.MM.YYYY. HH:mm")}</label>
                                   
                                 </div>
                                 <Button className="izlaz" 
@@ -701,9 +684,6 @@ class PocetnaStranicaLekara extends React.Component {
                   
                     </Row>
                   </Grid>
-                    
-                     
-                 
                 }
                 
               />

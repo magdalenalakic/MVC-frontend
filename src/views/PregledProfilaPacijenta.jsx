@@ -37,7 +37,8 @@ class PregledProfilaPacijenta extends Component {
       ZKpacijenta: [],
       zkOpen: false,
       redirectToPregled: false,
-      redirectToListaPac: false
+      redirectToListaPac: false,
+      prikaziZK: false
     };
     this.config = {
       headers: {
@@ -71,9 +72,34 @@ class PregledProfilaPacijenta extends Component {
           grad: Response.data.grad,
           drzava: Response.data.drzava,
           lbo: Response.data.lbo
+        }, ()=> {
+          console.log("usaooo u proveru ");
+          console.log(this.state.token);
+          axios
+          .post('http://localhost:8025/api/lekari/mogucPrikazZKPacijenta' ,
+          { email: Response.data.id}, this.config)
+            .then(Response => {
+              console.log("Da li je odobren ili ne uvid u zk ");
+              console.log(Response.data);
+             if(Response.data == "MOZE"){
+               console.log("MOZE DA PRISTUPI");
+               this.setState({
+                prikaziZK: true
+               })
+             }else{
+               console.log("NE MOZE DA PRISTUPI")
+               this.setState({
+                prikaziZK: false
+               })
+             }
+            })
+            .catch(error => {
+              console.log("nije uspeo url1");
+              console.log(error);
+            });
+            
         });
-        
-        
+
         
         console.log(this.state);
       })
@@ -136,13 +162,16 @@ class PregledProfilaPacijenta extends Component {
     let res = [];
     let lista = this.state.listaPregleda;
     for (var i = 0; i < lista.length; i++) {
-      res.push(
-        <tr key = {i} >
+      let datum = new Date(lista[i].datum);
+      datum.setHours(lista[i].termin);
 
-          <td >{moment(lista[i].datum).format("DD.MM.YYYY HH:mm")}</td>
+      res.push(
+        <tr key = {i}>
+
+          <td >{moment(datum).format("DD.MM.YYYY HH:mm")}</td>
           <td >{lista[i].nazivTP}</td>
+          <td>{lista[i].salaBR + " "+ lista[i].salaN}</td>
           
-          <td >{lista[i].salaN}</td>
          
           
           <td >
@@ -168,7 +197,7 @@ class PregledProfilaPacijenta extends Component {
  
   render() {
 
-     if (this.state.redirectToPregled === true) {
+    if (this.state.redirectToPregled === true) {
         return (
           <BrowserRouter>
             <Switch>
@@ -186,8 +215,8 @@ class PregledProfilaPacijenta extends Component {
             </Switch>
           </BrowserRouter>
         );
-      }
-      if(this.state.redirectToListaPac === true){
+    }
+    if(this.state.redirectToListaPac === true){
         return (
           <BrowserRouter>
             <Switch>
@@ -204,7 +233,7 @@ class PregledProfilaPacijenta extends Component {
             </Switch>
           </BrowserRouter>
         );
-      }
+    }
     
     const ime = this.state.ime;
     const prezime = this.state.prezime;
@@ -215,46 +244,23 @@ class PregledProfilaPacijenta extends Component {
       <div className="content">
         <Grid fluid>
           <Row>
-            {/* <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                // statsText="Lista pacijenata"
-                // statsValue="105GB"
-                // statsIcon={<i className="fa fa-refresh" />}
-                statsIconText="Zahtev za pregled"
-              />
-            </Col> */}
+            
          
+            
+            {
+              this.state.prikaziZK ?
+              <Col lg={3} sm={6}>
+                <Button className="pregledDugme" onClick={()=> this.setState({
+                  zkOpen: true
+                })}>Zdravstveni karton</Button>
+              </Col>
+              : null
+            }
+            
             <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-wallet text-success" />}
-                // statsText="Pocetak pregleda"
-                // statsValue="$1,345"
-                // statsIcon={<i className="fa fa-calendar-o" />}
-                statsIconText="Pregled zdravstvenog kartona"
-              />
+              <Button className="pregledDugme" onClick={this.handleNazad}>Izadji iz profila</Button>
             </Col>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                statsIconText="Istorija pregleda/operacija"
-              />
-            </Col>
-            <Col>
-              <Button className="izadjiDugme" onClick={this.handleNazad}>Izadji iz profila</Button>
-            </Col>
-            {/* <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                // statsText="Profil korisnika"
-                // statsValue="23"
-                // statsIcon={<i className="fa fa-clock-o" />}
-                statsIconText="Brzo zakazivanje pregleda"
-              />
-            </Col> */}
+            
             
           </Row>
           <Row>
@@ -264,8 +270,7 @@ class PregledProfilaPacijenta extends Component {
               <Col md={8}>
               <Card
                 title="Zdravstveni karton"
-                // category="24 Hours performance"
-                // stats="Updated 3 minutes ago"
+                
                 content={
                   <div className="ct-chart">
                     {/* <ChartistGraph
@@ -275,6 +280,10 @@ class PregledProfilaPacijenta extends Component {
                       responsiveOptions={responsiveSales}
                     /> */}
                     <p></p>
+                    <Button className="izadjiDugme" onClick={()=> this.setState({
+                      zkOpen: false
+                    })}>Izadji</Button>
+
                   </div>
                 }
                
@@ -283,28 +292,20 @@ class PregledProfilaPacijenta extends Component {
             : <Col md={8}>
             
                 <Card
-                  title="Lista pregleda klinike"
+                  title="Lista pregleda"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
                   ctTableResponsive
                   content={
                     <div>
-                    {/* <Button className="DodajKlinikuDugme"  onClick={e => this.dodajLekara(e)}>Dodaj novi termin za pregled</Button>
-                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
-                     */}
+                    
                    
                     <Table striped hover>
                       <thead>
                         <tr>
                           <th id="IdPacijenta">Datum</th>
                           <th id="ImePacijenta">Tip pregleda</th>
-                          
                           <th>Sala</th>
-                           
-                                    
-                            {/* <th id="pacijent">Pacijent</th> */}
-
-                            {/* <th id="cena">Cena</th> */}
                                 
                         </tr>
                       </thead>
