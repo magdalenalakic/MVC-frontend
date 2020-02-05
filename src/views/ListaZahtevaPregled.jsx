@@ -66,6 +66,7 @@ class ListaZahtevaPregled extends Component {
     const urlPRegled = 'http://localhost:8025/api/pregledi/' +  e.target.id;    
     axios.get(urlPRegled, config)
       .then(pregled => {
+        console.log("###################################################")
         console.log(pregled.data);
 
         this.setState({
@@ -83,6 +84,7 @@ class ListaZahtevaPregled extends Component {
           console.log(this.state.idPregleda);
           console.log(this.state.idLekar);
           console.log(this.state.datumPregleda);
+          console.log(this.state.idPacijent);
           
 
         });
@@ -327,6 +329,8 @@ class ListaZahtevaPregled extends Component {
     return res;
   }
 
+
+  
   render() {
     const redirectToListaSala = this.state.redirectToListaSala;
    
@@ -340,7 +344,7 @@ class ListaZahtevaPregled extends Component {
           <Switch>
             <Route
               path="/listaSala"
-              render={props => <ListaSala {...props} handleClick={this.handleClick} idLekar={this.state.idLekar} idPacijent={this.state.idPacijent} idPregleda={this.state.idPregleda} idKlinike={this.state.idKlinike}  terminPregleda={this.state.terminPregleda} datumPregleda={this.state.datumPregleda} redirectToListaSala={this.state.redirectToListaSala} token={this.state.token} />}
+              render={props => <ListaSala {...props} handleClick={this.handleNotificationClick} idLekar={this.state.idLekar} idPacijent={this.state.idPacijent} idPregleda={this.state.idPregleda} idKlinike={this.state.idKlinike}  terminPregleda={this.state.terminPregleda} datumPregleda={this.state.datumPregleda} redirectToListaSala={this.state.redirectToListaSala} token={this.state.token} />}
             />
             <Redirect from="/" to="/listaSala" />
           </Switch>

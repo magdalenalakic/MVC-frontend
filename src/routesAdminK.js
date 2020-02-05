@@ -9,7 +9,7 @@ import listaZahteva from "views/ListaZahtevaPregled.jsx";
 import listaZahtevaOdmorOdsustvo from "views/ListaZahtevaOdmorOdsustvo.jsx";
 import tipoviPregleda from "views/TipoviPregleda.jsx";
 import izvestajOPoslovanju from "views/IzvestajOPoslovanju.jsx";
-
+import Mapa from "views/Maps.jsx";
 const dashboardRoutes = [
   //za admina k
   {
@@ -89,6 +89,13 @@ const dashboardRoutes = [
     name: "Izvestaj o Poslovanju ",
     icon: "pe-7s-graph",
     component: izvestajOPoslovanju,
+    layout: "/admink"
+  }, 
+  {
+    path: "/mapa",
+    name: "mapa ",
+    icon: "pe-7s-graph",
+    component: Mapa,
     layout: "/admink"
   }
 ];

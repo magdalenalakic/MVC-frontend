@@ -434,6 +434,8 @@ class ListaSala extends Component {
             // console.log(this.props.idPregleda);
             // console.log(this.props.idLekar);
 
+            console.log(this.props);
+            console.log(this.props.idPacijent)
             axios
               .post(url3, {
                 salaID: this.state.idSale,
@@ -441,19 +443,20 @@ class ListaSala extends Component {
                 datum: this.props.datumPregleda,
                 termin: this.state.selectValue,
                 id: this.props.idPregleda,
-                lekarID: this.props.idLekar,
+                lekarID: this.state.idLekar,
+                pacijentID: this.props.idPacijent
                 
               }, config)
               .then(response => {
                 
                 console.log("USPJEEEEEH< REZ SALAAAA");
-                this.props.handleClick("USPESNA REZERVACIJA");
+              
                 this.setState({
                   rezervisanaSala: true
                 }, ()=> {console.log(this.state.rezervisanaSala)
                   
                   
-  
+                  // this.props.handleClick("USPESNA REZERVACIJA");
                 })
         
               })
@@ -1377,7 +1380,7 @@ obrisiLekara = e => {
           idSale: Response.data.id
          }, ()=> {
                          
-           console.log(this.props.idLekar);
+           console.log(this.state.idLekar);
           console.log("111111111111111111111111111111111111111111111111")
           const url3 = "http://localhost:8025/api/sale/rezervisanjeSale";
           axios
@@ -1387,14 +1390,14 @@ obrisiLekara = e => {
               datum: this.state.datumS,
               termin: this.state.selectValue,
               id: this.props.idPregleda,
-              lekarID: this.props.idLekar,
+              lekarID: this.state.idLekar,
+              pacijentID: this.props.idPacijent
               
             }, config)
             .then(response => {
               console.log("USPJEEEEEH< REZ SALAAAA");
               console.log(this.props)
-              this.props.handleClick("USPESNA REZERVACIJA");
-              console.log("USPJEEEEEH< REZ SALAAAA")
+              // this.props.handleClick("USPESNA REZERVACIJA");
               this.setState({
                 rezervisanaSala: true
               }, ()=> {console.log(this.state.rezervisanaSala)

@@ -133,7 +133,7 @@ class AdministatorKlinike extends Component {
       poruka == "OCENJENA KLINIKA" ||
       poruka == "ZAHTEV JE POSLAT" ||
       poruka == "USPESNA REZERVACIJA"
-    ) {
+      ) {
       level = "success";
       klasa = "pe-7s-check";
     } else if (poruka == "ZAHTEV JE ODBIJEN") {
