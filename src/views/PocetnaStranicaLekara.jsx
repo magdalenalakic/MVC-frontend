@@ -192,6 +192,7 @@ class PocetnaStranicaLekara extends React.Component {
         console.log(error);
     })
  }
+ 
   dodavanjeListaUKalendar(){
     //treba dodati i jednu i drugu listu hahahha 
     this.state.dogadjajiKalendar = [];
@@ -232,13 +233,13 @@ class PocetnaStranicaLekara extends React.Component {
     let lista3 = this.state.listaOperacija;
     if(lista3.length != 0){
       for(var i = 0; i < lista3.length; i++){
-        console.log("datum!!!")
-        console.log(i);
+        // console.log("datum!!!")
+        // console.log(i);
         
         let start = new Date(lista3[i].datum) ; 
         let end = new Date(lista3[i].datum);
-        console.log(start);
-        console.log(end);
+        // console.log(start);
+        // console.log(end);
         start.setHours(lista3[i].termin);
         end.setHours(lista3[i].termin + 2);
 
