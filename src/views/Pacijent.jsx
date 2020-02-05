@@ -40,6 +40,7 @@ class Pacijent extends Component {
       email: props.email,
       // email: JSON.parse(localStorage.getItem("email") || props.email),
       token: props.token,
+      lozinka: props.lozinka,
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -79,6 +80,8 @@ class Pacijent extends Component {
                 uloga={this.state.uloga}
                 email={this.state.email}
                 token={this.state.token}
+                lozinka={this.state.lozinka}
+                promeniLozinku={this.promeniLozinku}
               />
             )}
             key={key}
@@ -103,13 +106,15 @@ class Pacijent extends Component {
       poruka == "OCENJEN LEKAR" ||
       poruka == "OCENJENA KLINIKA" ||
       poruka == "ZAHTEV JE POSLAT" ||
-      poruka == "ZAHTEV JE ODBIJEN" ||
-      poruka == "ZAHTEV JE OTKAZAN"
+      poruka == "LOZINKA JE PROMENJENA"
     ) {
       level = "success";
       klasa = "pe-7s-check";
     } else if (poruka == "ZAHTEV SE NE MOZE OTKAZATI") {
       level = "error";
+      klasa = "pe-7s-close";
+    } else if (poruka == "ZAHTEV JE ODBIJEN" || poruka == "ZAHTEV JE OTKAZAN") {
+      level = "warning";
       klasa = "pe-7s-close";
     }
     // switch (poruka) {
@@ -134,6 +139,11 @@ class Pacijent extends Component {
       level: level,
       position: "tr",
       autoDismiss: 15
+    });
+  };
+  promeniLozinku = lozinka => {
+    this.setState({
+      lozinka: lozinka
     });
   };
   getBrandText = path => {
