@@ -330,7 +330,7 @@ class ListaZahtevaPregled extends Component {
   render() {
     const redirectToListaSala = this.state.redirectToListaSala;
    
-    if (redirectToListaSala === true) {
+    if (redirectToListaSala == true) {
      console.log("|||||||||||||||||||||||||||||||||||||")
      console.log(this.state.datumPregleda);
      console.log(this.state.terminPregleda);
@@ -340,7 +340,7 @@ class ListaZahtevaPregled extends Component {
           <Switch>
             <Route
               path="/listaSala"
-              render={props => <ListaSala {...props} idLekar={this.state.idLekar} idPacijent={this.state.idPacijent} idPregleda={this.state.idPregleda} idKlinike={this.state.idKlinike}  terminPregleda={this.state.terminPregleda} datumPregleda={this.state.datumPregleda} redirectToListaSala={this.state.redirectToListaSala} token={this.state.token} />}
+              render={props => <ListaSala {...props} handleClick={this.handleClick} idLekar={this.state.idLekar} idPacijent={this.state.idPacijent} idPregleda={this.state.idPregleda} idKlinike={this.state.idKlinike}  terminPregleda={this.state.terminPregleda} datumPregleda={this.state.datumPregleda} redirectToListaSala={this.state.redirectToListaSala} token={this.state.token} />}
             />
             <Redirect from="/" to="/listaSala" />
           </Switch>
