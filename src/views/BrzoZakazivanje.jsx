@@ -110,7 +110,7 @@ class BrzoZakazivanje extends Component {
   }
 
   componentWillMount() {
-    var url = "http://localhost:8025/api/lekari/listaZauzetihTermina/" + 1;
+    var url = "http://localhost:8025/api/lekari/listaZauzetostiLekara/" + 1;
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -140,10 +140,19 @@ class BrzoZakazivanje extends Component {
       .then(Response => {
         console.log("Preuzeti unapred def pregledi: ");
         console.log(Response.data);
+        
 
         this.setState(
           {
-            listaPregleda: Response.data
+            listaPregleda: Response.data.sort((a, b) => {
+              let startA = new Date(a.datum);
+              startA.setHours(a.termin);
+  
+              let startB = new Date(b.datum);
+              startB.setHours(b.termin);
+  
+              return new Date(startA).getTime() - new Date(startB).getTime();
+            })
           },
           () => console.log(this.state.listaPregleda)
         );
@@ -161,14 +170,30 @@ class BrzoZakazivanje extends Component {
       console.log("datum");
       this.setState({
         listaPregleda: lista.sort((a, b) => {
-          return new Date(a.datum).getTime() - new Date(b.datum).getTime();
+          let startA = new Date(a.datum);
+          startA.setHours(a.termin);
+
+          let startB = new Date(b.datum);
+          startB.setHours(b.termin);
+
+          return new Date(startA).getTime() - new Date(startB).getTime();
         })
       });
     } else if (sortBy === "datumDown") {
       console.log("datum");
       this.setState({
         listaPregleda: lista.sort((b, a) => {
-          return new Date(a.datum).getTime() - new Date(b.datum).getTime();
+          this.setState({
+            pregledi: lista.sort((b, a) => {
+              let startA = new Date(a.datum);
+              startA.setHours(a.termin);
+    
+              let startB = new Date(b.datum);
+              startB.setHours(b.termin);
+    
+              return new Date(startA).getTime() - new Date(startB).getTime();
+            })
+          });
         })
       });
     } else if (sortBy === "tipPregledaUp") {

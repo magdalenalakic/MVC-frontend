@@ -347,8 +347,8 @@ class ListaKlinika extends Component {
     console.log(e.currentTarget.value);
     const lekarid = e.currentTarget.value;
     const url =
-      "http://localhost:8025/api/lekari/listaZauzetihTermina/" +
-      e.currentTarget.value;
+      "http://localhost:8025/api/lekari/listaZauzetostiLekara/" +
+      e.currentTarget.value +"/"+this.state.datumZaPregled;
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -364,7 +364,15 @@ class ListaKlinika extends Component {
 
         this.setState(
           {
-            terminiIzabranogLekara: Response.data
+            terminiIzabranogLekara: Response.data.sort((a, b) => {
+              let startA = new Date(a.datumPocetka);
+              startA.setHours(a.termin);
+  
+              let startB = new Date(b.datumPocetka);
+              startB.setHours(b.termin);
+  
+              return new Date(startA).getTime() - new Date(startB).getTime();
+            })
           },
           () => {
             console.log(this.state.terminiIzabranogLekara);
@@ -375,11 +383,11 @@ class ListaKlinika extends Component {
                 "DD.MM.YYYY."
               );
               const datPoc = moment(termin.datumPocetka).format("DD.MM.YYYY.");
-              console.log(moment(termin.datumZaPregled).format("HH:mm"));
+              // console.log(moment(termin.datumZaPregled).format("HH:mm"));
               console.log("******");
 
-              console.log(dat);
-              console.log(datPoc);
+              
+              console.log(datPoc + " " + termin.termin);
               console.log("******");
               if (dat.valueOf() === datPoc.valueOf()) {
                 console.log("ISTI SU");
@@ -683,7 +691,33 @@ class ListaKlinika extends Component {
       {
         datumZaPregled: date
       },
-      () => console.log(this.state)
+      () => {console.log(this.state)
+      
+        var config = {
+          headers: {
+            Authorization: "Bearer " + this.state.token,
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          }
+        };
+        axios
+          .get(
+            "http://localhost:8025/api/klinike/slobodneKlinike/" +
+              this.state.datumZaPregled,
+            config
+          )
+          .then(Response => {
+            console.log("Preuzeta lista klinika: ");
+            console.log(Response.data);
+            this.setState({
+              listaKlinika: Response.data
+            });
+          })
+    
+          .catch(error => {
+            console.log("klinike nisu preuzete");
+          });
+      }
     );
   };
   podesiOcenuKlinike = e => {
@@ -748,30 +782,7 @@ class ListaKlinika extends Component {
   };
   slobodniTermini() {
     //get zahtev za preuzimanje termina iz baze za zadati datum
-    var config = {
-      headers: {
-        Authorization: "Bearer " + this.state.token,
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    };
-    axios
-      .get(
-        "http://localhost:8025/api/klinike/slobodneKlinike/" +
-          this.state.datumZaPregled,
-        config
-      )
-      .then(Response => {
-        console.log("Preuzeta lista klinika: ");
-        console.log(Response.data);
-        this.setState({
-          listaKlinika: Response.data
-        });
-      })
-
-      .catch(error => {
-        console.log("klinike nisu preuzete");
-      });
+    
   }
 
   odabranaKlinika = e => {
@@ -1077,8 +1088,8 @@ class ListaKlinika extends Component {
 
             // onChange={date => setStartDate(date)}
           />
-          <br></br>
-          <Button onClick={this.slobodniTermini}>Pronadji termine</Button>
+          {/* <br></br>
+          <Button onClick={this.slobodniTermini}>Pronadji termine</Button> */}
         </h5>
       );
     } else if (this.state.odabranFilter == "ocena") {

@@ -219,6 +219,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
