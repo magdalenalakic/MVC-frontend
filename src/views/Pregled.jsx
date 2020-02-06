@@ -1130,7 +1130,7 @@ class Pregled extends React.Component {
                 </div>
             </Row>
               </Row>
-              : null
+              : null 
             }    
             <Row></Row>
            
