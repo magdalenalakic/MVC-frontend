@@ -32,7 +32,7 @@ import UserCard from "components/UserCard/UserCard";
 import slikaKC from "assets/img/klinickiCentar.jpg";
 import axios from "axios";
 import PocetnaStranicaAdminaKlinike from "./PocetnaStranicaAdminaKlinike";
-
+import Geocode from "react-geocode";
 class AdministatorKlinike extends Component {
   constructor(props) {
     super(props);
@@ -133,7 +133,7 @@ class AdministatorKlinike extends Component {
       poruka == "OCENJENA KLINIKA" ||
       poruka == "ZAHTEV JE POSLAT" ||
       poruka == "USPESNA REZERVACIJA"
-    ) {
+      ) {
       level = "success";
       klasa = "pe-7s-check";
     } else if (poruka == "ZAHTEV JE ODBIJEN") {
@@ -237,6 +237,35 @@ class AdministatorKlinike extends Component {
       this.refs.mainPanel.scrollTop = 0;
     }
   }
+
+
+// getData(){
+//   Geocode.setApiKey("AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk");
+//   // Get address from latidude & longitude.
+// Geocode.fromLatLng("48.8583701", "2.2922926").then(
+//   response => {
+//     const address = response.results[0].formatted_address;
+//     console.log(address);
+//   },
+//   error => {
+//     console.error(error);
+//   }
+// );
+
+// // Get latidude & longitude from address.
+// Geocode.fromAddress("Bulevar Oslobodjenja 67").then(
+//   response => {
+//     console.log("dasdsadasdasdsadas nananaa ananananna aana **-* -*- *- ")
+//     console.log(response);
+//     const { lat, lng } = response.results[0].geometry.location;
+//     console.log(lat, lng);
+//   },
+//   error => {
+//     console.error(error);
+//   }
+// );
+// }
+
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;
@@ -247,6 +276,7 @@ class AdministatorKlinike extends Component {
         <NotificationSystem ref="notificationSystem" style={style} />
         <Sidebar
           {...this.props}
+         // getData={this.getData()}
           routes={routes}
           email={this.state.email}
           uloga={this.state.uloga}
@@ -257,8 +287,9 @@ class AdministatorKlinike extends Component {
         <div id="main-panel" className="main-panel" ref="mainPanel">
           <AdminNavbar
             {...this.props}
+            
             brandText={this.getBrandText(this.props.location.pathname)}
-            // brandText="JU JU JUJU"
+            
           />
 
           {/* <PocetnaStranicaLekara  email={email} uloga={uloga} /> */}

@@ -28,6 +28,25 @@ import slikaSala from "assets/img/sala.jpg"
 import slikaST from "assets/img/lekari.jpg"
 import Login from "login.js";
 import axios from "axios";
+import Geocode from "react-geocode";
+import Map from "views/Map.jsx"
+
+// import {
+//   withScriptjs,
+//   withGoogleMap,
+//   GoogleMap,
+//   Marker
+// } from "react-google-maps";
+
+// function Maps(){
+//   return <GoogleMap
+//     defaultZoom = {13}
+//     defaultCenter = {{lat : 45.267136, lng: 19.833549}}
+
+//   />;
+// }
+// const WrappedMap = withScriptjs(withGoogleMap(Maps))
+
 
 class PocetnaStranicaAdminaKlinike extends React.Component {
   constructor(props){
@@ -62,6 +81,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
   this.handleLisaPregleda = this.handleLisaPregleda.bind(this);
   console.log(this.state.token);
 }
+
+
 
   componentWillMount(){
     console.log("wmount")
@@ -106,6 +127,28 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
               opis: klinika.data.opis,
               ocena: klinika .data.ocena,
              
+            }, ()=>{
+              // Geocode.setLanguage("sr");
+ 
+              // // set response region. Its optional.
+              // // A Geocoding request with region=es (Spain) will return the Spanish city.
+              // Geocode.setRegion("RS");
+               
+              // // Enable or disable logs. Its optional.
+              // Geocode.enableDebug();
+              // console.log("********* LOKACIJA *****************");
+              // Geocode.fromAddress(this.state.adresa).then(
+              //   response => {
+              //     console.log(response)
+              //     // const { lat, lng } = response.results[0].geometry.location;
+              //     // console.log(lat, lng);
+              //   },
+              //   error => {
+              //     console.error("LOKACIJA GRESKAAAAAAAAAAAAA");
+              //   }
+              // );
+
+              
             });
        
           })
@@ -215,6 +258,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
 //     return res;
 //   }
 
+
+
+
+
   render() {
     // console.log("Ispisi  props u pocetna stranica lekara: "); 
     // console.log(this.props);
@@ -233,6 +280,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     const adresa = this.state.adresa;
     const opis = this.state.opis;
     const ocena = this.state.ocena;
+    console.log(this.state.adresa);
+    console.log("////////////////////////////////////////////////////")
+
+ 
     // console.log(nazivKlinike);
     // console.log(telefon);
     // console.log("Render ps email: " + email);
@@ -430,47 +481,23 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             </Col> */}
           </Row>
           </Row>
-{/* 
-          <Row>
-            <Col md={6}>
-              <Card
-                id="chartActivity"
-                title="2014 Sales"
-                category="All products including Taxes"
-                stats="Data information certified"
-                statsIcon="fa fa-check"
-                content={
-                  <div className="ct-chart">
-                    <ChartistGraph
-                      data={dataBar}
-                      type="Bar"
-                      options={optionsBar}
-                      responsiveOptions={responsiveBar}
-                    />
-                  </div>
-                }
-                legend={
-                  <div className="legend">{this.createLegend(legendBar)}</div>
-                }
-              />
-            </Col>
 
-            <Col md={6}>
-              <Card
-                title="Tasks"
-                category="Backend development"
-                stats="Updated 3 minutes ago"
-                statsIcon="fa fa-history"
-                content={
-                  <div className="table-full-width">
-                    <table className="table">
-                      <Tasks />
-                    </table>
-                  </div>
-                }
-              />
-            </Col>
-          </Row> */}
+          <Row>
+       
+            {/* <Map
+              adresa={this.state.adresa}
+              K={this.state.idKlinike}
+            /> */}
+            {/* <div style={{width: '100vw', height: '100vh'}} >
+              <WrappedMap  
+                googleMapURL={'https://maps.googleapis.com/maps/api/js?AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk'}
+                loadingElemnt={<div style={{ height: `100%` }} />}
+                containerElement={<div style={{ height: `100vh` }} />}
+                mapElement={<div style={{ height: `100%` }} />}
+
+             />
+            </div> */}
+          </Row>
         </Grid>
       </div>
     );

@@ -6,10 +6,11 @@ import listaPregleda from "views/ListaPregleda.jsx";
 import slobodniTermini from "views/SlobodniTermini.jsx";
 import listaSala from "views/ListaSala.jsx";
 import listaZahteva from "views/ListaZahtevaPregled.jsx";
+import listaZahtevaOp from "views/ListaZahtevaOper.jsx";
 import listaZahtevaOdmorOdsustvo from "views/ListaZahtevaOdmorOdsustvo.jsx";
 import tipoviPregleda from "views/TipoviPregleda.jsx";
 import izvestajOPoslovanju from "views/IzvestajOPoslovanju.jsx";
-
+import Mapa from "views/Maps.jsx";
 const dashboardRoutes = [
   //za admina k
   {
@@ -31,7 +32,7 @@ const dashboardRoutes = [
     name: "Izmena  klinike",
     icon: "pe-7s-note",
     component: izmenaKlinike,
-    layout: "/admink"
+    layout: "/admink",
   },
   {
     path: "/listaLekara",
@@ -76,7 +77,13 @@ const dashboardRoutes = [
     component: listaZahteva,
     layout: "/admink"
   },
-
+  {
+    path: "/listaZahtevaOper",
+    name: "Zahtevi za operaciju",
+    icon: "pe-7s-box1",
+    component: listaZahtevaOp,
+    layout: "/admink"
+  },
   {
     path: "/listaZahtevaOdmorOdsustvo",
     name: "Zahtevi za odmor/odsustvo",
@@ -89,6 +96,13 @@ const dashboardRoutes = [
     name: "Izvestaj o Poslovanju ",
     icon: "pe-7s-graph",
     component: izvestajOPoslovanju,
+    layout: "/admink"
+  }, 
+  {
+    path: "/mapa",
+    name: "mapa ",
+    icon: "pe-7s-graph",
+    component: Mapa,
     layout: "/admink"
   }
 ];
