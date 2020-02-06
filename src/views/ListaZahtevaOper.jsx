@@ -10,7 +10,7 @@ import moment from 'moment';
 import ListaSala from "./ListaSala.jsx";
 
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-class ListaZahtevaPregled extends Component {
+class ListaZahtevaOper extends Component {
   constructor(props) {
     super(props);
     console.log("LISTA ZAHTJEVA ZA PREGLED");
@@ -20,16 +20,16 @@ class ListaZahtevaPregled extends Component {
       email: props.email,
       token: props.token,
       idKlinike: "",
-      redirectToListaSala: false,
-      listaZahtevaZaOregled: [], 
+      redirectZahOper: false,
+      listaZahtevaZaO: [], 
       
       salaN: "", 
       salaBR: "",
-      datumPregleda: "",
-      idPregleda: "",
-      terminPregleda: "",
+      datumOper: "",
+      idOper: "",
+      terminOper: "",
       idLekar: "",
-      idPacijent:""
+      idPacijentOp:""
 
 
     };
@@ -40,7 +40,7 @@ class ListaZahtevaPregled extends Component {
 
   ucitajPonovo(){
     const url1 =
-      "http://localhost:8025/api/pregledi/listaZahtevaZaRegistraciju/" +
+      "http://localhost:8025/api/operacije/listaZahtevaZaRegistraciju/" +
       this.state.email;
 
     axios
@@ -63,7 +63,7 @@ class ListaZahtevaPregled extends Component {
         "Content-Type": "application/json"
       }
     };
-    const urlPRegled = 'http://localhost:8025/api/pregledi/' +  e.target.id;    
+    const urlPRegled = 'http://localhost:8025/api/operacije/' +  e.target.id;    
     axios.get(urlPRegled, config)
       .then(pregled => {
         console.log("###################################################")
@@ -71,20 +71,20 @@ class ListaZahtevaPregled extends Component {
 
         this.setState({
             // idKlinike: klinika.data.id,
-            datumPregleda: pregled.data.datum,
-            salaN: pregled.data.salaN,
-            salaBR: pregled.data.salaBR,
-            terminPregleda: pregled.data.termin,
-            idPregleda: pregled.data.id,
-            idLekar: pregled.data.lekarID,
-            idPacijent: pregled.data.pacijentID
+            datumOper: pregled.data.datum,
+            // salaN: pregled.data.salaN,
+            // salaBR: pregled.data.salaBR,
+            terminOper: pregled.data.termin,
+            idOper: pregled.data.id, //to je id operacija
+          //  idLekar: pregled.data.lekarID,
+          idPacijentOp: pregled.data.pacijentID
          
         }, ()=> {
           console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
-          console.log(this.state.idPregleda);
-          console.log(this.state.idLekar);
-          console.log(this.state.datumPregleda);
-          console.log(this.state.idPacijent);
+          console.log(this.state.idOper);
+          console.log(this.state.terminOper);
+          console.log(this.state.datumOper);
+          console.log(this.state.idPacijentOp);
           
 
         });
@@ -93,8 +93,8 @@ class ListaZahtevaPregled extends Component {
    
 
     this.setState({
-      redirectToListaSala: true,
-      idPregleda: e.target.id,
+      redirectZahOper: true,
+      idOper: e.target.id,
   
     });
 
@@ -121,12 +121,12 @@ class ListaZahtevaPregled extends Component {
          idKlinike: Response.data.idKlinike,
         }, () => {
          
-          const urlKlinike = 'http://localhost:8025/api/pregledi/preuzmiZahtevePregledaKlinike/' + this.state.idKlinike;    
+          const urlKlinike = 'http://localhost:8025/api/operacije/preuzmiZahteveOperacijeKlinike/' + this.state.idKlinike;    
           axios.get(urlKlinike, config)
             .then(k => {
              
               this.setState({
-                  listaZahtevaZaOregled: k.data,
+                  listaZahtevaZaO: k.data,
                
               });
                 
@@ -236,19 +236,20 @@ class ListaZahtevaPregled extends Component {
     const potvrdi = <Tooltip id="remove_tooltip">Potvrdi</Tooltip>;
 
    
-    let lista = this.state.listaZahtevaZaOregled;
+    let lista = this.state.listaZahtevaZaO;
 
     for (var i = 0; i < lista.length; i++) {
-
+        console.log("OPERACIJEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+        console.log(lista[i]);
       if (lista[i].salaN == "" || lista[i].salaN == undefined) {
+        var kraj = lista[i].termin + 2;
         res.push(
           <tr key={i}>
-            
-            <td key={lista[i].lekarID}>
-              {lista[i].imeL} {lista[i].prezimeL}
-            </td>
-            <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
-        <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
+          <td >{lista[i].tipOperacije}</td>
+          <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
+          <td >
+            {lista[i].termin} : 00 - {kraj} : 00
+          </td>
             <td key={lista[i].cena}>{lista[i].cena} RSD</td>
         <td>{lista[i].imeP} {lista[i].prezimeP}</td>
         <td>
@@ -261,14 +262,14 @@ class ListaZahtevaPregled extends Component {
         );
       } else {
         if (lista[i].status == 1) {
-          res.push(
-            <tr key={i}>
-              <td key={lista[i].nazivKl}>{lista[i].nazivKl}</td>
-              <td key={lista[i].lekarID}>
-                {lista[i].imeL} {lista[i].prezimeL}
-              </td>
-              <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+            var kraj = lista[i].termin + 2;
+            res.push(
+              <tr key={i}>
+              <td >{lista[i].tipOperacije}</td>
               <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
+              <td >
+                {lista[i].termin} : 00 - {kraj} : 00
+              </td>
               <td key={lista[i].cena}>{lista[i].cena} RSD</td>
 
               <td align={"center"} key={lista[i].status}>
@@ -281,14 +282,14 @@ class ListaZahtevaPregled extends Component {
             </tr>
           );
         } else if (lista[i].status == 0) {
-         
+            var kraj = lista[i].termin + 2;
           res.push(
             <tr key={i}>
-              <td key={lista[i].lekarID}>
-              {lista[i].imeL} {lista[i].prezimeL}
-            </td>
-            <td key={lista[i].nazivTP}>{lista[i].nazivTP}</td>
+            <td >{lista[i].tipOperacije}</td>
             <td>  {moment(lista[i].datum).format("DD.MM.YYYY")}</td>
+            <td >
+              {lista[i].termin} : 00 - {kraj} : 00
+            </td>
             <td key={lista[i].cena}>{lista[i].cena} RD</td>
             <td >
                 {lista[i].imeP} {lista[i].prezimeP}
@@ -332,12 +333,15 @@ class ListaZahtevaPregled extends Component {
 
   
   render() {
-    const redirectToListaSala = this.state.redirectToListaSala;
-   
-    if (redirectToListaSala == true) {
-     console.log("|||||||||||||||||||||||||||||||||||||")
-     console.log(this.state.datumPregleda);
-     console.log(this.state.terminPregleda);
+    const redirectZahOper = this.state.redirectZahOper;
+    const datumOper = this.state.datumOper;
+    const terminOper = this.state.terminOper;
+    const idPacijentOp = this.state.idPacijentOp;
+ 
+    if (redirectZahOper == true) {
+    //  console.log("|||||||||||||||||||||||||||||||||||||")
+    //  console.log(this.state.datumOper);
+    //  console.log(this.state.terminOper);
      
       return (
         <BrowserRouter>
@@ -345,14 +349,13 @@ class ListaZahtevaPregled extends Component {
             <Route
               path="/listaSala"
               render={props => <ListaSala {...props} 
-              handleClick={this.handleNotificationClick} 
-              idLekar={this.state.idLekar} 
-              idPacijent={this.state.idPacijent} 
-              idPregleda={this.state.idPregleda} 
+              handleClick={this.handleNotificationClick}  
+              idPacijentOp={this.state.idPacijentOp} 
+              idOper={this.state.idOper} 
               idKlinike={this.state.idKlinike}  
-              terminPregleda={this.state.terminPregleda} 
-              datumPregleda={this.state.datumPregleda} 
-              redirectToListaSala={this.state.redirectToListaSala} 
+              terminOper={this.state.terminOper} 
+              datumOper={this.state.datumOper} 
+              redirectZahOper={this.state.redirectZahOper} 
               token={this.state.token} />}
             />
             <Redirect from="/" to="/listaSala" />
@@ -369,7 +372,7 @@ class ListaZahtevaPregled extends Component {
             <Col>
               <Row>
                 <Card
-                  title="Lista zahteva za pregled"
+                  title="Lista zahteva za operaciju"
                   // category="Here is a subtitle for this table"
                   ctTableFullWidth
                   ctTableResponsive
@@ -377,9 +380,10 @@ class ListaZahtevaPregled extends Component {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th id="lekar">Lekar</th>
-                          <th id="tipP">tip pregleda</th>
+                          {/* <th id="lekar">Lekar</th> */}
+                          <th id="tipP">tip operacije</th>
                           <th>datum</th>
+                          <th>termin</th> 
                           <th id="cijena"> cijena</th>
                           <th id="PrezimePacijenta">pacijent</th>
                         
@@ -406,4 +410,4 @@ class ListaZahtevaPregled extends Component {
   }
 }
 
-export default ListaZahtevaPregled;
+export default ListaZahtevaOper;

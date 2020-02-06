@@ -483,7 +483,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           </Row>
 
           <Row>
-            
+       
             {/* <Map
               adresa={this.state.adresa}
               K={this.state.idKlinike}
