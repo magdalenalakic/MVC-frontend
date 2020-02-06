@@ -7,7 +7,10 @@ import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Registracija from "registracija.js";
 
 import Lekar from "views/Lekar.jsx";
+import Pacijent from "views/Pacijent.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
+import MedicinskaSestra from "views/MedicinskaSestra.jsx";
+import AdministatorKlinike from "views/AdministatorKlinike.jsx";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -29,6 +32,8 @@ class Login extends Component {
       redirectToReferrer: false,
       redirectToRegistration: false,
       errorF: false,
+      token: "",
+      waitToapprove: props.waitToapprove,
       formErrors: {
         log: "",
         email: "",
@@ -44,12 +49,19 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-      .post("http://localhost:8020/api/korisnici/login", {
+
+      .post("http://localhost:8025/api/korisnici/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
       })
       .then(response => {
         console.log(response.data);
+        console.log(response.data.accessToken);
+        this.setState({
+          token: response.data.accessToken
+        });
+        console.log("TOKEN : " + this.state.token);
+
         this.setState({
           uloga: response.data.uloga
         });
@@ -58,7 +70,7 @@ class Login extends Component {
           email: response.data.email
         });
 
-        console.log(this.state.uloga);
+        // console.log(this.state.uloga);
         this.setState({
           redirectToReferrer: true
         });
@@ -95,54 +107,7 @@ class Login extends Component {
     if (formErrors.email.length > 0 && formErrors.lozinka.length > 0) {
       formErrors.log = "";
     }
-    this.setState({ formErrors, [name]: value }, () => console.log(this.state));
 
-    // switch (name) {
-    //   case "ime":
-    //     formErrors.ime =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera  " : "";
-    //     break;
-    //   case "prezime":
-    //     formErrors.prezime =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "adresa":
-    //     formErrors.adresa =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "grad":
-    //     formErrors.grad =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "drzava":
-    //     formErrors.drzava =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "email":
-    //     formErrors.email =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "telefon":
-    //     formErrors.telefon =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "brojOsiguranika":
-    //     formErrors.brojOsiguranika =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "korisnickoIme":
-    //     formErrors.korisnickoIme =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "lozinka":
-    //     formErrors.lozinka =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    //   case "potvrdaLozinke":
-    //     formErrors.potvrdaLozinke =
-    //       value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
-    //     break;
-    // }
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   };
   componentDidMount() {
@@ -165,61 +130,105 @@ class Login extends Component {
     const uloga = this.state.uloga;
     const redirectToReferrer = this.state.redirectToReferrer;
     const redirectToRegistration = this.state.redirectToRegistration;
+    const token = this.state.token;
 
-    if( uloga === "ADMINISTRATORKC"){
-      return (
-        <BrowserRouter>
-          <Switch>
-
-            <Route
-              path="/admin"
-              render={props => (
-                <KlinickiCentar {...props} email={email} uloga={uloga} />
-              )}
-            />
-            <Redirect from="/" to="/admin/klinickiCentar" />
-          </Switch>
-        </BrowserRouter>
-      );
-    }
-    if(uloga === "ADMINISTRATORK"){
-      
-    }
-    if(uloga === "LEKAR"){
+    if (uloga === "ADMIN_KC") {
       return (
         <BrowserRouter>
           <Switch>
             <Route
-              path="/admin"
+              path="/kc"
               render={props => (
-                <Lekar {...props} email={email} uloga={uloga} />
+                <KlinickiCentar
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                />
               )}
             />
-            <Redirect from="/" to="/admin/pocetnaStranica" />
+            <Redirect from="/" to="/kc/klinickiCentar" />
           </Switch>
         </BrowserRouter>
       );
     }
-    if(uloga === "MEDICINSKASESTRA"){
-      
+    if (uloga === "ADMIN_KLINIKE") {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/admink"
+              render={props => (
+                <AdministatorKlinike
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                />
+              )}
+            />
+            <Redirect from="/" to="/admink/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
     }
-    if(uloga === "PACIJENT"){
-      // return (
-      //   <BrowserRouter>
-      //     <Switch>
-      //       <Route
-      //         path="/admin"
-      //         render={props => (
-      //           <Lekar {...props} email={email} uloga={uloga} />
-      //         )}
-      //       />
-      //       <Redirect from="/" to="/admin/pocetnaStranica" />
+    if (uloga === "LEKAR") {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/lekar"
+              render={props => (
+                <Lekar {...props} email={email} uloga={uloga} token={token} />
+              )}
+            />
+            <Redirect from="/" to="/lekar/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    if (uloga === "MED_SESTRA") {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/medses"
+              render={props => (
+                <MedicinskaSestra
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                />
+              )}
+            />
+            <Redirect from="/" to="/medses/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    if (uloga === "PACIJENT") {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/pacijent"
+              render={props => (
+                <Pacijent
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                  lozinka={this.state.lozinka}
+                />
+              )}
+            />
+            <Redirect from="/" to="/pacijent/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
 
-      //     </Switch>
-      //   </BrowserRouter>
-      // );
-    }
-    
     if (redirectToRegistration === true) {
       return (
         <BrowserRouter>
@@ -238,7 +247,13 @@ class Login extends Component {
       <div>
         <div className="logForm">
           <div className="form-logForm">
-            <h1>Uloguj se</h1>
+            <h1>Prijavi se</h1>
+            {this.state.waitToapprove === true && (
+              <span className="errorMessage">
+                Bicete obavesteni o potvrdi registracije putem mejla u najkracem
+                mogucem roku.
+              </span>
+            )}
             <form onSubmit={this.handleSumbit} noValidate>
               <div className="email">
                 <label htmlFor="email">E-mail: </label>

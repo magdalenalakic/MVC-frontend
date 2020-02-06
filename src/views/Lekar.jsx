@@ -30,14 +30,17 @@ import {
 import "klinickiCentar.css";
 import UserCard from "components/UserCard/UserCard";
 import slikaKC from "assets/img/klinickiCentar.jpg";
+import axios from "axios";
+import PocetnaStranicaLekara from "./PocetnaStranicaLekara";
 
 class Lekar extends Component {
   constructor(props) {
     super(props);
-
-    console.log(this.props);
+    console.log("Konsturkotr od Lekar");
     this.state = {
       uloga: props.uloga,
+      email: props.email,
+      token: props.token,
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -45,12 +48,13 @@ class Lekar extends Component {
       hasImage: true,
       fixedClasses: "dropdown show-dropdown open"
     };
-    console.log(this.state.uloga);
+    // console.log(this.state.uloga);
+    // console.log(this.state.email);
   }
 
   getRoutes = routes => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/lekar") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -58,6 +62,9 @@ class Lekar extends Component {
               <prop.component
                 {...props}
                 handleClick={this.handleNotificationClick}
+                uloga={this.state.uloga}
+                email={this.state.email}
+                token={this.state.token}
               />
             )}
             key={key}
@@ -87,18 +94,18 @@ class Lekar extends Component {
       default:
         break;
     }
-    // this.state._notificationSystem.addNotification({
-    //   title: <span data-notify="icon" className="pe-7s-gift" />,
-    //   message: (
-    //     <div>
-    //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-    //       every web developer.
-    //     </div>
-    //   ),
-    //   level: level,
-    //   position: position,
-    //   autoDismiss: 15
-    // });
+    this.state._notificationSystem.addNotification({
+      title: <span data-notify="icon" className="pe-7s-gift" />,
+      message: (
+        <div>
+          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
+          every web developer.
+        </div>
+      ),
+      level: level,
+      position: position,
+      autoDismiss: 15
+    });
   };
   getBrandText = path => {
     for (let i = 0; i < routes.length; i++) {
@@ -128,39 +135,48 @@ class Lekar extends Component {
       this.setState({ fixedClasses: "dropdown" });
     }
   };
+  componentWillMount() {
+    console.log("WILL MOUNT");
+    if (this.state.email == "" || this.state.email == undefined) {
+      this.setState({
+        email: JSON.parse(localStorage.getItem("email") || "{}"),
+        token: JSON.parse(localStorage.getItem("token") || "{}")
+      });
+    }
+  }
   componentDidMount() {
-    // this.setState({ _notificationSystem: this.refs.notificationSystem });
-    // var _notificationSystem = this.refs.notificationSystem;
-    // var color = Math.floor(Math.random() * 4 + 1);
-    // var level;
-    // switch (color) {
-    //   case 1:
-    //     level = "success";
-    //     break;
-    //   case 2:
-    //     level = "warning";
-    //     break;
-    //   case 3:
-    //     level = "error";
-    //     break;
-    //   case 4:
-    //     level = "info";
-    //     break;
-    //   default:
-    //     break;
-    // }
-    // _notificationSystem.addNotification({
-    //   title: <span data-notify="icon" className="pe-7s-gift" />,
-    //   message: (
-    //     <div>
-    //       Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-    //       every web developer.
-    //     </div>
-    //   ),
-    //   level: level,
-    //   position: "tr",
-    //   autoDismiss: 15
-    // });
+    console.log("-----------------------");
+    console.log("DID MOUNT");
+    localStorage.setItem("email", JSON.stringify(this.state.email));
+    localStorage.setItem("token", JSON.stringify(this.state.token));
+    console.log(this.refs);
+    this.setState({ _notificationSystem: this.refs.notificationSystem });
+    var _notificationSystem = this.refs.notificationSystem;
+    var color = 4;
+    var level;
+    switch (color) {
+      case 1:
+        level = "success";
+        break;
+      case 2:
+        level = "warning";
+        break;
+      case 3:
+        level = "error";
+        break;
+      case 4:
+        level = "info";
+        break;
+      default:
+        break;
+    }
+    _notificationSystem.addNotification({
+      title: <span data-notify="icon" className="pe-7s-gift" />,
+      message: <div>Dobrodosli, {this.state.email}</div>,
+      level: level,
+      position: "tr",
+      autoDismiss: 15
+    });
   }
   componentDidUpdate(e) {
     if (
@@ -177,13 +193,18 @@ class Lekar extends Component {
     }
   }
   render() {
+    const email = this.state.email;
+    const uloga = this.state.uloga;
+    console.log("Render email: " + email);
+    console.log("Render uloga: " + uloga);
     return (
-      
       <div className="wrapper">
-        {/* <NotificationSystem ref="notificationSystem" style={style} /> */}
+        <NotificationSystem ref="notificationSystem" style={style} />
         <Sidebar
           {...this.props}
           routes={routes}
+          email={this.state.email}
+          uloga={this.state.uloga}
           image={this.state.image}
           color={this.state.color}
           hasImage={this.state.hasImage}
@@ -195,11 +216,11 @@ class Lekar extends Component {
             // brandText="JU JU JUJU"
           />
 
+          {/* <PocetnaStranicaLekara  email={email} uloga={uloga} /> */}
           <Switch>{this.getRoutes(routes)}</Switch>
           <Footer />
         </div>
       </div>
-      
     );
   }
 }

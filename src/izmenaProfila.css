@@ -1,4 +1,3 @@
-
 /* label {
     font-size: 0.8em;
     margin-bottom: 0.25em;
@@ -7,21 +6,27 @@
     width: 200vh;
   } */
 
-  .email,
-  .ime,
-  .prezime,
-  .telefon, .gKlinika
-  {
-    width: 100%;
-  }
+.email,
+.ime,
+.prezime,
+.telefon,
+.gKlinika,
+.lbo,
+.visina,
+.tezina,
+.krvnaGrupa,
+.brTelefona,
+.izmeniPodatkeMedSestri {
+  width: 100%;
+}
 
-.klinikaK{
+.klinikaK {
   width: 650px;
   height: 54px;
 }
 
-.izmeniPodatkeLekar button{
-  background-color:#519e8a;
+.izmeniPodatkeLekar button {
+  background-color: #519e8a;
   color: rgb(0, 0, 0);
   border: 2px solid rgb(124, 117, 117);
   width: 650px;
@@ -32,5 +37,3 @@
   letter-spacing: 1px;
   margin-bottom: 0.25em;
 }
-
-

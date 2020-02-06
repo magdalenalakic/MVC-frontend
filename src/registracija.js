@@ -38,11 +38,13 @@ class Registracija extends Component {
       email: null,
       telefon: null,
       brojOsiguranika: null,
+      jmbg: null,
       lozinka: null,
       potvrdaLozinke: null,
       registrovan: false,
       praznaPolja: false,
       poklapanjeLozinke: true,
+      redirectToLogin: false,
       formErrors: {
         ime: "",
         prezime: "",
@@ -52,6 +54,7 @@ class Registracija extends Component {
         email: "",
         telefon: "",
         brojOsiguranika: "",
+        jmbg: "",
         lozinka: "",
         potvrdaLozinke: ""
       }
@@ -66,37 +69,35 @@ class Registracija extends Component {
         });
       } else {
         console.log(`Ime: ${this.state.ime}`);
+        // axios
+
+        //   .post("http://localhost:8025/api/pacijenti/signup", {
+        //     email: this.state.email
+        //   })
+        //   .then(response => {
+        //     this.setState({
+        //       redirectToReferrer: true
+        //     });
+
+        // this.render(<div>Potvrdite registraciju putem maila. </div>);
         axios
-          .post("http://localhost:8029/api/pacijenti/signup", {
-            email: this.state.email
+
+          .post("http://localhost:8025/api/korisnici/register", {
+            lozinka: this.state.lozinka,
+            ime: this.state.ime,
+            prezime: this.state.prezime,
+            adresa: this.state.adresa,
+            grad: this.state.grad,
+            drzava: this.state.drzava,
+            email: this.state.email,
+            telefon: this.state.telefon,
+            lbo: this.state.brojOsiguranika,
+            jmbg: this.state.jmbg
           })
           .then(response => {
-            this.setState({
-              redirectToReferrer: true
-            });
-
-            // this.render(<div>Potvrdite registraciju putem maila. </div>);
-            axios
-              .post("http://localhost:8029/api/pacijenti/register", {
-                lozinka: this.state.lozinka,
-                ime: this.state.ime,
-                prezime: this.state.prezime,
-                adresa: this.state.adresa,
-                grad: this.state.grad,
-                drzava: this.state.drzava,
-                email: this.state.email,
-                telefon: this.state.telefon,
-                lbo: this.state.brojOsiguranika
-              })
-              .then(response => {
-                console.log("slanje mejla");
-                console.log(response);
-              })
-              .catch(error => {
-                console.log(error.response);
-              });
-
+            console.log("slanje mejla");
             console.log(response);
+            this.render(<div>Potvrdite registraciju putem maila. </div>);
           })
           .catch(error => {
             console.log(error.response);
@@ -104,6 +105,15 @@ class Registracija extends Component {
         this.setState({
           registrovan: true
         });
+
+        // console.log(response);
+        // )}
+        // .catch(error => {
+        //   console.log(error.response);
+        // });
+        //   this.setState({
+        //     registrovan: true
+        //   });
       }
     } else {
       console.log(this.state);
@@ -113,6 +123,13 @@ class Registracija extends Component {
 
       console.error("FORM invalid");
     }
+  };
+  handleClick = e => {
+    e.preventDefault();
+    console.log("registracijaa");
+    this.setState({
+      redirectToLogin: true
+    });
   };
   handleChange = e => {
     e.preventDefault();
@@ -192,7 +209,15 @@ class Registracija extends Component {
           });
         }
         formErrors.brojOsiguranika =
-          value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
+          value.length != 11 ? "sadrzi 11 karaktera" : "";
+        break;
+      case "jmbg":
+        if (value.length > 0) {
+          this.setState({
+            praznaPolja: false
+          });
+        }
+        formErrors.jmbg = value.length != 13 ? "sadrzi 13 karaktera" : "";
         break;
 
       case "lozinka":
@@ -214,6 +239,7 @@ class Registracija extends Component {
           value.length < 3 && value.length > 0 ? "min 3 karaktera" : "";
         break;
     }
+
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   };
 
@@ -230,6 +256,16 @@ class Registracija extends Component {
               path="/login"
               render={props => <Login waitToapprove={true} {...props} />}
             />
+            <Redirect from="/" to="/login" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    if (this.state.redirectToLogin === true) {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route path="/login" render={props => <Login {...props} />} />
             <Redirect from="/" to="/login" />
           </Switch>
         </BrowserRouter>
@@ -348,6 +384,19 @@ class Registracija extends Component {
                   </span>
                 )}
               </div>
+              <div className="jmbg">
+                <label htmlFor="jmbg">JMBG:* </label>
+                <input
+                  type="number"
+                  name="jmbg"
+                  placeholder="JMBG"
+                  noValidate
+                  onChange={this.handleChange}
+                />
+                {formErrors.jmbg.length > 0 && (
+                  <span className="errorMessage">{formErrors.jmbg}</span>
+                )}
+              </div>
 
               <div className="lozinka">
                 <label htmlFor="lozinka">Lozinka:* </label>
@@ -387,6 +436,9 @@ class Registracija extends Component {
                   </span>
                 )}
                 <button type="submit">Registruj se</button>
+                <div className="signIn">
+                  <small onClick={this.handleClick}>Prijavi se</small>
+                </div>
               </div>
             </form>
           </div>
