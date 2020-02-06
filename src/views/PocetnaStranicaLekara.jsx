@@ -405,10 +405,11 @@ class PocetnaStranicaLekara extends React.Component {
               path="/pregled"
               render={props => <Pregled {...props}
               token={this.state.token}
+              handleClick={this.props.handleClick}
               email={this.state.email} 
               uloga={this.state.uloga}
               idPregleda ={this.state.objekat.desc.id}
-              emailPacijenta={this.state.objekat.desc.pacijentEmail}   />}
+              emailPacijenta={this.state.objekat.desc.pacijentID}   />}
             />
             <Redirect from="/" to="/pregled" />
           </Switch>

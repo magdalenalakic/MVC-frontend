@@ -410,6 +410,7 @@ class ListaPacijenataLekar extends Component {
                 token={this.state.token}
                 email={this.state.email} 
                 uloga={this.state.uloga}
+                handleClick={this.props.handleClick}
                //nije emailPacijenta vec je id al dobro
                 emailPacijenta={this.state.emailPacijenta} />}
               />
