@@ -44,16 +44,14 @@ class OveravanjeRecepata extends Component {
       }
     }
     this.listaRecepata = this.listaRecepata.bind(this);
-
+    this.overaRecepta = this.overaRecepta.bind(this);
+    this.ucitavanjeListeRecepata =this.ucitavanjeListeRecepata.bind(this);
   };
-  componentWillMount() {
-    console.log("--------pocetak");
 
+  ucitavanjeListeRecepata(){
     const url1 = 'http://localhost:8025/api/medicinskaSestra/listaRecepata'; 
-
-    console.log(url1, this.config);
     axios
-      .get(url1)
+      .get(url1, this.config)
       .then(response => {
         console.log("PREUZETA LISTA RECEPATA");
         console.log(response.data);
@@ -65,6 +63,12 @@ class OveravanjeRecepata extends Component {
         console.log("nije preuzeta lista recepata");
         console.log(error);
       });
+  }
+
+  componentWillMount() {
+    console.log("--------pocetak");
+    this.ucitavanjeListeRecepata();
+    
     };
 
   handleChange = e => {
@@ -113,7 +117,7 @@ class OveravanjeRecepata extends Component {
       // });
   };
 
-  listaRecepata() {
+  listaRecepata(){
     let res = [];
     let lista = this.state.recepti;
     
@@ -127,7 +131,8 @@ class OveravanjeRecepata extends Component {
           <td >{lista[i].prezimeL}</td>
 
           <td ><Button className="OdobrenZahtev"  
-          //onChange={this.handleChange}
+          id={lista[i].id}
+          onClick={e=> this.overaRecepta(e)}
           >Overi</Button></td>
           
         </tr>
@@ -136,13 +141,29 @@ class OveravanjeRecepata extends Component {
     return res;
   };
 
+  overaRecepta= e => {
+    console.log("OVERA RECEPTA; " + e.target.id)
+   
+    const url1 = 'http://localhost:8025/api/medicinskaSestra/overa/' + e.target.value; 
+    axios
+      .put(url1, this.config)
+      .then(response => {
+        console.log("PREUZETA LISTA RECEPATA");
+        console.log(response.data);
+        this.ucitavanjeListeRecepata();
+      })
+      .catch(error => {
+        console.log("nije preuzeta lista recepata");
+        console.log(error);
+      });
+  }
+
   render() {
     return (
       <div className="content">
         <Grid fluid>
-          <Row>
-            <Col>
-              <Row>
+          
+              <Row >
                 <Card
                   title="Lista pristiglih recepata od pacijenata"
                   // category="Here is a subtitle for this table"
@@ -172,12 +193,6 @@ class OveravanjeRecepata extends Component {
               
               </Row>
              
-              
-              
-            </Col>
-           
-          
-          </Row>
 
          
         </Grid>
