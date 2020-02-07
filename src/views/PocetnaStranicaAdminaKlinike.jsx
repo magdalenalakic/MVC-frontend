@@ -29,23 +29,8 @@ import slikaST from "assets/img/lekari.jpg"
 import Login from "login.js";
 import axios from "axios";
 import Geocode from "react-geocode";
-import Map from "views/Map.jsx"
 
-// import {
-//   withScriptjs,
-//   withGoogleMap,
-//   GoogleMap,
-//   Marker
-// } from "react-google-maps";
-
-// function Maps(){
-//   return <GoogleMap
-//     defaultZoom = {13}
-//     defaultCenter = {{lat : 45.267136, lng: 19.833549}}
-
-//   />;
-// }
-// const WrappedMap = withScriptjs(withGoogleMap(Maps))
+import { YMaps, Map, Placemark, GeoObject } from 'react-yandex-maps';
 
 
 class PocetnaStranicaAdminaKlinike extends React.Component {
@@ -257,9 +242,6 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
 //     }
 //     return res;
 //   }
-
-
-
 
 
   render() {
@@ -484,19 +466,26 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
 
           <Row>
        
-            {/* <Map
-              adresa={this.state.adresa}
-              K={this.state.idKlinike}
-            /> */}
-            {/* <div style={{width: '100vw', height: '100vh'}} >
-              <WrappedMap  
-                googleMapURL={'https://maps.googleapis.com/maps/api/js?AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk'}
-                loadingElemnt={<div style={{ height: `100%` }} />}
-                containerElement={<div style={{ height: `100vh` }} />}
-                mapElement={<div style={{ height: `100%` }} />}
+          <YMaps>
+              <div>
+     
+                  <Map state={{ center: [44.786568, 20.448921], zoom: 5 }}  query={{ lang: 'en_US' }}>
+                      <GeoObject
+                          geometry={{
+                              type: 'Point',
+                              coordinates: ["Beograd", "Beograd"],
+                          }}
 
-             />
-            </div> */}
+                          properties={{
+                              iconContent: 'Lokacija',
+                              hintContent: 'Lokacija',
+                          }}
+
+                      />
+                  </Map>
+
+              </div>
+          </YMaps>    
           </Row>
         </Grid>
       </div>

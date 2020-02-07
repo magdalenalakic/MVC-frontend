@@ -7,6 +7,7 @@ import {
   GoogleMap,
   Marker
 } from "react-google-maps";
+import Geocode from "react-geocode";
 
 // function getData(){
 //   Geocode.setApiKey("AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk");
@@ -22,20 +23,11 @@ import {
 //   );
 
 //     // Get latidude & longitude from address.
-//     Geocode.fromAddress("Bulevar Oslobodjenja 67").then(
-//       response => {
-//         console.log("dasdsadasdasdsadas nananaa ananananna aana **-* -*- *- ")
-//         console.log(response);
-//         const { lat, lng } = response.results[0].geometry.location;
-//         console.log(lat, lng);
-//       },
-//       error => {
-//         console.error(error);
-//       }
-//     );
+
 // }
   
-
+const lat = 0;
+const lng = 0;
 const WrappedMap = withScriptjs(
   withGoogleMap(props => (
     <GoogleMap
@@ -46,8 +38,10 @@ const WrappedMap = withScriptjs(
         scrollwheel: false,
         zoomControl: true
       }}
+
+      
     >
-      <Marker position={{ lat: 45.267136, lng: 19.833549}} />
+      <Marker position={{ lat:lat , lng: lng}} /> //proslijedim koord od moje adrese
     </GoogleMap>
   ))
 );
@@ -55,9 +49,21 @@ const WrappedMap = withScriptjs(
 // //AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk api key
 
 function Maps({ ...prop }) {
-
-
+ 
+console.log({...prop});
+Geocode.fromAddress("Bulevar Oslobodjenja 67").then(
+  response => {
+    console.log("dasdsadasdasdsadas nananaa ananananna aana **-* -*- *- ")
+    console.log(response);
+    const { lat, lng } = response.results[0].geometry.location;
+    console.log(lat, lng);
+  },
+  error => {
+    console.error(error);
+  }
+);
   return (
+
     <WrappedMap
       googleMapURL="https://maps.googleapis.com/maps/api/js?keys=AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk"
       loadingElement={<div style={{ height: `100%` }} />}
