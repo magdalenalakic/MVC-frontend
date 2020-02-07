@@ -17,7 +17,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import events from "events.js"; //ovo nece trebati  kasnije
 import moment from 'moment';
 import ListaZahtevaPregled from "views/ListaZahtevaPregled.jsx"
-import ListaZahtebaOper from "views/ListaZahtevaOper.jsx"
+import ListaZahtevaOper from "views/ListaZahtevaOper.jsx"
 const localizer = momentLocalizer(moment);
 
 class ListaSala extends Component {
@@ -45,6 +45,7 @@ class ListaSala extends Component {
       listaSlobodnihSala: [],
       listaZauzetihTerminaSale: [],
       rezervisanaSala: false,
+      rezervisanaSalaOp: false,
       izabraniLekar: null,
 
       listaLekara: [],
@@ -65,8 +66,10 @@ class ListaSala extends Component {
       //redirekcija od lista sala, mijenjam izgled i setujem datum
       // redirectFromListaSala: false,
 
+      listaLekaraZaOperaciju: [],
       terminOper: props.terminOper,
       datumOper: props.datumOper,
+      idPacijentOp: props.idPacijentOp,
       prikaz1: false,
       datum666: "",
       selectValue:"",
@@ -91,6 +94,7 @@ class ListaSala extends Component {
      this.handleDropdownChange = this.handleDropdownChange.bind(this);
      this.handleDropdownChangeTipSale = this.handleDropdownChangeTipSale.bind(this);
      this.dodeliLekara = this.dodeliLekara.bind(this);
+     this.dodeliLekaraOper = this.dodeliLekaraOper.bind(this);
   //   this.rezervisiSalu = this.rezervisiSalu.bind(this);
 
   }
@@ -170,13 +174,7 @@ class ListaSala extends Component {
   }
   componentWillMount(){
     
-  var config = {
-    headers: {
-      Authorization: "Bearer " + this.state.token,
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
-  };
+
 
     var config = {
       headers: {
@@ -277,6 +275,7 @@ class ListaSala extends Component {
 
 
    
+   
 
   if(this.props.redirectToListaSala==true){
         const urlPRegled = 'http://localhost:8025/api/pregledi/pronadjiSaleZaTajTermin/' + this.props.idPregleda;    
@@ -298,6 +297,9 @@ class ListaSala extends Component {
                     
                       var datumP = zauzetiTermin.datumPocetka;
                       // console.log("Prikaz 1 : " + prikaz1);
+                      console.log(this.props.terminPregleda);
+                      console.log(this.props.datumPregleda);
+                      console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
                       if(datumP.valueOf()===this.props.datumPregleda.valueOf()){
                         if(preuzmiPocTermina===this.props.terminPregleda){
                           
@@ -327,6 +329,8 @@ class ListaSala extends Component {
         this.setState({
           listaSlobodnihSala: pregled.data,
         }, ()=>{
+
+         
           this.state.listaSlobodnihSala.map(sala=>{
             sala.zauzetiTermini.map(zauzetiTermin=>{
               var zabranjeniTermini = [false, false, false, false];
@@ -337,82 +341,46 @@ class ListaSala extends Component {
                 
                   var datumP = zauzetiTermin.datumPocetka;
                   // console.log("Prikaz 1 : " + prikaz1);
+                  console.log(this.props.terminOper);
+                  console.log(this.props.datumOper);
+                  
+                  console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
                   if(datumP.valueOf()===this.props.datumOper.valueOf()){
                     if(preuzmiPocTermina===this.props.terminOper){
                       
                       this.setState({
                         prikaz1: true
                       })
-                      // console.log("Prikaz 1 - 1 : " + prikaz1);
-  
+                   
+                
                     }
   
                   }
            
             })
           })
+
+
         });
        
       } );
-        const url = 'http://localhost:8025/api/operacije/pronadjiLekaraZaOperaciju/';    
-        console.log(url);
-        console.log("3333333333333333333333333333333333333333")
-        axios
-        .post(url, {
-          termin: this.props.terminOper,
-          klinikaID: this.state.idKlinike,
-          salaID: 1,
-          datum: this.props.datumOper, //treba datum onaj koji je poslat iz tabele //TODO
-         
-         
-        //  lekarID: this.props.idLekar,
-        }, config)
-        .then(response => {
-          console.log("LLLLLLLAAAA")
-          console.log(response.data);
-            this.setState({
-              listaLekaraSlobodnihOPERR: response.data
-            })
-        });
-     
-
-
-     
-  }
-
-
-   
-
-
-  this.setState({
-    datum666: this.props.datumPregleda
-  }, ()=> {console.log("DADSDSADSADASDADDSA DATUM ~~~~~~~~~~~~~~~~~"); console.log(this.state.datum666)})
-
-
-  var config = {
-    headers: {
-      Authorization: "Bearer " + this.state.token,
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
-  };
- 
-
-  // const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' +3;    
-  // axios.get(urlKlinike, config)
-  //   .then(klinika => {
-  //     console.log("Preuzeta klinika");
-  //     console.log(klinika.data);
-
-  //     this.setState({
-         
-  //         listaLekara: klinika.data,
        
-  //     });
- 
-  //   })
+     
+
+
+     
+  }
+
+
+  console.log("PROPPSSSSS !!!!!!!!!!!!!!!!!!!!!!!!!1 ")
+  console.log(this.props.terminPregleda);
+  console.log(this.props.datumPregleda);
+  console.log(this.props.datumOper);
+  console.log(this.props.terminOper);
+  console.log("1111111111111111111111111111111111111111111111111111111111")
 
   }
+
   biranjeLekara(lekar){
 
     const idL = lekar.target.value;
@@ -496,37 +464,52 @@ class ListaSala extends Component {
   }
 
   ispisiSlobodneLekare() {
-    let res = [];
-    let lista = this.state.listaLekara;
-
-    for (var i = 0; i < lista.length; i++) {
-      
-      res.push(
-
-        <tr key={i}>
-          <td>
-              <input
-                name="odabranaSala"
-                type="radio"
-                value={lista[i].id}
-                checked={this.state.izabranaDijagnoza == lista[i].id}
-                onChange={e => {
-                  this.biranjeLekara(e);
-                }}
-              ></input>
-            </td>
+    if(this.props.redirectToListaSala==true){
+      let res = [];
+      let lista = this.state.listaLekara;
+  
+      for (var i = 0; i < lista.length; i++) {
+        
+        res.push(
+  
+          <tr key={i}>
+            <td>
+                <input
+                  name="odabranaSala"
+                  type="radio"
+                  value={lista[i].id}
+                  checked={this.state.izabranaDijagnoza == lista[i].id}
+                  onChange={e => {
+                    this.biranjeLekara(e);
+                  }}
+                ></input>
+              </td>
+           
+            <td>{lista[i].ime}</td>
+            <td>{lista[i].prezime}</td>
+            <td>{lista[i].email}</td>
          
-          <td>{lista[i].ime}</td>
-          <td>{lista[i].prezime}</td>
-          <td>{lista[i].email}</td>
-       
-          <td>{lista[i].telefon}</td>   
-       
- 
-        </tr>
-      );
+            <td>{lista[i].telefon}</td>   
+         
+   
+          </tr>
+        );
+      }
+      return res;
+      
+    }else if(this.props.redirectZahOper==true){
+      let res = [];
+      let lista = this.state.listaLekaraZaOperaciju;
+  
+      for (var i = 0; i < lista.length; i++) {
+        
+        res.push(
+                <option value={lista[i].id}>{lista[i].ime} {lista[i].prezime}</option>
+        );
+      }
+      return res;
     }
-    return res;
+    
   }
 
   dodajSalu = e => {
@@ -766,6 +749,169 @@ obrisiLekara = e => {
             });
   
   }
+  sacuvajLekre = e=>{
+    let lekari = this.state.listaLekaraZaOperaciju;
+    console.log(lekari.length);
+    console.log('^^^^^^^^^^^&&&&&&&&&&&&&&')
+  }
+
+  dodeliLekaraOper= e => {
+    console.log("Dijalog sa slobodnim lekarima za taj datum i termin");
+    console.log(e.target.id + " " + e.target.value);
+    var idS = e.target.id;
+    var termin = e.target.value;
+     this.setState({
+       idSale: idS,
+       terminOper : termin
+
+     }, ()=> {
+       console.log("================================")
+       console.log(this.state.idSale);
+       var config = {
+         headers: {
+           Authorization: "Bearer " + this.state.token,
+           Accept: "application/json",
+           "Content-Type": "application/json"
+         }
+       };
+      for(var k=0; k<this.state.listaSlobodnihSala.length; k++){
+
+       console.log(this.state.listaSlobodnihSala[k]);
+       console.log("for ...... ")
+         
+         const url = 'http://localhost:8025/api/operacije/pronadjiLekaraZaOperaciju/';    
+         console.log(url);
+         console.log("3333333333333333333333333333333333333333")
+         console.log(this.props.terminOper);
+         console.log(this.props.datumOper);
+         axios
+         .post(url, {
+           termin: this.props.terminOper,
+           klinikaID: this.props.idKlinike,
+           salaID: this.state.listaSlobodnihSala[k].id,
+           datum: this.props.datumOper, //treba datum onaj koji je poslat iz tabele //TODO
+         
+         
+         //  lekarID: this.props.idLekar,
+         }, config)
+         .then(response => {
+           console.log("LLLLLLLAAAA")
+           console.log(response.data);
+             this.setState({
+               listaLekaraSlobodnihOPERR: response.data
+             })
+       
+            
+       this.dialog.show({
+         title: 'Lista slobodnih lekara',
+         body: [
+         <form className="formaZaDodavanjeNovogLekara">
+            
+           
+                       <div className="telefonLekara">
+            <label className="lekarTelefonLabel" htmlFor="biranjeLekara">
+              Lekar:{" "}
+            </label>
+            <select   multiple
+              className="lekarTelefonLabel"
+              // name="lekadID"
+              // onChange={e => this.biranjeLekara(e)}
+              
+            >
+              {this.ucitajSlobodneLekare()}
+              {/* {this.ispisiSlobodneLekare()} */}
+            </select>
+            {/* <div>
+              <Button onClick={this.rezervisiSaluOper()}> OK</Button>
+            </div> */}
+
+          </div>
+                       
+         </form> 
+         ],
+         
+         actions: [
+          Dialog.OKAction(() => {
+            if(this.state.prikaz1==false){
+              this.setState({
+                datumS: this.props.datumOper
+              }, ()=> {
+                this.dialog.hide();
+              });
+        
+            }
+  
+        
+          var config = {
+            headers: {
+              Authorization: "Bearer " + this.state.token,
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            }
+          };
+          const url = 'http://localhost:8025/api/sale/' + this.state.idSale;
+          axios.get(url, config)
+            .then(Response => {
+              console.log("SALA PREUZEO JE");
+              console.log(Response.data);
+        
+              this.setState({
+                brojSale: Response.data.broj,
+                nazivSale: Response.data.naziv,
+                idKlinike: Response.data.klinikaID,
+                idSale: Response.data.id
+               }, ()=> {
+                               
+                //  console.log(this.state.idLekar);
+                console.log("111111111111111111111111111111111111111111111111")
+                const url3 = "http://localhost:8025/api/operacije/rezervisanjeSale";
+                axios
+                  .post(url3, {
+                    salaID: this.state.idSale,
+                    klinikaID: this.state.idKlinike,
+                    datum: this.state.datumS,
+                    termin: this.state.terminOper,
+                    id: this.props.idOper,
+                    listaLekara: this.state.listaLekaraZaOperaciju,
+                    pacijentID: this.props.idPacijentOp
+                    
+                  }, config)
+                  .then(response => {
+                    console.log("USPJEEEEEH< REZ SALAAAA");
+                    console.log(this.props)
+                    // this.props.handleClick("USPESNA REZERVACIJA");
+                    this.setState({
+                      rezervisanaSalaOp: true
+                    }, ()=> {console.log(this.state.rezervisanaSalaOp)
+                      
+                      
+        
+                    })
+            
+                  })
+                  .catch(error => {
+                  });
+                
+               });
+          });
+
+
+          })
+         ],
+         bsSize: 'medium',
+         onHide: (dialog) => {
+           dialog.hide()
+           console.log('closed by clicking background.')
+         }
+       })
+         })
+        }
+     })
+    
+    
+     
+ }
+
 
   dodeliLekara= e => {
      console.log("Dijalog sa slobodnim lekarima za taj datum i termin");
@@ -824,16 +970,7 @@ obrisiLekara = e => {
                         </Table>
           </form> 
           ],
-          // actions: [
-          //   Dialog.CancelAction(),
-          //   Dialog.OKAction(() => {
-              
-          //    console.log("Izabrani  lekar: " + this.state.idLekar);
-    
-            
-               
-          //   })
-          // ],
+  
           bsSize: 'medium',
           onHide: (dialog) => {
             dialog.hide()
@@ -935,12 +1072,21 @@ obrisiLekara = e => {
     this.setState({ selectValue: e.target.value });
   }
 
+  dodajLekareUListu = e=>{
+    console.log(e.target.value);
+    let listaa = this.state.listaLekaraZaOperaciju;
+    listaa.push(e.target.value);
+    this.setState({
+      listaLekaraZaOperaciju: listaa
+    })
+  }
+
   ucitajSlobodneLekare(){
   
     let res = [];
     let lista = this.state.listaLekaraSlobodnihOPERR;
     for (var i = 0; i < lista.length; i++) {
-      res.push(<option value={lista[i].id}>{lista[i].ime}</option>);
+    res.push(<option onClick={e=>this.dodajLekareUListu(e)}  value={lista[i].id}>{lista[i].ime} {lista[i].prezime}</option>);
     }
     return res;
   }
@@ -1251,17 +1397,18 @@ obrisiLekara = e => {
               <td>{broj}</td>
               <td> {moment(this.props.datumOper).format("DD.MM.YYYY.")}
                {this.props.terminOper} : 00 - {krajT} : 00
-               </td>
+               {/* </td>
                <td>
-               <select
-                  className="lekarTelefonLabel"
-                  name="lekari"
+               <select class="mdb-select md-form colorful-select dropdown-danger" multiple
+                  // className="lekarTelefonLabel"
+                  // name="lekari"
                  // onChange={e => this.biranjeTipaPregleda(e)}
                 >
                   {this.ucitajSlobodneLekare()}
                 </select>
-               </td>
-               <td><Button id={listaSlobodnihSala[i].id}  value= {this.props.terminOper}  onClick={e => this.rezervisiSalu(e) }>  Rezervisi</Button>  </td> 
+                {/* <button class="btn-save btn btn-sm">Save</button> */}
+               </td> 
+               <td><Button id={listaSlobodnihSala[i].id}  value={this.props.terminOper}  onClick={e => this.dodeliLekaraOper(e) }>  Dodeli lekara</Button>  </td> 
              
             </tr>
           );
@@ -1269,17 +1416,7 @@ obrisiLekara = e => {
           
           res.push(
             <tr key={i}>
-                   {/* <td>
-                    <input
-                      name="odabranaSala"
-                      type="radio"
-                      value={listaSlobodnihSala[i].id}
-                      checked={this.state.izabranaSala == listaSlobodnihSala[i].id}
-                      onChange={e => {
-                        this.promenjenOdabirSale(e);
-                      }}
-                    ></input>
-                  </td> */}
+                
               <td>{naziv}</td>
               <td>{broj}</td>
               <td> {moment(this.state.datumS).format("DD.MM.YYYY.")}
@@ -1298,16 +1435,18 @@ obrisiLekara = e => {
                         </option>
                  </select>
                </td>
-               <td>
-                  <select
-                  className="lekarTelefonLabel"
-                  name="lekari"
+               {/* <td> */}
+                  {/* <select
+                  // className="lekarTelefonLabel"
+                  // name="lekari"
+                  class="mdb-select md-form colorful-select dropdown-danger" multiple
                  // onChange={e => this.biranjeTipaPregleda(e)}
                 >
                   {this.ucitajSlobodneLekare()}
-                </select>
-               </td>
-               <td><Button id={listaSlobodnihSala[i].id}  value= {this.state.selectValue}  onClick={e => this.dodeliLekara(e) }>rezzz</Button>  </td> 
+                </select> */}
+                {/* <button class="btn-save btn btn-sm" onClick={e=>this.sacuvajLekre(e)}> Sacuvaj</button> */}
+               {/* </td> */}
+               <td><Button id={listaSlobodnihSala[i].id}  value= {this.state.selectValue}  onClick={e => this.dodeliLekaraOper(e) }>Dodeli lekara</Button>  </td> 
              
             </tr>
           );
@@ -1381,7 +1520,7 @@ obrisiLekara = e => {
                   <td> {moment(this.props.datumPregleda).format("DD.MM.YYYY.")}
                   {this.props.terminPregleda} : 00 - {krajT} : 00
                    </td>
-                   <td><Button id={listaSlobodnihSala[i].id}  value= {this.state.selectValue}  onClick={e => this.rezervisiSalu(e) }>  Rezervisi</Button>  </td> 
+                   <td><Button id={listaSlobodnihSala[i].id}  value= {this.state.selectValue} onClick={e => this.rezeriviSalluOp(e) }>  Rezervisi</Button>  </td> 
                  
                 </tr>
               );
@@ -1677,7 +1816,11 @@ obrisiLekara = e => {
     } 
     return res;
   }
+  // rezeriviSalluOp = e =>{
+  //   console.log("SALU REEZERVISEE : " + e.target.id + " " + e.target.value);
 
+    
+  // }
 
   rezervisiSalu = e =>{
     console.log("SALU REEZERVISEE : " + e.target.id + " " + e.target.value);
@@ -1734,6 +1877,75 @@ obrisiLekara = e => {
          });
     });
     
+  }
+  rezervisiSaluOper() {
+    if(this.state.prikaz1==false){
+      this.setState({
+        datumS: this.props.datumOper
+      }, ()=> {
+        this.dialog.hide();
+      });
+
+    }
+  console.log('Rezervacija sale za operaciju ................');
+  console.log("Id sale: " + this.state.idSale);
+  console.log("Id oper:" + this.props.idOper);
+  console.log("Termin: " + this.state.terminOper);
+  console.log("Datum: " + this.state.datumS);
+  console.log("Lista doktora: " + this.state.listaLekaraZaOperaciju);
+
+  var config = {
+    headers: {
+      Authorization: "Bearer " + this.state.token,
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    }
+  };
+  const url = 'http://localhost:8025/api/sale/' + this.state.idSale;
+  axios.get(url, config)
+    .then(Response => {
+      console.log("SALA PREUZEO JE");
+      console.log(Response.data);
+
+      this.setState({
+        brojSale: Response.data.broj,
+        nazivSale: Response.data.naziv,
+        idKlinike: Response.data.klinikaID,
+        idSale: Response.data.id
+       }, ()=> {
+                       
+        //  console.log(this.state.idLekar);
+        console.log("111111111111111111111111111111111111111111111111")
+        const url3 = "http://localhost:8025/api/operacije/rezervisanjeSale";
+        axios
+          .post(url3, {
+            salaID: this.state.idSale,
+            klinikaID: this.state.idKlinike,
+            datum: this.state.datumS,
+            termin: this.state.terminOper,
+            id: this.props.idOper,
+            listaLekara: this.state.listaLekaraZaOperaciju,
+            // pacijentID: this.props.idPacijent
+            
+          }, config)
+          .then(response => {
+            console.log("USPJEEEEEH< REZ SALAAAA");
+            console.log(this.props)
+            // this.props.handleClick("USPESNA REZERVACIJA");
+            this.setState({
+              rezervisanaSalaOp: true
+            }, ()=> {console.log(this.state.rezervisanaSalaOp)
+              
+              
+
+            })
+    
+          })
+          .catch(error => {
+          });
+        
+       });
+  });
   }
 
   posaljiDatum(){
@@ -1871,6 +2083,20 @@ obrisiLekara = e => {
               render={props => <ListaZahtevaPregled  token={this.state.token} />}
             />
             <Redirect from="/" to="/listaZahtevaPregled" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    if(this.state.rezervisanaSalaOp==true){
+      console.log("if");
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/listaZahtevaOper"
+              render={props => <ListaZahtevaOper  token={this.state.token} />}
+            />
+            <Redirect from="/" to="/listaZahtevaOper" />
           </Switch>
         </BrowserRouter>
       );
