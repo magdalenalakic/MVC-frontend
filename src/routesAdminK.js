@@ -10,7 +10,7 @@ import listaZahtevaOp from "views/ListaZahtevaOper.jsx";
 import listaZahtevaOdmorOdsustvo from "views/ListaZahtevaOdmorOdsustvo.jsx";
 import tipoviPregleda from "views/TipoviPregleda.jsx";
 import izvestajOPoslovanju from "views/IzvestajOPoslovanju.jsx";
-import Mapa from "views/Maps.jsx";
+import Mapa from "views/Map.jsx";
 const dashboardRoutes = [
   //za admina k
   {
@@ -32,7 +32,7 @@ const dashboardRoutes = [
     name: "Izmena  klinike",
     icon: "pe-7s-note",
     component: izmenaKlinike,
-    layout: "/admink",
+    layout: "/admink"
   },
   {
     path: "/listaLekara",
@@ -97,10 +97,10 @@ const dashboardRoutes = [
     icon: "pe-7s-graph",
     component: izvestajOPoslovanju,
     layout: "/admink"
-  }, 
+  },
   {
     path: "/mapa",
-    name: "mapa ",
+    name: "Mapa ",
     icon: "pe-7s-graph",
     component: Mapa,
     layout: "/admink"

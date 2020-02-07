@@ -1,4 +1,3 @@
-
 import React from "react";
 // react components used to create a google map
 import {
@@ -7,6 +6,7 @@ import {
   GoogleMap,
   Marker
 } from "react-google-maps";
+import Geocode from "react-geocode";
 
 // function getData(){
 //   Geocode.setApiKey("AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk");
@@ -34,20 +34,31 @@ import {
 //       }
 //     );
 // }
-  
 
 const WrappedMap = withScriptjs(
   withGoogleMap(props => (
     <GoogleMap
-
       defaultZoom={13}
-      defaultCenter={{lat : 45.267136, lng: 19.833549}}
+      defaultCenter={{ lat: 45.267136, lng: 19.833549 }}
       defaultOptions={{
         scrollwheel: false,
         zoomControl: true
       }}
     >
-      <Marker position={{ lat: 45.267136, lng: 19.833549}} />
+      <Marker
+        position={Geocode.fromAddress("Temerinska 5").then(
+          response => {
+            console.log(
+              "DSADSDSADSADADAD MAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            );
+            const { lat, lng } = response.results[0].geometry.location;
+            console.log(lat, lng);
+          },
+          error => {
+            console.error(error);
+          }
+        )}
+      />
     </GoogleMap>
   ))
 );
@@ -55,8 +66,6 @@ const WrappedMap = withScriptjs(
 // //AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk api key
 
 function Maps({ ...prop }) {
-
-
   return (
     <WrappedMap
       googleMapURL="https://maps.googleapis.com/maps/api/js?keys=AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk"
