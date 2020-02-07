@@ -5,7 +5,7 @@ import AdminLayout from "layouts/Admin.jsx";
 import axios from "axios";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Registracija from "registracija.js";
-
+import PrvoLogovanje from "prvoLogovanje.jsx";
 import Lekar from "views/Lekar.jsx";
 import Pacijent from "views/Pacijent.jsx";
 import KlinickiCentar from "views/KlinickiCentar.jsx";
@@ -39,8 +39,13 @@ class Login extends Component {
         email: "",
         lozinka: "",
         uloga: ""
-      }
+      },
+      prvoLogovanje: false,
+      redirectToPrvoLogovanje: false,
+      korisnik: []
     };
+    this.prvoLogovanje = this.prvoLogovanje.bind(this);
+
   }
   handleSumbit = e => {
     e.preventDefault();
@@ -49,7 +54,6 @@ class Login extends Component {
     let formErrors = { ...this.state.formErrors };
 
     axios
-
       .post("http://localhost:8025/api/korisnici/login", {
         email: this.state.email,
         lozinka: this.state.lozinka
@@ -59,16 +63,19 @@ class Login extends Component {
         console.log(response.data.accessToken);
         this.setState({
           token: response.data.accessToken
+        }, ()=> {
+
         });
         console.log("TOKEN : " + this.state.token);
 
         this.setState({
           uloga: response.data.uloga
-        });
+        }, ()=> this.prvoLogovanje());
 
         this.setState({
           email: response.data.email
         });
+        
 
         // console.log(this.state.uloga);
         this.setState({
@@ -122,6 +129,118 @@ class Login extends Component {
     //   .then(res => res.json())
     //   .then(res => console.log(res));
   }
+  prvoLogovanje(){
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
+    var uloga = this.state.uloga;
+
+    if(uloga === "ADMIN_KC"){
+      //preuzimi admina klinickog centra
+      const url =
+      "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC";
+        axios
+          .get(url, config)
+          .then(Response => {
+            console.log("Preuzet admin klinickog centra: ");
+            console.log(Response.data);
+            this.setState({
+              korisnik: Response.data
+            })
+            if(Response.data.status == 0){
+              this.setState({
+                redirectToPrvoLogovanje: true
+              })
+            }else{
+              this.setState({
+                prvoLogovanje: true
+              })
+            }
+
+            
+          })
+          .catch(error => {
+            console.log("Admin KC nije preuzet");
+          });
+    }else if(uloga === "ADMIN_KLINIKE"){
+      //preuzmi admina klinike
+      const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
+      axios.get(url, config)
+        .then(Response => {
+          console.log("Preuzet admin klinike: ");
+          console.log(Response.data);
+          this.setState({
+            korisnik: Response.data
+          })
+          if(Response.data.status == 0){
+            this.setState({
+              redirectToPrvoLogovanje: true
+            })
+          }else{
+            this.setState({
+              prvoLogovanje: true
+            })
+          }
+         
+  
+        })
+        .catch(error => {
+          console.log("Admin klinike nije preuzet")
+        })
+    }else if(uloga === "LEKAR"){
+      console.log("lekar")
+      const url = 'http://localhost:8025/api/lekari/getLekarByEmail';
+      axios.get(url, config)
+        .then(Response => {
+          console.log("Preuzet lekar: ");
+          console.log(Response.data);
+          this.setState({
+            korisnik: Response.data
+          })
+          if(Response.data.status == 0){
+            this.setState({
+              redirectToPrvoLogovanje: true
+            })
+          }else{
+            this.setState({
+              prvoLogovanje: true
+            })
+          }
+      })
+      .catch(error => {
+        console.log("Lekar  nije preuzet")
+      })
+    }else if(uloga === "MED_SESTRA"){
+      console.log("med sestra")
+      const url =
+      "http://localhost:8025/api/medicinskaSestra/medicinskaSestra" ;
+    axios
+      .get(url, config)
+      .then(Response => {
+        console.log("Preuzeta med sestra: ");
+        console.log(Response.data);
+        this.setState({
+          korisnik: Response.data
+        })
+        if(Response.data.status == 0){
+          this.setState({
+            redirectToPrvoLogovanje: true
+          })
+        }else{
+          this.setState({
+            prvoLogovanje: true
+          })
+        }
+      })
+      .catch(error => {
+        console.log("Med sestra nije preuzeta");
+      });
+    }
+  }
 
   render() {
     const { formErrors } = this.state;
@@ -132,7 +251,7 @@ class Login extends Component {
     const redirectToRegistration = this.state.redirectToRegistration;
     const token = this.state.token;
 
-    if (uloga === "ADMIN_KC") {
+    if (uloga === "ADMIN_KC" && this.state.prvoLogovanje === true) {
       return (
         <BrowserRouter>
           <Switch>
@@ -152,7 +271,7 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    if (uloga === "ADMIN_KLINIKE") {
+    if (uloga === "ADMIN_KLINIKE" && this.state.prvoLogovanje === true) {
       return (
         <BrowserRouter>
           <Switch>
@@ -172,7 +291,7 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    if (uloga === "LEKAR") {
+    if (uloga === "LEKAR" && this.state.prvoLogovanje === true) {
       return (
         <BrowserRouter>
           <Switch>
@@ -187,7 +306,7 @@ class Login extends Component {
         </BrowserRouter>
       );
     }
-    if (uloga === "MED_SESTRA") {
+    if (uloga === "MED_SESTRA" && this.state.prvoLogovanje === true) {
       return (
         <BrowserRouter>
           <Switch>
@@ -238,6 +357,24 @@ class Login extends Component {
               render={props => <Registracija {...props} />}
             />
             <Redirect from="/" to="/registration" />
+          </Switch>
+        </BrowserRouter>
+      );
+    }
+    if (this.state.redirectToPrvoLogovanje === true) {
+      return (
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/prvoLogovanje"
+              render={props => <PrvoLogovanje {...props} 
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                  korisnik={this.state.korisnik}
+                  />}
+            />
+            <Redirect from="/" to="/prvoLogovanje" />
           </Switch>
         </BrowserRouter>
       );

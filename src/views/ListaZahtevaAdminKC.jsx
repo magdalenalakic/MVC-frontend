@@ -131,7 +131,7 @@ class ListaZahtevaAdminKC extends Component {
           console.log(this.state.razlogOdbijanja);
           const url3 = "http://localhost:8025/api/administratoriKC/odbijanje/"  + this.state.razlogOdbijanja;
           axios
-            .post(url3,{email: e.state.za}, this.config)
+            .post(url3,{email: this.state.za}, this.config)
             .then(response => {
               console.log("Odbijanje uspelo! ");
               console.log(response.data);
@@ -159,7 +159,7 @@ class ListaZahtevaAdminKC extends Component {
       
       res.push(
         <tr key={i}>
-          <td>{lista[i].id}</td>
+          
           <td>{lista[i].lbo}</td>
           <td>{lista[i].ime}</td>
           <td>{lista[i].prezime}</td>
@@ -190,8 +190,7 @@ class ListaZahtevaAdminKC extends Component {
     return (
       <div className="content">
         <Grid fluid>
-          <Row>
-            <Col>
+          
               <Row>
                 <Card
                   title="Lista zahteva za registraciju od korisnika"
@@ -202,7 +201,7 @@ class ListaZahtevaAdminKC extends Component {
                     <Table striped hover>
                       <thead>
                         <tr>
-                          <th id="IdPacijenta">Id</th>
+                          
                           <th id="LBOPacijenta">LBO</th>
                           <th id="ImePacijenta"> Ime</th>
                           <th id="PrezimePacijenta">Prezime</th>
@@ -222,8 +221,7 @@ class ListaZahtevaAdminKC extends Component {
                   }
                 />
               </Row>
-            </Col>
-          </Row>
+           
         </Grid>
       </div>
     );

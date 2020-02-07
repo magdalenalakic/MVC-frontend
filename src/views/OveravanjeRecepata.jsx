@@ -1,27 +1,10 @@
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import { Grid, Row, Col, Table } from "react-bootstrap";
-
 import { Card } from "components/Card/Card.jsx";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
 import "klinickiCentar.css";
-import UserCard from "components/UserCard/UserCard";
-import slikaKC from "assets/img/klinickiCentar.jpg";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
+import moment from 'moment';
 
 
 class OveravanjeRecepata extends Component {
@@ -31,32 +14,44 @@ class OveravanjeRecepata extends Component {
     console.log(this.props);
     this.state = {
       uloga: props.uloga,
+      token: props.token,
       email: props.email,
       selected: null,
-      listaZahtevaZaRegistraciju: []
+      recepti: []
     };
-    this.listaZahtevaZaRegistraciju = this.listaZahtevaZaRegistraciju.bind(this);
-
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
+    this.listaRecepata = this.listaRecepata.bind(this);
+    this.overaRecepta = this.overaRecepta.bind(this);
+    this.ucitavanjeListeRecepata =this.ucitavanjeListeRecepata.bind(this);
   };
+
+  ucitavanjeListeRecepata(){
+    const url1 = 'http://localhost:8025/api/medicinskaSestra/listaRecepata'; 
+    axios
+      .get(url1, this.config)
+      .then(response => {
+        console.log("PREUZETA LISTA RECEPATA");
+        console.log(response.data);
+        this.setState({
+          recepti: response.data
+        });
+      })
+      .catch(error => {
+        console.log("nije preuzeta lista recepata");
+        console.log(error);
+      });
+  }
+
   componentWillMount() {
     console.log("--------pocetak");
-
-    const url1 = 'http://localhost:8025/api/administratoriKC/listaZahtevaZaRegistraciju/' + this.state.email; 
-
-    console.log(url1);
-    // axios
-    //   .get(url1)
-    //   .then(response => {
-    //     console.log("URL zahtevi za reg");
-    //     console.log(response);
-    //     this.setState({
-    //       listaZahtevaZaRegistraciju: response.data
-    //     });
-    //   })
-    //   .catch(error => {
-    //     console.log("nije uspeo url1");
-    //     console.log(error);
-    //   });
+    this.ucitavanjeListeRecepata();
+    
     };
 
   handleChange = e => {
@@ -65,82 +60,58 @@ class OveravanjeRecepata extends Component {
       console.log(this.state);
       console.log("On click !!!");
     };
-  odobrenClick = e => {
-      
-      e.preventDefault();
-      console.log("ODOBRENO");
-      this.setState({ [e.target.name]: e.target.value });
-      console.log(this.state);
-      console.log("On click !!!");
-      // console.log(param.i)
-     
-      // this.setState({
-      //   redirectToRegistration: true
-      // });
-      // axios
-      // .post("http://localhost:8025/api/administratoriKC/potvrda", {
 
-      //   // lbo: this.state.email,
-      // })
-      // .then(response => {
-      //   console.log(response.data);
-      //   // this.setState({
-      //   //   uloga: response.data.uloga
-      //   // });
 
-      //   // this.setState({
-      //   //   email: response.data.email
-      //   // });
 
-      //   // console.log(this.state.uloga);
-      //   // this.setState({
-      //   //   redirectToReferrer: true
-      //   // });
-      // })
-      // .catch(error => {
-      //   //   console.log(error.response);
-      //   formErrors.log = "Pogresni kredencijali";
-      //   // this.setState({ formErrors }, () => console.log(this.state));
-      // });
-  };
-
-  listaZahtevaZaRegistraciju() {
+  listaRecepata(){
     let res = [];
-    let lista = this.state.listaZahtevaZaRegistraciju;
+    let lista = this.state.recepti;
     
     for (var i = 0; i < lista.length; i++) {
      
-      // this.setState({
-      //   lboKlik : lista[i].lbo
-      // });
-      // console.log(this.state.lboKlik);
       res.push(
         <tr key = {i} >
-          <td >{lista[i].id}</td>
-          <td >{lista[i].lbo}</td>
-          <td >{lista[i].ime}</td>
-          <td >{lista[i].prezime}</td>
-          <td >{lista[i].email}</td>
-          <td >{lista[i].adresa}</td>
-          <td >{lista[i].grad}</td>
-          <td >{lista[i].drzava}</td>
-          <td >{lista[i].telefon}</td>
+          <td >{lista[i].nazivLeka}</td>
+          <td >{moment(lista[i].datumIzvestaja).format("DD.MM.YYYY.")}</td>
+          <td >{lista[i].imeL + " " + lista[i].prezimeL}</td>
+          <td >{lista[i].imeP + " " + lista[i].prezimeP + " " + lista[i].jmbgP}</td>
+
+          <td ><Button className="OdobrenZahtev"  
+          id={lista[i].id}
+          onClick={e=> this.overaRecepta(e)}
+          >Overi</Button></td>
           
-          <td ><Button className="OdobrenZahtev"  onChange={this.handleChange}>Odobri</Button></td>
-          <td ><Button className="OdbijenZahtev">Odbij</Button></td>
         </tr>
       );
     }
     return res;
   };
 
+  overaRecepta= e => {
+    
+    console.log("OVERA RECEPTA; " + e.target.id)
+   
+    const url1 = 'http://localhost:8025/api/medicinskaSestra/overa'; 
+    axios
+      .put(url1, e.target.id ,this.config)
+      .then(response => {
+        console.log("PREUZETA LISTA RECEPATA");
+        console.log(response.data);
+        this.props.handleClick("RECEPT JE OVEREN");
+        this.ucitavanjeListeRecepata();
+      })
+      .catch(error => {
+        console.log("nije preuzeta lista recepata");
+        console.log(error);
+      });
+  }
+
   render() {
     return (
       <div className="content">
         <Grid fluid>
-          <Row>
-            <Col>
-              <Row>
+          
+              <Row >
                 <Card
                   title="Lista pristiglih recepata od pacijenata"
                   // category="Here is a subtitle for this table"
@@ -150,23 +121,17 @@ class OveravanjeRecepata extends Component {
                     <Table striped hover >
                       <thead>
                         <tr>
-                          <th id="IdPacijenta">Id</th>
-                          <th id="LBOPacijenta">LBO</th>
-                          <th id="ImePacijenta"> Ime</th>
-                          <th id="PrezimePacijenta">Prezime</th>
-                          <th id="EmailPacijenta">Email</th>
-                          {/* <th id="LozinkaPacijenta">Lozinka</th> */}
-                          <th id="AdresaPacijenta">Adresa</th>
-                          <th id="GradPacijenta">Grad</th>
-                          <th id="DrzavaPacijenta">Drzava</th>
-                          <th id="TelefonPacijenta">Telefon</th>
-                          {/* {thArray.map((prop, key) => {
-                            return <th key={key}>{prop}</th>;
-                          })} */}
+                        
+                          <th >Naziv leka</th>
+                          <th >Datum</th> 
+                          <th >Lekara</th>
+                          <th >Pacijent(JMBG)</th>
+                          
+                         
                         </tr>
                       </thead>
                       <tbody>
-                        {/* {this.listaZahtevaZaRegistraciju()} */}
+                        {this.listaRecepata()}
                         
                       </tbody>
                       
@@ -177,12 +142,6 @@ class OveravanjeRecepata extends Component {
               
               </Row>
              
-              
-              
-            </Col>
-           
-          
-          </Row>
 
          
         </Grid>
