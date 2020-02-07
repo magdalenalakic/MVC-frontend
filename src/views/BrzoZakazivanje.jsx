@@ -570,7 +570,7 @@ class BrzoZakazivanje extends Component {
               <div>
               <h5>
                 <input
-                  placeholder="Pretrazi"
+                  placeholder="Pretrazi po klinikama"
                   type="text"
                   aria-label="Search"
                   name="pretraziPoljeKlinika"

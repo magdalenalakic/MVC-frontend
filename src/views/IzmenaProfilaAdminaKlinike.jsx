@@ -154,40 +154,39 @@ class IzmenaProfilaAdminaKlinike extends Component {
       
         this.setState({
           email: Response.data.email,
-          idKlinika: Response.data.idKlinike
-        });
-        this.setState({
-          ime: Response.data.ime
-        });
-
-        this.setState({
-          prezime: Response.data.prezime
-        });
-        this.setState({
+          idKlinika: Response.data.idKlinike,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
           telefon: Response.data.telefon
-        });
 
-        console.log("ucitaj mi kliniku " + this.state.idKlinika);
-        const urlKlinike = 'http://localhost:8025/api/klinike/finKlinikaById/' + this.state.idKlinika;    
-        console.log(urlKlinike);
-        axios.get(urlKlinike, config)
-          .then(klinika => {
-            console.log("Preuzeta klinika");
-            console.log(klinika.data);
-   
-            this.setState({
-              imeKlinike: klinika.data.naziv,
-            
-             
-            });
-        
-          })
+        }, ()=> {
+          console.log("ucitaj mi kliniku " + this.state.idKlinika);
+          const urlKlinike = 'http://localhost:8025/api/klinike/' + this.state.idKlinika;    
+          console.log(urlKlinike);
+          axios.get(urlKlinike, config)
+            .then(klinika => {
+              console.log("Preuzeta klinika");
+              console.log(klinika.data);
+     
+              this.setState({
+                imeKlinike: klinika.data.naziv,
+              
+               
+              });
+          
+            })
+            .catch(error => {
+              console.log("Admin klinike nije preuzet")
+            })
+        });
+      
+ 
+
+    
 
       })
       
-      .catch(error => {
-        console.log("Admin klinike nije preuzet")
-      })
+      
 
   }
   handleChange = e => {
