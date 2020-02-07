@@ -155,6 +155,7 @@ class ZahtevLekar extends React.Component {
                   token={this.state.token}
                   email={this.state.email} 
                   uloga={this.state.uloga}
+                  
                 //nije emailPacijenta vec je id al dobro
                   // emailPacijenta={this.state.emailPacijenta}  
                 />}

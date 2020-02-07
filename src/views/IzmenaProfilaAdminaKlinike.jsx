@@ -31,6 +31,7 @@ class IzmenaProfilaAdminaKlinike extends Component {
       email: props.email,
       token: props.token,
       uloga: props.uloga, 
+      lozinka: this.props.lozinka,
       ime: "",
       telefon: "",
       prezime: "",
@@ -39,11 +40,102 @@ class IzmenaProfilaAdminaKlinike extends Component {
       lozinkaN: "", 
       brTelefonaN: "",
       idKlinika: "",
-      imeKlinike: ""
+      imeKlinike: "",
+      staraLoz: props.lozinka,
+      novaLoz: "",
+      potvrdaLoz: "",
+      promenaLozinke: false,
+      formError: ""
     }
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
 
   }
+  prikazPromenaLozinke() {
+    var res = [];
+    if (this.state.promenaLozinke) {
+      res.push(
+        <table>
 
+          <tr>
+            <td>Nova lozinka:</td>
+            <td>
+              <input
+                type="password"
+                name="novaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+          <tr>
+            <td>Potvrdite novu lozinku:</td>
+            <td>
+              <input
+                type="password"
+                name="potvrdaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+        </table>
+      );
+    }
+    return res;
+  }
+  promenaLozinkeClick() {
+    console.log("promenaLozinke");
+    this.setState({
+      promenaLozinke: true
+    });
+  }
+  PotvrdiPromenuLozinkeClick() {
+    console.log("potvrdaaa lozinkee");
+    if (this.state.novaLoz === this.state.potvrdaLoz) {
+     console.log(this.state);
+     console.log(this.props.lozinka);
+     console.log(this.props);
+      axios
+        .put(
+          "http://localhost:8025/api/adminKlinike/promeniLozinku",
+          {
+            newPassword: this.state.novaLoz,
+            oldPassword: this.props.lozinka
+          },
+          this.config
+        )
+        .then(response => {
+          console.log(response.data);
+          this.props.handleClick("LOZINKA JE PROMENJENA");
+          this.setState(
+            {
+              lozinka: this.state.novaLoz
+              // lozinka: response.data.lozinka
+            },
+            () => {
+              this.props.promeniLozinku(this.state.novaLoz);
+            }
+          );
+        })
+        .catch(error => {
+          console.log("Izmena nije uspela! ");
+        });
+    } else {
+      this.setState({
+        formError: "Lozinke se ne poklapaju"
+      });
+    }
+  }
 
   componentWillMount(){
     console.log("wmount!!!!")
@@ -292,6 +384,29 @@ class IzmenaProfilaAdminaKlinike extends Component {
                         </tr>
                       </thead>
                     </Table>
+                    <div>
+                      <div>{this.prikazPromenaLozinke()}</div>
+                      {this.state.promenaLozinke == false && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.promenaLozinkeClick()}
+                        >
+                          Izmeni lozinku
+                        </Button>
+                      )}
+                      {this.state.promenaLozinke && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.PotvrdiPromenuLozinkeClick()}
+                        >
+                          Potvrdi lozinku
+                        </Button>
+                      )}
+                      {this.state.formError.length > 0 && (
+                        <spam>{this.state.formError}</spam>
+                      )}
+                    </div>
+
                   </div>
                 }
                 

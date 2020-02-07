@@ -18,21 +18,16 @@ class prvoLogovanje extends Component {
     this.state = {
       email: props.email,
       lozinka: props.lozinka,
+      promenaLozinke: false,
+      potvrdaLozinke: "",
       uloga: props.uloga,
       token: props.token,
       korisnik: props.korisnik,
-      waitToapprove: props.waitToapprove,
-    
-      formErrors: {
-        log: "",
-        email: "",
-        lozinka: "",
-        uloga: ""
-      },
+      greskaLozinke: false, //za gresku 
       poklapanjeLozinke: true,
       mozemoDalje: false,
-      lozinka: "",
-      potvrdaLozinke: ""
+      
+      
 
     };
     this.config = {
@@ -43,17 +38,19 @@ class prvoLogovanje extends Component {
         }
     }
     this.logovanje = this.logovanje.bind(this);
+    this.promeniLozinku = this.promeniLozinku.bind(this);
   }
 
   logovanje = e =>{
-    e.preventDefault();
-    if (this.state.lozinka === this.state.potvrdaLozinke) {
+    // e.preventDefault();
+    if (this.state.promenaLozinke === this.state.potvrdaLozinke) {
         
         console.log("lozinke se poklapaju");
         console.log("promena lozinke stare");
-        this.state.mozemoDalje = true;
-        console.log(this.state.uloga);
-        console.log(this.state.mozemoDalje);
+        this.promeniLozinku();
+        
+       
+        
 
     } else {
         console.log("lozinke se ne poklapaju");
@@ -99,94 +96,235 @@ class prvoLogovanje extends Component {
     //   });
   }
 
+  promeniLozinku(){
+    const uloga = this.state.uloga;
+    if (uloga === "ADMIN_KC") {
+      //izmena lozinke 
+      console.log("admin kc")
+      axios
+      .put(
+        "http://localhost:8025/api/administratoriKC/promeniLozinku",
+        {
+          newPassword: this.state.promenaLozinke,
+          oldPassword: this.state.lozinka
+        },
+        this.config
+      )
+      .then(response => {
+
+        console.log(response.data);
+        console.log("ispisssssss lozinke")
+        this.setState({
+          mozemoDalje: true,
+          lozinka: this.state.promenaLozinke
+        }, ()=> {
+          console.log(this.state.lozinka)
+          console.log(this.state.uloga);
+          console.log(this.state.mozemoDalje);
+        })
+        
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ");
+      });
+
+    
+    }
+    if (uloga === "ADMIN_KLINIKE") {
+        //izmena lozinke
+        console.log("admin klinike")
+        
+      axios
+      .put(
+        "http://localhost:8025/api/adminKlinike/promeniLozinku",
+        {
+          newPassword: this.state.promenaLozinke,
+          oldPassword: this.state.lozinka
+        },
+        this.config
+      )
+      .then(response => {
+
+        console.log(response.data);
+        console.log("ispisssssss lozinke")
+        this.setState({
+          mozemoDalje: true,
+          lozinka: this.state.promenaLozinke
+        }, ()=> {
+          console.log(this.state.lozinka)
+          console.log(this.state.uloga);
+          console.log(this.state.mozemoDalje);
+        })
+
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ");
+      });
+      
+    }
+    if (uloga === "LEKAR" ) {
+      console.log("lekar")
+      axios
+      .put(
+        "http://localhost:8025/api/lekari/promeniLozinku",
+        {
+          newPassword: this.state.promenaLozinke,
+          oldPassword: this.state.lozinka
+        },
+        this.config
+      )
+      .then(response => {
+        console.log(response.data);
+        console.log("ispisssssss lozinke")
+        this.setState({
+          mozemoDalje: true,
+          lozinka: this.state.promenaLozinke
+        }, ()=> {
+          console.log(this.state.lozinka)
+          console.log(this.state.uloga);
+          console.log(this.state.mozemoDalje);
+        })
+        
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ");
+      });
+      
+    }
+    if (uloga === "MED_SESTRA" ) {
+      console.log("med sestra")
+      axios
+      .put(
+        "http://localhost:8025/api/medicinskaSestra/promeniLozinku",
+        {
+          newPassword: this.state.promenaLozinke,
+          oldPassword: this.state.lozinka
+        },
+        this.config
+      )
+      .then(response => {
+        console.log(response.data);
+        console.log("ispisssssss lozinke")
+        this.setState({
+          mozemoDalje: true,
+          lozinka: this.state.promenaLozinke
+        }, ()=> {
+          console.log(this.state.lozinka)
+          console.log(this.state.uloga);
+          console.log(this.state.mozemoDalje);
+        })
+       
+       
+      })
+      .catch(error => {
+        console.log("Izmena nije uspela! ");
+      });
+      
+    }
+
+
+    
+    
+  };
+
   render() {
    
     const email = this.state.email;
     const uloga = this.state.uloga;
     const token = this.state.token;
+    const lozinka = this.state.lozinka;
     const mozemoDalje = this.state.mozemoDalje;
 
       if (uloga === "ADMIN_KC" && mozemoDalje === true) {
-          //izmena lozinke 
-        console.log("admin kc")
+        return (
+          <BrowserRouter>
+            <Switch>
+              <Route
+                path="/kc"
+                render={props => (
+                  <KlinickiCentar
+                    {...props}
+                    email={email}
+                    uloga={uloga}
+                    token={token}
+                    lozinka={lozinka}
+                  />
+                )}
+              />
+              <Redirect from="/" to="/kc/klinickiCentar" />
+            </Switch>
+          </BrowserRouter>
+        ); 
 
-        // return (
-        //   <BrowserRouter>
-        //     <Switch>
-        //       <Route
-        //         path="/kc"
-        //         render={props => (
-        //           <KlinickiCentar
-        //             {...props}
-        //             email={email}
-        //             uloga={uloga}
-        //             token={token}
-        //           />
-        //         )}
-        //       />
-        //       <Redirect from="/" to="/kc/klinickiCentar" />
-        //     </Switch>
-        //   </BrowserRouter>
-        // );
       }
       if (uloga === "ADMIN_KLINIKE" && mozemoDalje === true) {
-          //izmena lozinke
-          console.log("admin klinike")
-        // return (
-        //   <BrowserRouter>
-        //     <Switch>
-        //       <Route
-        //         path="/admink"
-        //         render={props => (
-        //           <AdministatorKlinike
-        //             {...props}
-        //             email={email}
-        //             uloga={uloga}
-        //             token={token}
-        //           />
-        //         )}
-        //       />
-        //       <Redirect from="/" to="/admink/pocetnaStranica" />
-        //     </Switch>
-        //   </BrowserRouter>
-        // );
+        return (
+          <BrowserRouter>
+          <Switch>
+            <Route
+              path="/admink"
+              render={props => (
+                <AdministatorKlinike
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                  lozinka={lozinka}
+                />
+              )}
+            />
+            <Redirect from="/" to="/admink/pocetnaStranica" />
+          </Switch>
+        </BrowserRouter>
+      );  
+                
+              
+              
+
+        
       }
       if (uloga === "LEKAR" && mozemoDalje === true) {
-        console.log("lekar")
-        // return (
-        //   <BrowserRouter>
-        //     <Switch>
-        //       <Route
-        //         path="/lekar"
-        //         render={props => (
-        //           <Lekar {...props} email={email} uloga={uloga} token={token} />
-        //         )}
-        //       />
-        //       <Redirect from="/" to="/lekar/pocetnaStranica" />
-        //     </Switch>
-        //   </BrowserRouter>
-        // );
+        
+        return (
+          <BrowserRouter>
+            <Switch>
+              <Route
+                path="/lekar"
+                render={props => (
+                  <Lekar {...props} email={email} uloga={uloga} token={token} lozinka={lozinka} />
+                )}
+              />
+              <Redirect from="/" to="/lekar/pocetnaStranica" />
+            </Switch>
+          </BrowserRouter>
+        );
+              
+              
+        
       }
       if (uloga === "MED_SESTRA" && mozemoDalje === true) {
-        console.log("med sestra")
-        // return (
-        //   <BrowserRouter>
-        //     <Switch>
-        //       <Route
-        //         path="/medses"
-        //         render={props => (
-        //           <MedicinskaSestra
-        //             {...props}
-        //             email={email}
-        //             uloga={uloga}
-        //             token={token}
-        //           />
-        //         )}
-        //       />
-        //       <Redirect from="/" to="/medses/pocetnaStranica" />
-        //     </Switch>
-        //   </BrowserRouter>
-        // );
+        return (
+          <BrowserRouter>
+            <Switch>
+              <Route
+                path="/medses"
+                render={props => (
+                  <MedicinskaSestra
+                    {...props}
+                    email={email}
+                    uloga={uloga}
+                    token={token}
+                    lozinka={lozinka}
+                  />
+                )}
+              />
+              <Redirect from="/" to="/medses/pocetnaStranica" />
+            </Switch>
+          </BrowserRouter>
+        );
+              
+              
+          
       }
       
     
@@ -203,7 +341,7 @@ class prvoLogovanje extends Component {
                 <label htmlFor="lozinka">Lozinka:* </label>
                 <input
                   type="password"
-                  name="lozinka"
+                  name="promenaLozinke"
                   placeholder="Lozinka"
                   noValidate
                   onChange={this.handleChange}

@@ -31,6 +31,7 @@ class izmenaProfila extends Component {
       email: props.email,
       uloga: props.uloga, 
       token: props.token,
+      lozinka: this.props.lozinka,
       ime: "",
       telefon: "",
       prezime: "",
@@ -38,9 +39,21 @@ class izmenaProfila extends Component {
       telefonN: "",
       prezimeN: "",
       imeKlinike: "",
-      idKlinike: ""
+      idKlinike: "",
+      staraLoz: props.lozinka,
+      novaLoz: "",
+      potvrdaLoz: "",
+      promenaLozinke: false,
+      formError: ""
 
     }
+    this.config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
 
   }
 
@@ -146,6 +159,86 @@ class izmenaProfila extends Component {
         console.log("Izmena nije uspela! ")
       });
   };
+  prikazPromenaLozinke() {
+    var res = [];
+    if (this.state.promenaLozinke) {
+      res.push(
+        <table>
+
+          <tr>
+            <td>Nova lozinka:</td>
+            <td>
+              <input
+                type="password"
+                name="novaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+          <tr>
+            <td>Potvrdite novu lozinku:</td>
+            <td>
+              <input
+                type="password"
+                name="potvrdaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+        </table>
+      );
+    }
+    return res;
+  }
+  promenaLozinkeClick() {
+    console.log("promenaLozinke");
+    this.setState({
+      promenaLozinke: true
+    });
+  }
+  PotvrdiPromenuLozinkeClick() {
+    console.log("potvrdaaa lozinkee");
+    if (this.state.novaLoz === this.state.potvrdaLoz) {
+     console.log(this.state);
+     console.log(this.props.lozinka);
+     console.log(this.props);
+      axios
+        .put(
+          "http://localhost:8025/api/lekari/promeniLozinku",
+          {
+            newPassword: this.state.novaLoz,
+            oldPassword: this.props.lozinka
+          },
+          this.config
+        )
+        .then(response => {
+          console.log(response.data);
+          this.props.handleClick("LOZINKA JE PROMENJENA");
+          this.setState(
+            {
+              lozinka: this.state.novaLoz
+              // lozinka: response.data.lozinka
+            },
+            () => {
+              this.props.promeniLozinku(this.state.novaLoz);
+            }
+          );
+        })
+        .catch(error => {
+          console.log("Izmena nije uspela! ");
+        });
+    } else {
+      this.setState({
+        formError: "Lozinke se ne poklapaju"
+      });
+    }
+  }
 
   render() {
     const email = this.state.email;
@@ -366,6 +459,28 @@ class izmenaProfila extends Component {
                         </tr>
                       </thead>
                     </Table>
+                    <div>
+                      <div>{this.prikazPromenaLozinke()}</div>
+                      {this.state.promenaLozinke == false && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.promenaLozinkeClick()}
+                        >
+                          Izmeni lozinku
+                        </Button>
+                      )}
+                      {this.state.promenaLozinke && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.PotvrdiPromenuLozinkeClick()}
+                        >
+                          Potvrdi lozinku
+                        </Button>
+                      )}
+                      {this.state.formError.length > 0 && (
+                        <spam>{this.state.formError}</spam>
+                      )}
+                    </div>
                     
                     
                   </div>

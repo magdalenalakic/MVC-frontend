@@ -263,6 +263,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -283,6 +284,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -298,7 +300,7 @@ class Login extends Component {
             <Route
               path="/lekar"
               render={props => (
-                <Lekar {...props} email={email} uloga={uloga} token={token} />
+                <Lekar {...props} email={email} uloga={uloga} token={token} lozinka={this.state.lozinka} />
               )}
             />
             <Redirect from="/" to="/lekar/pocetnaStranica" />
@@ -318,6 +320,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -371,7 +374,9 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                   korisnik={this.state.korisnik}
+                 
                   />}
             />
             <Redirect from="/" to="/prvoLogovanje" />

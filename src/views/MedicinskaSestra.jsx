@@ -43,6 +43,7 @@ class MedicinskaSestra extends Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      lozinka: props.lozinka,
 
       _notificationSystem: null,
       // image: image,
@@ -69,6 +70,9 @@ class MedicinskaSestra extends Component {
                 uloga={this.state.uloga}
                 email={this.state.email}
                 token={this.state.token}
+                lozinka={this.state.lozinka}
+                promeniLozinku={this.promeniLozinku}
+
               />
             )}
             key={key}
@@ -204,6 +208,11 @@ class MedicinskaSestra extends Component {
       this.refs.mainPanel.scrollTop = 0;
     }
   }
+  promeniLozinku = lozinka => {
+    this.setState({
+      lozinka: lozinka
+    });
+  };
   render() {
     // const {listaKlinika} = this.state.listaKlinika
     return (

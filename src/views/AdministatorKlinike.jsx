@@ -42,6 +42,7 @@ class AdministatorKlinike extends Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      lozinka: props.lozinka,
       _notificationSystem: null,
       image: "https://wallpaperaccess.com/full/20601.jpg",
       color: "black",
@@ -66,6 +67,8 @@ class AdministatorKlinike extends Component {
                 uloga={this.state.uloga}
                 email={this.state.email}
                 token={this.state.token}
+                lozinka={this.state.lozinka}
+                promeniLozinku={this.promeniLozinku}
               />
             )}
             key={key}
@@ -237,6 +240,11 @@ class AdministatorKlinike extends Component {
       this.refs.mainPanel.scrollTop = 0;
     }
   }
+  promeniLozinku = lozinka => {
+    this.setState({
+      lozinka: lozinka
+    });
+  };
 
 
 // getData(){
