@@ -1,27 +1,10 @@
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import { Grid, Row, Col, Table } from "react-bootstrap";
-
 import { Card } from "components/Card/Card.jsx";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
 import "klinickiCentar.css";
-import UserCard from "components/UserCard/UserCard";
-import slikaKC from "assets/img/klinickiCentar.jpg";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
+import moment from 'moment';
 
 
 class OveravanjeRecepata extends Component {
@@ -78,44 +61,7 @@ class OveravanjeRecepata extends Component {
       console.log("On click !!!");
     };
 
-  odobrenClick = e => {
-      
-      e.preventDefault();
-      console.log("ODOBRENO");
-      this.setState({ [e.target.name]: e.target.value });
-      console.log(this.state);
-      console.log("On click !!!");
-      // console.log(param.i)
-     
-      // this.setState({
-      //   redirectToRegistration: true
-      // });
-      // axios
-      // .post("http://localhost:8025/api/administratoriKC/potvrda", {
 
-      //   // lbo: this.state.email,
-      // })
-      // .then(response => {
-      //   console.log(response.data);
-      //   // this.setState({
-      //   //   uloga: response.data.uloga
-      //   // });
-
-      //   // this.setState({
-      //   //   email: response.data.email
-      //   // });
-
-      //   // console.log(this.state.uloga);
-      //   // this.setState({
-      //   //   redirectToReferrer: true
-      //   // });
-      // })
-      // .catch(error => {
-      //   //   console.log(error.response);
-      //   formErrors.log = "Pogresni kredencijali";
-      //   // this.setState({ formErrors }, () => console.log(this.state));
-      // });
-  };
 
   listaRecepata(){
     let res = [];
@@ -126,9 +72,9 @@ class OveravanjeRecepata extends Component {
       res.push(
         <tr key = {i} >
           <td >{lista[i].nazivLeka}</td>
-          <td >{lista[i].datumIzvestaja}</td>
-          <td >{lista[i].imeL}</td>
-          <td >{lista[i].prezimeL}</td>
+          <td >{moment(lista[i].datumIzvestaja).format("DD.MM.YYYY.")}</td>
+          <td >{lista[i].imeL + " " + lista[i].prezimeL}</td>
+          <td >{lista[i].imeP + " " + lista[i].prezimeP + " " + lista[i].jmbgP}</td>
 
           <td ><Button className="OdobrenZahtev"  
           id={lista[i].id}
@@ -142,14 +88,16 @@ class OveravanjeRecepata extends Component {
   };
 
   overaRecepta= e => {
+    
     console.log("OVERA RECEPTA; " + e.target.id)
    
-    const url1 = 'http://localhost:8025/api/medicinskaSestra/overa/' + e.target.value; 
+    const url1 = 'http://localhost:8025/api/medicinskaSestra/overa'; 
     axios
-      .put(url1, this.config)
+      .put(url1, e.target.id ,this.config)
       .then(response => {
         console.log("PREUZETA LISTA RECEPATA");
         console.log(response.data);
+        this.props.handleClick("RECEPT JE OVEREN");
         this.ucitavanjeListeRecepata();
       })
       .catch(error => {
@@ -174,10 +122,11 @@ class OveravanjeRecepata extends Component {
                       <thead>
                         <tr>
                         
-                          <th id="IdPacijenta">Naziv leka</th>
-                          <th id="LBOPacijenta">Datum</th> 
-                          <th id="ImePacijenta"> Ime lekara</th>
-                          <th id="PrezimePacijenta">Prezime lekara</th>
+                          <th >Naziv leka</th>
+                          <th >Datum</th> 
+                          <th >Lekara</th>
+                          <th >Pacijent(JMBG)</th>
+                          
                          
                         </tr>
                       </thead>
