@@ -77,7 +77,7 @@ class SlobodniTermini extends Component {
   };
 
   // listaKlinikaIzbor(){
-  //   let res = [];
+  //   let res = [k];
 
   //   let lista = this.state.listaKlinika;
 

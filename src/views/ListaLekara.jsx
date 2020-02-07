@@ -29,7 +29,11 @@ class ListaLekara extends Component {
       lozinkaLekara: "",
       telefonLekara: "",
       klinikaLekara: 0,
-      reirectToIzmeniLekar: false
+      reirectToIzmeniLekar: false,
+      pretraziPoljeKlinika: "",
+      listaSalaZaBrisanjeIzmjenu: []
+   
+
     };
     this.listaLekaraUK = this.listaLekaraUK.bind(this);
     this.dodajLekara = this.dodajLekara.bind(this);
@@ -185,6 +189,18 @@ class ListaLekara extends Component {
           idKlinike: Response.data.idKlinike
         });
         console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
+        
+        axios.get('http://localhost:8025/api/lekari/allIBlekari/' +  this.state.idKlinike, config)
+        .then(resp=>{
+          console.log(resp);
+          this.setState({
+            listaSalaZaBrisanjeIzmjenu: resp.data
+          })
+      
+        })
+
+        
+        
         console.log("ucitaj mi kliniku");
         const urlKlinike =
           "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
@@ -303,6 +319,19 @@ class ListaLekara extends Component {
               onChange={this.handleChange}
             />
           </div>
+          <div className="emailLekara">
+            <label className="lekarMailLabel" htmlFor="emailLekara">
+              Radno vreme:{" "}
+            </label>
+            <input
+              className="lekarMailLabel"
+              type="text"
+              name="emailLekara"
+              defaultValue="09:00 -  17:00 h"
+              disabled="disabled"
+              // onChange={this.handleChange}
+            />
+          </div>
           {/* <div className="klinikaLekara" >
             <label className="lekarKlinikaLabel" htmlFor="lekarKlinika">Klinika: </label>
             <div>
@@ -381,41 +410,126 @@ class ListaLekara extends Component {
   listaLekaraUK() {
     let res = [];
     let lista = this.state.listaLekara;
+    let lis = this.state.listaSalaZaBrisanjeIzmjenu;
+    const pretraga = this.state.pretraziPoljeKlinika;
+    if (pretraga == "" || pretraga == undefined) {
+     for (var i = 0; i < lista.length; i++) {
+      if(lis.some(item => lista[i].id === item.id)){
+          res.push(
+            <tr key={i}>
+              <td>{lista[i].id}</td>
 
-    for (var i = 0; i < lista.length; i++) {
-      res.push(
-        <tr key={i}>
-          <td>{lista[i].id}</td>
+              <td>{lista[i].ime}</td>
+              <td>{lista[i].prezime}</td>
+              <td>{lista[i].email}</td>
 
-          <td>{lista[i].ime}</td>
-          <td>{lista[i].prezime}</td>
-          <td>{lista[i].email}</td>
+              <td>{lista[i].telefon}</td>
+              <td>
+                <Button id={lista[i].email} onClick={e => this.obrisiLekara(e)}>
+                  Obrisi
+                </Button>
+                <Dialog
+                  ref={el => {
+                    this.dialog = el;
+                  }}
+                ></Dialog>
+              </td>
+              <td>
+                <Button
+                  className="OdobrenZahtev"
+                  id={lista[i].email}
+                  onClick={e => this.handleIzmeni(e)}
+                >
+                  Izmeni
+                </Button>
+              </td>
+            </tr>
+          );
 
-          <td>{lista[i].telefon}</td>
-          <td>
-            <Button id={lista[i].email} onClick={e => this.obrisiLekara(e)}>
-              Obrisi
-            </Button>
-            <Dialog
-              ref={el => {
-                this.dialog = el;
-              }}
-            ></Dialog>
-          </td>
-          <td>
-            <Button
-              className="OdobrenZahtev"
-              id={lista[i].email}
-              onClick={e => this.handleIzmeni(e)}
-            >
-              Izmeni
-            </Button>
-          </td>
-        </tr>
-      );
+      }else{
+        res.push(
+          <tr key={i}>
+            <td>{lista[i].id}</td>
+
+            <td>{lista[i].ime}</td>
+            <td>{lista[i].prezime}</td>
+            <td>{lista[i].email}</td>
+
+            <td>{lista[i].telefon}</td>
+            <td>
+            
+            </td>
+            <td>
+        
+            </td>
+          </tr>
+        );
+      }
     }
+  }else{
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i].ime.toLowerCase().includes(pretraga.toLowerCase()) || lista[i].prezime.toLowerCase().includes(pretraga.toLowerCase()) )  {
+        if(lis.some(item => lista[i].id === item.id)){
+          res.push(
+            <tr key={i}>
+              <td>{lista[i].id}</td>
+    
+              <td>{lista[i].ime}</td>
+              <td>{lista[i].prezime}</td>
+              <td>{lista[i].email}</td>
+    
+              <td>{lista[i].telefon}</td>
+              <td>
+                <Button id={lista[i].email} onClick={e => this.obrisiLekara(e)}>
+                  Obrisi
+                </Button>
+                <Dialog
+                  ref={el => {
+                    this.dialog = el;
+                  }}
+                ></Dialog>
+              </td>
+              <td>
+                <Button
+                  className="OdobrenZahtev"
+                  id={lista[i].email}
+                  onClick={e => this.handleIzmeni(e)}
+                >
+                  Izmeni
+                </Button>
+              </td>
+            </tr>
+          );
+        } else{
+          res.push(
+            <tr key={i}>
+              <td>{lista[i].id}</td>
+    
+              <td>{lista[i].ime}</td>
+              <td>{lista[i].prezime}</td>
+              <td>{lista[i].email}</td>
+    
+              <td>{lista[i].telefon}</td>
+              <td>
+            
+              </td>
+              <td>
+        
+              </td>
+            </tr>
+          );
+        }
+      }
+    }
+  }
     return res;
   }
+  handleChangePretraga= e => {
+    e.preventDefault();
+    this.setState({ [e.target.name]: e.target.value });
+
+    console.log("On change !!!");
+  };
 
   render() {
     const lista = this.state.listaKlinika;
@@ -442,8 +556,19 @@ class ListaLekara extends Component {
       <div className="content">
         <Grid fluid>
           <Row>
-            <Col>
-              <Row>
+          <div>
+              <h5>
+                <input
+                  placeholder="Pretrazi lekare"
+                  type="text"
+                  aria-label="Search"
+                  name="pretraziPoljeKlinika"
+                  onChange={this.handleChangePretraga}
+                  value={this.state.pretraziPoljeKlinika}
+                />
+            </h5>
+              </div>
+            
                 <Card
                   title="Lista lekara"
                   // category="Here is a subtitle for this table"
@@ -481,8 +606,7 @@ class ListaLekara extends Component {
                   }
                 />
               </Row>
-            </Col>
-          </Row>
+      
         </Grid>
       </div>
     );
