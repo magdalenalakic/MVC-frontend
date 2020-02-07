@@ -57,6 +57,9 @@ class Pregled extends React.Component {
       //za informacije o pregledu
       infPreOpen: false,
       pregled: [],
+
+      //zakazivanje pregleda
+      zakNovPreg: false
       
       
     };
@@ -605,8 +608,9 @@ class Pregled extends React.Component {
   }
 
   ucitavanjePregleda(){
+    console.log(this.state.idPregleda)
     axios
-    .get("http://localhost:8025/api/pregledi/getPregledPac/" + this.state.pregledID, this.config)
+    .get("http://localhost:8025/api/pregledi/getPregledPac/" + this.state.idPregleda, this.config)
 
     .then(Response => {
       console.log("uspesno ucitan pregled");
@@ -623,8 +627,10 @@ class Pregled extends React.Component {
   }
 
 
+
+
   render() {
-    console.log(this.props);
+    
 
     if(this.state.redirectToOdustani === true){
       return (
@@ -648,7 +654,7 @@ class Pregled extends React.Component {
     }
 
     return (
-        <Grid>
+        <Grid className="pregled">
             {
               this.state.zkOpen ?
               <Row>
@@ -661,10 +667,11 @@ class Pregled extends React.Component {
                     zkOpen: false
                   })}>Izadji</Button>
                 </Col>
-                <Col md={8}>
+                <Col md={8} >
                   <Card
                     title="Zdravstveni karton"
-                    
+                    ctTableFullWidth
+                    ctTableResponsive
                     content={
                       <div className="ct-chart">
                 
@@ -968,8 +975,87 @@ class Pregled extends React.Component {
               </Row>
               : null
             }
-            { this.state.zkOpen === false && this.state.infPreOpen === false ?
+            {
+              this.state.zakNovPreg ?
               <Row>
+                <Col>
+                  <Button className="izadjiDugme" 
+                    onClick={this.setState({zakNovPreg: false})}
+                  >Izadji</Button>
+                  
+                  
+                </Col>
+                <Col md={12}>
+                  <Card
+                    title="Zakazi novi pregled"
+                    
+                    content={
+                      <div className="ct-chart">
+                
+                        <Table striped hover>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label>TipPregleda: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="ime"
+                                defaultValue={this.state.pregled.nazivTP}
+                                disabled="disabled"
+                                // placeholder={this.state.ime}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Datum i vreme: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="prezime"
+                                defaultValue={moment(this.state.pregled.datum).format("DD.MM.YYYY. ") + this.state.pregled.termin + ":00" }
+                                disabled="disabled"
+                                // placeholder={this.state.prezime}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Sala: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="lbo"
+                                defaultValue={this.state.pregled.salaBR + " " +  this.state.pregled.salaN}
+                                disabled="disabled"
+                                // placeholder={this.state.lbo}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          
+                        </tbody>
+                      </Table>
+
+                      </div>
+                    }
+                  
+                  />
+                </Col> 
+              </Row>
+              : null
+            }
+            { this.state.zkOpen === false && this.state.infPreOpen === false && this.state.zakNovPreg === false ?
+              <Col>
                 <Row className="linkoviPregled">
                   <Col lg={3} sm={6}>
                       {/* {this.renderRedirect()} */}
@@ -991,7 +1077,9 @@ class Pregled extends React.Component {
                   <Col lg={3} sm={6}>
                       {/* {this.renderRedirect()} */}
                       <div 
-                      // onClick={this.handleListaPacijenata}
+                      onClick={()=> this.setState({
+                        infPreOpen : true 
+                      })}
                       >
                           <StatsCard
                               bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
@@ -1005,7 +1093,9 @@ class Pregled extends React.Component {
                   <Col lg={3} sm={6}>
                       {/* {this.renderRedirect()} */}
                       <div 
-                      // onClick={this.handleListaPacijenata}
+                      onClick={()=> this.setState({
+                        zakNovPreg : true 
+                      })}
                       >
                           <StatsCard
                               bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
@@ -1019,7 +1109,9 @@ class Pregled extends React.Component {
                   <Col lg={3} sm={6}>
                       {/* {this.renderRedirect()} */}
                       <div 
-                      // onClick={this.handleListaPacijenata}
+                      // onClick={()=> this.setState({
+                      //   zakNovPreg : true 
+                      // })}
                       >
                           <StatsCard
                               bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
@@ -1030,7 +1122,7 @@ class Pregled extends React.Component {
                           />
                       </div>                    
                   </Col>                    
-              </Row>
+                </Row>
                 <Row>
                 <div className="formaPregleda">
 
@@ -1129,7 +1221,7 @@ class Pregled extends React.Component {
                     />
                 </div>
             </Row>
-              </Row>
+              </Col>
               : null 
             }    
             <Row></Row>
