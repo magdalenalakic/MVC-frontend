@@ -34,6 +34,7 @@ class BrzoZakazivanje extends Component {
       uloga: props.uloga,
       token: props.token,
       listaPregleda: [],
+      pretraziPoljeKlinika: "",
       redirectNext: false,
       flag: 0,
       izabranPregled: 0,
@@ -140,17 +141,16 @@ class BrzoZakazivanje extends Component {
       .then(Response => {
         console.log("Preuzeti unapred def pregledi: ");
         console.log(Response.data);
-        
 
         this.setState(
           {
             listaPregleda: Response.data.sort((a, b) => {
               let startA = new Date(a.datum);
               startA.setHours(a.termin);
-  
+
               let startB = new Date(b.datum);
               startB.setHours(b.termin);
-  
+
               return new Date(startA).getTime() - new Date(startB).getTime();
             })
           },
@@ -187,10 +187,10 @@ class BrzoZakazivanje extends Component {
             pregledi: lista.sort((b, a) => {
               let startA = new Date(a.datum);
               startA.setHours(a.termin);
-    
+
               let startB = new Date(b.datum);
               startB.setHours(b.termin);
-    
+
               return new Date(startA).getTime() - new Date(startB).getTime();
             })
           });
@@ -373,41 +373,76 @@ class BrzoZakazivanje extends Component {
     let res = [];
     console.log("lista kl");
 
-    // const pretraga = this.state.pretraziPoljeKlinika;
+    const pretraga = this.state.pretraziPoljeKlinika;
     // const oc = this.state.ocenaKlinike;
     // console.log(oc);
     // if ((pretraga == "" || pretraga == undefined) && oc < 5) {
     let lista = this.state.listaPregleda;
 
-    for (var i = 0; i < lista.length; i++) {
-      res.push(
-        <tr key={i}>
-          <td>
-            <input
-              name="odabranPregled"
-              type="radio"
-              value={lista[i].id}
-              checked={this.state.izabranPregled == lista[i].id}
-              onChange={e => {
-                this.promenjenOdabirPregleda(e);
-              }}
-            ></input>
-          </td>
+    if (pretraga == "" || pretraga == undefined) {
+      for (var i = 0; i < lista.length; i++) {
+        res.push(
+          <tr key={i}>
+            <td>
+              <input
+                name="odabranPregled"
+                type="radio"
+                value={lista[i].id}
+                checked={this.state.izabranPregled == lista[i].id}
+                onChange={e => {
+                  this.promenjenOdabirPregleda(e);
+                }}
+              ></input>
+            </td>
 
-          <td key={lista[i].datum}>
-            {moment(lista[i].datum).format("DD.MM.YYYY. HH:mm")}
-          </td>
-          <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
-          <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
-          <td key={lista[i].lekarId}>
-            {lista[i].lekarIme} {lista[i].lekarPrezime}
-          </td>
+            <td key={lista[i].datum}>
+              {moment(lista[i].datum).format("DD.MM.YYYY.")} {lista[i].termin}h
+            </td>
+            <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
+            <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
+            <td key={lista[i].lekarId}>
+              {lista[i].lekarIme} {lista[i].lekarPrezime}
+            </td>
 
-          <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-          <td key={lista[i].popust}>{lista[i].popust}%</td>
-        </tr>
-      );
+            <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+            <td key={lista[i].popust}>{lista[i].popust}%</td>
+          </tr>
+        );
+      }
+    } else {
+      for (var i = 0; i < lista.length; i++) {
+        if (lista[i].klinikaN.toLowerCase().includes(pretraga.toLowerCase())) {
+          res.push(
+            <tr key={i}>
+              <td>
+                <input
+                  name="odabranPregled"
+                  type="radio"
+                  value={lista[i].id}
+                  checked={this.state.izabranPregled == lista[i].id}
+                  onChange={e => {
+                    this.promenjenOdabirPregleda(e);
+                  }}
+                ></input>
+              </td>
+
+              <td key={lista[i].datum}>
+                {moment(lista[i].datum).format("DD.MM.YYYY.")}  {lista[i].termin}h
+              </td>
+              <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
+              <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
+              <td key={lista[i].lekarId}>
+                {lista[i].lekarIme} {lista[i].lekarPrezime}
+              </td>
+
+              <td key={lista[i].cena}>{lista[i].cena} RSD</td>
+              <td key={lista[i].popust}>{lista[i].popust}%</td>
+            </tr>
+          );
+        }
+      }
     }
+
     // } else {
     //   console.log("===========");
     //   console.log(pretraga);
@@ -532,6 +567,18 @@ class BrzoZakazivanje extends Component {
           <Grid fluid>
             <Row>
               <Col md={12}>
+              <div>
+              <h5>
+                <input
+                  placeholder="Pretrazi"
+                  type="text"
+                  aria-label="Search"
+                  name="pretraziPoljeKlinika"
+                  onChange={this.handleChange}
+                  value={this.state.pretraziPoljeKlinika}
+                />
+            </h5>
+              </div>
                 <Card
                   ctTableFullWidth
                   ctTableResponsive
