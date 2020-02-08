@@ -10,8 +10,7 @@ import moment from 'moment';
 class OveravanjeRecepata extends Component {
   constructor(props) {
     super(props);
-    console.log("MEDICINSKA SESTRA");
-    console.log(this.props);
+    
     this.state = {
       uloga: props.uloga,
       token: props.token,

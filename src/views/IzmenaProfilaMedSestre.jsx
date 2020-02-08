@@ -106,7 +106,7 @@ class IzmenaProfilaMedSestre extends Component {
       }, this.config)
       .then(response => {
         console.log(response.data);
-
+        this.props.handleClick("USPESNO PROMENJENI PODACI");
         this.setState({
           ime: response.data.ime
         });
@@ -200,7 +200,7 @@ class IzmenaProfilaMedSestre extends Component {
         )
         .then(response => {
           console.log(response.data);
-          this.props.handleClick("LOZINKA JE PROMENJENA");
+          this.props.handleClick("USPESNO PROMENJENA LOZINKA");
           this.setState(
             {
               lozinka: this.state.novaLoz
@@ -208,6 +208,7 @@ class IzmenaProfilaMedSestre extends Component {
             },
             () => {
               this.props.promeniLozinku(this.state.novaLoz);
+              
             }
           );
         })

@@ -52,9 +52,7 @@ class MedicinskaSestra extends Component {
       hasImage: true,
       fixedClasses: "dropdown show-dropdown open"
     };
-    console.log("MEDICINSKA SESTRA");
-    console.log(this.state.uloga);
-    console.log(this.state.email);
+    
   }
 
   getRoutes = routes => {
@@ -89,7 +87,10 @@ class MedicinskaSestra extends Component {
     var color = 1;
     var level;
     var klasa = "pe-7s-gift";
-    if(position == "RECEPT JE OVEREN" ){
+    if(position == "RECEPT JE OVEREN" ||
+      position == "ZAHTEV JE POSLAT" ||
+      position ==  "USPESNO PROMENJENA LOZINKA" ||
+      position == "USPESNO PROMENJENI PODACI"){
       color = 1;
       level = "success";
       klasa = "pe-7s-check";

@@ -384,19 +384,7 @@ class ListaPacijenataMedSestra extends Component {
         listaPacijenata: lista.sort((a, b) => a.telefon - b.telefon)
       });
     } 
-    // else if (sortBy.target.value === "idOpadajuce") {
-    //   console.log("idOpadajuce");
-
-    //   this.setState({
-    //     listaPacijenata: lista.sort((a, b) => b.id - a.id)
-    //   });
-    // } else if (sortBy.target.value === "idRastuce") {
-    //   console.log("idRastuce");
-
-    //   this.setState({
-    //     listaPacijenata: lista.sort((a, b) => a.id - b.id)
-    //   });
-    // }
+    
     
   }
 
@@ -444,26 +432,8 @@ class ListaPacijenataMedSestra extends Component {
                         <option value={"telefon"}>Telefon</option>
                       </select>
                     </div>
-                    {/* <NavDropdown
-                      onSelect={e => {
-                        this.sortMyArray(e);
-                      }}
-                      className="SortListePacijenata"
-                      title="Sortiraj"
-                      id="nav-item dropdown"
-                      
-                    >
-                      <MenuItem eventKey={"idRastuce"}>Id (rastuce)</MenuItem>
-                      <MenuItem eventKey={"idOpadajuce"}>Id (opadajuce)</MenuItem>
-                      <MenuItem eventKey={"lbo"}>LBO</MenuItem>
-                      <MenuItem eventKey={"ime"}>Ime</MenuItem>
-                      <MenuItem eventKey={"prezime"}>Prezime</MenuItem>
-                      <MenuItem eventKey={"email"}>Email</MenuItem>
-                      <MenuItem eventKey={"adresa"}>Adresa</MenuItem>
-                      <MenuItem eventKey={"grad"}>Grad</MenuItem>
-                      <MenuItem eventKey={"drzava"}>Drzava</MenuItem>
-                      <MenuItem eventKey={"telefon"}>Telefon</MenuItem>
-                    </NavDropdown> */}
+                  
+                    
 
                     <Card 
                       // category="Here is a subtitle for this table"
@@ -499,12 +469,7 @@ class ListaPacijenataMedSestra extends Component {
                     </form>
                 }
               />
-                
-              
-              
-             
-              
-              
+
             </Col>
            
           
