@@ -72,7 +72,7 @@ class TipoviPregleda extends Component {
     this.setState({ [e.target.name]: e.target.value });
     // console.log(this.state);
     console.log("On change !!!");
-    console.log({ [e.target.name]: e.target.value })
+    
   };
 
   proslediKliniku(klinika) {
@@ -123,28 +123,12 @@ obrisiTP = e => {
       "Content-Type": "application/json"
     }
   };
-  const url111 = "http://localhost:8025/api/tipPregleda/finByIdTP/" + e.target.id;
-  console.log(url111)
-  axios.get(url111, config)
-        .then(response => {
-        console.log("uzmi iime tp uspelo! ");
-        console.log(response.data);
-        this.setState({
-            naziTP: response.data.naziv,
-            idTP: response.data.id
-        });
-        // console.log(this.state.naziTP);
-    
-        console.log("--------------------------------");
-        console.log(this.state.idTP + " " + this.state.naziTP);
+
         const url6 = "http://localhost:8025/api/tipPregleda/brisanjeTP";
-        console.log(url6 + " " + this.state.naziTP);
+        var a = e.target.id;
+        console.log(url6 + " " + e.target.id);
             axios
-                .post(url6, {
-                naziv : this.state.naziTP,
-                // id: this.state.idTP
-                
-                }, config)
+                .post(url6,{a}, config)
                 .then(response => {
                 console.log("Brisanje tp uspelo! ");
                 console.log(response.data);
@@ -154,11 +138,7 @@ obrisiTP = e => {
                 .catch(error => {
                 console.log("Brisanje tp nije uspelo! ");
                 });
-        })
-    .catch(error => {
-      console.log("nije preuzeto ime tp nije uspelo! ");
-    });
-
+  
 
 }
 
@@ -211,6 +191,19 @@ componentWillMount(){
               name="naziTP"
               defaultValue=""
               onChange={this.handleChange}
+              
+            />
+          </div>
+          <div className="telefonLekara">
+            <label className="lekarTelefonLabel" htmlFor="telefonLekara">
+              Cena(RSD):{" "}
+            </label>
+            <input
+              className="lekarTelefonLabel"
+              type="number"
+              name="cena"
+              defaultValue=""
+              onChange={this.handleChange}
             />
           </div>
           
@@ -237,7 +230,8 @@ componentWillMount(){
           };
           axios
           .post("http://localhost:8025/api/tipPregleda/dodajNoviTP", {
-                naziv: this.state.naziTP
+                naziv: this.state.naziTP,
+                cena: this.state.cena
           }, config)
           .then(response => {
             console.log("Dodat novi tp");
@@ -351,6 +345,7 @@ handleIzmeni = e => {
 
         <tr key={i}>
             <td>{lista[i].naziv}</td>
+              <td>{lista[i].cena}</td>
             <td >
                 <Button  id={lista[i].id} onClick={e => this.obrisiTP(e)}>Obrisi</Button>
                 <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
@@ -418,6 +413,7 @@ handleIzmeni = e => {
                       <thead>
                         <tr>
                           <th id="nazivTP">Naziv tipa pregleda</th>
+                          <th id="cena"> Cena</th>
 
                         </tr>
                       </thead>

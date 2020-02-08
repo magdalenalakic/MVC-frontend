@@ -346,7 +346,7 @@ class SlobodniTermini extends Component {
                         </option>
                  </select>
           </div>
-          <div className="telefonLekara">
+          {/* <div className="telefonLekara">
             <label className="lekarTelefonLabel" htmlFor="telefonLekara">
               Cena(RSD):{" "}
             </label>
@@ -357,7 +357,7 @@ class SlobodniTermini extends Component {
               defaultValue=""
               onChange={this.handleChange}
             />
-          </div>
+          </div> */}
           <div className="telefonLekara">
             <label className="lekarTelefonLabel" htmlFor="telefonLekara">
               Popust(%):{" "}
