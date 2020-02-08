@@ -41,6 +41,7 @@ class KlinickiCentar extends Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      lozinka: props.lozinka,
       // listaKlinika:[],
       _notificationSystem: null,
       // image: image,
@@ -52,6 +53,7 @@ class KlinickiCentar extends Component {
 
     console.log(this.state.uloga);
     console.log(this.state.email);
+    console.log("LOZINKAAAAAAAA" + this.state.lozinka);
   }
 
   getRoutes = routes => {
@@ -67,6 +69,8 @@ class KlinickiCentar extends Component {
                 uloga={this.state.uloga}
                 email={this.state.email}
                 token={this.state.token}
+                lozinka={this.state.lozinka}
+                promeniLozinku={this.promeniLozinku}
               />
             )}
             key={key}
@@ -194,6 +198,12 @@ class KlinickiCentar extends Component {
       this.refs.mainPanel.scrollTop = 0;
     }
   }
+
+  promeniLozinku = lozinka => {
+    this.setState({
+      lozinka: lozinka
+    });
+  };
   render() {
     // const {listaKlinika} = this.state.listaKlinika
     return (

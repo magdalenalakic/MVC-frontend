@@ -65,7 +65,7 @@ class IzmenaKlinike extends Component {
           idKlinike: Response.data.idKlinike,
         });
         console.log("wmount!!!!");
-        const url = 'http://localhost:8025/api/klinike/finKlinikaById/' + this.state.idKlinike;
+        const url = 'http://localhost:8025/api/klinike/' + this.state.idKlinike;
         axios.get(url, config)
           .then(Response => {
             console.log("Preuzeta klinike: ");

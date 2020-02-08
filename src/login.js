@@ -263,6 +263,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -283,6 +284,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -298,7 +300,7 @@ class Login extends Component {
             <Route
               path="/lekar"
               render={props => (
-                <Lekar {...props} email={email} uloga={uloga} token={token} />
+                <Lekar {...props} email={email} uloga={uloga} token={token} lozinka={this.state.lozinka} />
               )}
             />
             <Redirect from="/" to="/lekar/pocetnaStranica" />
@@ -318,6 +320,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -371,7 +374,9 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                   korisnik={this.state.korisnik}
+                 
                   />}
             />
             <Redirect from="/" to="/prvoLogovanje" />
@@ -395,6 +400,7 @@ class Login extends Component {
               <div className="email">
                 <label htmlFor="email">E-mail: </label>
                 <input
+                  id="txtEmail"
                   type="text"
                   name="email"
                   placeholder="E-mail"
@@ -405,6 +411,7 @@ class Login extends Component {
               <div className="lozinka">
                 <label htmlFor="lozinka">Lozinka: </label>
                 <input
+                  id="txtLoz"
                   type="password"
                   name="lozinka"
                   placeholder="Lozinka"
@@ -416,7 +423,7 @@ class Login extends Component {
                 {formErrors.log.length > 0 && (
                   <span className="errorMessage">{formErrors.log}</span>
                 )}
-                <button type="submit">Uloguj se</button>
+                <button id="btnSignIn" type="submit">Uloguj se</button>
 
                 <small onClick={this.handleClick}>Napravi nalog</small>
               </div>

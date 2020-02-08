@@ -44,8 +44,7 @@ class ZahtevLekar extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeDatePocetka = this.handleChangeDatePocetka.bind(this);
     this.handleChangeDateKraja = this.handleChangeDateKraja.bind(this);
-    console.log(this.state.uloga);
-    console.log(this.state.email);
+    
   }
 
   izaberiTip(izbor) {
@@ -130,6 +129,7 @@ class ZahtevLekar extends React.Component {
         
         console.log("uspesno poslat zahtev")
         console.log(Response.data);
+        this.props.handleClick("ZAHTEV JE POSLAT");
         this.setState({
           redirectToPocetna: true
           
@@ -155,6 +155,7 @@ class ZahtevLekar extends React.Component {
                   token={this.state.token}
                   email={this.state.email} 
                   uloga={this.state.uloga}
+                  
                 //nije emailPacijenta vec je id al dobro
                   // emailPacijenta={this.state.emailPacijenta}  
                 />}

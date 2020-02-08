@@ -77,6 +77,8 @@ class KlinickiCentarPocetna extends Component {
         "Content-Type": "application/json"
       }
     }
+    console.log(this.props);
+    console.log(this.state);
     this.listaKlinikaUKC = this.listaKlinikaUKC.bind(this);
     this.listaAdminaKlinikaUKC = this.listaAdminaKlinikaUKC.bind(this);
     this.listaAdminaUKC = this.listaAdminaUKC.bind(this); 

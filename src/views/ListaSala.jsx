@@ -47,6 +47,7 @@ class ListaSala extends Component {
       rezervisanaSala: false,
       rezervisanaSalaOp: false,
       izabraniLekar: null,
+      listaSalaZaBrisanjeIzmjenu: [],
 
       listaLekara: [],
       velikiNiz: [],
@@ -195,6 +196,16 @@ class ListaSala extends Component {
         //   telefon: Response.data.telefon,
         idKlinike: Response.data.idKlinike,
         });
+
+        axios.get('http://localhost:8025/api/sale/allIB/' +  this.state.idKlinike, config)
+        .then(resp=>{
+          console.log(resp);
+          this.setState({
+            listaSalaZaBrisanjeIzmjenu: resp.data
+          })
+      
+        })
+
 
         const urlKlinike = 'http://localhost:8025/api/klinike/listaLekaraKlinika/' + this.state.idKlinike;    
         axios.get(urlKlinike, config)
@@ -370,6 +381,7 @@ class ListaSala extends Component {
 
      
   }
+
 
 
   console.log("PROPPSSSSS !!!!!!!!!!!!!!!!!!!!!!!!!1 ")
@@ -1107,7 +1119,7 @@ obrisiLekara = e => {
     let listaT = this.state.listaTermina;
     
     let listaSlobodnihSala = this.state.listaSlobodnihSala;
-
+    let lis = this.state.listaSalaZaBrisanjeIzmjenu;
 
     
     if( this.props.redirectToListaSala==true){
@@ -1572,27 +1584,57 @@ obrisiLekara = e => {
        
 
     }else if ((pretraga == "" || pretraga == undefined) && this.state.izabranDatum == false ) {
-      for (var i = 0; i < lista.length; i++) {
-        res.push(
-          <tr key={i}>
-           
-
-                <td>{lista[i].naziv}</td>
-                <td>{lista[i].broj}</td>
-           
-              <td >
-                    <Button  id={lista[i].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
-                    <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
-              </td>
-              <td>
-                  <Button className="OdobrenZahtev" id={lista[i].id} onClick={e => this.handleIzmeni(e)}>
-                    Izmeni
-                  </Button>
-              </td>
+      var nova = [];
+     
+      for(var j =  0; j<lista.length;j++){
+        // for (var i = 0; i < lis.length; i++) {
+          if(lis.some(item => lista[j].id === item.id)){
+            console.log("EEEEEEEEEEEEEEEEEEEEEEE")
+          res.push(
+            <tr key={i}>
+             
+  
+                  <td>{lista[j].naziv}</td>
+                  <td>{lista[j].broj}</td>
+             
+                <td >
+                      <Button  id={lista[j].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
+                      <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
+                </td>
+                <td>
+                    <Button className="OdobrenZahtev" id={lista[j].id} onClick={e => this.handleIzmeni(e)}>
+                      Izmeni
+                    </Button>
+                </td>
+                
+            </tr>
+          );
+          }else{
               
-          </tr>
-        );
+                res.push(
+                  <tr key={j}>
+                   
+        
+                        <td>{lista[j].naziv}</td>
+                        <td>{lista[j].broj}</td>
+                        <td></td>
+                        <td></td>
+                      
+                  </tr>
+                );
+        
+          }
+        // }
       }
+      console.log(nova)
+       
+    
+      //   }
+        
+      // }
+      // // else{
+      // /
+      // // }
     } else if((pretraga == "" || pretraga == undefined) && this.state.izabranDatum == true ){
      
       let lista = this.state.listaSalaKlinike;
@@ -1654,7 +1696,7 @@ obrisiLekara = e => {
 
             }
            
-                    
+                  
                     res.push(
                       <tr key={i}>
                         {/* <td>
@@ -1792,24 +1834,43 @@ obrisiLekara = e => {
 
         if(naziv.toLowerCase().includes(pretraga.toLowerCase())
         || broj.toLowerCase().includes(pretraga.toLocaleLowerCase())){
-          res.push(
-            <tr key={i}>
-            
-                  <td>{lista[i].naziv}</td>
-                  <td>{lista[i].broj}</td>
-             
-                <td >
-                      <Button  id={lista[i].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
-                      <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
-                </td>
-                <td>
-                    <Button className="OdobrenZahtev" id={lista[i].id} onClick={e => this.handleIzmeni(e)}>
-                      Izmeni
-                    </Button>
-                </td>
-                
-            </tr>
-          );
+          if(lis.some(item => lista[i].id === item.id)){
+            res.push(
+              <tr key={i}>
+              
+                    <td>{lista[i].naziv}</td>
+                    <td>{lista[i].broj}</td>
+               
+                  <td >
+                        <Button  id={lista[i].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
+                        <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
+                  </td>
+                  <td>
+                      <Button className="OdobrenZahtev" id={lista[i].id} onClick={e => this.handleIzmeni(e)}>
+                        Izmeni
+                      </Button>
+                  </td>
+                  
+              </tr>
+            );
+          }else{
+            res.push(
+              <tr key={i}>
+              
+                    <td>{lista[i].naziv}</td>
+                    <td>{lista[i].broj}</td>
+               
+                  <td >
+                     
+                  </td>
+                  <td>
+                    
+                  </td>
+                  
+              </tr>
+            );
+          }
+          
         }
         
       }

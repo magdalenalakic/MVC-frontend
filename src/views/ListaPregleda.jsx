@@ -171,7 +171,15 @@ class ListaPregleda extends Component {
             console.log(klinika.data[0].tipPregledaID);
             this.setState({
               // idKlinike: klinika.data.id,
-              listaLekara: klinika.data,
+              listaLekara: klinika.data.sort((a, b) => {
+                let startA = new Date(a.datum);
+                startA.setHours(a.termin);
+      
+                let startB = new Date(b.datum);
+                startB.setHours(b.termin);
+      
+                return new Date(startA).getTime() - new Date(startB).getTime();
+              }),
               pregledLekarID: klinika.data.lekarID,
               pregledPacijentID: klinika.data.pacijentID,
               pregledTipPregledaID: klinika.data[0].tipPregledaID,
@@ -327,13 +335,13 @@ class ListaPregleda extends Component {
   listaSalaK() {
     let res = [];
     let lista = this.state.listaLekara;
-
+  
     for (var i = 0; i < lista.length; i++) {
       const dat = lista[i].datum;
       res.push(
         <tr key={i}>
           <td>
-            {moment(dat).format("DD.MM.YYYY.")} {lista[i].termin}h
+            {moment(dat).format("DD.MM.YYYY.")} {lista[i].termin}:00 h -  {lista[i].termin + 2}  : 00 h
           </td>
           <td>{lista[i].nazivTP}</td>
           <td>
@@ -382,8 +390,7 @@ class ListaPregleda extends Component {
     return (
       <div className="content">
         <Grid fluid>
-          <Row>
-            <Col>
+          
               <Row>
                 <Card
                   title="Lista pregleda klinike"
@@ -415,8 +422,7 @@ class ListaPregleda extends Component {
                   }
                 />
               </Row>
-            </Col>
-          </Row>
+        
         </Grid>
       </div>
     );

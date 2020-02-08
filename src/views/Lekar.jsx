@@ -41,6 +41,7 @@ class Lekar extends Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      lozinka: props.lozinka,
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -65,6 +66,8 @@ class Lekar extends Component {
                 uloga={this.state.uloga}
                 email={this.state.email}
                 token={this.state.token}
+                lozinka={this.state.lozinka}
+                promeniLozinku={this.promeniLozinku}
               />
             )}
             key={key}
@@ -81,9 +84,16 @@ class Lekar extends Component {
     var level;
     var klasa = "pe-7s-gift";
     if(position == "ZDRAVSTVENI KARTON JE IZMENJEN" ||
-      position == "PREGLED JE ZAVRSEN"){
+      position == "PREGLED JE ZAVRSEN" ||
+      position == "ZAHTEV JE POSLAT" ||
+      position ==  "USPESNO PROMENJENA LOZINKA" ||
+      position == "USPESNO PROMENJENI PODACI"){
       color = 1;
       level = "success";
+      klasa = "pe-7s-check";
+    }else if(position =="PREGLED JE ZAPOCET"){
+      color = 4;
+      level = "info";
       klasa = "pe-7s-check";
     }
     // else{
@@ -205,6 +215,11 @@ class Lekar extends Component {
       this.refs.mainPanel.scrollTop = 0;
     }
   }
+  promeniLozinku = lozinka => {
+    this.setState({
+      lozinka: lozinka
+    });
+  };
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;

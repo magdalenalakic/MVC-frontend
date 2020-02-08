@@ -71,10 +71,10 @@ class PocetnaStranicaLekara extends React.Component {
 
     // this.dodavanjeListePregledaUKalendar = this.dodavanjeListePregledaUKalendar.bind(this);
     this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(this);
-    this.ucitavanjeListePregleda = this.ucitavanjeListePregleda.bind(this);
+    // this.ucitavanjeListePregleda = this.ucitavanjeListePregleda.bind(this);
     // this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(this);
     this.dodavanjeListaUKalendar = this.dodavanjeListaUKalendar.bind(this);
-    this.ucitavanjeListeOperacija = this.ucitavanjeListeOperacija.bind(this);
+    // this.ucitavanjeListeOperacija = this.ucitavanjeListeOperacija.bind(this);
 
   }
 
@@ -141,9 +141,41 @@ class PocetnaStranicaLekara extends React.Component {
         console.log(response);
         this.setState({
           listaOdmorOdsustvo: response.data
-        }
-        ,()=> this.dodavanjeListaUKalendar()
-        );
+        },()=>{
+          axios.get("http://localhost:8025/api/pregledi/getPreglediLekara", this.config)
+          .then(response => {
+            console.log("PREUZETI PREGLEDI");
+            
+            console.log(response.data)
+            this.setState({
+              listaPregleda: response.data
+            },()=> {
+              axios.get("http://localhost:8025/api/operacije/operacijeLekara", this.config)
+              .then(response => {
+                console.log("PREUZETE OPERACIJE");
+              
+                console.log(response.data)
+                this.setState({
+                  listaOperacija: response.data
+                }
+                , ()=> this.dodavanjeListaUKalendar()
+                );
+                
+              })
+              .catch(error => {
+                  console.log("nisu preuzete operacije");
+                  console.log(error);
+              })
+
+            } );
+            
+          })
+          .catch(error => {
+              console.log("nisu preuzeti pregledi");
+              console.log(error);
+          })
+
+        });
       })
       .catch(error => {
         console.log("nije ucitana lista odmor odsustvo");
@@ -152,46 +184,7 @@ class PocetnaStranicaLekara extends React.Component {
     
   
   };
-  ucitavanjeListePregleda(){
-     //PREUZIMANJE LISTE PREGLEDA LEKARA
-        
-     axios.get("http://localhost:8025/api/pregledi/getPreglediLekara", this.config)
-     .then(response => {
-       console.log("PREUZETI PREGLEDI");
-      
-       console.log(response.data)
-       this.setState({
-         listaPregleda: response.data
-       }
-       , ()=> this.dodavanjeListaUKalendar()
-       );
-       
-     })
-     .catch(error => {
-         console.log("nisu preuzeti pregledi");
-         console.log(error);
-     })
-  }
-  ucitavanjeListeOperacija(){
-    //PREUZIMANJE LISTE PREGLEDA LEKARA
-       
-    axios.get("http://localhost:8025/api/operacije/operacijeLekara", this.config)
-    .then(response => {
-      console.log("PREUZETE OPERACIJE");
-     
-      console.log(response.data)
-      this.setState({
-        listaOperacija: response.data
-      }
-      , ()=> this.dodavanjeListaUKalendar()
-      );
-      
-    })
-    .catch(error => {
-        console.log("nisu preuzete operacije");
-        console.log(error);
-    })
- }
+//   
  
   dodavanjeListaUKalendar(){
     //treba dodati i jednu i drugu listu hahahha 
@@ -281,9 +274,10 @@ class PocetnaStranicaLekara extends React.Component {
 
   componentWillMount(){
     this.preuzimanjeLekara();
-    this.ucitavanjeListePregleda();
+    // this.ucitavanjeListePregleda();
     this.ucitavanjeListeOdmorOdsustvo();
-    this.ucitavanjeListeOperacija();
+    this.dodavanjeListaUKalendar();
+    // this.ucitavanjeListeOperacija();
   }
 
 
