@@ -276,6 +276,7 @@ class PocetnaStranicaLekara extends React.Component {
     this.preuzimanjeLekara();
     // this.ucitavanjeListePregleda();
     this.ucitavanjeListeOdmorOdsustvo();
+    this.dodavanjeListaUKalendar();
     // this.ucitavanjeListeOperacija();
   }
 

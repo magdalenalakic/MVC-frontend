@@ -84,7 +84,7 @@ class izmenaProfila extends Component {
         });
   
       console.log("ucitaj mi kliniku " + this.state.idKlinike);
-      const urlKlinike = 'http://localhost:8025/api/klinike/finKlinikaById/' + this.state.idKlinike;    
+      const urlKlinike = 'http://localhost:8025/api/klinike/findKlinikaById/' + this.state.idKlinike;    
       console.log(urlKlinike);
       axios.get(urlKlinike, config)
         .then(klinika => {
@@ -137,7 +137,7 @@ class izmenaProfila extends Component {
       }, config)
       .then(response => {
         console.log(response.data);
- 
+        this.props.handleClick("USPESNO PROMENJENI PODACI");
       
         this.setState({
           ime: response.data.ime
@@ -205,9 +205,9 @@ class izmenaProfila extends Component {
   PotvrdiPromenuLozinkeClick() {
     console.log("potvrdaaa lozinkee");
     if (this.state.novaLoz === this.state.potvrdaLoz) {
-     console.log(this.state);
-     console.log(this.props.lozinka);
-     console.log(this.props);
+    //  console.log(this.state);
+    //  console.log(this.props.lozinka);
+    //  console.log(this.props);
       axios
         .put(
           "http://localhost:8025/api/lekari/promeniLozinku",
@@ -219,7 +219,7 @@ class izmenaProfila extends Component {
         )
         .then(response => {
           console.log(response.data);
-          this.props.handleClick("LOZINKA JE PROMENJENA");
+          this.props.handleClick("USPESNO PROMENJENA LOZINKA");
           this.setState(
             {
               lozinka: this.state.novaLoz

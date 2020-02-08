@@ -59,7 +59,17 @@ class Pregled extends React.Component {
       pregled: [],
 
       //zakazivanje pregleda
-      zakNovPreg: false
+      zakNovPreg: false,
+      datumPregleda: new Date(),
+      tipoviPregleda: [],
+      tipPregleda: "",
+      terminPregleda: "",
+      
+
+      //zakazivanje operacije
+      zakNovOper: false,
+      datumOperacije : new Date(),
+      terminOperacije: "",
       
       
     };
@@ -98,9 +108,56 @@ class Pregled extends React.Component {
     
     //za pregled
     this.ucitavanjePregleda = this.ucitavanjePregleda.bind(this);
+
+    this.zkOpenHendler = this.zkOpenHendler.bind(this);
+    this.infPreOpenHendler = this.infPreOpenHendler.bind(this);
+    this.zakNovPregHendler = this.zakNovPregHendler.bind(this);
+    this.zakNovOperHendler = this.zakNovOperHendler.bind(this);
+    this.handleChangeDatePregleda = this.handleChangeDatePregleda.bind(this);
+    this.handleChangeDateOperacije = this.handleChangeDateOperacije.bind(this);
+    this.preuzimanjeTipovaPregleda = this.preuzimanjeTipovaPregleda.bind(this);
+    this.izaberiVrstuPregleda = this.izaberiVrstuPregleda.bind(this);
+    this.biranjeTipaPregleda = this.biranjeTipaPregleda.bind(this);
+
   }
 
+  handleChangeDatePregleda = date => {
+    console.log(date)
+    this.setState(
+      {
+        datumPregleda: date
+      },
+      () => {
+        console.log(this.state);
+        //ovde izlistati termine
+        axios
+        .post("http://localhost:8025/api/pregledi/getTerminiLekaraZaDatum", {datum: this.state.datumPregleda}, this.config)
+        .then(Response => {
+          console.log("Preuzeti termini: ");
+          console.log(Response.data);
+          // this.setState({
+          //   tipoviPregleda: Response.data,
+          //   tipPregleda: Response.data[0].naziv
+          // });
+          // console.log(this.state.tipPregleda);
+        })
+  
+        .catch(error => {
+          console.log("Lista tipova nije preuzeta");
+        });
 
+      }
+    );
+  };
+  handleChangeDateOperacije = date => {
+    console.log(date)
+    this.setState(
+      {
+        datumOperacije: date
+      },
+      () => console.log(this.state)
+    );
+  };
   handleChange = e => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -120,6 +177,7 @@ class Pregled extends React.Component {
     this.ucitavanjeZKPacijenta();
     this.ucitavanjePacijenta();
     this.ucitavanjePregleda();
+    this.preuzimanjeTipovaPregleda();
 
     const url = "http://localhost:8025/api/lekari/getLekarByEmail";
 
@@ -513,10 +571,11 @@ class Pregled extends React.Component {
     .then(Response => {
       console.log("IZMENJEN ZDRAVSTVENI KARTON");
       console.log(Response.data);
+      this.props.handleClick("ZDRAVSTVENI KARTON JE IZMENJEN")
       this.setState({
         zkOpen: false
       }, ()=> {
-        this.props.handleClick("ZDRAVSTVENI KARTON JE IZMENJEN")
+        
         this.ucitavanjeZKPacijenta()
       })
       // this.setState({
@@ -584,6 +643,7 @@ class Pregled extends React.Component {
                this.setState({
                 prikaziZK: true
                })
+               
              }else{
                console.log("NE MOZE DA PRISTUPI")
                this.setState({
@@ -626,9 +686,101 @@ class Pregled extends React.Component {
     });
   }
 
+  zkOpenHendler(){
+    this.setState({
+      zkOpen: false
+    })
+  }
+  infPreOpenHendler(){
+    this.setState({infPreOpen: false})
+  }
+  zakNovPregHendler(){
+    this.setState({zakNovPreg: false})
+  }
+  zakNovOperHendler(){
+    this.setState({zakNovOper: false})
+  }
 
+  //za tip pregled
+  preuzimanjeTipovaPregleda(){
+    axios
+      .get("http://localhost:8025/api/tipPregleda/all", this.config)
+      .then(Response => {
+        console.log("Preuzeta lista tipova pregleda: ");
+        console.log(Response.data);
+        this.setState({
+          tipoviPregleda: Response.data,
+          tipPregleda: Response.data[0].naziv
+        });
+        console.log(this.state.tipPregleda);
+      })
 
+      .catch(error => {
+        console.log("Lista tipova nije preuzeta");
+      });
+  }
 
+  izaberiVrstuPregleda() {
+    let res = [];
+    let lista = this.state.tipoviPregleda;
+    for (var i = 0; i < lista.length; i++) {
+      res.push(<option value={lista[i].id}>{lista[i].naziv}</option>);
+    }
+    return res;
+  }
+
+  biranjeTipaPregleda(tip) {
+    console.log("prosledjen pregled");
+    console.log(tip.target.value);
+    this.setState({
+      tipPregleda: tip.target.value
+    }, ()=> {
+      console.log(this.state.tipPregleda);
+      
+    });
+
+    
+
+  }
+
+  //za termin
+  // prikazTermina() {
+  //   var res = [];
+  //   if (this.state.prikazTerminaClick == true) {
+  //     res.push(
+  //       <select onChange={e => this.biranjeTermina(e)}>
+  //         <option value="odaberiTermin">Izaberite termin</option>
+  //         {this.state.terminiZaIzabraniDatum[0] == false && (
+  //           <option value="9">09:00 - 11:00</option>
+  //         )}
+  //         {this.state.terminiZaIzabraniDatum[1] == false && (
+  //           <option value="11">11:00 - 13:00</option>
+  //         )}
+  //         {this.state.terminiZaIzabraniDatum[2] == false && (
+  //           <option value="13">13:00 - 15:00</option>
+  //         )}
+  //         {this.state.terminiZaIzabraniDatum[3] == false && (
+  //           <option value="15">15:00 - 17:00</option>
+  //         )}
+  //       </select>
+  //     );
+  //   }
+
+  //   return res;
+  // }
+  // biranjeTermina = e => {
+  //   console.log(e.target.value);
+  //   const termin = e.target.value;
+  //   console.log("IF");
+  //   this.setState(
+  //     {
+  //       izabranTermin: termin
+  //     },
+  //     () => {
+  //       console.log(this.state.izabranTermin);
+  //     }
+  //   );
+  // };
   render() {
     
 
@@ -663,14 +815,13 @@ class Pregled extends React.Component {
                     onClick={this.izmenaZK}
                   >Izmeni</Button>
                   
-                  <Button className="izadjiDugme" onClick={()=> this.setState({
-                    zkOpen: false
-                  })}>Izadji</Button>
+                  <Button className="izadjiDugme" onClick={this.zkOpenHendler}>Izadji</Button>
                 </Col>
                 <Col md={8} >
                   <Card
                     title="Zdravstveni karton"
                     ctTableFullWidth
+                    
                     ctTableResponsive
                     content={
                       <div className="ct-chart">
@@ -900,8 +1051,9 @@ class Pregled extends React.Component {
               this.state.infPreOpen ?
               <Row>
                 <Col>
+                  
                   <Button className="izadjiDugme" 
-                    onClick={this.setState({infPreOpen: false})}
+                    onClick={this.infPreOpenHendler}
                   >Izadji</Button>
                   
                   
@@ -980,7 +1132,7 @@ class Pregled extends React.Component {
               <Row>
                 <Col>
                   <Button className="izadjiDugme" 
-                    onClick={this.setState({zakNovPreg: false})}
+                    onClick={this.zakNovPregHendler}
                   >Izadji</Button>
                   
                   
@@ -988,6 +1140,90 @@ class Pregled extends React.Component {
                 <Col md={12}>
                   <Card
                     title="Zakazi novi pregled"
+                    
+                    content={
+                      <div className="ct-chart">
+                
+                        <Table striped hover>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label>TipPregleda: </label>
+                            </td>
+                            <td>
+                            <select
+                              name="tipPregleda"
+                              onChange={e => this.biranjeTipaPregleda(e)}
+                            >
+                              {this.izaberiVrstuPregleda()}
+                            </select>
+                              
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Datum: </label>
+                               
+                          
+                            </td>
+                            <td>
+                              <DatePicker
+                              placeholderText="Izaberi datum"
+                              selected={this.state.datumPregleda}
+                              onSelect={this.handleChangeDatePregleda}
+                              minDate={new Date()}
+
+                              />
+                              {/* <input
+                                type="text"
+                                name="prezime"
+                                // defaultValue={moment(this.state.pregled.datum).format("DD.MM.YYYY. ") + this.state.pregled.termin + ":00" }
+                                disabled="disabled"
+                                // placeholder={this.state.prezime}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              /> */}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Termin: </label>
+                            </td>
+                            <td>
+                            <select name="odabirKlinike" 
+                             onChange={e => {this.proslediKliniku(e)}}
+                             >
+                              {/* {this.listaKlinikaIzbor()}  */}
+            
+                            </select>
+                              
+                            </td>
+                          </tr>
+                          
+                        </tbody>
+                      </Table>
+
+                      </div>
+                    }
+                  
+                  />
+                </Col> 
+              </Row>
+              : null
+            }
+            {
+              this.state.zakNovOper ?
+              <Row>
+                <Col>
+                  <Button className="izadjiDugme" 
+                    onClick={this.zakNovOperHendler}
+                  >Izadji</Button>
+                  
+                  
+                </Col>
+                <Col md={12}>
+                  <Card
+                    title="Zakazi novu operaciju"
                     
                     content={
                       <div className="ct-chart">
@@ -1012,34 +1248,39 @@ class Pregled extends React.Component {
                           </tr>
                           <tr>
                             <td>
-                              <label>Datum i vreme: </label>
+                              <label>Datum: </label>
                             </td>
                             <td>
-                              <input
+                              <DatePicker
+                                placeholderText="Izaberi datum"
+                                selected={this.state.datumOperacije}
+                                onSelect={this.handleChangeDateOperacije}
+                                minDate={new Date()}
+
+                                />
+                              {/* <input
                                 type="text"
                                 name="prezime"
-                                defaultValue={moment(this.state.pregled.datum).format("DD.MM.YYYY. ") + this.state.pregled.termin + ":00" }
+                                // defaultValue={moment(this.state.pregled.datum).format("DD.MM.YYYY. ") + this.state.pregled.termin + ":00" }
                                 disabled="disabled"
                                 // placeholder={this.state.prezime}
                                 // noValidate
                                 // onChange={this.handleChange}
-                              />
+                              /> */}
                             </td>
                           </tr>
                           <tr>
                             <td>
-                              <label>Sala: </label>
+                              <label>Termin: </label>
                             </td>
                             <td>
-                              <input
-                                type="text"
-                                name="lbo"
-                                defaultValue={this.state.pregled.salaBR + " " +  this.state.pregled.salaN}
-                                disabled="disabled"
-                                // placeholder={this.state.lbo}
-                                // noValidate
-                                // onChange={this.handleChange}
-                              />
+                            <select name="odabirKlinike" 
+                             onChange={e => {this.proslediKliniku(e)}}
+                             >
+                              {/* {this.listaKlinikaIzbor()}  */}
+            
+                            </select>
+                              
                             </td>
                           </tr>
                           
@@ -1054,11 +1295,12 @@ class Pregled extends React.Component {
               </Row>
               : null
             }
-            { this.state.zkOpen === false && this.state.infPreOpen === false && this.state.zakNovPreg === false ?
+            { this.state.zkOpen === false && this.state.infPreOpen === false 
+              && this.state.zakNovPreg === false  && this.state.zakNovOper === false ?
               <Col>
                 <Row className="linkoviPregled">
                   <Col lg={3} sm={6}>
-                      {/* {this.renderRedirect()} */}
+                     
                       <div 
                       onClick={()=> this.setState({
                         zkOpen : true 
@@ -1075,7 +1317,7 @@ class Pregled extends React.Component {
                   </Col>
                   
                   <Col lg={3} sm={6}>
-                      {/* {this.renderRedirect()} */}
+                      
                       <div 
                       onClick={()=> this.setState({
                         infPreOpen : true 
@@ -1091,7 +1333,7 @@ class Pregled extends React.Component {
                       </div>                    
                   </Col>  
                   <Col lg={3} sm={6}>
-                      {/* {this.renderRedirect()} */}
+                     
                       <div 
                       onClick={()=> this.setState({
                         zakNovPreg : true 
@@ -1107,11 +1349,11 @@ class Pregled extends React.Component {
                       </div>                    
                   </Col>
                   <Col lg={3} sm={6}>
-                      {/* {this.renderRedirect()} */}
+                     
                       <div 
-                      // onClick={()=> this.setState({
-                      //   zakNovPreg : true 
-                      // })}
+                      onClick={()=> this.setState({
+                        zakNovPreg : true 
+                      })}
                       >
                           <StatsCard
                               bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
@@ -1220,7 +1462,7 @@ class Pregled extends React.Component {
                         }
                     />
                 </div>
-            </Row>
+                </Row>
               </Col>
               : null 
             }    
