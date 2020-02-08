@@ -163,8 +163,9 @@ class ListaZahtevaOdmorOdsustvo extends Component {
 
     console.log("----------------------------");
     console.log("HANDLE ODOBREN LEKAR"+e.currentTarget.id);
-    if(e.currentTarget.id != "" && e.currentTarget.id != null){
-      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtevL/" + e.currentTarget.id;
+    var zahtev = e.currentTarget.id;
+    if(zahtev != "" && zahtev != null){
+      const url1 ="http://localhost:8025/api/odmorodsustvo/zahtevL/" +zahtev;
       console.log(url1);
   
       axios

@@ -87,13 +87,18 @@ class Lekar extends Component {
       position == "PREGLED JE ZAVRSEN" ||
       position == "ZAHTEV JE POSLAT" ||
       position ==  "USPESNO PROMENJENA LOZINKA" ||
-      position == "USPESNO PROMENJENI PODACI"){
+      position == "USPESNO PROMENJENI PODACI" ||
+      position ==  "ZAKAZAN PREGLED"){
       color = 1;
       level = "success";
       klasa = "pe-7s-check";
     }else if(position =="PREGLED JE ZAPOCET"){
       color = 4;
       level = "info";
+      klasa = "pe-7s-check";
+    }else if( position == "NISU SVA POLJA UNESENA"){
+      color = 3;
+      level = "error";
       klasa = "pe-7s-check";
     }
     // else{
