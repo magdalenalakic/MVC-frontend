@@ -16,7 +16,8 @@ import "klinickiCentar.css";
 import Slikalekari from "assets/img/lekari.jpg";
 import slikaPregledi from "assets/img/pregled.jpg"
 import kalendarSlika from "assets/img/calendar.png"
-
+import moment from "moment";
+import slikaPacijent from "assets/img/pacijentImage.jpg";
 
 
 class Pregled extends React.Component {
@@ -44,8 +45,19 @@ class Pregled extends React.Component {
       recepti: [],
       izabranLek: null,
       misljenje: "",
+      //za zdravstveni karton
+      zkOpen: false,
+      visina: 0, 
+      tezina: 0,
+      krvnaGrupa: "",
+      pacijent : [],
+      zdravstveniKarton: [],
+      listaIzvestaja: [],
 
-
+      //za informacije o pregledu
+      infPreOpen: false,
+      pregled: [],
+      
       
     };
     this.config = {
@@ -76,7 +88,13 @@ class Pregled extends React.Component {
 
     this.zavrsiPregled = this.zavrsiPregled.bind(this);
 
+    //metode za zdravstveni karton
+    this.izmenaZK = this.izmenaZK.bind(this);
+    this.ucitavanjeZKPacijenta = this.ucitavanjeZKPacijenta.bind(this);
+    this.ucitavanjePacijenta = this.ucitavanjePacijenta.bind(this);
     
+    //za pregled
+    this.ucitavanjePregleda = this.ucitavanjePregleda.bind(this);
   }
 
 
@@ -96,9 +114,9 @@ class Pregled extends React.Component {
   componentWillMount() {
     this.listaDijagnoza();
     this.listaLekova();
-
-    
-
+    this.ucitavanjeZKPacijenta();
+    this.ucitavanjePacijenta();
+    this.ucitavanjePregleda();
 
     const url = "http://localhost:8025/api/lekari/getLekarByEmail";
 
@@ -453,6 +471,7 @@ class Pregled extends React.Component {
             .then(response => {
               console.log("ZAVRSEN PREGLED! ");
               console.log(response.data);
+              this.props.handleClick("PREGLED JE ZAVRSEN")
               this.setState({
                 redirectToOdustani: true
               })
@@ -477,6 +496,131 @@ class Pregled extends React.Component {
     
   }
 
+  izmenaZK(){
+    console.log("IZMENA ZK");
+    axios
+    .put("http://localhost:8025/api/pacijenti/izmenaZK",{
+        id: this.state.zdravstveniKarton.id,
+        pacijentID: this.state.emailPacijenta,
+        visina: this.state.visina,
+        tezina: this.state.tezina,
+        krvnaGrupa: this.state.krvnaGrupa
+        
+    }, this.config)
+    .then(Response => {
+      console.log("IZMENJEN ZDRAVSTVENI KARTON");
+      console.log(Response.data);
+      this.setState({
+        zkOpen: false
+      }, ()=> {
+        this.props.handleClick("ZDRAVSTVENI KARTON JE IZMENJEN")
+        this.ucitavanjeZKPacijenta()
+      })
+      // this.setState({
+      //   zdravstveniKarton : Response.data,
+      //   zkOpen: false
+      // });
+      
+    })
+    .catch(error => {
+      console.log("NIJE USPELA IZMENA ZK");
+      console.log(error);
+    });
+
+    
+
+  }
+  ucitavanjeZKPacijenta(){
+    axios
+    .get("http://localhost:8025/api/pacijenti/findZKMS/" + this.state.emailPacijenta, this.config)
+
+    .then(Response => {
+      console.log("URL 111");
+      console.log(Response);
+      this.setState({
+        zdravstveniKarton : Response.data,
+        listaIzvestaja: Response.data.listaIzvestaja
+      });
+      console.log(this.state);
+    })
+    .catch(error => {
+      console.log("nije uspeo url1");
+      console.log(error);
+    });
+  }
+  ucitavanjePacijenta(){
+    console.log("OVO JE PACIJENT " + this.state.emailPacijenta)
+    axios
+    .get('http://localhost:8025/api/pacijenti/findPacijentLekar/' + this.state.emailPacijenta ,
+     this.config)
+      .then(Response => {
+        console.log("Ucitavanje pacijenta");
+        console.log(Response);
+        this.setState({
+          pacijent: Response.data,
+          emailPacijenta: Response.data.id,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
+          telefon: Response.data.telefon,
+          adresa: Response.data.adresa,
+          grad: Response.data.grad,
+          drzava: Response.data.drzava,
+          lbo: Response.data.lbo,
+          jmbg: Response.data.jmbg
+        }, ()=> {
+          console.log("usaooo u proveru ");
+          console.log(this.state.token);
+          axios
+          .post('http://localhost:8025/api/lekari/mogucPrikazZKPacijenta' ,
+          { id: Response.data.id}, this.config)
+            .then(Response => {
+              console.log("Da li je odobren ili ne uvid u zk ");
+              console.log(Response.data);
+             if(Response.data == "MOZE"){
+               console.log("MOZE DA PRISTUPI");
+               this.setState({
+                prikaziZK: true
+               })
+             }else{
+               console.log("NE MOZE DA PRISTUPI")
+               this.setState({
+                prikaziZK: false
+               })
+             }
+            })
+            .catch(error => {
+              console.log("nije uspeo url1");
+              console.log(error);
+            });
+            
+        });
+
+        
+        console.log(this.state);
+      })
+      .catch(error => {
+        console.log("nije uspeo url1");
+        console.log(error);
+      });
+  }
+
+  ucitavanjePregleda(){
+    axios
+    .get("http://localhost:8025/api/pregledi/getPregledPac/" + this.state.pregledID, this.config)
+
+    .then(Response => {
+      console.log("uspesno ucitan pregled");
+      console.log(Response);
+      this.setState({
+        pregled : Response.data
+      }, ()=> console.log("uspesno preuzet pregled"));
+      
+    })
+    .catch(error => {
+      console.log("nije ucitao pregled");
+      console.log(error);
+    });
+  }
 
 
   render() {
@@ -492,6 +636,7 @@ class Pregled extends React.Component {
                   token={this.state.token}
                   email={this.state.email} 
                   uloga={this.state.uloga}
+                  handleClick={this.props.handleClick}
                 //nije emailPacijenta vec je id al dobro
                   emailPacijenta={this.state.emailPacijenta}  
                 />}
@@ -504,65 +649,389 @@ class Pregled extends React.Component {
 
     return (
         <Grid>
-            <Row className="linkoviPregled">
-                <Col lg={3} sm={6}>
-                    {/* {this.renderRedirect()} */}
-                    <div 
-                    // onClick={this.handleListaPacijenata}
-                    >
-                        <StatsCard
-                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                            // statsText="Lista pacijenata"
-                            // statsValue="105GB"
-                            // statsIcon={<i className="fa fa-refresh" />}
-                            statsIconText="Zdravstveni karton"
-                        />
-                    </div>                    
+            {
+              this.state.zkOpen ?
+              <Row>
+                <Col>
+                  <Button className="izadjiDugme" 
+                    onClick={this.izmenaZK}
+                  >Izmeni</Button>
+                  
+                  <Button className="izadjiDugme" onClick={()=> this.setState({
+                    zkOpen: false
+                  })}>Izadji</Button>
                 </Col>
-                <Col lg={3} sm={6}>
-                    {/* {this.renderRedirect()} */}
-                    <div 
-                    // onClick={this.handleListaPacijenata}
-                    >
-                        <StatsCard
-                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                            // statsText="Lista pacijenata"
-                            // statsValue="105GB"
-                            // statsIcon={<i className="fa fa-refresh" />}
-                            statsIconText="Informacije o pacijentu"
-                        />
-                    </div>                    
+                <Col md={8}>
+                  <Card
+                    title="Zdravstveni karton"
+                    
+                    content={
+                      <div className="ct-chart">
+                
+                        <Table striped hover>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label>Ime: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="ime"
+                                defaultValue={this.state.pacijent.ime}
+                                disabled="disabled"
+                                // placeholder={this.state.ime}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Prezime: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="prezime"
+                                defaultValue={this.state.pacijent.prezime}
+                                disabled="disabled"
+                                // placeholder={this.state.prezime}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Jedinstveni broj osiguranika: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="lbo"
+                                defaultValue={this.state.pacijent.lbo}
+                                disabled="disabled"
+                                // placeholder={this.state.lbo}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Visina: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="visina"
+                                defaultValue={this.state.zdravstveniKarton.visina}
+                                // disabled="disabled"
+                                // placeholder={this.state.visina}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Tezina: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="tezina"
+                                defaultValue={this.state.zdravstveniKarton.tezina}
+                                // disabled="disabled"
+                                // placeholder={this.state.tezina}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Krvna grupa: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="krvnaGrupa"
+                                defaultValue={this.state.zdravstveniKarton.krvnaGrupa}
+                                // disabled="disabled"
+                                // placeholder={this.state.krvnaGrupa}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
+
+                      </div>
+                    }
+                  
+                  />
+                </Col> 
+                <Col md={4}>
+              <Card
+                // statsIcon="fa fa-clock-o"
+                title="O pacijentu"
+                // category="Ime"
+                content={
+                  <div id="a">
+                    <div className="slikaKCdiv">
+                      <h2>
+                        <img
+                          className="slikaPacijent"
+                          src={slikaPacijent}
+                        ></img>
+                      </h2>
+                    </div>
+                    <Table striped hover>
+                      <thead className="thead-dark">
+                        
+                        <tr>
+                          <td>E-mail:</td>
+                          <td>{this.state.pacijent.email}</td>
+                        </tr>
+                        <tr>
+                          <td>LBO:</td>
+                          <td>{this.state.pacijent.lbo}</td>
+                        </tr>
+                        <tr>
+                          <td>JMBG:</td>
+                          <td>{this.state.pacijent.jmbg}</td>
+                        </tr>
+                        <tr>
+                          <td>Telefon:</td>
+                          <td>{this.state.pacijent.telefon}</td>
+                        </tr>
+                      </thead>
+                    </Table>
+
+                  </div>
+                }
+
+            
+                
+              />
+            </Col>
+                <Col md={8}>
+              <Card
+                title="Posete lekarima"
+                content={
+                  <div>
+                    <Table striped hover>
+                      <thead>
+                        <tr>
+                          <th>Datum</th>
+                          <th>Lekar</th>
+                          <th>Izvestaj</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.listaIzvestaja.map(izvestaj => {
+                          return (
+                            <tr>
+                              <td>
+                                {moment(izvestaj.datum).format("DD.MM.YYYY.")}
+                              </td>
+                              <td>
+                                {izvestaj.imeL} {izvestaj.prezimeL}
+                              </td>
+                              <td>{izvestaj.sadrzaj}</td>
+                              {/* <td>
+                                <Button>izmeni</Button>
+                              </td> */}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  </div>
+                }
+              />
+            </Col>
+                <Col md={4}>
+              <Card
+                // statsIcon="fa fa-clock-o"
+                title="Istorija bolesti"
+                // category="Ime"
+                content={
+                  <div id="a">
+                    <Table striped hover>
+                      <thead className="thead-dark">
+                        <tr>
+                          <th>Datum</th>
+                          <th>Bolest</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.listaIzvestaja.map(izvestaj => {
+                          return (
+                            <tr>
+                              <td>
+                                {moment(izvestaj.datum).format("DD.MM.YYYY.")}
+                              </td>
+                              <td>{izvestaj.dijagnozaN}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  </div>
+                }
+              />
+            </Col>
+
+              </Row>
+              :  null
+            }
+            {
+              this.state.infPreOpen ?
+              <Row>
+                <Col>
+                  <Button className="izadjiDugme" 
+                    onClick={this.setState({infPreOpen: false})}
+                  >Izadji</Button>
+                  
+                  
                 </Col>
-                <Col lg={3} sm={6}>
-                    {/* {this.renderRedirect()} */}
-                    <div 
-                    // onClick={this.handleListaPacijenata}
-                    >
-                        <StatsCard
-                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                            // statsText="Lista pacijenata"
-                            // statsValue="105GB"
-                            // statsIcon={<i className="fa fa-refresh" />}
-                            statsIconText="Informacije o pregledu"
-                        />
-                    </div>                    
-                </Col>  
-                <Col lg={3} sm={6}>
-                    {/* {this.renderRedirect()} */}
-                    <div 
-                    // onClick={this.handleListaPacijenata}
-                    >
-                        <StatsCard
-                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                            // statsText="Lista pacijenata"
-                            // statsValue="105GB"
-                            // statsIcon={<i className="fa fa-refresh" />}
-                            statsIconText="Zakazi pregled"
-                        />
-                    </div>                    
-                </Col>                   
-            </Row>
-            <Row>
+                <Col md={12}>
+                  <Card
+                    title="Informacije o pregledu"
+                    
+                    content={
+                      <div className="ct-chart">
+                
+                        <Table striped hover>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label>TipPregleda: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="ime"
+                                defaultValue={this.state.pregled.nazivTP}
+                                disabled="disabled"
+                                // placeholder={this.state.ime}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Datum i vreme: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="prezime"
+                                defaultValue={moment(this.state.pregled.datum).format("DD.MM.YYYY. ") + this.state.pregled.termin + ":00" }
+                                disabled="disabled"
+                                // placeholder={this.state.prezime}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Sala: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="lbo"
+                                defaultValue={this.state.pregled.salaBR + " " +  this.state.pregled.salaN}
+                                disabled="disabled"
+                                // placeholder={this.state.lbo}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          
+                        </tbody>
+                      </Table>
+
+                      </div>
+                    }
+                  
+                  />
+                </Col> 
+              </Row>
+              : null
+            }
+            { this.state.zkOpen === false && this.state.infPreOpen === false ?
+              <Row>
+                <Row className="linkoviPregled">
+                  <Col lg={3} sm={6}>
+                      {/* {this.renderRedirect()} */}
+                      <div 
+                      onClick={()=> this.setState({
+                        zkOpen : true 
+                      })}
+                      >
+                      <StatsCard
+                        bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                        // statsText="Lista pacijenata"
+                              // statsValue="105GB"
+                        // statsIcon={<i className="fa fa-refresh" />}
+                        statsIconText="Zdravstveni karton"
+                      />
+                      </div>                    
+                  </Col>
+                  
+                  <Col lg={3} sm={6}>
+                      {/* {this.renderRedirect()} */}
+                      <div 
+                      // onClick={this.handleListaPacijenata}
+                      >
+                          <StatsCard
+                              bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                              // statsText="Lista pacijenata"
+                              // statsValue="105GB"
+                              // statsIcon={<i className="fa fa-refresh" />}
+                              statsIconText="Informacije o pregledu"
+                          />
+                      </div>                    
+                  </Col>  
+                  <Col lg={3} sm={6}>
+                      {/* {this.renderRedirect()} */}
+                      <div 
+                      // onClick={this.handleListaPacijenata}
+                      >
+                          <StatsCard
+                              bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                              // statsText="Lista pacijenata"
+                              // statsValue="105GB"
+                              // statsIcon={<i className="fa fa-refresh" />}
+                              statsIconText="Zakazi pregled"
+                          />
+                      </div>                    
+                  </Col>
+                  <Col lg={3} sm={6}>
+                      {/* {this.renderRedirect()} */}
+                      <div 
+                      // onClick={this.handleListaPacijenata}
+                      >
+                          <StatsCard
+                              bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                              // statsText="Lista pacijenata"
+                              // statsValue="105GB"
+                              // statsIcon={<i className="fa fa-refresh" />}
+                              statsIconText="Zakazi operaciju"
+                          />
+                      </div>                    
+                  </Col>                    
+              </Row>
+                <Row>
                 <div className="formaPregleda">
 
                     <Card
@@ -660,7 +1129,11 @@ class Pregled extends React.Component {
                     />
                 </div>
             </Row>
-            
+              </Row>
+              : null 
+            }    
+            <Row></Row>
+           
         </Grid>
      
     );

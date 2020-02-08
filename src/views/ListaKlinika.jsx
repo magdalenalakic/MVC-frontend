@@ -147,51 +147,6 @@ class ListaKlinika extends Component {
     console.log("On change !!!");
   };
 
-  // handleSumbit = e => {
-  //   e.preventDefault();
-  //   console.log("KLIK SUBMITTT");
-  //   // let formErrors = { ...this.state.formErrors };
-  //   console.log("Izmjena : ---------------");
-  //   console.log(this.state.ime);
-  //   console.log(this.state.prezime);
-  //   axios
-  //     .put("http://localhost:8025/api/pacijenti/update", {
-  //       ime: this.state.ime,
-  //       prezime: this.state.prezime,
-  //       telefon: this.state.telefon,
-  //       email: this.state.email,
-  //       adresa: this.state.adresa,
-  //       grad: this.state.grad,
-  //       drzava: this.state.drzava,
-  //       lbo: this.state.lbo
-  //     })
-  //     .then(response => {
-  //       console.log(response.data);
-
-  //       this.setState({
-  //         ime: response.data.ime
-  //       });
-
-  //       this.setState({
-  //         prezime: response.data.prezime
-  //       });
-
-  //       this.setState({
-  //         telefon: response.data.telefon,
-  //         adresa: response.data.adresa,
-  //         grad: response.data.grad,
-  //         drzava: response.data.drzava,
-  //         lbo: response.data.lbo
-  //       });
-
-  //       // this.setState({
-  //       //   redirectToReferrer: true
-  //       // });
-  //     })
-  //     .catch(error => {
-  //       console.log("Izmena nije uspela! ");
-  //     });
-  // };
   promenjenOdabirKlinike = e => {
     this.setState(
       {

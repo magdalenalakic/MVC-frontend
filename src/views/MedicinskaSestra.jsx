@@ -80,34 +80,42 @@ class MedicinskaSestra extends Component {
     });
   };
   handleNotificationClick = position => {
-    var color = Math.floor(Math.random() * 4 + 1);
+    // var color = Math.floor(Math.random() * 4 + 1);
+    // var level;
+    var color = 1;
     var level;
-    switch (color) {
-      case 1:
-        level = "success";
-        break;
-      case 2:
-        level = "warning";
-        break;
-      case 3:
-        level = "error";
-        break;
-      case 4:
-        level = "info";
-        break;
-      default:
-        break;
+    var klasa = "pe-7s-gift";
+    if(position == "RECEPT JE OVEREN" ){
+      color = 1;
+      level = "success";
+      klasa = "pe-7s-check";
     }
+    // switch (color) {
+    //   case 1:
+    //     level = "success";
+    //     break;
+    //   case 2:
+    //     level = "warning";
+    //     break;
+    //   case 3:
+    //     level = "error";
+    //     break;
+    //   case 4:
+    //     level = "info";
+    //     break;
+    //   default:
+    //     break;
+    // }
     this.state._notificationSystem.addNotification({
-      title: <span data-notify="icon" className="pe-7s-gift" />,
+      title: <span data-notify="icon" className={klasa}
+      />,
       message: (
         <div>
-          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-          every web developer.
+          {position}
         </div>
       ),
       level: level,
-      position: position,
+      position: "tr",
       autoDismiss: 15
     });
   };

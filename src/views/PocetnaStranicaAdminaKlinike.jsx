@@ -28,6 +28,10 @@ import slikaSala from "assets/img/sala.jpg"
 import slikaST from "assets/img/lekari.jpg"
 import Login from "login.js";
 import axios from "axios";
+import Geocode from "react-geocode";
+
+import { YMaps, Map, Placemark, GeoObject } from 'react-yandex-maps';
+
 
 class PocetnaStranicaAdminaKlinike extends React.Component {
   constructor(props){
@@ -62,6 +66,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
   this.handleLisaPregleda = this.handleLisaPregleda.bind(this);
   console.log(this.state.token);
 }
+
+
 
   componentWillMount(){
     console.log("wmount")
@@ -106,6 +112,28 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
               opis: klinika.data.opis,
               ocena: klinika .data.ocena,
              
+            }, ()=>{
+              // Geocode.setLanguage("sr");
+ 
+              // // set response region. Its optional.
+              // // A Geocoding request with region=es (Spain) will return the Spanish city.
+              // Geocode.setRegion("RS");
+               
+              // // Enable or disable logs. Its optional.
+              // Geocode.enableDebug();
+              // console.log("********* LOKACIJA *****************");
+              // Geocode.fromAddress(this.state.adresa).then(
+              //   response => {
+              //     console.log(response)
+              //     // const { lat, lng } = response.results[0].geometry.location;
+              //     // console.log(lat, lng);
+              //   },
+              //   error => {
+              //     console.error("LOKACIJA GRESKAAAAAAAAAAAAA");
+              //   }
+              // );
+
+              
             });
        
           })
@@ -215,6 +243,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
 //     return res;
 //   }
 
+
   render() {
     // console.log("Ispisi  props u pocetna stranica lekara: "); 
     // console.log(this.props);
@@ -233,6 +262,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
     const adresa = this.state.adresa;
     const opis = this.state.opis;
     const ocena = this.state.ocena;
+    console.log(this.state.adresa);
+    console.log("////////////////////////////////////////////////////")
+
+ 
     // console.log(nazivKlinike);
     // console.log(telefon);
     // console.log("Render ps email: " + email);
@@ -430,47 +463,30 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             </Col> */}
           </Row>
           </Row>
-{/* 
-          <Row>
-            <Col md={6}>
-              <Card
-                id="chartActivity"
-                title="2014 Sales"
-                category="All products including Taxes"
-                stats="Data information certified"
-                statsIcon="fa fa-check"
-                content={
-                  <div className="ct-chart">
-                    <ChartistGraph
-                      data={dataBar}
-                      type="Bar"
-                      options={optionsBar}
-                      responsiveOptions={responsiveBar}
-                    />
-                  </div>
-                }
-                legend={
-                  <div className="legend">{this.createLegend(legendBar)}</div>
-                }
-              />
-            </Col>
 
-            <Col md={6}>
-              <Card
-                title="Tasks"
-                category="Backend development"
-                stats="Updated 3 minutes ago"
-                statsIcon="fa fa-history"
-                content={
-                  <div className="table-full-width">
-                    <table className="table">
-                      <Tasks />
-                    </table>
-                  </div>
-                }
-              />
-            </Col>
-          </Row> */}
+          <Row>
+       
+          <YMaps>
+              <div>
+     
+                  <Map state={{ center: [44.786568, 20.448921], zoom: 5 }}  query={{ lang: 'en_US' }}>
+                      <GeoObject
+                          geometry={{
+                              type: 'Point',
+                              coordinates: ["Beograd", "Beograd"],
+                          }}
+
+                          properties={{
+                              iconContent: 'Lokacija',
+                              hintContent: 'Lokacija',
+                          }}
+
+                      />
+                  </Map>
+
+              </div>
+          </YMaps>    
+          </Row>
         </Grid>
       </div>
     );

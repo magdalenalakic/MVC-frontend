@@ -1,20 +1,3 @@
-/*!
-
-=========================================================
-* Light Bootstrap Dashboard React - v1.3.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 // react components used to create a google map
 import {
@@ -23,26 +6,80 @@ import {
   GoogleMap,
   Marker
 } from "react-google-maps";
+import Geocode from "react-geocode";
 
-const CustomMap = withScriptjs(
+// function getData(){
+//   Geocode.setApiKey("AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk");
+//   // Get address from latidude & longitude.
+//   Geocode.fromLatLng("48.8583701", "2.2922926").then(
+//     response => {
+//       const address = response.results[0].formatted_address;
+//       console.log(address);
+//     },
+//     error => {
+//       console.error(error);
+//     }
+//   );
+
+//     // Get latidude & longitude from address.
+
+// }
+const WrappedMap = withScriptjs(
   withGoogleMap(props => (
     <GoogleMap
       defaultZoom={13}
-      defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
+      defaultCenter={{ lat: 45.267136, lng: 19.833549 }}
       defaultOptions={{
         scrollwheel: false,
         zoomControl: true
       }}
+
+      
     >
-      <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
+
+      <Marker
+        position={Geocode.fromAddress("Temerinska 5").then(
+          response => {
+            console.log(
+              "DSADSDSADSADADAD MAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            );
+            const { lat, lng } = response.results[0].geometry.location;
+            console.log(lat, lng);
+          },
+          error => {
+            console.error(error);
+          }
+        )}
+      />
+
+      {/* <Marker position={{ lat:lat , lng: lng}} /> //proslijedim koord od moje adrese */}
+
     </GoogleMap>
   ))
 );
 
+// //AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk api key
+
 function Maps({ ...prop }) {
+
+ 
+console.log({...prop});
+Geocode.fromAddress("Bulevar Oslobodjenja 67").then(
+  response => {
+    console.log("dasdsadasdasdsadas nananaa ananananna aana **-* -*- *- ")
+    console.log(response);
+    const { lat, lng } = response.results[0].geometry.location;
+    console.log(lat, lng);
+  },
+  error => {
+    console.error(error);
+  }
+);
+
   return (
-    <CustomMap
-      googleMapURL="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE"
+
+    <WrappedMap
+      googleMapURL="https://maps.googleapis.com/maps/api/js?keys=AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk"
       loadingElement={<div style={{ height: `100%` }} />}
       containerElement={<div style={{ height: `100vh` }} />}
       mapElement={<div style={{ height: `100%` }} />}
