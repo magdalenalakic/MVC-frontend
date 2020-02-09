@@ -236,7 +236,7 @@ class ListaSala extends Component {
                             axios.get(urlKlinike, config)
                                .then(termini => {
                             
-                                console.log(termini.data);
+                                // console.log(termini.data);
                                   this.setState({
                                       listaTermina: termini.data
                                   }, ()=>{
