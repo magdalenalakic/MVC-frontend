@@ -157,7 +157,7 @@ class IzmenaProfilaAdminaKC extends Component {
           this.config
         )
         .then(response => {
-          this.props.handleClick("LOZINKA JE PROMENJENA");
+
           this.props.handleClick("USPESNO PROMENJENA LOZINKA");
           this.setState(
             {

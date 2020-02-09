@@ -86,7 +86,7 @@ class KlinickiCentar extends Component {
    var color = 1;
    var level;
    var klasa = "pe-7s-gift";
-   this.props.handleClick("IZMENJENA KLINIKA");
+   
    if (
      position === "IZMENJENA KLINIKA" ||
      position === "IZMENJEN ADMINISTRATOR KLINIKE" ||
