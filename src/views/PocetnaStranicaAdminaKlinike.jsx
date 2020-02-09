@@ -70,9 +70,6 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
 
 
   componentWillMount(){
-    console.log("wmount")
-    console.log("Preuzimanje admina klinike.....")
-    // console.log("TOKEN: "  + this.state.token)
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -80,6 +77,12 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
         "Content-Type": "application/json"
       }
     };
+   
+    
+    console.log("wmount")
+    console.log("Preuzimanje admina klinike.....")
+    // console.log("TOKEN: "  + this.state.token)
+   
     const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
 
     axios.get(url, config)
@@ -95,6 +98,9 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           idKlinike: Response.data.idKlinike,
           
         });
+        axios.get('http://localhost:8025/api/pregledi/automatska', config)
+        .then(res => 
+          {console.log(res.data)});
         console.log(this.state);
         console.log("Id klinike: " + this.state.idKlinike);
         console.log("******Id klinike: " + this.state.idKlinike);
@@ -468,9 +474,10 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
        
           <YMaps>
               <div>
-     
+
                   <Map state={{ center: [44.786568, 20.448921], zoom: 5 }}  query={{ lang: 'en_US' }}>
                       <GeoObject
+
                           geometry={{
                               type: 'Point',
                               coordinates: ["Beograd", "Beograd"],

@@ -45,7 +45,6 @@ class Login extends Component {
       korisnik: []
     };
     this.prvoLogovanje = this.prvoLogovanje.bind(this);
-
   }
   handleSumbit = e => {
     e.preventDefault();
@@ -61,21 +60,24 @@ class Login extends Component {
       .then(response => {
         console.log(response.data);
         console.log(response.data.accessToken);
-        this.setState({
-          token: response.data.accessToken
-        }, ()=> {
-
-        });
+        this.setState(
+          {
+            token: response.data.accessToken
+          },
+          () => {}
+        );
         console.log("TOKEN : " + this.state.token);
 
-        this.setState({
-          uloga: response.data.uloga
-        }, ()=> this.prvoLogovanje());
+        this.setState(
+          {
+            uloga: response.data.uloga
+          },
+          () => this.prvoLogovanje()
+        );
 
         this.setState({
           email: response.data.email
         });
-        
 
         // console.log(this.state.uloga);
         this.setState({
@@ -129,116 +131,114 @@ class Login extends Component {
     //   .then(res => res.json())
     //   .then(res => console.log(res));
   }
-  prvoLogovanje(){
+  prvoLogovanje() {
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
         Accept: "application/json",
         "Content-Type": "application/json"
       }
-    }
+    };
     var uloga = this.state.uloga;
 
-    if(uloga === "ADMIN_KC"){
+    if (uloga === "ADMIN_KC") {
       //preuzimi admina klinickog centra
       const url =
-      "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC";
-        axios
-          .get(url, config)
-          .then(Response => {
-            console.log("Preuzet admin klinickog centra: ");
-            console.log(Response.data);
-            this.setState({
-              korisnik: Response.data
-            })
-            if(Response.data.status == 0){
-              this.setState({
-                redirectToPrvoLogovanje: true
-              })
-            }else{
-              this.setState({
-                prvoLogovanje: true
-              })
-            }
-
-            
-          })
-          .catch(error => {
-            console.log("Admin KC nije preuzet");
+        "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC";
+      axios
+        .get(url, config)
+        .then(Response => {
+          console.log("Preuzet admin klinickog centra: ");
+          console.log(Response.data);
+          this.setState({
+            korisnik: Response.data
           });
-    }else if(uloga === "ADMIN_KLINIKE"){
+          if (Response.data.status == 0) {
+            this.setState({
+              redirectToPrvoLogovanje: true
+            });
+          } else {
+            this.setState({
+              prvoLogovanje: true
+            });
+          }
+        })
+        .catch(error => {
+          console.log("Admin KC nije preuzet");
+        });
+    } else if (uloga === "ADMIN_KLINIKE") {
       //preuzmi admina klinike
-      const url = 'http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail';
-      axios.get(url, config)
+      const url =
+        "http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail";
+      axios
+        .get(url, config)
         .then(Response => {
           console.log("Preuzet admin klinike: ");
           console.log(Response.data);
           this.setState({
             korisnik: Response.data
-          })
-          if(Response.data.status == 0){
+          });
+          if (Response.data.status == 0) {
             this.setState({
               redirectToPrvoLogovanje: true
-            })
-          }else{
+            });
+          } else {
             this.setState({
               prvoLogovanje: true
-            })
+            });
           }
-         
-  
         })
         .catch(error => {
-          console.log("Admin klinike nije preuzet")
-        })
-    }else if(uloga === "LEKAR"){
-      console.log("lekar")
-      const url = 'http://localhost:8025/api/lekari/getLekarByEmail';
-      axios.get(url, config)
+          console.log("Admin klinike nije preuzet");
+        });
+    } else if (uloga === "LEKAR") {
+      console.log("lekar");
+      const url = "http://localhost:8025/api/lekari/getLekarByEmail";
+      axios
+        .get(url, config)
         .then(Response => {
           console.log("Preuzet lekar: ");
           console.log(Response.data);
           this.setState({
             korisnik: Response.data
-          })
-          if(Response.data.status == 0){
+          });
+          if (Response.data.status == 0) {
             this.setState({
               redirectToPrvoLogovanje: true
-            })
-          }else{
+            });
+          } else {
             this.setState({
               prvoLogovanje: true
-            })
+            });
           }
-      })
-      .catch(error => {
-        console.log("Lekar  nije preuzet")
-      })
-    }else if(uloga === "MED_SESTRA"){
-      console.log("med sestra")
-      const url =
-      "http://localhost:8025/api/medicinskaSestra/medicinskaSestra" ;
-    axios
-      .get(url, config)
-      .then(Response => {
-        console.log("Preuzeta med sestra: ");
-        console.log(Response.data);
-        this.setState({
-          korisnik: Response.data
         })
-        if(Response.data.status == 0){
+        .catch(error => {
+          console.log("Lekar  nije preuzet");
+        });
+    } else if (uloga === "MED_SESTRA") {
+      console.log("med sestra");
+      const url = "http://localhost:8025/api/medicinskaSestra/medicinskaSestra";
+      axios
+        .get(url, config)
+        .then(Response => {
+          console.log("Preuzeta med sestra: ");
+          console.log(Response.data);
           this.setState({
-            redirectToPrvoLogovanje: true
-          })
-        }else{
-          this.setState({
-            prvoLogovanje: true
-          })
-        }
-      })
-      .catch(error => {
-        console.log("Med sestra nije preuzeta");
-      });
+            korisnik: Response.data
+          });
+          if (Response.data.status == 0) {
+            this.setState({
+              redirectToPrvoLogovanje: true
+            });
+          } else {
+            this.setState({
+              prvoLogovanje: true
+            });
+          }
+        })
+        .catch(error => {
+          console.log("Med sestra nije preuzeta");
+        });
     }
   }
 
@@ -263,6 +263,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -283,6 +284,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -298,7 +300,13 @@ class Login extends Component {
             <Route
               path="/lekar"
               render={props => (
-                <Lekar {...props} email={email} uloga={uloga} token={token} />
+                <Lekar
+                  {...props}
+                  email={email}
+                  uloga={uloga}
+                  token={token}
+                  lozinka={this.state.lozinka}
+                />
               )}
             />
             <Redirect from="/" to="/lekar/pocetnaStranica" />
@@ -318,6 +326,7 @@ class Login extends Component {
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                 />
               )}
             />
@@ -367,12 +376,16 @@ class Login extends Component {
           <Switch>
             <Route
               path="/prvoLogovanje"
-              render={props => <PrvoLogovanje {...props} 
+              render={props => (
+                <PrvoLogovanje
+                  {...props}
                   email={email}
                   uloga={uloga}
                   token={token}
+                  lozinka={this.state.lozinka}
                   korisnik={this.state.korisnik}
-                  />}
+                />
+              )}
             />
             <Redirect from="/" to="/prvoLogovanje" />
           </Switch>
@@ -395,6 +408,7 @@ class Login extends Component {
               <div className="email">
                 <label htmlFor="email">E-mail: </label>
                 <input
+                  id="txtEmail"
                   type="text"
                   name="email"
                   placeholder="E-mail"
@@ -405,6 +419,7 @@ class Login extends Component {
               <div className="lozinka">
                 <label htmlFor="lozinka">Lozinka: </label>
                 <input
+                  id="txtLoz"
                   type="password"
                   name="lozinka"
                   placeholder="Lozinka"
@@ -416,7 +431,9 @@ class Login extends Component {
                 {formErrors.log.length > 0 && (
                   <span className="errorMessage">{formErrors.log}</span>
                 )}
-                <button type="submit">Uloguj se</button>
+                <button id="btnSignIn" type="submit">
+                  Uloguj se
+                </button>
 
                 <small onClick={this.handleClick}>Napravi nalog</small>
               </div>

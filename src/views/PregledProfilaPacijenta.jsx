@@ -172,6 +172,7 @@ class PregledProfilaPacijenta extends Component {
     // this.setState({
     //   emailPacijenta: e.currentTarget.id
     // })
+    this.props.handleClick("PREGLED JE ZAPOCET")
     this.setState({
       idPregleda : e.currentTarget.id
     }, ()=> {
@@ -245,10 +246,11 @@ class PregledProfilaPacijenta extends Component {
     .then(Response => {
       console.log("IZMENJEN ZDRAVSTVENI KARTON");
       console.log(Response.data);
+      this.props.handleClick("ZDRAVSTVENI KARTON JE IZMENJEN")
       this.setState({
         zkOpen: false
       }, ()=> {
-        this.props.handleClick("ZDRAVSTVENI KARTON JE IZMENJEN")
+        
         this.ucitavanjeZKPacijenta()
       })
 

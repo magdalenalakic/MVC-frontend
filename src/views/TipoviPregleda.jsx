@@ -48,7 +48,9 @@ class TipoviPregleda extends Component {
       cena: 0,
       popust: 0,
       naziTP: "",
-      idTP: ""
+      idTP: "",
+      idKlinike: "",
+      listaTPIzmjenaBr : []
     
     };
      this.listaTP = this.listaTP.bind(this);
@@ -72,7 +74,7 @@ class TipoviPregleda extends Component {
     this.setState({ [e.target.name]: e.target.value });
     // console.log(this.state);
     console.log("On change !!!");
-    console.log({ [e.target.name]: e.target.value })
+    
   };
 
   proslediKliniku(klinika) {
@@ -123,42 +125,23 @@ obrisiTP = e => {
       "Content-Type": "application/json"
     }
   };
-  const url111 = "http://localhost:8025/api/tipPregleda/finByIdTP/" + e.target.id;
-  console.log(url111)
-  axios.get(url111, config)
-        .then(response => {
-        console.log("uzmi iime tp uspelo! ");
-        console.log(response.data);
-        this.setState({
-            naziTP: response.data.naziv,
-            idTP: response.data.id
-        });
-        // console.log(this.state.naziTP);
-    
-        console.log("--------------------------------");
-        console.log(this.state.idTP + " " + this.state.naziTP);
-        const url6 = "http://localhost:8025/api/tipPregleda/brisanjeTP";
-        console.log(url6 + " " + this.state.naziTP);
+         var a = e.target.id;
+        const url6 = "http://localhost:8025/api/tipPregleda/brisanjeTP/" + a + "/" + this.state.idKlinike;
+        
+        console.log(url6);
             axios
-                .post(url6, {
-                naziv : this.state.naziTP,
-                // id: this.state.idTP
-                
-                }, config)
+                .get(url6, config)
                 .then(response => {
                 console.log("Brisanje tp uspelo! ");
                 console.log(response.data);
-                this.listaTPPonovo();
+                  this.listaTPPonovo();
+               
     
                 })
                 .catch(error => {
                 console.log("Brisanje tp nije uspelo! ");
                 });
-        })
-    .catch(error => {
-      console.log("nije preuzeto ime tp nije uspelo! ");
-    });
-
+  
 
 }
 
@@ -172,20 +155,58 @@ componentWillMount(){
         "Content-Type": "application/json"
       }
     };
-    const url = 'http://localhost:8025/api/tipPregleda/all';
-    axios.get(url, config)
-      .then(Response => {
-            console.log("Preuzeti tipovi pregleda");
-            console.log(Response.data);
 
-            this.setState({
-                listaTP: Response.data
-            });
-        }) 
-        .catch(error => {
-                console.log("Nisu preuzeti tipovi pregleda")
-        })
+    const url = "http://localhost:8025/api/adminKlinike/getAdminKlinikeByEmail";
+    axios
+      .get(url, config)
+      .then(Response => {
+       
+
+        this.setState({
+          email: Response.data.email,
+          //   ime: Response.data.ime,
+          //   prezime: Response.data.prezime,
+          //   telefon: Response.data.telefon,
+          idKlinike: Response.data.idKlinike
+        }, ()=>{
+
+          var idk = this.state.idKlinike;
+          console.log("ID K: " + idk);
+          const url = 'http://localhost:8025/api/tipPregleda/allKlinike/' + idk;
+          console.log(url);
+          axios.get(url ,config)
+            .then(Response => {
+                  console.log("Preuzeti tipovi pregleda");
+                  console.log(Response.data);
       
+                  this.setState({
+                      listaTP: Response.data
+                  });
+              }) 
+              .catch(error => {
+                      console.log("Nisu preuzeti tipovi pregleda")
+              })
+
+
+              const url22 = 'http://localhost:8025/api/tipPregleda/allTerminiIB/'  + idk;
+              console.log(url);
+              axios.get(url22 ,config)
+                .then(Response => {
+                      console.log("Preuzeti tipovi pregledaza brisanje i izmjenu u");
+                      console.log(Response.data);
+          
+                      this.setState({
+                          listaTPIzmjenaBr: Response.data
+                      });
+                  }) 
+                  .catch(error => {
+                          console.log("Nisu preuzeti tipovi pregleda za brisanje i izmjenu ")
+                  })
+
+        });
+      }) 
+  
+     
 
   }
  
@@ -209,6 +230,19 @@ componentWillMount(){
             <input className="lekarTelefonLabel"
               type="text"
               name="naziTP"
+              defaultValue=""
+              onChange={this.handleChange}
+              
+            />
+          </div>
+          <div className="telefonLekara">
+            <label className="lekarTelefonLabel" htmlFor="telefonLekara">
+              Cena(RSD):{" "}
+            </label>
+            <input
+              className="lekarTelefonLabel"
+              type="number"
+              name="cena"
               defaultValue=""
               onChange={this.handleChange}
             />
@@ -237,7 +271,8 @@ componentWillMount(){
           };
           axios
           .post("http://localhost:8025/api/tipPregleda/dodajNoviTP", {
-                naziv: this.state.naziTP
+                naziv: this.state.naziTP,
+                cena: this.state.cena, 
           }, config)
           .then(response => {
             console.log("Dodat novi tp");
@@ -343,14 +378,16 @@ handleIzmeni = e => {
   listaTP() {
     let res = [];
     let lista = this.state.listaTP;
+    let lis = this.state.listaTPIzmjenaBr;
     console.log("Ispisi tp: ");
     
     for (var i = 0; i < lista.length; i++) {
-       
+      if(lis.some(item => lista[i].id === item.id)){
       res.push(
 
         <tr key={i}>
             <td>{lista[i].naziv}</td>
+              <td>{lista[i].cena}</td>
             <td >
                 <Button  id={lista[i].id} onClick={e => this.obrisiTP(e)}>Obrisi</Button>
                 <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
@@ -363,6 +400,22 @@ handleIzmeni = e => {
  
         </tr>
       );
+      }else{
+        res.push(
+
+          <tr key={i}>
+              <td>{lista[i].naziv}</td>
+                <td>{lista[i].cena}</td>
+              <td >
+                
+              </td>
+              <td>
+               
+              </td>
+   
+          </tr>
+        );
+      }
     }
     return res;
   }
@@ -400,8 +453,7 @@ handleIzmeni = e => {
     return (
       <div className="content">
         <Grid fluid>
-          <Row>
-            <Col>
+         
               <Row>
                 <Card
                   title="Lista tipova  pregleda"
@@ -418,6 +470,7 @@ handleIzmeni = e => {
                       <thead>
                         <tr>
                           <th id="nazivTP">Naziv tipa pregleda</th>
+                          <th id="cena"> Cena</th>
 
                         </tr>
                       </thead>
@@ -427,8 +480,7 @@ handleIzmeni = e => {
                   }
                 />
               </Row>
-            </Col>
-          </Row>
+          
         </Grid>
       </div>
     );

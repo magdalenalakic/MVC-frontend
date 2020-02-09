@@ -43,6 +43,7 @@ class MedicinskaSestra extends Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      lozinka: props.lozinka,
 
       _notificationSystem: null,
       // image: image,
@@ -51,9 +52,7 @@ class MedicinskaSestra extends Component {
       hasImage: true,
       fixedClasses: "dropdown show-dropdown open"
     };
-    console.log("MEDICINSKA SESTRA");
-    console.log(this.state.uloga);
-    console.log(this.state.email);
+    
   }
 
   getRoutes = routes => {
@@ -69,6 +68,9 @@ class MedicinskaSestra extends Component {
                 uloga={this.state.uloga}
                 email={this.state.email}
                 token={this.state.token}
+                lozinka={this.state.lozinka}
+                promeniLozinku={this.promeniLozinku}
+
               />
             )}
             key={key}
@@ -85,7 +87,10 @@ class MedicinskaSestra extends Component {
     var color = 1;
     var level;
     var klasa = "pe-7s-gift";
-    if(position == "RECEPT JE OVEREN" ){
+    if(position == "RECEPT JE OVEREN" ||
+      position == "ZAHTEV JE POSLAT" ||
+      position ==  "USPESNO PROMENJENA LOZINKA" ||
+      position == "USPESNO PROMENJENI PODACI"){
       color = 1;
       level = "success";
       klasa = "pe-7s-check";
@@ -204,6 +209,11 @@ class MedicinskaSestra extends Component {
       this.refs.mainPanel.scrollTop = 0;
     }
   }
+  promeniLozinku = lozinka => {
+    this.setState({
+      lozinka: lozinka
+    });
+  };
   render() {
     // const {listaKlinika} = this.state.listaKlinika
     return (

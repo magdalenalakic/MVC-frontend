@@ -1,38 +1,17 @@
 import React, { Component } from "react";
-import { useState } from "react";
-import {
-  Grid,
-  Row,
-  Col,
-  FormGroup,
-  ControlLabel,
-  FormControl
-} from "react-bootstrap";
+import { Grid, Row, Col } from "react-bootstrap";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import "klinickiCentar.css";
 import { Table } from "react-bootstrap";
-import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
-import { FormInputs } from "components/FormInputs/FormInputs.jsx";
-import { UserCard } from "components/UserCard/UserCard.jsx";
-// import Button from "components/CustomButton/CustomButton.jsx";
 import { ButtonToolbar } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import { InputGroupButton } from "react-bootstrap";
 import "izmenaProfila.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-//dodam link za sliku  mozda od doktora!!
-// import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
-import { log } from "util";
-import Login from "login";
-import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
-import { string } from "prop-types";
-import PocetnaStranicaPacijenta from "./PocetnaStranicaPacijenta";
-import { setHours, setMinutes, subHours, subMinutes } from "date-fns";
 import moment from "moment";
 
 class ListaKlinika extends Component {
@@ -43,6 +22,7 @@ class ListaKlinika extends Component {
       uloga: props.uloga,
       token: props.token,
       listaKlinika: [],
+      listaFiltriranihKlinika: [],
       pretraziPoljeKlinika: "",
       pretraziPoljeLekara: "",
       datumZaPregled: new Date(),
@@ -303,7 +283,9 @@ class ListaKlinika extends Component {
     const lekarid = e.currentTarget.value;
     const url =
       "http://localhost:8025/api/lekari/listaZauzetostiLekara/" +
-      e.currentTarget.value +"/"+this.state.datumZaPregled;
+      e.currentTarget.value +
+      "/" +
+      this.state.datumZaPregled;
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -322,10 +304,10 @@ class ListaKlinika extends Component {
             terminiIzabranogLekara: Response.data.sort((a, b) => {
               let startA = new Date(a.datumPocetka);
               startA.setHours(a.termin);
-  
+
               let startB = new Date(b.datumPocetka);
               startB.setHours(b.termin);
-  
+
               return new Date(startA).getTime() - new Date(startB).getTime();
             })
           },
@@ -341,7 +323,6 @@ class ListaKlinika extends Component {
               // console.log(moment(termin.datumZaPregled).format("HH:mm"));
               console.log("******");
 
-              
               console.log(datPoc + " " + termin.termin);
               console.log("******");
               if (dat.valueOf() === datPoc.valueOf()) {
@@ -378,7 +359,7 @@ class ListaKlinika extends Component {
     var res = [];
     if (this.state.prikazTerminaClick == true) {
       res.push(
-        <select onChange={e => this.biranjeTermina(e)}>
+        <select id="izaberiTermin" onChange={e => this.biranjeTermina(e)}>
           <option value="odaberiTermin">Izaberite termin</option>
           {this.state.terminiZaIzabraniDatum[0] == false && (
             <option value="9">09:00 - 11:00</option>
@@ -423,10 +404,13 @@ class ListaKlinika extends Component {
       let lista = this.state.listaLekara;
 
       for (var i = 0; i < lista.length; i++) {
+        const id2 = "odabranLekar" + i;
+        const vt2 = "vidiTermine" + i;
         res.push(
           <tr key={i}>
             <td>
               <input
+                id={id2}
                 name="odabranLekar"
                 type="radio"
                 value={lista[i].id}
@@ -444,6 +428,7 @@ class ListaKlinika extends Component {
             <td>
               <OverlayTrigger placement="top" overlay={vidiTermine}>
                 <Button
+                  id={vt2}
                   bsStyle="info"
                   // style={{ outline: "#42f5a4" }}
                   simple
@@ -484,10 +469,14 @@ class ListaKlinika extends Component {
           console.log(oc);
           console.log(ocena);
           if (oc <= ocena) {
+            const id2 = "odabranLekar" + i;
+            const vt2 = "vidiTermine" + i;
+
             res.push(
               <tr key={i}>
                 <td>
                   <input
+                    id={id2}
                     name="odabranLekar"
                     type="radio"
                     value={lista[i].id}
@@ -505,6 +494,7 @@ class ListaKlinika extends Component {
                 <td>
                   <OverlayTrigger placement="top" overlay={vidiTermine}>
                     <Button
+                      id={vt2}
                       bsStyle="info"
                       simple
                       type="button"
@@ -646,8 +636,9 @@ class ListaKlinika extends Component {
       {
         datumZaPregled: date
       },
-      () => {console.log(this.state)
-      
+      () => {
+        console.log(this.state);
+
         var config = {
           headers: {
             Authorization: "Bearer " + this.state.token,
@@ -668,7 +659,7 @@ class ListaKlinika extends Component {
               listaKlinika: Response.data
             });
           })
-    
+
           .catch(error => {
             console.log("klinike nisu preuzete");
           });
@@ -737,7 +728,6 @@ class ListaKlinika extends Component {
   };
   slobodniTermini() {
     //get zahtev za preuzimanje termina iz baze za zadati datum
-    
   }
 
   odabranaKlinika = e => {
@@ -821,7 +811,7 @@ class ListaKlinika extends Component {
     }
   };
   redirectReferer() {
-    console.log("REDIRECT REFF")
+    console.log("REDIRECT REFF");
     var flag = 1;
     console.log(this.state.izabranaKlinika);
 
@@ -887,20 +877,53 @@ class ListaKlinika extends Component {
   biranjeTipaPregleda(tip) {
     console.log("prosledjen pregled");
     console.log(tip.target.value);
-    this.setState({
-      oznaceniTipPregleda: tip.target.value
-    });
-    let lista = this.state.tipoviPregleda;
-
-    for (var i = 0; i < lista.length; i++) {
-      var naziv = lista[i].naziv;
-      var id = lista[i].id;
-      if (id == tip.target.value) {
-        this.setState({
-          nazivOznacenogPregleda: naziv
-        });
+    const idTP = tip.target.value;
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
       }
-    }
+    };
+    axios
+      .get("http://localhost:8025/api/tipPregleda/klinikeTP/" + idTP, config)
+      .then(Response => {
+        console.log("--------------------");
+        console.log(Response.data);
+        var filtrirane = Response.data;
+        var listaFK = [];
+        var lista = this.state.listaKlinika;
+        for (var i = 0; i < this.state.listaKlinika; i++) {
+          if (filtrirane.some(item => lista[i].id === item.id)) {
+            listaFK.concat(lista[i]);
+            console.log(lista[i].id);
+            console.log("*********");
+          }
+        }
+        console.log("--------------------");
+        this.setState(
+          {
+            listaKlinika: listaFK,
+            oznaceniTipPregleda: tip.target.value
+          },
+          () => {
+            console.log("--------------------");
+            for (var i = 0; i < lista.length; i++) {
+              var naziv = lista[i].naziv;
+              var id = lista[i].id;
+              if (id == tip.target.value) {
+                this.setState({
+                  nazivOznacenogPregleda: naziv
+                });
+              }
+            }
+          }
+        );
+      })
+
+      .catch(error => {
+        console.log("klinike nisu preuzete");
+      });
   }
 
   izaberiVrstuPregleda() {
@@ -1002,6 +1025,7 @@ class ListaKlinika extends Component {
       res.push(
         <h5>
           <input
+            id="pretraziPoljeKlinika"
             placeholder="Pretrazi"
             type="text"
             aria-label="Search"
@@ -1016,6 +1040,7 @@ class ListaKlinika extends Component {
         <h5>
           {" "}
           <select
+            id="selectTipPregleda"
             name="tipPregleda"
             onChange={e => this.biranjeTipaPregleda(e)}
           >
@@ -1027,6 +1052,7 @@ class ListaKlinika extends Component {
       res.push(
         <h5>
           <DatePicker
+            id="odabirDatuma"
             placeholderText="Izaberi datum"
             selected={this.state.datumZaPregled}
             onChange={date => this.handleChangeDate(date)}
@@ -1051,7 +1077,11 @@ class ListaKlinika extends Component {
       res.push(
         <div>
           <ButtonToolbar>
-            <Button value="9" onClick={e => this.podesiOcenuKlinike(e)}>
+            <Button
+              id="klinikaOcena9"
+              value="9"
+              onClick={e => this.podesiOcenuKlinike(e)}
+            >
               9+
             </Button>
             <Button value="8" onClick={e => this.podesiOcenuKlinike(e)}>
@@ -1250,6 +1280,7 @@ class ListaKlinika extends Component {
         </div>
       );
     } else {
+      //ako klinika nije odabrana
       if (this.state.flag == 0) {
         // const [startDate, setStartDate] = useState(
         //   setHours(setMinutes(new Date(), 30), 16)
@@ -1264,6 +1295,7 @@ class ListaKlinika extends Component {
                       <div>
                         <ButtonToolbar>
                           <Button
+                            id="btnPretragaKlinika"
                             fill
                             bsStyle="info"
                             value="1"
@@ -1272,6 +1304,7 @@ class ListaKlinika extends Component {
                             Pretrazi
                           </Button>
                           <Button
+                            id="btnTipPregleda"
                             fill
                             bsStyle="danger"
                             value="2"
@@ -1280,6 +1313,7 @@ class ListaKlinika extends Component {
                             Izaberi tip pregleda
                           </Button>
                           <Button
+                            id="btnDatum"
                             fill
                             bsStyle="success"
                             value="3"
@@ -1288,6 +1322,7 @@ class ListaKlinika extends Component {
                             Izaberi datum
                           </Button>
                           <Button
+                            id="btnOcena"
                             fill
                             bsStyle="warning"
                             value="4"
@@ -1296,6 +1331,7 @@ class ListaKlinika extends Component {
                             Filtriraj po oceni
                           </Button>
                           <Button
+                            id="btnPonistiFilter"
                             fill
                             value="4"
                             onClick={e => this.ponistiFiltere()}
@@ -1559,6 +1595,7 @@ class ListaKlinika extends Component {
                   />
                   <ButtonToolbar>
                     <Button
+                      id="zakaziPregled"
                       fill
                       bsStyle="success"
                       onClick={e => {
@@ -1606,7 +1643,9 @@ class ListaKlinika extends Component {
             </Grid>
           </div>
         );
-      } else if (this.state.flag == 1) {
+      }
+      //ako lekar nije odabran
+      else if (this.state.flag == 1) {
         return (
           <div className="content">
             <Grid fluid>
@@ -1742,6 +1781,7 @@ class ListaKlinika extends Component {
                       PRETHODNO
                     </Button>
                     <Button
+                      id="btnOdabranLekar"
                       onClick={e => this.odabranLekar(e)}
                       fill
                       bsStyle="success"
@@ -1794,7 +1834,9 @@ class ListaKlinika extends Component {
             </Grid>
           </div>
         );
-      } else if (this.state.flag == 2) {
+      }
+      //odabrani su klinika i lekar
+      else if (this.state.flag == 2) {
         return (
           <div className="content">
             <Grid fluid>
@@ -1834,6 +1876,7 @@ class ListaKlinika extends Component {
                     <Button onClick={this.odustani}>Odustani</Button>
 
                     <Button
+                      id="potvrdiPregled"
                       type="submit"
                       fill
                       bsStyle="success"

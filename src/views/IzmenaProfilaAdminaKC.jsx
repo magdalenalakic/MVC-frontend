@@ -1,44 +1,32 @@
 import React, { Component } from "react";
-import {
-  Grid,
-  Row,
-  Col,
-  FormGroup,
-  ControlLabel,
-  FormControl
-} from "react-bootstrap";
-
+import { Grid, Row, Col } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
-import { FormInputs } from "components/FormInputs/FormInputs.jsx";
-import { UserCard } from "components/UserCard/UserCard.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import "izmenaProfila.css";
-
-//dodam link za sliku  mozda od doktora!!
-// import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
-import { log } from "util";
-import Login from "login";
-import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
-// import Dialog from 'react-bootstrap-dialog';
 
 class IzmenaProfilaAdminaKC extends Component {
   constructor(props) {
     super(props);
-    console.log("IZMENA PROFILA Admina KC");
     this.state = {
       email: props.email,
       uloga: props.uloga,
       token: props.token,
+      lozinka: this.props.lozinka,
       ime: "",
       prezime: "",
-      lozinka: "",
+
       imeN: "",
       prezimeN: "",
-      lozinkaN: "" ,
+      lozinkaN: "",
       menjanjeLozinke: "password",
       is_checked: false,
+      staraLoz: props.lozinka,
+      novaLoz: "",
+      potvrdaLoz: "",
+      promenaLozinke: false,
+      formError: ""
     };
     this.config = {
       headers: {
@@ -51,15 +39,11 @@ class IzmenaProfilaAdminaKC extends Component {
   }
 
   componentWillMount() {
-    
     const url =
       "http://localhost:8025/api/administratoriKC/pronadjenAdministratorKC";
     axios
       .get(url, this.config)
       .then(Response => {
-        console.log("Preuzet admin: ");
-        console.log(Response.data);
-
         this.setState({
           email: Response.data.email
         });
@@ -69,38 +53,32 @@ class IzmenaProfilaAdminaKC extends Component {
         this.setState({
           prezime: Response.data.prezime
         });
-        this.setState({
-          lozinka: Response.data.lozinka
-        });
+        // this.setState({
+        //   lozinka: Response.data.lozinka
+        // });
       })
-      .catch(error => {
-        console.log("Admin KC nije preuzet");
-      });
+      .catch(error => {});
   }
   handleChange = e => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
-    console.log(this.state);
-    console.log("On change !!!");
   };
 
   handleSumbit = e => {
     e.preventDefault();
-    console.log("KLIK SUBMITTT");
     // let formErrors = { ...this.state.formErrors };
-    console.log("Izmena : ---------------");
-    console.log(this.state.imeN);
-    console.log(this.state.prezimeN);
     axios
-      .put("http://localhost:8025/api/administratoriKC/izmena", {
-        ime: this.state.imeN,
-        prezime: this.state.prezimeN,
-        email: this.state.email,
-        adresa: this.state.lozinkaN
-      }, this.config)
+      .put(
+        "http://localhost:8025/api/administratoriKC/izmena",
+        {
+          ime: this.state.imeN,
+          prezime: this.state.prezimeN,
+          email: this.state.email,
+          adresa: this.state.lozinkaN
+        },
+        this.config
+      )
       .then(response => {
-        console.log(response.data);
-
         this.setState({
           ime: response.data.ime
         });
@@ -109,25 +87,92 @@ class IzmenaProfilaAdminaKC extends Component {
           prezime: response.data.prezime
         });
 
-        this.setState({
-          lozinka: response.data.lozinka
-        });
-        
-
+        // this.setState({
+        //   lozinka: response.data.lozinka
+        // });
       })
-      .catch(error => {
-        console.log("Izmena nije uspela! ");
-      });
+      .catch(error => {});
   };
   handleCheckBox() {
-    if(this.state.is_checked == true){
+    if (this.state.is_checked == true) {
       this.setState({ is_checked: false });
-      this.setState({ menjanjeLozinke : "password"});
-    }else{
+      this.setState({ menjanjeLozinke: "password" });
+    } else {
       this.setState({ is_checked: true });
-      this.setState({ menjanjeLozinke : "text"});
+      this.setState({ menjanjeLozinke: "text" });
     }
-    
+  }
+
+  prikazPromenaLozinke() {
+    var res = [];
+    if (this.state.promenaLozinke) {
+      res.push(
+        <table>
+          <tr>
+            <td>Nova lozinka:</td>
+            <td>
+              <input
+                type="password"
+                name="novaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+          <tr>
+            <td>Potvrdite novu lozinku:</td>
+            <td>
+              <input
+                type="password"
+                name="potvrdaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+        </table>
+      );
+    }
+    return res;
+  }
+  promenaLozinkeClick() {
+    this.setState({
+      promenaLozinke: true
+    });
+  }
+  PotvrdiPromenuLozinkeClick() {
+    if (this.state.novaLoz === this.state.potvrdaLoz) {
+      axios
+        .put(
+          "http://localhost:8025/api/administratoriKC/promeniLozinku",
+          {
+            newPassword: this.state.novaLoz,
+            oldPassword: this.props.lozinka
+          },
+          this.config
+        )
+        .then(response => {
+          this.props.handleClick("LOZINKA JE PROMENJENA");
+          this.setState(
+            {
+              lozinka: this.state.novaLoz
+              // lozinka: response.data.lozinka
+            },
+            () => {
+              this.props.promeniLozinku(this.state.novaLoz);
+            }
+          );
+        })
+        .catch(error => {});
+    } else {
+      this.setState({
+        formError: "Lozinke se ne poklapaju"
+      });
+    }
   }
 
   render() {
@@ -139,7 +184,6 @@ class IzmenaProfilaAdminaKC extends Component {
     const imeN = this.state.imeN;
     const prezimeN = this.state.prezimeN;
     const lozinkaN = this.state.lozinkaN;
- 
 
     return (
       <div className="content">
@@ -159,7 +203,7 @@ class IzmenaProfilaAdminaKC extends Component {
                         type="text"
                         name="ime"
                         defaultValue={email}
-                        disabled= "disabled"
+                        disabled="disabled"
                         // placeholder={this.state.ime}
                         // noValidate
                         // onChange={this.handleChange}
@@ -171,7 +215,6 @@ class IzmenaProfilaAdminaKC extends Component {
                         type="text"
                         name="imeN"
                         defaultValue={ime}
-
                         // placeholder={this.state.ime}
                         // noValidate
                         onChange={this.handleChange}
@@ -189,7 +232,7 @@ class IzmenaProfilaAdminaKC extends Component {
                       />
                     </div>
 
-                   
+                    {/*                    
                     <div className="lozinka">
                       <label htmlFor="lozinka">Lozinka: </label>
                       <input
@@ -210,13 +253,12 @@ class IzmenaProfilaAdminaKC extends Component {
                         />
                         <label htmlFor="check">prikazi lozinku</label>
                       </div> 
-                    </div>
+                    </div> */}
 
                     <div className="izmeniPodatkeAdminKC">
                       <Button type="submit">Izmeni podatke</Button>
                     </div>
                   </form>
-                  
                 }
               />
             </Col>
@@ -254,15 +296,30 @@ class IzmenaProfilaAdminaKC extends Component {
                         <label className="prezimeAdminaKC">{prezime}</label>
                       </h2>
                     </div>
-                    {/* <div className="typo-line">
-                      <h2>
-                        <p className="category">Lozinka: </p>
-                        <label className="lozinkaAdminaKC">{lozinka}</label>
-                      </h2>
-                    </div> */}
+                    <div>
+                      <div>{this.prikazPromenaLozinke()}</div>
+                      {this.state.promenaLozinke == false && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.promenaLozinkeClick()}
+                        >
+                          Izmeni lozinku
+                        </Button>
+                      )}
+                      {this.state.promenaLozinke && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.PotvrdiPromenuLozinkeClick()}
+                        >
+                          Potvrdi lozinku
+                        </Button>
+                      )}
+                      {this.state.formError.length > 0 && (
+                        <spam>{this.state.formError}</spam>
+                      )}
+                    </div>
                   </div>
                 }
-
               />
             </Col>
           </Row>

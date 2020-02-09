@@ -45,63 +45,50 @@ class BrzoZakazivanje extends Component {
       izabraniTipPregleda: 0,
       izabranaCena: 0,
       izabraniPopust: 0,
+      izabraniTermin: 0,
+      izabranaSala: 0,
       canClick: false
     };
     this.redirectReferer = this.redirectReferer.bind(this);
     this.sortMyArray = this.sortMyArray.bind(this);
   }
   sortMyArray(sortBy) {
-    console.log("sort funkcija");
-    console.log(sortBy);
     const lista = this.state.listaPregleda;
     if (sortBy === "klinika") {
-      console.log("klinika");
       this.setState({
         listaPregleda: lista.sort((a, b) =>
           a.klinikaN.localeCompare(b.klinikaN)
         )
       });
     } else if (sortBy === "lekarI") {
-      console.log("lekarI");
       this.setState({
         listaPregleda: lista.sort((a, b) =>
           a.lekarIme.localeCompare(b.lekarIme)
         )
       });
     } else if (sortBy === "lekarP") {
-      console.log("lekarP");
       this.setState({
         listaPregleda: lista.sort((a, b) =>
           a.lekarPrezime.localeCompare(b.lekarPrezime)
         )
       });
     } else if (sortBy === "cenar") {
-      console.log("cenar");
-
       this.setState({
         listaPregleda: lista.sort((a, b) => a.cena - b.cena)
       });
     } else if (sortBy === "cenao") {
-      console.log("cenao");
-
       this.setState({
         listaPregleda: lista.sort((a, b) => b.cena - a.cena)
       });
     } else if (sortBy === "popustr") {
-      console.log("popustr");
-
       this.setState({
         listaPregleda: lista.sort((a, b) => a.popust - b.popust)
       });
     } else if (sortBy === "popusto") {
-      console.log("popusto");
-
       this.setState({
         listaPregleda: lista.sort((a, b) => b.popust - a.popust)
       });
     } else if (sortBy === "tipPregleda") {
-      console.log("tipPregleda");
-
       this.setState({
         listaPregleda: lista.sort((a, b) =>
           a.tipPregledaN.localeCompare(b.tipPregledaN)
@@ -111,25 +98,17 @@ class BrzoZakazivanje extends Component {
   }
 
   componentWillMount() {
-    var url = "http://localhost:8025/api/lekari/listaZauzetostiLekara/" + 1;
-    var config = {
-      headers: {
-        Authorization: "Bearer " + this.state.token,
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    };
     // axios
     //   .get(url, config)
     //   .then(Response => {
-    //     console.log("Preuzeti zauzetiTermini: ");
-    //     console.log(Response.data);
+    //
+    //
     //   })
     //   .catch(error => {
-    //     console.log("pregledi  nisu preuzeti");
+    //
     //   });
-    url = "http://localhost:8025/api/ST/unapredDef";
-    config = {
+    const url = "http://localhost:8025/api/ST/unapredDef";
+    const config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
         Accept: "application/json",
@@ -139,9 +118,6 @@ class BrzoZakazivanje extends Component {
     axios
       .get(url, config)
       .then(Response => {
-        console.log("Preuzeti unapred def pregledi: ");
-        console.log(Response.data);
-
         this.setState(
           {
             listaPregleda: Response.data.sort((a, b) => {
@@ -154,20 +130,25 @@ class BrzoZakazivanje extends Component {
               return new Date(startA).getTime() - new Date(startB).getTime();
             })
           },
-          () => console.log(this.state.listaPregleda)
+          () => {
+            // this.setState({
+            //   lekarID: listaPregleda[0].lekar,
+            //   klinikaID: Response.data,
+            //   tipPregledaID: this.state.izabraniTipPregleda,
+            //   pacijentEmail: this.state.email,
+            //   cena: this.state.izabranaCena,
+            //   datum: this.state.izabraniDatum,
+            //   termin: t
+            // })
+          }
         );
       })
 
-      .catch(error => {
-        console.log("pregledi  nisu preuzeti");
-      });
+      .catch(error => {});
   }
   handleSortKlinika(sortBy) {
-    console.log("sort funkcija");
-    console.log(sortBy);
     const lista = this.state.listaPregleda;
     if (sortBy === "datumUp") {
-      console.log("datum");
       this.setState({
         listaPregleda: lista.sort((a, b) => {
           let startA = new Date(a.datum);
@@ -180,7 +161,6 @@ class BrzoZakazivanje extends Component {
         })
       });
     } else if (sortBy === "datumDown") {
-      console.log("datum");
       this.setState({
         listaPregleda: lista.sort((b, a) => {
           this.setState({
@@ -197,76 +177,60 @@ class BrzoZakazivanje extends Component {
         })
       });
     } else if (sortBy === "tipPregledaUp") {
-      console.log("tipPregleda");
       this.setState({
         listaPregleda: lista.sort((a, b) =>
           a.tipPregledaN.localeCompare(b.tipPregledaN)
         )
       });
     } else if (sortBy === "tipPregledaDown") {
-      console.log("tipPregleda");
       this.setState({
         listaPregleda: lista.sort((b, a) =>
           a.tipPregledaN.localeCompare(b.tipPregledaN)
         )
       });
     } else if (sortBy === "klinikaUp") {
-      console.log("klinika");
       this.setState({
         listaPregleda: lista.sort((a, b) =>
           a.klinikaN.localeCompare(b.klinikaN)
         )
       });
     } else if (sortBy === "klinikaDown") {
-      console.log("klinika");
       this.setState({
         listaPregleda: lista.sort((b, a) =>
           a.klinikaN.localeCompare(b.klinikaN)
         )
       });
     } else if (sortBy === "lekarUp") {
-      console.log("lekar");
       this.setState({
         listaPregleda: lista.sort((a, b) =>
           a.lekarIme.localeCompare(b.lekarIme)
         )
       });
     } else if (sortBy === "lekarDown") {
-      console.log("lekar");
       this.setState({
         listaPregleda: lista.sort((b, a) =>
           a.lekarIme.localeCompare(b.lekarIme)
         )
       });
     } else if (sortBy === "cenaUp") {
-      console.log("cena");
-
       this.setState({
         listaPregleda: lista.sort((a, b) => a.cena - b.cena)
       });
     } else if (sortBy === "cenaDown") {
-      console.log("cena");
-
       this.setState({
         listaPregleda: lista.sort((a, b) => b.cena - a.cena)
       });
     } else if (sortBy === "popustUp") {
-      console.log("popust");
-
       this.setState({
         listaPregleda: lista.sort((a, b) => a.popust - b.popust)
       });
     } else if (sortBy === "popustDown") {
-      console.log("popust");
-
       this.setState({
         listaPregleda: lista.sort((a, b) => b.popust - a.popust)
       });
     }
   }
   promenjenOdabirPregleda = e => {
-    console.log("promenjen odabrir");
-    console.log(e.currentTarget.value);
     const lista = this.state.listaPregleda;
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].id == e.currentTarget.value) {
@@ -276,18 +240,19 @@ class BrzoZakazivanje extends Component {
           izabranaKlinika: lista[i].klinikaID,
           izabraniDatum: lista[i].datum,
           izabranaCena: lista[i].cena,
-          izabraniTipPregleda: lista[i].tipPregledaID
+          izabraniTipPregleda: lista[i].tipPregledaID,
+          izabraniTermin: lista[i].termin,
+          izabranaSala: lista[i].salaID
 
           // izabraniPopust:lista[i].popust
         });
       }
     }
-    console.log(this.state);
   };
   odabranPrelged = e => {
     //treba redirektovati na pretragu i filtriranje lekara
     e.preventDefault();
-    console.log(this.state.izabranPregled);
+
     const ol = this.state.izabranPregled;
     var config = {
       headers: {
@@ -296,36 +261,7 @@ class BrzoZakazivanje extends Component {
         "Content-Type": "application/json"
       }
     };
-    var t = 0;
-    if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "09:00"
-    ) {
-      console.log("9");
-      t = 9;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "11:00"
-    ) {
-      console.log("11");
-      t = 11;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "13:00"
-    ) {
-      console.log("13");
-      t = 13;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "15:00"
-    ) {
-      console.log("15");
-      t = 15;
-    }
+
     if (ol != 0 && ol != undefined) {
       axios
 
@@ -338,13 +274,12 @@ class BrzoZakazivanje extends Component {
             pacijentEmail: this.state.email,
             cena: this.state.izabranaCena,
             datum: this.state.izabraniDatum,
-            termin: t
+            termin: this.state.izabraniTermin,
+            salaID: this.state.izabranaSala
           },
           config
         )
         .then(response => {
-          console.log("PREGLED");
-          console.log(response);
           this.setState(
             {
               redirectNext: true,
@@ -355,36 +290,30 @@ class BrzoZakazivanje extends Component {
               this.props.handleClick("ZAHTEV JE POSLAT");
             }
           );
-        })
-        .catch(error => {
-          console.log("greska pregled");
-          console.log(error.response);
         });
     } else {
-      this.setState(
-        {
-          formError: "Odaberite Pregled"
-        },
-        () => console.log(this.state.formError)
-      );
+      this.setState({
+        formError: "Odaberite Pregled"
+      });
     }
   };
   listaUnapredDefinisanihPregleda() {
     let res = [];
-    console.log("lista kl");
 
     const pretraga = this.state.pretraziPoljeKlinika;
     // const oc = this.state.ocenaKlinike;
-    // console.log(oc);
+    //
     // if ((pretraga == "" || pretraga == undefined) && oc < 5) {
     let lista = this.state.listaPregleda;
 
     if (pretraga == "" || pretraga == undefined) {
       for (var i = 0; i < lista.length; i++) {
+        const id2 = "odabranPregled" + i;
         res.push(
           <tr key={i}>
             <td>
               <input
+                id={id2}
                 name="odabranPregled"
                 type="radio"
                 value={lista[i].id}
@@ -412,10 +341,12 @@ class BrzoZakazivanje extends Component {
     } else {
       for (var i = 0; i < lista.length; i++) {
         if (lista[i].klinikaN.toLowerCase().includes(pretraga.toLowerCase())) {
+          const id2 = "odabranPregled" + i;
           res.push(
             <tr key={i}>
               <td>
                 <input
+                  id={id2}
                   name="odabranPregled"
                   type="radio"
                   value={lista[i].id}
@@ -427,7 +358,8 @@ class BrzoZakazivanje extends Component {
               </td>
 
               <td key={lista[i].datum}>
-                {moment(lista[i].datum).format("DD.MM.YYYY.")}  {lista[i].termin}h
+                {moment(lista[i].datum).format("DD.MM.YYYY.")} {lista[i].termin}
+                h
               </td>
               <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
               <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
@@ -444,8 +376,8 @@ class BrzoZakazivanje extends Component {
     }
 
     // } else {
-    //   console.log("===========");
-    //   console.log(pretraga);
+    //
+    //
     //   let lista = this.state.listaKlinika;
 
     //   for (var i = 0; i < lista.length; i++) {
@@ -489,17 +421,15 @@ class BrzoZakazivanje extends Component {
   handleChange = e => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
-    console.log(this.state);
-    console.log("On change !!!");
   };
 
   // handleSumbit = e => {
   //   e.preventDefault();
-  //   console.log("KLIK SUBMITTT");
+  //
   //   // let formErrors = { ...this.state.formErrors };
-  //   console.log("Izmjena : ---------------");
-  //   console.log(this.state.ime);
-  //   console.log(this.state.prezime);
+  //
+  //
+  //
   //   axios
   //     .put("http://localhost:8025/api/pacijenti/update", {
   //       ime: this.state.ime,
@@ -512,7 +442,7 @@ class BrzoZakazivanje extends Component {
   //       lbo: this.state.lbo
   //     })
   //     .then(response => {
-  //       console.log(response.data);
+  //
 
   //       this.setState({
   //         ime: response.data.ime
@@ -535,7 +465,7 @@ class BrzoZakazivanje extends Component {
   //       // });
   //     })
   //     .catch(error => {
-  //       console.log("Izmena nije uspela! ");
+  //
   //     });
   // };
   redirectReferer() {
@@ -552,7 +482,7 @@ class BrzoZakazivanje extends Component {
             />
           )}
         >
-          <Redirect from="/" to="/pacijent/klinikePacijenta" />
+          <Redirect from="/" to="/pacijent/brzoZakazivanje" />
         </Route>
       );
     }
@@ -567,18 +497,18 @@ class BrzoZakazivanje extends Component {
           <Grid fluid>
             <Row>
               <Col md={12}>
-              <div>
-              <h5>
-                <input
-                  placeholder="Pretrazi"
-                  type="text"
-                  aria-label="Search"
-                  name="pretraziPoljeKlinika"
-                  onChange={this.handleChange}
-                  value={this.state.pretraziPoljeKlinika}
-                />
-            </h5>
-              </div>
+                <div>
+                  <h5>
+                    <input
+                      placeholder="Pretrazi po klinikama"
+                      type="text"
+                      aria-label="Search"
+                      name="pretraziPoljeKlinika"
+                      onChange={this.handleChange}
+                      value={this.state.pretraziPoljeKlinika}
+                    />
+                  </h5>
+                </div>
                 <Card
                   ctTableFullWidth
                   ctTableResponsive
@@ -753,6 +683,7 @@ class BrzoZakazivanje extends Component {
                   }}
                 >
                   <Button
+                    id="potvrdiPregled"
                     type="submit"
                     bsStyle="success"
                     // onClick={
