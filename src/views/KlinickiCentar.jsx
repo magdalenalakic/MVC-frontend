@@ -93,8 +93,15 @@ class KlinickiCentar extends Component {
      position === "IZMENJEN ADMINISTRATOR KLINICKOG CENTRA" ||
      position === "USPESNO DODATA KLINIKA" ||
      position === "USPESNO DODAT ADMINISTRATOR KLINIKE" ||
-     position === "USPESNO DODAT ADMINISTRATOR KLINICKOG CENTRA" 
-  
+     position === "USPESNO DODAT ADMINISTRATOR KLINICKOG CENTRA" ||
+     position === "USPESNO PROMENJENA LOZINKA" ||
+     position === "USPESNO PROMENJENI PODACI" ||
+     position === "DODAT LEK" ||
+     position === "IZMENJEN LEK" ||
+     position === "DODATA DIJAGNOZA" ||
+     position === "IZMENJENA DIJAGNOZA" ||
+     position === "POTVRDJEN ZAHTEV OD PACIJENTA" ||
+     position === "ODBIJEN ZAHTEV OD PACIJENTA" 
    ) {
      color = 1;
      level = "success";

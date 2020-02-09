@@ -79,6 +79,7 @@ class IzmenaProfilaAdminaKC extends Component {
         this.config
       )
       .then(response => {
+        this.props.handleClick("USPESNO PROMENJENI PODACI");
         this.setState({
           ime: response.data.ime
         });
@@ -157,6 +158,7 @@ class IzmenaProfilaAdminaKC extends Component {
         )
         .then(response => {
           this.props.handleClick("LOZINKA JE PROMENJENA");
+          this.props.handleClick("USPESNO PROMENJENA LOZINKA");
           this.setState(
             {
               lozinka: this.state.novaLoz
