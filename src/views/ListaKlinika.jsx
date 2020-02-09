@@ -1,38 +1,17 @@
 import React, { Component } from "react";
-import { useState } from "react";
-import {
-  Grid,
-  Row,
-  Col,
-  FormGroup,
-  ControlLabel,
-  FormControl
-} from "react-bootstrap";
+import { Grid, Row, Col } from "react-bootstrap";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import "klinickiCentar.css";
 import { Table } from "react-bootstrap";
-import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
-import { FormInputs } from "components/FormInputs/FormInputs.jsx";
-import { UserCard } from "components/UserCard/UserCard.jsx";
-// import Button from "components/CustomButton/CustomButton.jsx";
 import { ButtonToolbar } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import { InputGroupButton } from "react-bootstrap";
 import "izmenaProfila.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-//dodam link za sliku  mozda od doktora!!
-// import avatar from "assets/img/faces/face-3.jpg";
 import "login.js";
-import { log } from "util";
-import Login from "login";
-import slikaPacijent from "assets/img/pacijentImage.jpg";
 import axios from "axios";
-import { string } from "prop-types";
-import PocetnaStranicaPacijenta from "./PocetnaStranicaPacijenta";
-import { setHours, setMinutes, subHours, subMinutes } from "date-fns";
 import moment from "moment";
 
 class ListaKlinika extends Component {
