@@ -93,6 +93,7 @@ class ListaKlinika extends Component {
     this.prethodno = this.prethodno.bind(this);
     this.prethodno2 = this.prethodno2.bind(this);
     this.odustani = this.odustani.bind(this);
+    this.vidiZaposlene = this.vidiZaposlene.bind(this);
     this.odustani2 = this.odustani2.bind(this);
     this.vidiTermineClick = this.vidiTermineClick.bind(this);
     this.biranjeTermina = this.biranjeTermina.bind(this);
@@ -211,6 +212,9 @@ class ListaKlinika extends Component {
     }
     this.listaLekaraKlinike();
   };
+  vidiZaposlene = e =>{
+    console.log("VIDI ZAPOSLENE" + e.currentTarget.value);
+  }
   listaKlinikaUKC() {
     let res = [];
     console.log("lista kl");
@@ -239,6 +243,7 @@ class ListaKlinika extends Component {
             <td key={lista[i].adresa}>{lista[i].adresa}</td>
             <td key={lista[i].opis}>{lista[i].opis}</td>
             <td key={lista[i].ocena}>{lista[i].ocena}</td>
+            <td><i className="pe-7s-id text-info" value={lista[i].id} onClick={(e)=>this.vidiZaposlene(e)}></i></td>
           </tr>
         );
       }
@@ -275,6 +280,7 @@ class ListaKlinika extends Component {
                 <td key={lista[i].adresa}>{lista[i].adresa}</td>
                 <td key={lista[i].opis}>{lista[i].opis}</td>
                 <td key={lista[i].ocena}>{lista[i].ocena}</td>
+                <td><i className="pe-7s-id text-info" value={lista[i].id} onClick={(e)=>this.vidiZaposlene(e)}></i></td>
               </tr>
             );
           }
@@ -298,13 +304,14 @@ class ListaKlinika extends Component {
     return res;
   }
   vidiTermineClick = e => {
-    e.preventDefault();
+    e.preventDefault(); 
 
-    console.log(e.currentTarget.value);
-    const lekarid = e.currentTarget.value;
-    const url =
+    // console.log(e.target.value);
+
+    var lekarid = e.target.value;
+    var url =
       "http://localhost:8025/api/lekari/listaZauzetostiLekara/" +
-      e.currentTarget.value +
+      lekarid +
       "/" +
       this.state.datumZaPregled;
     var config = {
@@ -375,7 +382,7 @@ class ListaKlinika extends Component {
       .catch(error => {
         console.log("Nisu preuzeti termini lekara");
       });
-  };
+  }
   prikazTermina() {
     var res = [];
     if (this.state.prikazTerminaClick == true) {
@@ -462,10 +469,11 @@ class ListaKlinika extends Component {
                 </Button>
               </OverlayTrigger>
             </td>
+            <td>
             {this.state.lekarTerminClick == lista[i].id && (
-              <td>{this.prikazTermina()}</td>
+              this.prikazTermina()
             )}
-            {this.state.lekarTerminClick != lista[i].id && <td></td>}
+            </td>
           </tr>
         );
       }
@@ -527,7 +535,7 @@ class ListaKlinika extends Component {
                     </Button>
                   </OverlayTrigger>
                 </td>
-                <td>{this.vidiTermineClick()}</td>
+                <td>{this.prikazTermina()}</td>
               </tr>
             );
           }
