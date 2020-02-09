@@ -423,7 +423,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           </Row>
           </Row>
 
-          <Row>
+          {/* <Row>
        
           <YMaps>
               <div>
@@ -446,7 +446,7 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
 
               </div>
           </YMaps>    
-          </Row>
+          </Row> */}
         </Grid>
       </div>
     );
