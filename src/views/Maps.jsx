@@ -1,90 +1,101 @@
-import React from "react";
-// react components used to create a google map
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker
-} from "react-google-maps";
-import Geocode from "react-geocode";
+import React, { Component } from "react";
+// import pin from "../../../assets/images/map.png";
 
-// function getData(){
-//   Geocode.setApiKey("AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk");
-//   // Get address from latidude & longitude.
-//   Geocode.fromLatLng("48.8583701", "2.2922926").then(
-//     response => {
-//       const address = response.results[0].formatted_address;
-//       console.log(address);
-//     },
-//     error => {
-//       console.error(error);
-//     }
-//   );
-
-//     // Get latidude & longitude from address.
-
-// }
-const WrappedMap = withScriptjs(
-  withGoogleMap(props => (
-    <GoogleMap
-      defaultZoom={13}
-      defaultCenter={{ lat: 45.267136, lng: 19.833549 }}
-      defaultOptions={{
-        scrollwheel: false,
-        zoomControl: true
-      }}
-
-      
-    >
-
-      <Marker
-        position={Geocode.fromAddress("Temerinska 5").then(
-          response => {
-            console.log(
-              "DSADSDSADSADADAD MAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-            );
-            const { lat, lng } = response.results[0].geometry.location;
-            console.log(lat, lng);
-          },
-          error => {
-            console.error(error);
-          }
-        )}
-      />
-
-      {/* <Marker position={{ lat:lat , lng: lng}} /> //proslijedim koord od moje adrese */}
-
-    </GoogleMap>
-  ))
-);
-
-// //AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk api key
-
-function Maps({ ...prop }) {
-
- 
-console.log({...prop});
-Geocode.fromAddress("Bulevar Oslobodjenja 67").then(
-  response => {
-    console.log("dasdsadasdasdsadas nananaa ananananna aana **-* -*- *- ")
-    console.log(response);
-    const { lat, lng } = response.results[0].geometry.location;
-    console.log(lat, lng);
-  },
-  error => {
-    console.error(error);
+export class Map extends Component {
+  constructor(props) {
+    super(props);
+    this.initMap = this.initMap.bind(this);
+    this.trackChangeLocation = this.trackChangeLocation.bind(this);
+    this.gmapCallback = this.gmapCallback.bind(this);
+    window.googleMapsCallback = this.gmapCallback;
+    this.state = {};
   }
-);
 
-  return (
+  gmapCallback() {
+    this.setState({
+      _googleMapsLoaded: true
+    });
+  }
 
-    <WrappedMap
-      googleMapURL="https://maps.googleapis.com/maps/api/js?keys=AIzaSyBO8lOU4v5gC2H64p7I4l9zZrkgq_dJ9rk"
-      loadingElement={<div style={{ height: `100%` }} />}
-      containerElement={<div style={{ height: `100vh` }} />}
-      mapElement={<div style={{ height: `100%` }} />}
-    />
-  );
+  trackChangeLocation() {
+    this.props.onChange(
+      this.state.googleMap.getCenter().lat() +
+        ", " +
+        this.state.googleMap.getCenter().lng()
+    );
+  }
+
+  initMap() {
+    console.log("InitMAP");
+    this.setState({
+      _mapInit: true
+    });
+
+    var latLng =
+      this.props.value && this.props.value.indexOf(",") !== -1
+        ? new window.google.maps.LatLng(
+            this.props.value.split(",")[0],
+            this.props.value.split(",")[1]
+          )
+        : new window.google.maps.LatLng(44.75874, 19.21437);
+
+    var map = new window.google.maps.Map(this.GoogleMap, {
+      zoom: 16,
+      center: latLng,
+      mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+      disableDefaultUI: true,
+      gestureHandling: "greedy"
+    });
+
+    map.addListener("center_changed", this.trackChangeLocation);
+
+    this.setState({ googleMap: map });
+  }
+
+  componentDidMount() {
+    var ref = window.document.getElementsByTagName("script")[0];
+    var script = window.document.createElement("script");
+    script.src =
+      "https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyAAqbIo7N0_Rpwtay3-CWzo5gkfpgWZ4to&callback=googleMapsCallback&language=hr&region=BA";
+    script.async = true;
+    script.defer = true;
+
+    ref.parentNode.insertBefore(script, ref);
+
+    if (this.state._googleMapsLoaded && !this.state._mapInit) {
+      this.initMap();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.state._googleMapsLoaded && !this.state._mapInit) {
+      this.initMap();
+    }
+
+    if (this.state._googleMapsLoaded && prevProps.value != this.props.value) {
+      var latLng = new window.google.maps.LatLng(
+        this.props.value.split(",")[0],
+        this.props.value.split(",")[1]
+      );
+      this.state.googleMap.setCenter(latLng);
+    }
+  }
+
+  render() {
+    return (
+      <div className="map-wrap">
+        {this.state._googleMapsLoaded ? (
+          <div
+            className="map"
+            ref={input => {
+              this.GoogleMap = input;
+            }}
+          ></div>
+        ) : null}
+        <div className="google-map-marker">{/* <img src={pin} /> */}</div>
+      </div>
+    );
+  }
 }
 
-export default Maps;
+export default Map;

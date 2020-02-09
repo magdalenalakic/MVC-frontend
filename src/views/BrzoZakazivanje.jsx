@@ -45,6 +45,8 @@ class BrzoZakazivanje extends Component {
       izabraniTipPregleda: 0,
       izabranaCena: 0,
       izabraniPopust: 0,
+      izabraniTermin: 0,
+      izabranaSala: 0,
       canClick: false
     };
     this.redirectReferer = this.redirectReferer.bind(this);
@@ -111,14 +113,6 @@ class BrzoZakazivanje extends Component {
   }
 
   componentWillMount() {
-    var url = "http://localhost:8025/api/lekari/listaZauzetostiLekara/" + 1;
-    var config = {
-      headers: {
-        Authorization: "Bearer " + this.state.token,
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    };
     // axios
     //   .get(url, config)
     //   .then(Response => {
@@ -128,8 +122,8 @@ class BrzoZakazivanje extends Component {
     //   .catch(error => {
     //     console.log("pregledi  nisu preuzeti");
     //   });
-    url = "http://localhost:8025/api/ST/unapredDef";
-    config = {
+    const url = "http://localhost:8025/api/ST/unapredDef";
+    const config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
         Accept: "application/json",
@@ -154,7 +148,18 @@ class BrzoZakazivanje extends Component {
               return new Date(startA).getTime() - new Date(startB).getTime();
             })
           },
-          () => console.log(this.state.listaPregleda)
+          () => {
+            console.log(this.state.listaPregleda);
+            // this.setState({
+            //   lekarID: listaPregleda[0].lekar,
+            //   klinikaID: Response.data,
+            //   tipPregledaID: this.state.izabraniTipPregleda,
+            //   pacijentEmail: this.state.email,
+            //   cena: this.state.izabranaCena,
+            //   datum: this.state.izabraniDatum,
+            //   termin: t
+            // })
+          }
         );
       })
 
@@ -276,7 +281,9 @@ class BrzoZakazivanje extends Component {
           izabranaKlinika: lista[i].klinikaID,
           izabraniDatum: lista[i].datum,
           izabranaCena: lista[i].cena,
-          izabraniTipPregleda: lista[i].tipPregledaID
+          izabraniTipPregleda: lista[i].tipPregledaID,
+          izabraniTermin: lista[i].termin,
+          izabranaSala: lista[i].salaID
 
           // izabraniPopust:lista[i].popust
         });
@@ -296,36 +303,7 @@ class BrzoZakazivanje extends Component {
         "Content-Type": "application/json"
       }
     };
-    var t = 0;
-    if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "09:00"
-    ) {
-      console.log("9");
-      t = 9;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "11:00"
-    ) {
-      console.log("11");
-      t = 11;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "13:00"
-    ) {
-      console.log("13");
-      t = 13;
-    } else if (
-      moment(this.state.izabraniDatum)
-        .format("HH:mm")
-        .valueOf() == "15:00"
-    ) {
-      console.log("15");
-      t = 15;
-    }
+
     if (ol != 0 && ol != undefined) {
       axios
 
@@ -338,7 +316,8 @@ class BrzoZakazivanje extends Component {
             pacijentEmail: this.state.email,
             cena: this.state.izabranaCena,
             datum: this.state.izabraniDatum,
-            termin: t
+            termin: this.state.izabraniTermin,
+            salaID: this.state.izabranaSala
           },
           config
         )
@@ -381,10 +360,12 @@ class BrzoZakazivanje extends Component {
 
     if (pretraga == "" || pretraga == undefined) {
       for (var i = 0; i < lista.length; i++) {
+        const id2 = "odabranPregled" + i;
         res.push(
           <tr key={i}>
             <td>
               <input
+                id={id2}
                 name="odabranPregled"
                 type="radio"
                 value={lista[i].id}
@@ -412,10 +393,12 @@ class BrzoZakazivanje extends Component {
     } else {
       for (var i = 0; i < lista.length; i++) {
         if (lista[i].klinikaN.toLowerCase().includes(pretraga.toLowerCase())) {
+          const id2 = "odabranPregled" + i;
           res.push(
             <tr key={i}>
               <td>
                 <input
+                  id={id2}
                   name="odabranPregled"
                   type="radio"
                   value={lista[i].id}
@@ -427,7 +410,8 @@ class BrzoZakazivanje extends Component {
               </td>
 
               <td key={lista[i].datum}>
-                {moment(lista[i].datum).format("DD.MM.YYYY.")}  {lista[i].termin}h
+                {moment(lista[i].datum).format("DD.MM.YYYY.")} {lista[i].termin}
+                h
               </td>
               <td key={lista[i].tipPregledaId}>{lista[i].tipPregledaN}</td>
               <td key={lista[i].klinikaId}>{lista[i].klinikaN}</td>
@@ -552,7 +536,7 @@ class BrzoZakazivanje extends Component {
             />
           )}
         >
-          <Redirect from="/" to="/pacijent/klinikePacijenta" />
+          <Redirect from="/" to="/pacijent/brzoZakazivanje" />
         </Route>
       );
     }
@@ -567,18 +551,18 @@ class BrzoZakazivanje extends Component {
           <Grid fluid>
             <Row>
               <Col md={12}>
-              <div>
-              <h5>
-                <input
-                  placeholder="Pretrazi po klinikama"
-                  type="text"
-                  aria-label="Search"
-                  name="pretraziPoljeKlinika"
-                  onChange={this.handleChange}
-                  value={this.state.pretraziPoljeKlinika}
-                />
-            </h5>
-              </div>
+                <div>
+                  <h5>
+                    <input
+                      placeholder="Pretrazi po klinikama"
+                      type="text"
+                      aria-label="Search"
+                      name="pretraziPoljeKlinika"
+                      onChange={this.handleChange}
+                      value={this.state.pretraziPoljeKlinika}
+                    />
+                  </h5>
+                </div>
                 <Card
                   ctTableFullWidth
                   ctTableResponsive
@@ -753,6 +737,7 @@ class BrzoZakazivanje extends Component {
                   }}
                 >
                   <Button
+                    id="potvrdiPregled"
                     type="submit"
                     bsStyle="success"
                     // onClick={

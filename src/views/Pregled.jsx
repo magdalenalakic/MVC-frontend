@@ -903,25 +903,25 @@ class Pregled extends React.Component {
     if(this.state.terminOperacije == null || this.state.tipOperacije == "" || this.state.tipOperacije == null ){
       this.props.handleClick("NISU SVA POLJA UNESENA")
     }else{
-    // axios
-    //     .post("http://localhost:8025/api/pregledi/zakazivanjePregledaLekar", {
-    //       datum: this.state.datumPregleda,
-    //       termin: this.state.terminPregleda,
-    //       tipPregledaID: this.state.tipPregleda,
-    //       pacijentEmail: this.state.pacijent.email
-    //     }, this.config)
-    //     .then(Response => {
-    //       console.log("Preuzeti termini: ");
-    //       console.log(Response.data);
-    //       this.props.handleClick("ZAKAZAN PREGLED")
-    //       this.setState({
-    //         zakNovPreg: false
-    //       })
+    axios
+        .post("http://localhost:8025/api/operacije/zakazivanjeOperacijeLekar", {
+          datum: this.state.datumOperacije,
+          termin: this.state.terminOperacije,
+          tipOperacije: this.state.tipOperacije,
+          pacijentEmail: this.state.pacijent.email
+        }, this.config)
+        .then(Response => {
+          console.log("Preuzeti termini: ");
+          console.log(Response.data);
+          this.props.handleClick("ZAKAZANA OPERACIJA")
+          this.setState({
+            zakNovOper: false
+          })
           
-    //     }) 
-    //     .catch(error => {
-    //       console.log("Lista tipova nije preuzeta");
-    //     });
+        }) 
+        .catch(error => {
+          console.log("Lista tipova nije preuzeta");
+        });
     }
   }
 
