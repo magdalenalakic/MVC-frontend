@@ -397,8 +397,9 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
             </Row>
           </Row>
 
-          <Row>
-            <YMaps>
+          {/* <Row>
+       
+          <YMaps>
               <div>
                 <Map
                   state={{ center: [44.786568, 20.448921], zoom: 5 }}
@@ -416,8 +417,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
                   />
                 </Map>
               </div>
-            </YMaps>
-          </Row>
+          </YMaps>    
+          </Row> */}
         </Grid>
       </div>
     );
