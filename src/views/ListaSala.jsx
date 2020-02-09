@@ -473,6 +473,39 @@ class ListaSala extends Component {
     
   }
 
+  ponovoPreuzmiSale(){
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    const urlKlinike = 'http://localhost:8025/api/sale/preuzmiSaleKlinike/' + this.state.idKlinike;    
+    axios.get(urlKlinike, config)
+       .then(klinika => {
+          
+           this.setState({
+               // idKlinike: klinika.data.id,
+               listaSalaKlinike: klinika.data,
+           
+           });
+
+    })
+
+    axios.get('http://localhost:8025/api/sale/allIB/' +  this.state.idKlinike, config)
+    .then(resp=>{
+      console.log(resp);
+      this.setState({
+        listaSalaZaBrisanjeIzmjenu: resp.data
+      })
+  
+    })
+
+    this. listaSalaK();
+
+  }
+
   ispisiSlobodneLekare() {
     if(this.props.redirectToListaSala==true){
       let res = [];
@@ -587,13 +620,13 @@ class ListaSala extends Component {
               naziv: this.state.nazivSale,
               broj: this.state.brojSale,
               klinikaID: this.state.idKlinike,
-              selectTipSale: this.state.selectTipSale
+              tipSale: this.state.selectTipSale
               
             }, config)
             .then(response => {
               
-           
-              this.listaSalaIspisi();
+              this.ponovoPreuzmiSale();
+              
 
             })
             .catch(error => {
@@ -658,29 +691,7 @@ handleIzmeni = e => {
                   onChange={this.handleChange}
                 />
               </div>
-              <div className="telefonLekara">
-            <label className="lekarTelefonLabel" htmlFor="telefonLekara">
-              Tip sale:{" "}
-            </label>
-            <select
-              className="lekarTelefonLabel"
-              name="salaID"
-              onChange={this.handleDropdownChangeTipSale}
-              defaultValue=" "
-              disabled="disabled"
-            >
-              <option>
-                
-              </option>
-              <option value={0}> 
-                    Sala za operaciju
-              </option>
-              <option value={1}>
-                    Sala za pregled
-              </option>
-              {/* {this.izaberiSalu()} */}
-            </select>
-          </div>
+            
         
           </form> 
           ],
@@ -708,8 +719,8 @@ handleIzmeni = e => {
                 .then(response => {
                   
           
-            
-                  this.listaSalaIspisi();
+                  this.ponovoPreuzmiSale();
+                  // this.listaSalaIspisi();
     
                 })
                 .catch(error => {
@@ -753,7 +764,7 @@ obrisiLekara = e => {
             .then(response => {
 
               this.listaSalaIspisi();
-  
+              
             })
             .catch(error => {
             });
