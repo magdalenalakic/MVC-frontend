@@ -90,17 +90,8 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           prezime: Response.data.prezime,
           telefon: Response.data.telefon,
           idKlinike: Response.data.idKlinike
-        });
-        axios
-          .get("http://localhost:8025/api/pregledi/automatska", config)
-          .then(res => {
-            console.log(res.data);
-          });
-        console.log(this.state);
-        console.log("Id klinike: " + this.state.idKlinike);
-        console.log("******Id klinike: " + this.state.idKlinike);
-        console.log("ucitaj mi kliniku");
-        const urlKlinike =
+        }, ()=> {
+          const urlKlinike =
           "http://localhost:8025/api/klinike/" + this.state.idKlinike;
         console.log(urlKlinike);
         axios
@@ -141,6 +132,18 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           .catch(error => {
             console.log("Klinika nije preuzeta!!!!");
           });
+
+        });
+        // axios
+        //   .get("http://localhost:8025/api/pregledi/automatska", config)
+        //   .then(res => {
+        //     console.log(res.data);
+        //   });
+        // console.log(this.state);
+        // console.log("Id klinike: " + this.state.idKlinike);
+        // console.log("******Id klinike: " + this.state.idKlinike);
+        // console.log("ucitaj mi kliniku");
+        
       })
 
       .catch(error => {
