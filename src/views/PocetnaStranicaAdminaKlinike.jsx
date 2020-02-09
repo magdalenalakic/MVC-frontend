@@ -98,9 +98,9 @@ class PocetnaStranicaAdminaKlinike extends React.Component {
           idKlinike: Response.data.idKlinike,
           
         });
-        axios.get('http://localhost:8025/api/pregledi', config)
+        axios.get('http://localhost:8025/api/pregledi/automatska', config)
         .then(res => 
-          {console.log(res)});
+          {console.log(res.data)});
         console.log(this.state);
         console.log("Id klinike: " + this.state.idKlinike);
         console.log("******Id klinike: " + this.state.idKlinike);

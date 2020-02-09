@@ -84,11 +84,7 @@ class ListaLekara extends Component {
     );
   }
   listaLekara() {
-    console.log("Ponovo ispisi listu bez obrisanog lekara");
-    console.log("!!!!!!!!!!!!!!!11111 ID KL " + this.state.idKlinike);
-
-    console.log("ID KLINIKE OD KOJE TRAZIM LEKARE: " + this.state.idKlinike);
-    console.log("ucitaj mi kliniku");
+    
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -134,9 +130,7 @@ class ListaLekara extends Component {
   }
   obrisiLekara = e => {
     e.preventDefault();
-    console.log("CLick brisanje lekara");
-    console.log("Lekar kojeg brisem: " + e.target.id);
-    console.log("--------------------------------");
+    
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
