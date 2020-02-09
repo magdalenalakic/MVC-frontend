@@ -784,12 +784,12 @@ class IstorijaPOPacijenta extends Component {
           <td>{this.ispisLekaraOperacija(lista[i])}</td>
            <td key={lista[i].nazivTP}>{lista[i].tipOperacije}</td>
             <td key={lista[i].cena}>{lista[i].cena} RSD</td>
-            <td>
+            {/* <td>
             <i className="pe-7s-like2 text-info" />
             </td>
             <td>
             <i className="pe-7s-like2 text-info" />
-            </td>
+            </td> */}
           </tr>
           );
         // );

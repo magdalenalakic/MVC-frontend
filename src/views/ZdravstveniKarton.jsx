@@ -359,7 +359,7 @@ class ZdravstveniKarton extends Component {
                                   }
                                 )}
 
-                                {/* {izvestaj.listaRecepata.map(recept => {
+                                {izvestaj.listaRecepata.map(recept => {
                                   return (
                                     <div>
                                       {recept.lek.overen && (
@@ -367,7 +367,7 @@ class ZdravstveniKarton extends Component {
                                       )}
                                     </div>
                                   );
-                                })} */}
+                                })}
                               </td>
                             </tr>
                           );

@@ -81,28 +81,30 @@ class izmenaProfila extends Component {
           ime: Response.data.ime,
           prezime: Response.data.prezime,
           telefon: Response.data.telefon
-        });
-  
-      console.log("ucitaj mi kliniku " + this.state.idKlinike);
-      const urlKlinike = 'http://localhost:8025/api/klinike/findKlinikaById/' + this.state.idKlinike;    
-      console.log(urlKlinike);
-      axios.get(urlKlinike, config)
-        .then(klinika => {
-          console.log("Preuzeta klinika");
-          console.log(klinika.data);
- 
-          this.setState({
-            imeKlinike: klinika.data.naziv,
-          
-           
-          });
+        }, ()=>{
+          console.log("ucitaj mi kliniku " + this.state.idKlinike);
+          const urlKlinike = 'http://localhost:8025/api/klinike/findKlinikaById/' + this.state.idKlinike;    
+          console.log(urlKlinike);
+          axios.get(urlKlinike, config)
+              .then(klinika => {
+                console.log("Preuzeta klinika");
+                console.log(klinika.data);
       
-        })
+                this.setState({
+                  imeKlinike: klinika.data.naziv,
+                
+                
+                });
+            
+              })
 
-    })
-      .catch(error => {
-        console.log("Lekar  nije preuzet")
-      })
+          })
+            .catch(error => {
+              console.log("Lekar  nije preuzet")
+            })
+        });
+    
+      
 
       
   }

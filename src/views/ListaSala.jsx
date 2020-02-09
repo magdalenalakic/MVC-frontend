@@ -660,29 +660,7 @@ handleIzmeni = e => {
                   onChange={this.handleChange}
                 />
               </div>
-              <div className="telefonLekara">
-            <label className="lekarTelefonLabel" htmlFor="telefonLekara">
-              Tip sale:{" "}
-            </label>
-            <select
-              className="lekarTelefonLabel"
-              name="salaID"
-              onChange={this.handleDropdownChangeTipSale}
-              defaultValue=" "
-              disabled="disabled"
-            >
-              <option>
-                
-              </option>
-              <option value={0}> 
-                    Sala za operaciju
-              </option>
-              <option value={1}>
-                    Sala za pregled
-              </option>
-              {/* {this.izaberiSalu()} */}
-            </select>
-          </div>
+            
         
           </form> 
           ],

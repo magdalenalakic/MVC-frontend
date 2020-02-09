@@ -417,7 +417,7 @@ class ListaLekara extends Component {
       if(lis.some(item => lista[i].id === item.id)){
           res.push(
             <tr key={i}>
-              <td>{lista[i].id}</td>
+          
 
               <td>{lista[i].ime}</td>
               <td>{lista[i].prezime}</td>
@@ -449,7 +449,7 @@ class ListaLekara extends Component {
       }else{
         res.push(
           <tr key={i}>
-            <td>{lista[i].id}</td>
+            
 
             <td>{lista[i].ime}</td>
             <td>{lista[i].prezime}</td>
@@ -472,7 +472,7 @@ class ListaLekara extends Component {
         if(lis.some(item => lista[i].id === item.id)){
           res.push(
             <tr key={i}>
-              <td>{lista[i].id}</td>
+            
     
               <td>{lista[i].ime}</td>
               <td>{lista[i].prezime}</td>
@@ -503,7 +503,7 @@ class ListaLekara extends Component {
         } else{
           res.push(
             <tr key={i}>
-              <td>{lista[i].id}</td>
+              
     
               <td>{lista[i].ime}</td>
               <td>{lista[i].prezime}</td>
@@ -591,7 +591,7 @@ class ListaLekara extends Component {
                       <Table striped hover>
                         <thead>
                           <tr>
-                            <th id="IdPacijenta">Id</th>
+                           
 
                             <th id="ImePacijenta"> Ime</th>
                             <th id="PrezimePacijenta">Prezime</th>
