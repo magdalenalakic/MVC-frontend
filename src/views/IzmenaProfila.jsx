@@ -49,28 +49,25 @@ class izmenaProfila extends Component {
       }
     };
     const url = "http://localhost:8025/api/lekari/getLekarByEmail";
-    axios
-      .get(url, config)
-      .then(Response => {
+    axios.get(url, config).then(Response => {
+      this.setState({
+        email: Response.data.email,
+        idKlinike: Response.data.klinikaID,
+        ime: Response.data.ime,
+        prezime: Response.data.prezime,
+        telefon: Response.data.telefon
+      });
+
+      const urlKlinike =
+        "http://localhost:8025/api/klinike/findKlinikaById/" +
+        this.state.idKlinike;
+
+      axios.get(urlKlinike, config).then(klinika => {
         this.setState({
-          email: Response.data.email,
-          idKlinike: Response.data.klinikaID,
-          ime: Response.data.ime,
-          prezime: Response.data.prezime,
-          telefon: Response.data.telefon
+          imeKlinike: klinika.data.naziv
         });
-
-        const urlKlinike =
-          "http://localhost:8025/api/klinike/findKlinikaById/" +
-          this.state.idKlinike;
-
-        axios.get(urlKlinike, config).then(klinika => {
-          this.setState({
-            imeKlinike: klinika.data.naziv
-          });
-        });
-      })
-      .catch(error => {});
+      });
+    });
   }
   handleChange = e => {
     e.preventDefault();

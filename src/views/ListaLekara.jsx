@@ -409,7 +409,7 @@ class ListaLekara extends Component {
         if (lis.some(item => lista[i].id === item.id)) {
           res.push(
             <tr key={i}>
-              <td>{lista[i].id}</td>
+          
 
               <td>{lista[i].ime}</td>
               <td>{lista[i].prezime}</td>
@@ -437,11 +437,66 @@ class ListaLekara extends Component {
               </td>
             </tr>
           );
-        } else {
+
+      }else{
+        res.push(
+          <tr key={i}>
+            
+
+            <td>{lista[i].ime}</td>
+            <td>{lista[i].prezime}</td>
+            <td>{lista[i].email}</td>
+
+            <td>{lista[i].telefon}</td>
+            <td>
+            
+            </td>
+            <td>
+        
+            </td>
+          </tr>
+        );
+      }
+    }
+  }else{
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i].ime.toLowerCase().includes(pretraga.toLowerCase()) || lista[i].prezime.toLowerCase().includes(pretraga.toLowerCase()) )  {
+        if(lis.some(item => lista[i].id === item.id)){
           res.push(
             <tr key={i}>
-              <td>{lista[i].id}</td>
-
+            
+    
+              <td>{lista[i].ime}</td>
+              <td>{lista[i].prezime}</td>
+              <td>{lista[i].email}</td>
+    
+              <td>{lista[i].telefon}</td>
+              <td>
+                <Button id={lista[i].email} onClick={e => this.obrisiLekara(e)}>
+                  Obrisi
+                </Button>
+                <Dialog
+                  ref={el => {
+                    this.dialog = el;
+                  }}
+                ></Dialog>
+              </td>
+              <td>
+                <Button
+                  className="OdobrenZahtev"
+                  id={lista[i].email}
+                  onClick={e => this.handleIzmeni(e)}
+                >
+                  Izmeni
+                </Button>
+              </td>
+            </tr>
+          );
+        } else{
+          res.push(
+            <tr key={i}>
+              
+    
               <td>{lista[i].ime}</td>
               <td>{lista[i].prezime}</td>
               <td>{lista[i].email}</td>
@@ -513,6 +568,7 @@ class ListaLekara extends Component {
     }
     return res;
   }
+}
   handleChangePretraga = e => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
@@ -555,46 +611,47 @@ class ListaLekara extends Component {
                   onChange={this.handleChangePretraga}
                   value={this.state.pretraziPoljeKlinika}
                 />
-              </h5>
-            </div>
+            </h5>
+              </div>
+            
+                <Card
+                  title="Lista lekara"
+                  // category="Here is a subtitle for this table"
+                  ctTableFullWidth
+                  ctTableResponsive
+                  content={
+                    <div>
+                      <Button
+                        className="DodajKlinikuDugme"
+                        onClick={e => this.dodajLekara(e)}
+                      >
+                        Dodaj lekara
+                      </Button>
+                      <Dialog
+                        ref={el => {
+                          this.dialog = el;
+                        }}
+                      ></Dialog>
 
-            <Card
-              title="Lista lekara"
-              // category="Here is a subtitle for this table"
-              ctTableFullWidth
-              ctTableResponsive
-              content={
-                <div>
-                  <Button
-                    className="DodajKlinikuDugme"
-                    onClick={e => this.dodajLekara(e)}
-                  >
-                    Dodaj lekara
-                  </Button>
-                  <Dialog
-                    ref={el => {
-                      this.dialog = el;
-                    }}
-                  ></Dialog>
+                      <Table striped hover>
+                        <thead>
+                          <tr>
+                           
 
-                  <Table striped hover>
-                    <thead>
-                      <tr>
-                        <th id="IdPacijenta">Id</th>
+                            <th id="ImePacijenta"> Ime</th>
+                            <th id="PrezimePacijenta">Prezime</th>
+                            <th id="EmailPacijenta">Email</th>
 
-                        <th id="ImePacijenta"> Ime</th>
-                        <th id="PrezimePacijenta">Prezime</th>
-                        <th id="EmailPacijenta">Email</th>
-
-                        <th id="TelefonPacijenta">Telefon</th>
-                      </tr>
-                    </thead>
-                    <tbody>{this.listaLekaraUK()}</tbody>
-                  </Table>
-                </div>
-              }
-            />
-          </Row>
+                            <th id="TelefonPacijenta">Telefon</th>
+                          </tr>
+                        </thead>
+                        <tbody>{this.listaLekaraUK()}</tbody>
+                      </Table>
+                    </div>
+                  }
+                />
+              </Row>
+      
         </Grid>
       </div>
     );

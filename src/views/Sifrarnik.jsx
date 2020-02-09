@@ -66,16 +66,10 @@ class Sifrarnik extends Component {
               }}
             ></Dialog>
           </td>
-          <td>
-            <Button id={lista[i].id} onClick={e => this.obrisiLek(e)}>
-              Obrisi
-            </Button>
-            <Dialog
-              ref={el => {
-                this.dialog = el;
-              }}
-            ></Dialog>
-          </td>
+          {/* <td >
+          <Button id={lista[i].id} onClick={e => this.obrisiLek(e)}>Obrisi</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td> */}
         </tr>
       );
     }
@@ -101,16 +95,10 @@ class Sifrarnik extends Component {
               }}
             ></Dialog>
           </td>
-          <td>
-            <Button id={lista[i].id} onClick={e => this.obrisiDijagnozu(e)}>
-              Obrisi
-            </Button>
-            <Dialog
-              ref={el => {
-                this.dialog = el;
-              }}
-            ></Dialog>
-          </td>
+          {/* <td >
+          <Button id={lista[i].id} onClick={e => this.obrisiDijagnozu(e)}>Obrisi</Button>
+          <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
+          </td> */}
         </tr>
       );
     }
