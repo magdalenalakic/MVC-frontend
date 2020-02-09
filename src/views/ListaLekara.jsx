@@ -407,9 +407,41 @@ class ListaLekara extends Component {
     if (pretraga == "" || pretraga == undefined) {
       for (var i = 0; i < lista.length; i++) {
         if (lis.some(item => lista[i].id === item.id)) {
+            res.push(
+              <tr key={i}>
+            
+
+                <td>{lista[i].ime}</td>
+                <td>{lista[i].prezime}</td>
+                <td>{lista[i].email}</td>
+
+                <td>{lista[i].telefon}</td>
+                <td>
+                  <Button id={lista[i].email} onClick={e => this.obrisiLekara(e)}>
+                    Obrisi
+                  </Button>
+                  <Dialog
+                    ref={el => {
+                      this.dialog = el;
+                    }}
+                  ></Dialog>
+                </td>
+                <td>
+                  <Button
+                    className="OdobrenZahtev"
+                    id={lista[i].email}
+                    onClick={e => this.handleIzmeni(e)}
+                  >
+                    Izmeni
+                  </Button>
+                </td>
+              </tr>
+            );
+
+        }else{
           res.push(
             <tr key={i}>
-          
+              
 
               <td>{lista[i].ime}</td>
               <td>{lista[i].prezime}</td>
@@ -417,50 +449,18 @@ class ListaLekara extends Component {
 
               <td>{lista[i].telefon}</td>
               <td>
-                <Button id={lista[i].email} onClick={e => this.obrisiLekara(e)}>
-                  Obrisi
-                </Button>
-                <Dialog
-                  ref={el => {
-                    this.dialog = el;
-                  }}
-                ></Dialog>
+              
               </td>
               <td>
-                <Button
-                  className="OdobrenZahtev"
-                  id={lista[i].email}
-                  onClick={e => this.handleIzmeni(e)}
-                >
-                  Izmeni
-                </Button>
+          
               </td>
             </tr>
           );
-
-      }else{
-        res.push(
-          <tr key={i}>
-            
-
-            <td>{lista[i].ime}</td>
-            <td>{lista[i].prezime}</td>
-            <td>{lista[i].email}</td>
-
-            <td>{lista[i].telefon}</td>
-            <td>
-            
-            </td>
-            <td>
-        
-            </td>
-          </tr>
-        );
-      }
-    }
-  }else{
-    for (var i = 0; i < lista.length; i++) {
-      if (lista[i].ime.toLowerCase().includes(pretraga.toLowerCase()) || lista[i].prezime.toLowerCase().includes(pretraga.toLowerCase()) )  {
+        }
+     }
+    }else{
+      for (var i = 0; i < lista.length; i++) {
+        if (lista[i].ime.toLowerCase().includes(pretraga.toLowerCase()) || lista[i].prezime.toLowerCase().includes(pretraga.toLowerCase()) )  {
         if(lis.some(item => lista[i].id === item.id)){
           res.push(
             <tr key={i}>
@@ -507,9 +507,9 @@ class ListaLekara extends Component {
             </tr>
           );
         }
-      }
-    } else {
-      for (var i = 0; i < lista.length; i++) {
+        }
+         else {
+      for  (var i = 0; i < lista.length; i++) {
         if (
           lista[i].ime.toLowerCase().includes(pretraga.toLowerCase()) ||
           lista[i].prezime.toLowerCase().includes(pretraga.toLowerCase())
@@ -565,10 +565,13 @@ class ListaLekara extends Component {
           }
         }
       }
-    }
+        }
+      }
     return res;
-  }
+    }
+  
 }
+
   handleChangePretraga = e => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
