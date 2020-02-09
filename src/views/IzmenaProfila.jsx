@@ -29,7 +29,8 @@ class izmenaProfila extends Component {
       novaLoz: "",
       potvrdaLoz: "",
       promenaLozinke: false,
-      formError: ""
+      formError: "",
+      idLekara:props.id
     };
     this.config = {
       headers: {
@@ -48,29 +49,38 @@ class izmenaProfila extends Component {
         "Content-Type": "application/json"
       }
     };
+    // const url11 = "http://localhost:8025/api/lekari/izmena" + this.state.idLekara;
+    // axios.get(url11, config).then(Response => {
+    //   this.setState({
+    //     email: Response.data.email,
+    //     idKlinike: Response.data.klinikaID,
+    //     ime: Response.data.ime,
+    //     prezime: Response.data.prezime,
+    //     telefon: Response.data.telefon,
+    //     idLekara: Response.data.id
+    //   });
+    // })
     const url = "http://localhost:8025/api/lekari/getLekarByEmail";
-    axios
-      .get(url, config)
-      .then(Response => {
+    axios.get(url, config).then(Response => {
+      this.setState({
+        email: Response.data.email,
+        idKlinike: Response.data.klinikaID,
+        ime: Response.data.ime,
+        prezime: Response.data.prezime,
+        telefon: Response.data.telefon,
+        idLekara: Response.data.id
+      });
+
+      const urlKlinike =
+        "http://localhost:8025/api/klinike/findKlinikaById/" +
+        this.state.idKlinike;
+
+      axios.get(urlKlinike, config).then(klinika => {
         this.setState({
-          email: Response.data.email,
-          idKlinike: Response.data.klinikaID,
-          ime: Response.data.ime,
-          prezime: Response.data.prezime,
-          telefon: Response.data.telefon
+          imeKlinike: klinika.data.naziv
         });
-
-        const urlKlinike =
-          "http://localhost:8025/api/klinike/findKlinikaById/" +
-          this.state.idKlinike;
-
-        axios.get(urlKlinike, config).then(klinika => {
-          this.setState({
-            imeKlinike: klinika.data.naziv
-          });
-        });
-      })
-      .catch(error => {});
+      });
+    });
   }
   handleChange = e => {
     e.preventDefault();
@@ -96,7 +106,8 @@ class izmenaProfila extends Component {
           ime: this.state.ime,
           prezime: this.state.prezime,
           telefon: this.state.telefon,
-          email: this.state.email
+          email: this.state.email,
+          id: this.state.idLekara
         },
         config
       )
