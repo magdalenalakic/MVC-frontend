@@ -507,7 +507,7 @@ class ListaLekara extends Component {
             </tr>
           );
         }
-        }
+       }
          else {
       for  (var i = 0; i < lista.length; i++) {
         if (
@@ -565,7 +565,7 @@ class ListaLekara extends Component {
           }
         }
       }
-        }
+    }
       }
     return res;
     }
