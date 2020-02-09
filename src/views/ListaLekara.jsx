@@ -507,8 +507,7 @@ class ListaLekara extends Component {
             </tr>
           );
         }
-      }
-    } else {
+      }else {
       for (var i = 0; i < lista.length; i++) {
         if (
           lista[i].ime.toLowerCase().includes(pretraga.toLowerCase()) ||
@@ -566,9 +565,12 @@ class ListaLekara extends Component {
         }
       }
     }
+    
     return res;
+    }
   }
 }
+
   handleChangePretraga = e => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
@@ -656,6 +658,7 @@ class ListaLekara extends Component {
       </div>
     );
   }
+
 }
 
 export default ListaLekara;

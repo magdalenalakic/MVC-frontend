@@ -82,36 +82,66 @@ class KlinickiCentar extends Component {
     });
   };
   handleNotificationClick = position => {
-    var color = Math.floor(Math.random() * 4 + 1);
-    var level;
-    switch (color) {
-      case 1:
-        level = "success";
-        break;
-      case 2:
-        level = "warning";
-        break;
-      case 3:
-        level = "error";
-        break;
-      case 4:
-        level = "info";
-        break;
-      default:
-        break;
-    }
-    this.state._notificationSystem.addNotification({
-      title: <span data-notify="icon" className="pe-7s-gift" />,
-      message: (
-        <div>
-          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-          every web developer.
-        </div>
-      ),
-      level: level,
-      position: position,
-      autoDismiss: 15
-    });
+   // var color = Math.floor(Math.random() * 4 + 1);
+   var color = 1;
+   var level;
+   var klasa = "pe-7s-gift";
+   this.props.handleClick("IZMENJENA KLINIKA");
+   if (
+     position === "IZMENJENA KLINIKA" ||
+     position === "IZMENJEN ADMINISTRATOR KLINIKE" ||
+     position === "IZMENJEN ADMINISTRATOR KLINICKOG CENTRA" ||
+     position === "USPESNO DODATA KLINIKA" ||
+     position === "USPESNO DODAT ADMINISTRATOR KLINIKE" ||
+     position === "USPESNO DODAT ADMINISTRATOR KLINICKOG CENTRA" 
+  
+   ) {
+     color = 1;
+     level = "success";
+     klasa = "pe-7s-check";
+   } 
+  // else if (position === "PREGLED JE ZAPOCET" )  {
+  //    color = 4;
+  //    level = "info";
+  //    klasa = "pe-7s-check";
+  //  } else if(position ==="ODUSTALI STE OD PREGLEDA"){
+  //    level = "warning";
+  //    color = 4;
+  //    klasa = "pe-7s-check";
+  //  }else if (position === "NISU SVA POLJA UNESENA" || 
+  //    position === "MAIL NIJE POSLAT") {
+  //    color = 3;
+  //    level = "error";
+  //    klasa = "pe-7s-check";
+  //  }
+   // else{
+   //   color = 1;
+   //   level = "success";
+   //   klasa = "pe-7s-check";
+   // }
+   // switch (color) {
+   //   case 1:
+   //     level = "success";
+   //     break;
+   //   case 2:
+   //     level = "warning";
+   //     break;
+   //   case 3:
+   //     level = "error";
+   //     break;
+   //   case 4:
+   //     level = "info";
+   //     break;
+   //   default:
+   //     break;
+   // }
+   this.state._notificationSystem.addNotification({
+     title: <span data-notify="icon" className={klasa} />,
+     message: <div>{position}</div>,
+     level: level,
+     position: "tr",
+     autoDismiss: 15
+   });
   };
   getBrandText = path => {
     for (let i = 0; i < routes.length; i++) {
