@@ -88,7 +88,8 @@ class Lekar extends Component {
       position == "ZAHTEV JE POSLAT" ||
       position ==  "USPESNO PROMENJENA LOZINKA" ||
       position == "USPESNO PROMENJENI PODACI" ||
-      position ==  "ZAKAZAN PREGLED"){
+      position ==  "ZAKAZAN PREGLED" || 
+      position == "ZAKAZANA OPERACIJA"){
       color = 1;
       level = "success";
       klasa = "pe-7s-check";
