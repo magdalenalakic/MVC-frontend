@@ -1,53 +1,101 @@
-/*!
+import React, { Component } from "react";
+// import pin from "../../../assets/images/map.png";
 
-=========================================================
-* Light Bootstrap Dashboard React - v1.3.0
-=========================================================
+export class Map extends Component {
+  constructor(props) {
+    super(props);
+    this.initMap = this.initMap.bind(this);
+    this.trackChangeLocation = this.trackChangeLocation.bind(this);
+    this.gmapCallback = this.gmapCallback.bind(this);
+    window.googleMapsCallback = this.gmapCallback;
+    this.state = {};
+  }
 
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
+  gmapCallback() {
+    this.setState({
+      _googleMapsLoaded: true
+    });
+  }
 
-* Coded by Creative Tim
+  trackChangeLocation() {
+    this.props.onChange(
+      this.state.googleMap.getCenter().lat() +
+        ", " +
+        this.state.googleMap.getCenter().lng()
+    );
+  }
 
-=========================================================
+  initMap() {
+    console.log("InitMAP");
+    this.setState({
+      _mapInit: true
+    });
 
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    var latLng =
+      this.props.value && this.props.value.indexOf(",") !== -1
+        ? new window.google.maps.LatLng(
+            this.props.value.split(",")[0],
+            this.props.value.split(",")[1]
+          )
+        : new window.google.maps.LatLng(44.75874, 19.21437);
 
-*/
-import React from "react";
-// react components used to create a google map
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker
-} from "react-google-maps";
+    var map = new window.google.maps.Map(this.GoogleMap, {
+      zoom: 16,
+      center: latLng,
+      mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+      disableDefaultUI: true,
+      gestureHandling: "greedy"
+    });
 
-const CustomMap = withScriptjs(
-  withGoogleMap(props => (
-    <GoogleMap
-      defaultZoom={13}
-      defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
-      defaultOptions={{
-        scrollwheel: false,
-        zoomControl: true
-      }}
-    >
-      <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
-    </GoogleMap>
-  ))
-);
+    map.addListener("center_changed", this.trackChangeLocation);
 
-function Maps({ ...prop }) {
-  return (
-    <CustomMap
-      googleMapURL="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE"
-      loadingElement={<div style={{ height: `100%` }} />}
-      containerElement={<div style={{ height: `100vh` }} />}
-      mapElement={<div style={{ height: `100%` }} />}
-    />
-  );
+    this.setState({ googleMap: map });
+  }
+
+  componentDidMount() {
+    var ref = window.document.getElementsByTagName("script")[0];
+    var script = window.document.createElement("script");
+    script.src =
+      "https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyAAqbIo7N0_Rpwtay3-CWzo5gkfpgWZ4to&callback=googleMapsCallback&language=hr&region=BA";
+    script.async = true;
+    script.defer = true;
+
+    ref.parentNode.insertBefore(script, ref);
+
+    if (this.state._googleMapsLoaded && !this.state._mapInit) {
+      this.initMap();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.state._googleMapsLoaded && !this.state._mapInit) {
+      this.initMap();
+    }
+
+    if (this.state._googleMapsLoaded && prevProps.value != this.props.value) {
+      var latLng = new window.google.maps.LatLng(
+        this.props.value.split(",")[0],
+        this.props.value.split(",")[1]
+      );
+      this.state.googleMap.setCenter(latLng);
+    }
+  }
+
+  render() {
+    return (
+      <div className="map-wrap">
+        {this.state._googleMapsLoaded ? (
+          <div
+            className="map"
+            ref={input => {
+              this.GoogleMap = input;
+            }}
+          ></div>
+        ) : null}
+        <div className="google-map-marker">{/* <img src={pin} /> */}</div>
+      </div>
+    );
+  }
 }
 
-export default Maps;
+export default Map;

@@ -283,5 +283,21 @@
 }
 
 .izadjiDugme{
+  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.pregled{
   margin-left: 10px;
+  width: 1100px;
+}
+
+
+.dugmiciii{
+  margin-bottom: 3px;
+  margin-top: 5px;
+  margin-left: 3px;
+  margin-right: 3px;
 }

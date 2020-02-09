@@ -44,8 +44,7 @@ class ZahtevLekar extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeDatePocetka = this.handleChangeDatePocetka.bind(this);
     this.handleChangeDateKraja = this.handleChangeDateKraja.bind(this);
-    console.log(this.state.uloga);
-    console.log(this.state.email);
+    
   }
 
   izaberiTip(izbor) {
@@ -112,8 +111,10 @@ class ZahtevLekar extends React.Component {
     });
   }
   zahtevOdmorOdsustvo() {
-
-    const url = "http://localhost:8025/api/odmorodsustvo/posaljiZahtevLekar";
+    if(this.state.opis === "" || this.state.opis === null){
+      this.props.handleClick("NISU SVA POLJA UNESENA");
+    }else{
+      const url = "http://localhost:8025/api/odmorodsustvo/posaljiZahtevLekar";
     axios
       .post(url,{ 
         datumOd : this.state.datumPocetka,
@@ -130,17 +131,16 @@ class ZahtevLekar extends React.Component {
         
         console.log("uspesno poslat zahtev")
         console.log(Response.data);
+        this.props.handleClick("ZAHTEV JE POSLAT");
         this.setState({
           redirectToPocetna: true
           
         })
-        
-
+      
       });
-      // .catch(error => {
-      //   console.log("nije dobro odabran datum");
-
-      // });
+      
+    }
+    
   };
 
   render() {
@@ -150,16 +150,17 @@ class ZahtevLekar extends React.Component {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/pocetnaStranicaLekara"
+              path="/pocetnaStranica"
               render={props => <PocetnaStranicaLekara {...props}
                   token={this.state.token}
                   email={this.state.email} 
                   uloga={this.state.uloga}
+                  
                 //nije emailPacijenta vec je id al dobro
                   // emailPacijenta={this.state.emailPacijenta}  
                 />}
             />
-            <Redirect from="/" to="/pocetnaStranicaLekara" />
+            <Redirect from="/" to="/pocetnaStranica" />
           </Switch>
         </BrowserRouter>
       );

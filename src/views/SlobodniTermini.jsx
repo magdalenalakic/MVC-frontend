@@ -5,11 +5,9 @@ import "klinickiCentar.css";
 import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from "react-bootstrap-dialog";
-import IzmenaLekara from "views/IzmenaProfila.jsx";
 import "klinickiCentar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import moment from "moment";
 
 class SlobodniTermini extends Component {
@@ -40,6 +38,7 @@ class SlobodniTermini extends Component {
       nazivOznaceneSale: "",
       brojOznaceneSale: "",
       tipoviPregleda: [],
+      cijenaTipaPregleda: "",
       lekari: [],
       sale: [],
       oznaceniTipPregleda: 1,
@@ -51,16 +50,53 @@ class SlobodniTermini extends Component {
       izabranLekar: 0,
       izabranaKlinika: 1,
       cena: 0,
-      popust: 0
+      popust: 0,
+      selectValue: 9, 
+      dodavanjeST: false,
+      izabraniLekar: null,
+      idLekar: ""
+
     };
     this.listaSalaK = this.listaSalaK.bind(this);
     this.izaberiVrstuPregleda = this.izaberiVrstuPregleda.bind(this);
     this.handleChangeDate = this.handleChangeDate.bind(this);
-    // this.dodajLekara = this.dodajLekara.bind(this);
-    // this.obrisiLekara = this.obrisiLekara.bind(this);
-    // this.proslediKliniku = this.proslediKliniku.bind(this);
+    this.handleDropdownChange = this.handleDropdownChange.bind(this);
+    this.dodajNoviST = this.dodajNoviST.bind(this);
+    this.handleDodajST = this.handleDodajST.bind(this);
+    this.dodeliLekara = this.dodeliLekara.bind(this);
+  }
 
-    // this.getKlinikaValue = this.getKlinikaValue.bind(this);
+
+
+   handleDropdownChange = e =>{
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    this.setState({
+       selectValue: e.target.value 
+     // });
+    }, ()=>{
+      console.log("SALE ******")
+        const urlPRegled = 'http://localhost:8025/api/ST/preuzmiSaleKlinikeZaPregled/' + this.state.idKlinike ;    
+        console.log(urlPRegled);
+    
+        axios.get(urlPRegled, config)
+          .then(pregled => {
+            console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ")
+            console.log(pregled.data);
+            this.setState({
+              sale: pregled.data,
+            })
+           
+          })
+     });
+   
+  
+ 
   }
 
   getKlinikaValue() {
@@ -76,19 +112,6 @@ class SlobodniTermini extends Component {
     console.log({ [e.target.name]: e.target.value });
   };
 
-  // listaKlinikaIzbor(){
-  //   let res = [];
-
-  //   let lista = this.state.listaKlinika;
-
-  //   for (var i = 0; i < lista.length; i++) {
-  //     res.push(
-  //       <option value={lista[i].id} >{lista[i].naziv}</option>
-  //        //<MenuItem eventKey={lista[i].id}>{lista[i].naziv}</MenuItem>
-  //     );
-  //   }
-  //   return res;
-  // }
   proslediKliniku(klinika) {
     console.log("prosledjena klinika");
 
@@ -101,47 +124,39 @@ class SlobodniTermini extends Component {
       () => console.log(this.state)
     );
   }
-  listaLekara() {
-    console.log("Ponovo ispisi listu bez obrisanog lekara");
-    console.log("!!!!!!!!!!!!!!!11111 ID KL " + this.state.idKlinike);
+  // listaLekara() {
+   
+  //   const urlKlinike =
+  //     "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
+  //     this.state.idKlinike;
+  //   axios.get(urlKlinike).then(klinika => {
+     
 
-    console.log("ID KLINIKE OD KOJE TRAZIM LEKARE: " + this.state.idKlinike);
-    console.log("ucitaj mi kliniku");
-    const urlKlinike =
-      "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
-      this.state.idKlinike;
-    axios.get(urlKlinike).then(klinika => {
-      console.log("Preuzeta klinika");
-      console.log(klinika.data);
-
-      this.setState({
-        idKlinika: klinika.data.id,
-        listaLekara: klinika.data
-      });
-    });
-  }
+  //     this.setState({
+  //       idKlinika: klinika.data.id,
+  //       // listaLekara: klinika.data
+  //     });
+  //   });
+  // }
 
   obrisiLekara = e => {
     e.preventDefault();
-    console.log("CLick brisanje lekara");
-    console.log("LLL: " + e.target.id);
-    console.log("--------------------------------");
+   
     const url6 = "http://localhost:8025/api/klinike/brisanjeLekara";
     axios
       .post(url6, {
         email: e.target.id
       })
       .then(response => {
-        console.log("Brisanje lekara uspelo! ");
-        console.log(response.data);
-        this.listaLekara();
+    
+        //his.listaLekara();
       })
       .catch(error => {
         console.log("Brisanje leka nije uspelo! ");
       });
   };
   ucitajUnapredDefTermine() {
-    console.log("UNAPRED DEF TER");
+    
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -153,27 +168,33 @@ class SlobodniTermini extends Component {
     const urlslobodni =
       "http://localhost:8025/api/ST/preuzmiSTKlinike/" + this.state.idKlinike;
     axios.get(urlslobodni, config).then(klinika => {
-      console.log("Preuzeta lista klinika");
-      console.log(klinika.data);
-      console.log(klinika.data[0].tipPregledaID);
+      
       this.setState(
         {
-          // idKlinike: klinika.data.id,
-          listaLekara: klinika.data,
-          pregledLekarID: klinika.data.lekarID,
-          pregledPacijentID: klinika.data.pacijentID,
-          pregledTipPregledaID: klinika.data[0].tipPregledaID,
-          pregledCijena: klinika.data.cena
+         
+          listaLekara: klinika.data
+
+          
         },
         () => {
+          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+          console.log(this.state.listaLekara);
+          // for(var j=0; j<this.state.listaLekara.length;j++){
+          //   axios.get( "http://localhost:8025/api/tipPregleda/finByIdTP/" + this.state.listaLekara[j].tipPregledaID, config )
+          //         .then(respon => {
+          //           console.log(respon.data);
+          //           this.setState({
+          //             cena: respon.data.cena
+          //           })
+          //         })
+          // }
           this.listaSalaK();
         }
       );
     });
   }
   componentWillMount() {
-    console.log("wmount");
-    console.log("Preuzimanje admina klinike.....");
+  
     var config = {
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -185,8 +206,7 @@ class SlobodniTermini extends Component {
     axios
       .get(url, config)
       .then(Response => {
-        console.log("Preuzet admin klinike: ");
-        console.log(Response.data);
+       
 
         this.setState({
           email: Response.data.email,
@@ -195,23 +215,41 @@ class SlobodniTermini extends Component {
           //   telefon: Response.data.telefon,
           idKlinike: Response.data.idKlinike
         });
-        console.log("Ucitaj mi kliniku sa id " + this.state.idKlinike);
-        console.log("ucitaj mi kliniku");
-        const urlKlinike =
-          "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
-          this.state.idKlinike;
-        axios.get(urlKlinike, config).then(klinika => {
-          console.log("Preuzeta klinika");
-          console.log(klinika.data);
+        
+        // const urlKlinike =
+        //   "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
+        //   this.state.idKlinike;
+        // axios.get(urlKlinike, config).then(klinika => {
+         
 
-          this.setState({
-            // idKlinike: klinika.data.id,
-            listaLekara: klinika.data
-          });
-          console.log("++++++++++++++++++ Id k: " + this.state.idKlinike);
-          console.log("Preuzmi mi sale za tu kliniku");
-
-          console.log("Preuzmi mi sale za tu kliniku");
+          const urlslobodni =
+          "http://localhost:8025/api/ST/preuzmiSTKlinike/" + this.state.idKlinike;
+        axios.get(urlslobodni, config).then(klinika => {
+          
+          this.setState(
+            {
+             
+              listaLekara: klinika.data
+    
+              
+            },
+            () => {
+              console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+              console.log(this.state.listaLekara);
+              // for(var j=0; j<this.state.listaLekara.length;j++){
+              //   axios.get( "http://localhost:8025/api/tipPregleda/finByIdTP/" + this.state.listaLekara[j].tipPregledaID, config )
+              //         .then(respon => {
+              //           console.log(respon.data);
+              //           this.setState({
+              //             cena: respon.data.cena
+              //           })
+              //         })
+              // }
+              this.listaSalaK();
+            }
+          );
+       
+     
           const urlKlinike =
             "http://localhost:8025/api/tipPregleda/tipPregledaKlinike/" +
             this.state.idKlinike;
@@ -229,202 +267,62 @@ class SlobodniTermini extends Component {
               // pregledCijena: klinika.data.cena,
             });
           });
-          const url2 =
-            "http://localhost:8025/api/klinike/listaLekaraKlinika/" +
-            this.state.idKlinike;
-          axios.get(url2, config).then(resp => {
-            console.log("Preuzeta lista klinika");
-            console.log(resp.data);
-
-            this.setState({
-              // idKlinike: klinika.data.id,
-              lekari: resp.data,
-              oznaceniLekar: resp.data[0].id,
-              nazivOznacenogLekara: resp.data[0].ime
-              // pregledLekarID: klinika.data.lekarID,
-              // pregledPacijentID: klinika.data.pacijentID,
-              // pregledTipPregledaID: klinika.data[0].tipPregledaID,
-              // pregledCijena: klinika.data.cena,
-            });
-          });
-          const url3 =
-            "http://localhost:8025/api/sale/preuzmiSaleKlinike/" +
-            this.state.idKlinike;
-          axios.get(url3, config).then(resp => {
-            console.log("Preuzeta lista klinika");
-            console.log(resp.data);
-
-            this.setState(
-              {
-                // idKlinike: klinika.data.id,
-                sale: resp.data,
-                oznacenaSala: resp.data[0].id,
-                nazivOznaceneSale: resp.data[0].naziv,
-                brojOznaceneSale: resp.data[0].broj
-                // pregledLekarID: klinika.data.lekarID,
-                // pregledPacijentID: klinika.data.pacijentID,
-                // pregledTipPregledaID: klinika.data[0].tipPregledaID,
-                // pregledCijena: klinika.data.cena,
-              },
-              () => {
-                console.log("salaa---- " + this.state.oznacenaSala);
-                this.ucitajUnapredDefTermine();
-              }
-            );
-          });
+        
         });
       })
 
       .catch(error => {
         console.log("Administrator klinike  nije preuzet");
       });
-    console.log("************* ID KLINIKE JE:" + this.state.idKlinike);
+    
   }
 
   onDropdownSelected(e) {
     console.log("THE VAL", e.target.value);
     //here you will see the current selected value of the select input
   }
-  dodajNoviST = e => {
-    e.preventDefault();
+  dodajNoviST(){
 
-    console.log("--------------------------------");
-    this.dialog.show({
-      title: "Dodavanje novog termina",
-      body: [
-        <form className="formaZaDodavanjeNovogTermina">
-          <div className="telefonLekara">
-            <label className="lekarTelefonLabel" htmlFor="datumPregleda">
-              Datum:{" "}
-            </label>
-            <DatePicker
-              className="lekarTelefonLabel"
-              name="datumPregleda"
-              defaultValue=""
-              placeholderText="Izaberi datum"
-              selected={this.state.datumZaPregled}
-              onSelect={this.handleChangeDate}
-            />
-          </div>
-          <div className="telefonLekara">
-            <label className="lekarTelefonLabel" htmlFor="prezimeLekara">
-              Tip Pregleda:{" "}
-            </label>
-            <select
-              className="lekarTelefonLabel"
-              name="tipPregleda"
-              onChange={e => this.biranjeTipaPregleda(e)}
-            >
-              {this.izaberiVrstuPregleda()}
-            </select>
-          </div>
-          <div className="telefonLekara">
-            <label className="lekarTelefonLabel" htmlFor="biranjeLekara">
-              Lekar:{" "}
-            </label>
-            <select
-              className="lekarTelefonLabel"
-              name="lekadID"
-              onChange={e => this.biranjeLekara(e)}
-            >
-              {this.izaberiLekara()}
-            </select>
-          </div>
-          <div className="telefonLekara">
-            <label className="lekarTelefonLabel" htmlFor="telefonLekara">
-              Sala:{" "}
-            </label>
-            <select
-              className="lekarTelefonLabel"
-              name="salaID"
-              onChange={e => this.biranjeSala(e)}
-            >
-              {this.izaberiSalu()}
-            </select>
-          </div>
-          <div className="telefonLekara">
-            <label className="lekarTelefonLabel" htmlFor="telefonLekara">
-              Cena(RSD):{" "}
-            </label>
-            <input
-              className="lekarTelefonLabel"
-              type="number"
-              name="cena"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="telefonLekara">
-            <label className="lekarTelefonLabel" htmlFor="telefonLekara">
-              Popust(%):{" "}
-            </label>
-            <input
-              className="lekarTelefonLabel"
-              type="number"
-              name="popust"
-              defaultValue=""
-              onChange={this.handleChange}
-            />
-          </div>
-
-          {/* <div className="klinikaLekara" >
-            <label className="lekarKlinikaLabel" htmlFor="lekarKlinika">Klinika: </label>
-            <div>
-            <select name="odabirKlinike"  onChange={e => {this.proslediKliniku(e)}}>
-            {this.listaKlinikaIzbor()} 
-            
-            </select>
-          </div>
-          </div> */}
-        </form>
-      ],
-      actions: [
-        Dialog.CancelAction(),
-        Dialog.OKAction(() => {
-          console.log("OK je kliknuto!");
-          console.log(this.state.oznaceniLekar);
-          console.log(this.state.idKlinike);
-          console.log(this.state.oznaceniTipPregleda);
-          console.log(this.state.datumZaPregled);
-          var config = {
-            headers: {
-              Authorization: "Bearer " + this.state.token,
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            }
-          };
-          axios
-
-            .post(
-              "http://localhost:8025/api/ST/dodajNoviST",
-              {
-                lekarID: this.state.oznaceniLekar,
-                klinikaID: this.state.idKlinike,
-                tipPregledaID: this.state.oznaceniTipPregleda,
-                cena: this.state.cena,
-                popust: this.state.popust,
-                datum: this.state.datumZaPregled,
-                salaID: this.state.oznacenaSala
-              },
-              config
-            )
-            .then(response => {
-              console.log("Dodat novi termin");
-              console.log(response);
-              this.ucitajUnapredDefTermine();
-            })
-            .catch(error => {
-              console.log("greska ST");
-              console.log(error.response);
-            });
-        })
-      ],
-      bsSize: "medium",
-      onHide: dialog => {
-        dialog.hide();
-        console.log("closed by clicking background.");
+    var config = {
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
       }
-    });
+    };
+ 
+    axios
+
+      .post(
+        "http://localhost:8025/api/ST/dodajNoviST",
+        {
+          lekarID: this.state.oznaceniLekar,
+          klinikaID: this.state.idKlinike,
+          tipPregledaID: this.state.oznaceniTipPregleda,
+         // cena: this.state.cena,
+          popust: this.state.popust,
+          datum: this.state.datumZaPregled,
+          salaID: this.state.oznacenaSala,
+          termin: this.state.selectValue
+        },
+        config
+      )
+      .then(response => {
+        console.log("Dodat novi termin");
+        console.log(response);
+        this.setState({
+          dodavanjeST: false
+        })
+        this.ucitajUnapredDefTermine() 
+        
+      })
+      .catch(error => {
+        console.log("greska ST");
+        console.log(error.response);
+      });
+
+
+   
   };
   handleIzmeni = e => {
     e.preventDefault();
@@ -454,14 +352,13 @@ class SlobodniTermini extends Component {
       },
       () => {
         console.log(this.state);
+        console.log("Datummmmmm  izabran: " + this.state.datumZaPregled)
         // ucitajSlobodneLeka
       }
     );
   };
   biranjeTipaPregleda(tip) {
-    console.log("BIRANJE TP P");
-    console.log("prosledjen pregled");
-    console.log(tip.target.value);
+
     this.setState({
       oznaceniTipPregleda: tip.target.value
     });
@@ -472,44 +369,40 @@ class SlobodniTermini extends Component {
       var id = lista[i].id;
       if (id == tip.target.value) {
         this.setState({
-          nazivOznacenogPregleda: naziv
+          nazivOznacenogPregleda: naziv,
+          cena: lista[i].cena
         });
       }
     }
   }
 
-  biranjeLekara(lekar) {
-    console.log("BIRANJE TP P");
-    console.log("prosledjen lekar");
-    console.log("Stari id: " + this.state.oznaceniLekar);
-    const idL = lekar.target.value;
-    this.setState({
-      oznaceniLekar: idL
-    });
-    console.log("Value id:" + lekar.target.value);
-    console.log("Novi id: +  " + this.state.oznaceniLekar);
-    let lista = this.state.lekari;
+//   biranjeLekara(lekar) {
+    
+//     const idL = lekar.target.value;
+//     this.setState({
+//       oznaceniLekar: idL
+//     });
+    
+//  //   let lista = this.state.lekari;
 
-    for (var i = 0; i < lista.length; i++) {
-      var naziv = lista[i].ime;
-      var id = lista[i].id;
-      if (id == lekar.target.value) {
-        this.setState({
-          nazivOznacenogLekara: naziv
-        });
-      }
-    }
-  }
+//     for (var i = 0; i < lista.length; i++) {
+//       var naziv = lista[i].ime;
+//       var id = lista[i].id;
+//       if (id == lekar.target.value) {
+//         this.setState({
+//           nazivOznacenogLekara: naziv
+//         });
+//       }
+//     }
+//   }
   biranjeSala(sala) {
-    console.log("BIRANJE TP P");
-    console.log("prosledjen sala");
-    console.log("Stari id: " + this.state.oznacenaSala);
+   
     const idL = sala.target.value;
+    console.log(" .... Target value: " + sala.target.value)
     this.setState({
       oznacenaSala: idL
     });
-    console.log("Value id:" + sala.target.value);
-    console.log("Novi id: +  " + this.state.oznacenaSala);
+ 
     let lista = this.state.sale;
 
     for (var i = 0; i < lista.length; i++) {
@@ -521,7 +414,7 @@ class SlobodniTermini extends Component {
           oznacenaSala: id,
           nazivOznaceneSale: naziv,
           brojOznaceneSale: broj
-        });
+        }, () => console.log(this.state.oznacenaSala));
       }
     }
   }
@@ -567,67 +460,342 @@ class SlobodniTermini extends Component {
       res.push(
         <tr key={i}>
           <td>
-            {moment(dat).format("DD.MM.YYYY.")} {moment(dat).format("HH:mm")}
+            {moment(dat).format("DD.MM.YYYY.")}  {lista[i].termin} : 00 - {lista[i].termin + 2} : 00 h
           </td>
           <td>{lista[i].tipPregledaN}</td>
           <td>
             {lista[i].lekarIme} {lista[i].lekarPrezime}
           </td>
 
-          <td>{lista[i].cena} RSD</td>
+          <td>{lista[i].cenaTP} RSD</td>
           <td>{lista[i].popust} %</td>
 
-          {/* <td>{lista[i].telefon}</td>    */}
-          {/* <td >
-             <Button  id={lista[i].id} onClick={e => this.obrisiLekara(e)}>Obrisi</Button>
-             <Dialog ref={(el) => { this.dialog = el }} ></Dialog>     
-       </td>
-         <td>
-            <Button className="OdobrenZahtev" id={lista[i].id} onClick={e => this.handleIzmeni(e)}>
-              Izmeni
-            </Button>
-          </td> */}
+      
         </tr>
       );
     }
     return res;
   }
+  handleDodajST(){
+    this.setState({ dodavanjeST: true})
+  }
+
+  biranjeLekara(lekar){
+
+    const idL = lekar.target.value;
+
+    this.setState({
+      izabraniLekar: lekar.target.value
+    });
+
+    console.log("Value id:" + lekar.target.value);
+    
+    let lista = this.state.lekari;
+
+    for (var i = 0; i < lista.length; i++) {
+      var naziv = lista[i].naziv;
+      var id = lista[i].id;
+      var sifra = lista[i].prezime;
+
+      if (id == lekar.target.value) {
+        this.setState({
+
+          idLekar: id, 
+         
+       
+        }, ()=> {
+          this.dialog.hide();
+            var config = {
+              headers: {
+                Authorization: "Bearer " + this.state.token,
+                Accept: "application/json",
+                "Content-Type": "application/json"
+              }
+            };
+            
+            console.log("111111111111111111111111111111111111111111111111")
+            const url3 = "http://localhost:8025/api/pregledi/rezervisanjeSale";
+            var datumm = moment(this.props.datumPregleda).format("DD.MM.YYYY");
+            console.log(this.state.idSale);
+            console.log( this.state.idKlinike);
+            console.log(datumm);
+            console.log(this.state.selectValue);
+            console.log(this.props.idPregleda);
+            console.log(this.props.idLekar);
+            
+            console.log(this.props);
+            // console.log(this.props.idPacijewnt)
+            axios
+
+            .post(
+              "http://localhost:8025/api/ST/dodajNoviST",
+              {
+                lekarID: this.state.idLekar,
+                klinikaID: this.state.idKlinike,
+                tipPregledaID: this.state.oznaceniTipPregleda,
+               // cena: this.state.cena,
+                popust: this.state.popust,
+                datum: this.state.datumZaPregled,
+                salaID: this.state.oznacenaSala,
+                termin: this.state.selectValue
+              },
+              config
+            )
+            .then(response => {
+              console.log("Dodat novi termin");
+              console.log(response);
+              this.setState({
+                dodavanjeST: false
+              })
+              this.ucitajUnapredDefTermine() 
+              
+            })
+            .catch(error => {
+              console.log("greska ST");
+              console.log(error.response);
+            });
+      
+      
+            
+           });
+    
+        
+      }
+      
+    }
+    
+  }
+
+  ispisiSlobodneLekare() {
+   
+      let res = [];
+      let lista = this.state.lekari;
+  
+      for (var i = 0; i < lista.length; i++) {
+        
+        res.push(
+  
+          <tr key={i}>
+            <td>
+                <input
+                  name="odabranaSala"
+                  type="radio"
+                  value={lista[i].id}
+                  checked={this.state.izabranaDijagnoza == lista[i].id}
+                  onChange={e => {
+                    this.biranjeLekara(e);
+                  }}
+                ></input>
+              </td>
+           
+            <td>{lista[i].ime}</td>
+            <td>{lista[i].prezime}</td>
+            <td>{lista[i].email}</td>
+         
+            <td>{lista[i].telefon}</td>   
+         
+   
+          </tr>
+        );
+      }
+      return res;
+      
+   
+    
+  }
+
+  dodeliLekara= e => {
+    console.log("Dijalog sa slobodnim lekarima za taj datum i termin");
+    console.log(e.target.id + " " + e.target.value);
+    var idS = e.target.id;
+     this.setState({
+       idSale: idS
+     }, ()=> {
+       console.log("================================")
+       console.log(this.state.idSale);
+       var config = {
+         headers: {
+           Authorization: "Bearer " + this.state.token,
+           Accept: "application/json",
+           "Content-Type": "application/json"
+         }
+       };
+       const url3 = "http://localhost:8025/api/pregledi/pronadjiLekaraZaPregled";
+       axios
+         .post(url3, {
+           termin: this.state.selectValue,
+           klinikaID: this.state.idKlinike,
+           salaID: this.state.idSale,
+           datum: this.state.datumZaPregled, //treba datum onaj koji je poslat iz tabele //TODO
+           termin: this.state.selectValue,
+          
+         //  lekarID: this.props.idLekar,
+         }, config)
+         .then(response => {
+           
+           console.log("||||||||||||||||||| lista dostupnih lekaraaaaa" );
+           console.log(response.data);
+           this.setState({
+             lekari: response.data,
+           })
+         // this.listaLekaraPonovo();
+       this.dialog.show({
+         title: 'Lista slobodnih lekara',
+         body: [
+         <form className="formaZaDodavanjeNovogLekara">
+            
+            <Table striped hover>
+                         <thead>
+                           <tr>
+                             <th></th>
+                            
+                             <th id="ImePacijenta"> Ime</th>
+                             <th id="PrezimePacijenta">Prezime</th>
+                             <th id="EmailPacijenta">Email</th>
+                            
+                             <th id="TelefonPacijenta">Telefon</th>
+                     
+                           </tr>
+                         </thead>
+                         <tbody>{this.ispisiSlobodneLekare()}</tbody>
+                       </Table>
+         </form> 
+         ],
+ 
+         bsSize: 'medium',
+         onHide: (dialog) => {
+           dialog.hide()
+           console.log('closed by clicking background.')
+         }
+       })
+         })
+     })
+    
+     
+   
+ }
 
   render() {
-    //     const lista = this.state.listaKlinika;
-    //     const reirectToIzmeniLekar = this.state.reirectToIzmeniLekar;
-    //    console.log("LEKARRRRRRR : "  + this.state.emailLekara);
-    //    const emailLekara = this.state.emailLekara;
-    //     if (reirectToIzmeniLekar === true) {
-    //       return (
-    //         <BrowserRouter>
-    //           <Switch>
-    //             <Route
-
-    //               path="/izmenaProfilaLekara"
-    //               render={props => <IzmenaProfila {...props} email={emailLekara} />}
-    //             />
-    //             <Redirect from="/" to="/izmenaProfilaLekara" />
-    //           </Switch>
-    //         </BrowserRouter>
-    //       );
-    //    }
+   
     return (
       <div className="content">
         <Grid fluid>
-          <Row>
-            <Col>
+              { this.state.dodavanjeST ?
+               
+               <Row>
+               
+                 <form className="formaZaDodavanjeNovogTermina">
+                      <div className="telefonLekara">
+                        <label className="lekarTelefonLabel" htmlFor="datumPregleda">
+                          Datum:{" "}
+                        </label>
+                        <DatePicker
+                          className="lekarTelefonLabel"
+                          name="datumPregleda"
+                          defaultValue=""
+                          minDate={new Date()}
+                          placeholderText="Izaberi datum"
+                          selected={this.state.datumZaPregled}
+                          onSelect={this.handleChangeDate}
+                        />
+                      </div>
+                      <div className="telefonLekara">
+                        <label className="lekarTelefonLabel" htmlFor="telefonLekara">
+                          Termin:{" "}
+                        </label>
+                        <select id="selectTermin"  onChange={e => this.handleDropdownChange(e)}>
+                                    <option value={9} >
+                                      09:00-11:00
+                                    </option>
+                                    <option value={11} > 
+                                      11:00-13:00
+                                    </option>
+                                    <option value={13} >
+                                      13:00-15:00
+                                    </option>
+                                    <option value={15}>
+                                      15:00-17:00
+                                    </option>
+                            </select>
+                      </div>
+                      <div className="telefonLekara">
+                        <label className="lekarTelefonLabel" htmlFor="prezimeLekara">
+                          Tip Pregleda:{" "}
+                        </label>
+                        <select
+                          className="lekarTelefonLabel"
+                          name="tipPregleda"
+                          onChange={e => this.biranjeTipaPregleda(e)}
+                        >
+                          {this.izaberiVrstuPregleda()}
+                        </select>
+                      </div>
+                      {/* <div className="telefonLekara">
+                        <label className="lekarTelefonLabel" htmlFor="biranjeLekara">
+                          Lekar:{" "}
+                        </label>
+                        <select
+                          className="lekarTelefonLabel"
+                          name="lekadID"
+                          onChange={e => this.biranjeLekara(e)}
+                        >
+                          {this.izaberiLekara()}
+                        </select>
+                      </div> */}
+                      <div className="telefonLekara">
+                        <label className="lekarTelefonLabel" htmlFor="telefonLekara">
+                          Sala:{" "}
+                        </label>
+                        <select
+                          className="lekarTelefonLabel"
+                          name="salaID"
+                          onChange={e => this.biranjeSala(e)}
+                        >
+                          {this.izaberiSalu()}
+                        </select>
+                      </div>
+                      <div className="telefonLekara">
+                        <label className="lekarTelefonLabel" htmlFor="telefonLekara">
+                          Popust(%):{" "}
+                        </label>
+                        <input
+                          className="lekarTelefonLabel"
+                          type="number"
+                          name="popust"
+                          defaultValue=""
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      {/* <div>
+                        <Button onClick={()=> this.dodajNoviST()}>Dodaj </Button>
+                      </div> */}
+
+                      <div>
+                        <Button id={this.state.oznacenaSala}  value= {this.state.selectValue}  onClick={e => this.dodeliLekara(e)}>Dodaj lekara </Button>
+                      </div>
+                    </form>
+            
+               
+                   
+                </Row>
+          
+                : null
+              }
               <Row>
+                {
+
+                }
                 <Card
                   title="Lista slobodnih termina"
-                  // category="Here is a subtitle for this table"
+               
                   ctTableFullWidth
                   ctTableResponsive
                   content={
                     <div>
                       <Button
                         className="DodajKlinikuDugme"
-                        onClick={e => this.dodajNoviST(e)}
+                        onClick={()=> this.handleDodajST()}
+                        // onClick={e => this.dodajNoviST(e)}
                       >
                         Dodaj novi termin za pregled
                       </Button>
@@ -655,8 +823,7 @@ class SlobodniTermini extends Component {
                   }
                 />
               </Row>
-            </Col>
-          </Row>
+         
         </Grid>
       </div>
     );

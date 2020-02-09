@@ -1,37 +1,13 @@
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
 import { Route, Switch } from "react-router-dom";
-import { Grid, Row, Col, Table } from "react-bootstrap";
 import NotificationSystem from "react-notification-system";
 
 import AdminNavbar from "components/Navbars/AdminNavbar";
 import Footer from "components/Footer/Footer";
 import Sidebar from "components/Sidebar/Sidebar";
-import FixedPlugin from "components/FixedPlugin/FixedPlugin.jsx";
-
 import { style } from "variables/Variables.jsx";
-
 import routes from "routesLekar.js";
-import { Card } from "components/Card/Card.jsx";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
 import "klinickiCentar.css";
-import UserCard from "components/UserCard/UserCard";
-import slikaKC from "assets/img/klinickiCentar.jpg";
-import axios from "axios";
-import PocetnaStranicaLekara from "./PocetnaStranicaLekara";
 
 class Lekar extends Component {
   constructor(props) {
@@ -41,6 +17,7 @@ class Lekar extends Component {
       uloga: props.uloga,
       email: props.email,
       token: props.token,
+      lozinka: props.lozinka,
       _notificationSystem: null,
       // image: image,
       image: "https://wallpaperaccess.com/full/20601.jpg",
@@ -65,6 +42,8 @@ class Lekar extends Component {
                 uloga={this.state.uloga}
                 email={this.state.email}
                 token={this.state.token}
+                lozinka={this.state.lozinka}
+                promeniLozinku={this.promeniLozinku}
               />
             )}
             key={key}
@@ -76,34 +55,62 @@ class Lekar extends Component {
     });
   };
   handleNotificationClick = position => {
-    var color = Math.floor(Math.random() * 4 + 1);
+    // var color = Math.floor(Math.random() * 4 + 1);
+    var color = 1;
     var level;
-    switch (color) {
-      case 1:
-        level = "success";
-        break;
-      case 2:
-        level = "warning";
-        break;
-      case 3:
-        level = "error";
-        break;
-      case 4:
-        level = "info";
-        break;
-      default:
-        break;
+    var klasa = "pe-7s-gift";
+    if (
+      position === "ZDRAVSTVENI KARTON JE IZMENJEN" ||
+      position === "PREGLED JE ZAVRSEN" ||
+      position === "ZAHTEV JE POSLAT" ||
+      position === "USPESNO PROMENJENA LOZINKA" ||
+      position === "USPESNO PROMENJENI PODACI" ||
+      position === "ZAKAZAN PREGLED" ||
+      position === "ZAKAZANA OPERACIJA"
+    ) {
+      color = 1;
+      level = "success";
+      klasa = "pe-7s-check";
+    } else if (position === "PREGLED JE ZAPOCET" )  {
+      color = 4;
+      level = "info";
+      klasa = "pe-7s-check";
+    } else if(position ==="ODUSTALI STE OD PREGLEDA"){
+      level = "warning";
+      color = 4;
+      klasa = "pe-7s-check";
+    }else if (position === "NISU SVA POLJA UNESENA" || 
+      position === "MAIL NIJE POSLAT") {
+      color = 3;
+      level = "error";
+      klasa = "pe-7s-check";
     }
+    // else{
+    //   color = 1;
+    //   level = "success";
+    //   klasa = "pe-7s-check";
+    // }
+    // switch (color) {
+    //   case 1:
+    //     level = "success";
+    //     break;
+    //   case 2:
+    //     level = "warning";
+    //     break;
+    //   case 3:
+    //     level = "error";
+    //     break;
+    //   case 4:
+    //     level = "info";
+    //     break;
+    //   default:
+    //     break;
+    // }
     this.state._notificationSystem.addNotification({
-      title: <span data-notify="icon" className="pe-7s-gift" />,
-      message: (
-        <div>
-          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-          every web developer.
-        </div>
-      ),
+      title: <span data-notify="icon" className={klasa} />,
+      message: <div>{position}</div>,
       level: level,
-      position: position,
+      position: "tr",
       autoDismiss: 15
     });
   };
@@ -192,6 +199,11 @@ class Lekar extends Component {
       this.refs.mainPanel.scrollTop = 0;
     }
   }
+  promeniLozinku = lozinka => {
+    this.setState({
+      lozinka: lozinka
+    });
+  };
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;

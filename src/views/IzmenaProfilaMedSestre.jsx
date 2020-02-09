@@ -27,6 +27,7 @@ class IzmenaProfilaMedSestre extends Component {
       email: props.email,
       uloga: props.uloga,
       token: props.token,
+      lozinka: this.props.lozinka,
       ime: "",
       prezime: "",
       lozinka: "", 
@@ -37,7 +38,12 @@ class IzmenaProfilaMedSestre extends Component {
       lozinkaN: "", 
       brTelefonaN: "",
       adresaN: "",
-      is_checked: false
+      is_checked: false,
+      staraLoz: props.lozinka,
+      novaLoz: "",
+      potvrdaLoz: "",
+      promenaLozinke: false,
+      formError: ""
     };
     this.config = {
       headers: {
@@ -68,9 +74,9 @@ class IzmenaProfilaMedSestre extends Component {
         this.setState({
           prezime: Response.data.prezime
         });
-        this.setState({
-          lozinka: Response.data.lozinka
-        });
+        // this.setState({
+        //   lozinka: Response.data.lozinka
+        // });
         this.setState({
             brTelefona: Response.data.brTelefona
         });
@@ -100,7 +106,7 @@ class IzmenaProfilaMedSestre extends Component {
       }, this.config)
       .then(response => {
         console.log(response.data);
-
+        this.props.handleClick("USPESNO PROMENJENI PODACI");
         this.setState({
           ime: response.data.ime
         });
@@ -134,7 +140,87 @@ class IzmenaProfilaMedSestre extends Component {
     }
     
   }
+  prikazPromenaLozinke() {
+    var res = [];
+    if (this.state.promenaLozinke) {
+      res.push(
+        <table>
 
+          <tr>
+            <td>Nova lozinka:</td>
+            <td>
+              <input
+                type="password"
+                name="novaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+          <tr>
+            <td>Potvrdite novu lozinku:</td>
+            <td>
+              <input
+                type="password"
+                name="potvrdaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+        </table>
+      );
+    }
+    return res;
+  }
+  promenaLozinkeClick() {
+    console.log("promenaLozinke");
+    this.setState({
+      promenaLozinke: true
+    });
+  }
+  PotvrdiPromenuLozinkeClick() {
+    console.log("potvrdaaa lozinkee");
+    if (this.state.novaLoz === this.state.potvrdaLoz) {
+     console.log(this.state);
+     console.log(this.props.lozinka);
+     console.log(this.props);
+      axios
+        .put(
+          "http://localhost:8025/api/medicinskaSestra/promeniLozinku",
+          {
+            newPassword: this.state.novaLoz,
+            oldPassword: this.props.lozinka
+          },
+          this.config
+        )
+        .then(response => {
+          console.log(response.data);
+          this.props.handleClick("USPESNO PROMENJENA LOZINKA");
+          this.setState(
+            {
+              lozinka: this.state.novaLoz
+              // lozinka: response.data.lozinka
+            },
+            () => {
+              this.props.promeniLozinku(this.state.novaLoz);
+              
+            }
+          );
+        })
+        .catch(error => {
+          console.log("Izmena nije uspela! ");
+        });
+    } else {
+      this.setState({
+        formError: "Lozinke se ne poklapaju"
+      });
+    }
+  }
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;
@@ -191,7 +277,7 @@ class IzmenaProfilaMedSestre extends Component {
                         // onChange={this.handleChange}
                       />
                     </div>
-                    <div className="formaPolje">
+                    {/* <div className="formaPolje">
                       <label className="formaPolje" htmlFor="lozinka">Lozinka: </label>
                       <input className="formaPolje"
                         type={this.state.menjanjeLozinke}
@@ -211,7 +297,7 @@ class IzmenaProfilaMedSestre extends Component {
                         />
                         <label htmlFor="check">prikazi lozinku</label>
                       </div> 
-                    </div>
+                    </div> */}
                     <div className="formaPolje">
                       <label className="formaPolje" htmlFor="brTelefona">Br. Telefona: </label>
                       <input className="formaPolje"
@@ -266,17 +352,34 @@ class IzmenaProfilaMedSestre extends Component {
                         <label className="prezimeAdminaKC">{prezime}</label>
                       </h2>
                     </div>
-                    {/* <div className="typo-line">
-                      <h2>
-                        <p className="category">Lozinka: </p>
-                        <label className="lozinkaAdminaKC">{lozinka}</label>
-                      </h2>
-                    </div> */}
+                    
                     <div className="typo-line">
                       <h2>
                         <p className="category">Br. telefona: </p>
                         <label className="lozinkaAdminaKC">{brTelefona}</label>
                       </h2>
+                    </div>
+                    <div>
+                      <div>{this.prikazPromenaLozinke()}</div>
+                      {this.state.promenaLozinke == false && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.promenaLozinkeClick()}
+                        >
+                          Izmeni lozinku
+                        </Button>
+                      )}
+                      {this.state.promenaLozinke && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.PotvrdiPromenuLozinkeClick()}
+                        >
+                          Potvrdi lozinku
+                        </Button>
+                      )}
+                      {this.state.formError.length > 0 && (
+                        <spam>{this.state.formError}</spam>
+                      )}
                     </div>
                   </div>
                 }

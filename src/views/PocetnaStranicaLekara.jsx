@@ -71,10 +71,10 @@ class PocetnaStranicaLekara extends React.Component {
 
     // this.dodavanjeListePregledaUKalendar = this.dodavanjeListePregledaUKalendar.bind(this);
     this.ucitavanjeListeOdmorOdsustvo = this.ucitavanjeListeOdmorOdsustvo.bind(this);
-    this.ucitavanjeListePregleda = this.ucitavanjeListePregleda.bind(this);
+    // this.ucitavanjeListePregleda = this.ucitavanjeListePregleda.bind(this);
     // this.dodavanjeListeOdmorOdsustvoUKalendar = this.dodavanjeListeOdmorOdsustvoUKalendar.bind(this);
     this.dodavanjeListaUKalendar = this.dodavanjeListaUKalendar.bind(this);
-    this.ucitavanjeListeOperacija = this.ucitavanjeListeOperacija.bind(this);
+    // this.ucitavanjeListeOperacija = this.ucitavanjeListeOperacija.bind(this);
 
   }
 
@@ -141,9 +141,41 @@ class PocetnaStranicaLekara extends React.Component {
         console.log(response);
         this.setState({
           listaOdmorOdsustvo: response.data
-        }
-        ,()=> this.dodavanjeListaUKalendar()
-        );
+        },()=>{
+          axios.get("http://localhost:8025/api/pregledi/getPreglediLekara", this.config)
+          .then(response => {
+            console.log("PREUZETI PREGLEDI");
+            
+            console.log(response.data)
+            this.setState({
+              listaPregleda: response.data
+            },()=> {
+              axios.get("http://localhost:8025/api/operacije/operacijeLekara", this.config)
+              .then(response => {
+                console.log("PREUZETE OPERACIJE");
+              
+                console.log(response.data)
+                this.setState({
+                  listaOperacija: response.data
+                }
+                , ()=> this.dodavanjeListaUKalendar()
+                );
+                
+              })
+              .catch(error => {
+                  console.log("nisu preuzete operacije");
+                  console.log(error);
+              })
+
+            } );
+            
+          })
+          .catch(error => {
+              console.log("nisu preuzeti pregledi");
+              console.log(error);
+          })
+
+        });
       })
       .catch(error => {
         console.log("nije ucitana lista odmor odsustvo");
@@ -152,46 +184,8 @@ class PocetnaStranicaLekara extends React.Component {
     
   
   };
-  ucitavanjeListePregleda(){
-     //PREUZIMANJE LISTE PREGLEDA LEKARA
-        
-     axios.get("http://localhost:8025/api/pregledi/getPreglediLekara", this.config)
-     .then(response => {
-       console.log("PREUZETI PREGLEDI");
-      
-       console.log(response.data)
-       this.setState({
-         listaPregleda: response.data
-       }
-       , ()=> this.dodavanjeListaUKalendar()
-       );
-       
-     })
-     .catch(error => {
-         console.log("nisu preuzeti pregledi");
-         console.log(error);
-     })
-  }
-  ucitavanjeListeOperacija(){
-    //PREUZIMANJE LISTE PREGLEDA LEKARA
-       
-    axios.get("http://localhost:8025/api/operacije/operacijeLekara", this.config)
-    .then(response => {
-      console.log("PREUZETE OPERACIJE");
-     
-      console.log(response.data)
-      this.setState({
-        listaOperacija: response.data
-      }
-      , ()=> this.dodavanjeListaUKalendar()
-      );
-      
-    })
-    .catch(error => {
-        console.log("nisu preuzete operacije");
-        console.log(error);
-    })
- }
+//   
+ 
   dodavanjeListaUKalendar(){
     //treba dodati i jednu i drugu listu hahahha 
     this.state.dogadjajiKalendar = [];
@@ -232,13 +226,13 @@ class PocetnaStranicaLekara extends React.Component {
     let lista3 = this.state.listaOperacija;
     if(lista3.length != 0){
       for(var i = 0; i < lista3.length; i++){
-        console.log("datum!!!")
-        console.log(i);
+        // console.log("datum!!!")
+        // console.log(i);
         
         let start = new Date(lista3[i].datum) ; 
         let end = new Date(lista3[i].datum);
-        console.log(start);
-        console.log(end);
+        // console.log(start);
+        // console.log(end);
         start.setHours(lista3[i].termin);
         end.setHours(lista3[i].termin + 2);
 
@@ -280,9 +274,10 @@ class PocetnaStranicaLekara extends React.Component {
 
   componentWillMount(){
     this.preuzimanjeLekara();
-    this.ucitavanjeListePregleda();
+    // this.ucitavanjeListePregleda();
     this.ucitavanjeListeOdmorOdsustvo();
-    this.ucitavanjeListeOperacija();
+    this.dodavanjeListaUKalendar();
+    // this.ucitavanjeListeOperacija();
   }
 
 
@@ -404,10 +399,11 @@ class PocetnaStranicaLekara extends React.Component {
               path="/pregled"
               render={props => <Pregled {...props}
               token={this.state.token}
+              handleClick={this.props.handleClick}
               email={this.state.email} 
               uloga={this.state.uloga}
               idPregleda ={this.state.objekat.desc.id}
-              emailPacijenta={this.state.objekat.desc.pacijentEmail}   />}
+              emailPacijenta={this.state.objekat.desc.pacijentID}   />}
             />
             <Redirect from="/" to="/pregled" />
           </Switch>
@@ -422,7 +418,7 @@ class PocetnaStranicaLekara extends React.Component {
             {this.renderRedirect()}
               <div onClick={this.handleListaPacijenata}>
                 <StatsCard
-                  bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                  //bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
                   // statsText="Lista pacijenata"
                   // statsValue="105GB"
                   // statsIcon={<i className="fa fa-refresh" />}
@@ -435,7 +431,7 @@ class PocetnaStranicaLekara extends React.Component {
             {this.renderRedirect()}
               <div onClick={this.handleProfilLekara}>
                 <StatsCard
-                   bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
+                 //  bigIcon={<div> <img src = { slikaPregledi} width="30" height="20" /></div>}
                   // statsText="Lista pacijenata"
                   // statsValue="105GB"
                   // statsIcon={<i className="fa fa-refresh" />}
@@ -448,7 +444,7 @@ class PocetnaStranicaLekara extends React.Component {
               {this.renderRedirect()}
               <div onClick={this.handleZahtevZaGodOdmor}>
                 <StatsCard
-                   bigIcon={<div> <img src = { Slikalekari} width="30" height="20" /></div>}
+                  // bigIcon={<div> <img src = { Slikalekari} width="30" height="20" /></div>}
                   // statsText="Lista pacijenata"
                   // statsValue="105GB"
                   // statsIcon={<i className="fa fa-refresh" />}

@@ -20,7 +20,7 @@ export class StatsCard extends Component {
           </Row>
           <div className="footer">
             <hr />
-            <div className="stats">
+            <div className="stats" id="brzoZakazivanje">
               {this.props.statsIcon} {this.props.statsIconText}
             </div>
           </div>

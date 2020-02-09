@@ -5,7 +5,7 @@ import { Grid, Row, Col } from "react-bootstrap";
 import { Card } from "components/Card/Card.jsx";
 import slikaPacijent from "assets/img/pacijentImage.jpg";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import slikaZakaziPregled from "assets/img/zakaziPregled.jpg";
+import slikazk from "assets/img/zakaziPregled.jpg";
 import slikaZK from "assets/img/zk.jpg";
 import slikaIP from "assets/img/istorijaPregleda.jpg";
 import slikaBZ from "assets/img/brzoZakazivanje.jpg";
@@ -80,32 +80,36 @@ class PocetnaStranicaPacijenta extends Component {
   componentWillMount() {
     this.pronadjiPacijenta();
   }
-  handleZahtevZaPregled() {
+  handleZahtevZaPregled = e => {
+    e.preventDefault();
     this.setState({
       redirectToZahtevZaPregled: true
     });
-  }
-  handleZdravstveniKarton() {
+  };
+  handleZdravstveniKarton = e => {
+    e.preventDefault();
     this.setState({
       redirectZdravstveniKarton: true
     });
-  }
-  handleIstorijaPO() {
+  };
+  handleIstorijaPO = e => {
+    e.preventDefault();
     this.setState({
       redirectIstorijaPO: true
     });
-  }
-  handleBrzoZakazivanje() {
+  };
+  handleBrzoZakazivanje = e => {
+    e.preventDefault();
     this.setState({
       redirectBrzoZakazivanje: true
     });
-  }
+  };
 
   renderRedirect = () => {
-    if (this.state.redirectToZahtevZaPregled == true) {
-      return <Redirect from="/" to="/pacijent/klinikePacijenta" />;
-    } else if (this.state.redirectBrzoZakazivanje == true) {
+    if (this.state.redirectBrzoZakazivanje == true) {
       return <Redirect from="/" to="/pacijent/brzoZakazivanje" />;
+    } else if (this.state.redirectToZahtevZaPregled == true) {
+      return <Redirect from="/" to="/pacijent/klinikePacijenta" />;
     } else if (this.state.redirectIstorijaPO == true) {
       return <Redirect from="/" to="/pacijent/istorija" />;
     } else if (this.state.redirectZdravstveniKarton == true) {
@@ -129,12 +133,12 @@ class PocetnaStranicaPacijenta extends Component {
           <Row>
             <Col lg={6} sm={6}>
               {this.renderRedirect()}
-              <div onClick={this.handleZahtevZaPregled}>
+              <div onClick={e => this.handleZahtevZaPregled(e)}>
                 <StatsCard
                   bigIcon={
                     <img
                       className="slikaPacijent"
-                      src={slikaZakaziPregled}
+                      src={slikazk}
                       width="30"
                       height="30"
                     ></img>
@@ -146,7 +150,7 @@ class PocetnaStranicaPacijenta extends Component {
 
             <Col lg={6} sm={6}>
               {this.renderRedirect()}
-              <div onClick={this.handleZdravstveniKarton}>
+              <div onClick={e => this.handleZdravstveniKarton(e)}>
                 <StatsCard
                   bigIcon={
                     <img
@@ -167,7 +171,7 @@ class PocetnaStranicaPacijenta extends Component {
           <Row>
             <Col lg={6} sm={6}>
               {this.renderRedirect()}
-              <div onClick={this.handleIstorijaPO}>
+              <div onClick={e => this.handleIstorijaPO(e)}>
                 <StatsCard
                   bigIcon={
                     <img
@@ -186,7 +190,10 @@ class PocetnaStranicaPacijenta extends Component {
             </Col>
             <Col lg={6} sm={6}>
               {this.renderRedirect()}
-              <div onClick={this.handleBrzoZakazivanje}>
+              <div
+                id="brzoZakazivanje"
+                onClick={e => this.handleBrzoZakazivanje(e)}
+              >
                 <StatsCard
                   bigIcon={
                     <img

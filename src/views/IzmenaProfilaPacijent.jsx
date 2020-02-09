@@ -30,12 +30,16 @@ class IzmenaProfilaPacijent extends Component {
       email: props.email,
       uloga: props.uloga,
       token: props.token,
+      promenaLozinke: false,
       ime: "",
       telefon: "",
       prezime: "",
       formMessage: "",
       lbo: "",
-      lozinka: "",
+      staraLoz: "",
+      novaLoz: "",
+      potvrdaLoz: "",
+      lozinka: props.lozinka,
       adresa: "",
       grad: "",
       drzava: "",
@@ -46,7 +50,8 @@ class IzmenaProfilaPacijent extends Component {
       lozinkaN: "",
       adresaN: "",
       gradN: "",
-      drzavaN: ""
+      drzavaN: "",
+      formError: ""
     };
   }
 
@@ -151,7 +156,101 @@ class IzmenaProfilaPacijent extends Component {
         console.log("Izmena nije uspela! ");
       });
   };
-
+  prikazPromenaLozinke() {
+    var res = [];
+    if (this.state.promenaLozinke) {
+      res.push(
+        <table>
+          {/* <tr>
+            <td>Stara lozinka:</td>
+            <td>
+              <input
+                type="password"
+                name="staraLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br> */}
+          <tr>
+            <td>Nova lozinka:</td>
+            <td>
+              <input
+                type="password"
+                name="novaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+          <tr>
+            <td>Potvrdite novu lozinku:</td>
+            <td>
+              <input
+                type="password"
+                name="potvrdaLoz"
+                // placeholder={this.state.ime}
+                // noValidate
+                onChange={this.handleChange}
+              />
+            </td>
+          </tr>
+          <br></br>
+        </table>
+      );
+    }
+    return res;
+  }
+  promenaLozinkeClick() {
+    console.log("promenaLozinke");
+    this.setState({
+      promenaLozinke: true
+    });
+  }
+  PotvrdiPromenuLozinkeClick() {
+    console.log("potvrdaaa lozinkee");
+    if (this.state.novaLoz === this.state.potvrdaLoz) {
+      var config = {
+        headers: {
+          Authorization: "Bearer " + this.state.token,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      };
+      axios
+        .put(
+          "http://localhost:8025/api/pacijenti/promeniLozinku",
+          {
+            newPassword: this.state.novaLoz,
+            oldPassword: this.state.lozinka
+          },
+          config
+        )
+        .then(response => {
+          console.log(response.data);
+          this.props.handleClick("LOZINKA JE PROMENJENA");
+          this.setState(
+            {
+              lozinka: this.state.novaLoz
+            },
+            () => {
+              this.props.promeniLozinku(this.state.novaLoz);
+            }
+          );
+        })
+        .catch(error => {
+          console.log("Izmena nije uspela! ");
+        });
+    } else {
+      this.setState({
+        formError: "Lozinke se ne poklapaju"
+      });
+    }
+  }
   render() {
     const email = this.state.email;
     const uloga = this.state.uloga;
@@ -198,26 +297,6 @@ class IzmenaProfilaPacijent extends Component {
                       />
                     </div>
 
-                    {/* <div className="klinikaK">
-                        <label htmlFor="klinikaK">klinika: </label>
-                        <input
-                          type="text"
-                          name="klinikaK"
-                          placeholder="klinikaK"
-                          // noValidate
-                          // onChange={this.handleChange}
-                        />
-                      </div> */}
-                    {/* <div className="klinika">
-                        <label htmlFor="klinika">Klinika: </label>
-                        <input
-                          type="text"
-                          name="klinika"
-                          placeholder="klinika"
-                          // noValidate
-                          // onChange={this.handleChange}
-                        />
-                      </div> */}
                     <div className="adresa">
                       <label htmlFor="adresa">Adresa: </label>
                       <input
@@ -272,6 +351,7 @@ class IzmenaProfilaPacijent extends Component {
                           // onChange={this.handleChange}
                         />*/}
                     </div>
+
                     <div className="izmeniPodatkePacijent">
                       <Button
                         variant="outline-primary"
@@ -288,70 +368,6 @@ class IzmenaProfilaPacijent extends Component {
                       )}
                     </div>
                   </form>
-                  // <form className="formUserProfile">
-                  //   <FormInputs
-                  //     ncols={["col-md-100", "col-md-10"]}
-                  //     properties={[
-                  //       {
-                  //         // label: "Klinika (disabled)",
-                  //         label: "Klinika ",
-                  //         type: "text",
-                  //         bsClass: "form-control",
-                  //         placeholder: "Company",
-                  //         defaultValue: "staviti ime od klinike",
-                  //         disabled: true
-                  //       },
-                  //       {
-                  //         label: "Email adresa",
-                  //         type: "email",
-                  //         bsClass: "form-control",
-                  //         placeholder: "Email",
-                  //         defaultValue: "Emai"
-                  //       }
-                  //     ]}
-                  //   />
-                  //    <FormInputs
-                  //     ncols={["col-md-10", "col-md-10"]}
-                  //     properties={[
-                  //       {
-                  //         label: "Ime",
-                  //         type: "text",
-                  //         bsClass: "form-control",
-                  //         placeholder: "First name",
-                  //         defaultValue: "ime"
-                  //       },
-                  //       {
-                  //         label: "Prezime",
-                  //         type: "text",
-                  //         bsClass: "form-control",
-                  //         placeholder: "Last name",
-                  //         defaultValue: "Neko prezime"
-                  //       }
-                  //     ]}
-                  //   />
-                  //   <FormInputs
-                  //     ncols={["col-md-10000"]}
-                  //     properties={[
-                  //       {
-                  //         label: "Adress",
-                  //         type: "text",
-                  //         bsClass: "form-control",
-                  //         placeholder: "Home Adress",
-                  //         defaultValue:
-                  //           "Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                  //       }
-                  //     ]}
-                  //   />
-
-                  //   <Row>
-                  //     <Col md={12}>
-                  //     </Col>
-                  //   </Row>
-                  //   <Button bsStyle="info" pullRight fill type="submit">
-                  //     Izmeni profil
-                  //   </Button>
-                  //   <div className="clearfix" />
-                  // </form>
                 }
               />
             </Col>
@@ -382,6 +398,28 @@ class IzmenaProfilaPacijent extends Component {
                         </tr>
                       </thead>
                     </Table>
+                    <div>
+                      <div>{this.prikazPromenaLozinke()}</div>
+                      {this.state.promenaLozinke == false && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.promenaLozinkeClick()}
+                        >
+                          Izmeni lozinku
+                        </Button>
+                      )}
+                      {this.state.promenaLozinke && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={e => this.PotvrdiPromenuLozinkeClick()}
+                        >
+                          Potvrdi lozinku
+                        </Button>
+                      )}
+                      {this.state.formError.length > 0 && (
+                        <spam>{this.state.formError}</spam>
+                      )}
+                    </div>
                   </div>
                 }
               />

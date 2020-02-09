@@ -129,7 +129,7 @@ class ZahtevMedSestra extends React.Component {
         
         console.log("uspesno poslat zahtev")
         console.log(Response.data);
-
+        this.props.handleClick("ZAHTEV JE POSLAT");
         this.setState({
           renderToPocetna: true
         })

@@ -116,21 +116,22 @@ class ListaPacijenataMedSestra extends Component {
   };
 
   handlePrikazZK = e => {
-    e.preventDefault();
+    // e.preventDefault();
     console.log( e.target.id);
+    var prom = e.target.id;
+    
     axios
-      .get("http://localhost:8025/api/pacijenti/findPacijentEmailMS",
-      {email: e.target.id}, this.config)
+      .get("http://localhost:8025/api/pacijenti/pacijentMedSestra/"+ prom , this.config )
       .then(response => {
         console.log("Preuzet pacijent");
-        console.log(response);
+        console.log(response.data);
         this.setState({
           ime: response.data.ime,
           prezime: response.data.prezime,
           lbo: response.data.lbo
-        }, ()=> axios
-                  .get("http://localhost:8025/api/pacijenti/findZKMS", 
-                  {email: e.target.id}, this.config)
+        }, ()=> {
+          axios
+                  .get("http://localhost:8025/api/pacijenti/findZKMS/"+ prom, this.config)
                   .then(Response => {
                     console.log("Preuzet ZK  pacijenta: ");
                     console.log(Response.data);
@@ -257,18 +258,13 @@ class ListaPacijenataMedSestra extends Component {
                   })
                   .catch(error => {
                     console.log("ZK pacijenta nije preuzet");
-                  })); 
+                  })
+        }); 
       })
       .catch(error => {
         console.log("Pacijent nije preuzet");
         console.log(error);
       });
-    
-    
-
-
-    
-    
     
   };
 
@@ -293,7 +289,7 @@ class ListaPacijenataMedSestra extends Component {
             <td >{lista[i].telefon}</td>
             
             <td ><Button className="OdobrenZahtev"
-                id={lista[i].email}
+                id={lista[i].id}
                  onClick={e => this.handlePrikazZK(e)}
                 > ZK </Button>
                 <Dialog ref={(el) => { this.dialog = el }} ></Dialog>
@@ -388,19 +384,7 @@ class ListaPacijenataMedSestra extends Component {
         listaPacijenata: lista.sort((a, b) => a.telefon - b.telefon)
       });
     } 
-    // else if (sortBy.target.value === "idOpadajuce") {
-    //   console.log("idOpadajuce");
-
-    //   this.setState({
-    //     listaPacijenata: lista.sort((a, b) => b.id - a.id)
-    //   });
-    // } else if (sortBy.target.value === "idRastuce") {
-    //   console.log("idRastuce");
-
-    //   this.setState({
-    //     listaPacijenata: lista.sort((a, b) => a.id - b.id)
-    //   });
-    // }
+    
     
   }
 
@@ -448,26 +432,8 @@ class ListaPacijenataMedSestra extends Component {
                         <option value={"telefon"}>Telefon</option>
                       </select>
                     </div>
-                    {/* <NavDropdown
-                      onSelect={e => {
-                        this.sortMyArray(e);
-                      }}
-                      className="SortListePacijenata"
-                      title="Sortiraj"
-                      id="nav-item dropdown"
-                      
-                    >
-                      <MenuItem eventKey={"idRastuce"}>Id (rastuce)</MenuItem>
-                      <MenuItem eventKey={"idOpadajuce"}>Id (opadajuce)</MenuItem>
-                      <MenuItem eventKey={"lbo"}>LBO</MenuItem>
-                      <MenuItem eventKey={"ime"}>Ime</MenuItem>
-                      <MenuItem eventKey={"prezime"}>Prezime</MenuItem>
-                      <MenuItem eventKey={"email"}>Email</MenuItem>
-                      <MenuItem eventKey={"adresa"}>Adresa</MenuItem>
-                      <MenuItem eventKey={"grad"}>Grad</MenuItem>
-                      <MenuItem eventKey={"drzava"}>Drzava</MenuItem>
-                      <MenuItem eventKey={"telefon"}>Telefon</MenuItem>
-                    </NavDropdown> */}
+                  
+                    
 
                     <Card 
                       // category="Here is a subtitle for this table"
@@ -503,12 +469,7 @@ class ListaPacijenataMedSestra extends Component {
                     </form>
                 }
               />
-                
-              
-              
-             
-              
-              
+
             </Col>
            
           

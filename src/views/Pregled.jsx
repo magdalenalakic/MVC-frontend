@@ -10,13 +10,10 @@ import Button from "components/CustomButton/CustomButton.jsx";
 import axios from "axios";
 import Dialog from 'react-bootstrap-dialog';
 import PocetnaStranicaLekara from "views/PocetnaStranicaLekara.jsx";
-
 import "klinickiCentar.css";
-
-import Slikalekari from "assets/img/lekari.jpg";
-import slikaPregledi from "assets/img/pregled.jpg"
 import kalendarSlika from "assets/img/calendar.png"
-
+import moment from "moment";
+import slikaPacijent from "assets/img/pacijentImage.jpg";
 
 
 class Pregled extends React.Component {
@@ -44,8 +41,37 @@ class Pregled extends React.Component {
       recepti: [],
       izabranLek: null,
       misljenje: "",
+      //za zdravstveni karton
+      zkOpen: false,
+      visina: 0, 
+      tezina: 0,
+      krvnaGrupa: "",
+      pacijent : [],
+      zdravstveniKarton: [],
+      listaIzvestaja: [],
 
+      //za informacije o pregledu
+      infPreOpen: false,
+      pregled: [],
 
+      //zakazivanje pregleda
+      zakNovPreg: false,
+      datumPregleda: new Date(),
+      tipoviPregleda: [],
+      tipPregleda: "",
+      terminPregleda: null,
+      terminiPregleda: [],
+
+      
+
+      //zakazivanje operacije
+      zakNovOper: false,
+      datumOperacije : new Date(),
+      terminOperacije: "",
+      terminiOperacije: [],
+      tipOperacije: "",
+
+      
       
     };
     this.config = {
@@ -76,10 +102,98 @@ class Pregled extends React.Component {
 
     this.zavrsiPregled = this.zavrsiPregled.bind(this);
 
+    //metode za zdravstveni karton
+    this.izmenaZK = this.izmenaZK.bind(this);
+    this.ucitavanjeZKPacijenta = this.ucitavanjeZKPacijenta.bind(this);
+    this.ucitavanjePacijenta = this.ucitavanjePacijenta.bind(this);
     
+    //za pregled
+    this.ucitavanjePregleda = this.ucitavanjePregleda.bind(this);
+
+    this.zkOpenHendler = this.zkOpenHendler.bind(this);
+    this.infPreOpenHendler = this.infPreOpenHendler.bind(this);
+    this.zakNovPregHendler = this.zakNovPregHendler.bind(this);
+    this.zakNovOperHendler = this.zakNovOperHendler.bind(this);
+    this.handleChangeDatePregleda = this.handleChangeDatePregleda.bind(this);
+    this.handleChangeDateOperacije = this.handleChangeDateOperacije.bind(this);
+    this.preuzimanjeTipovaPregleda = this.preuzimanjeTipovaPregleda.bind(this);
+    this.izaberiVrstuPregleda = this.izaberiVrstuPregleda.bind(this);
+    this.biranjeTipaPregleda = this.biranjeTipaPregleda.bind(this);
+    this.prikazTermina = this.prikazTermina.bind(this);
+    this.biranjeTermina = this.biranjeTermina.bind(this);
+    this.zakaziPregled = this.zakaziPregled.bind(this);
+    this.prikazTerminaOperacije = this.prikazTerminaOperacije.bind(this);
+    this.zakaziOperaciju = this.zakaziOperaciju.bind(this);
+    this.biranjeTerminaOP = this.biranjeTerminaOP.bind(this);
+   
+
   }
 
+  handleChangeDatePregleda = date => {
+    console.log(date)
+    this.setState(
+      {
+        datumPregleda: date
+      },
+      () => {
+        console.log(this.state);
+        //ovde izlistati termine
+        axios
+        .post("http://localhost:8025/api/pregledi/getTerminiLekaraZaDatum", {datum: this.state.datumPregleda}, this.config)
+        .then(Response => {
+          console.log("Preuzeti termini: ");
+          console.log(Response.data);
+          this.setState({
+            terminiPregleda: Response.data,
+            // terminPregleda: Response.data[0]
+          },()=>{
+            console.log(this.state.terminiPregleda);
+            console.log(this.state.terminPregleda);
+            this.prikazTermina();
+          }
+            );
+          
+        })
+  
+        .catch(error => {
+          console.log("Lista tipova nije preuzeta");
+        });
 
+      }
+    );
+  };
+  handleChangeDateOperacije = date => {
+    console.log(date)
+    this.setState(
+      {
+        datumOperacije: date
+      }
+      // ,() => {
+      //   console.log(this.state);
+      //   //ovde izlistati termine
+      //   axios
+      //   .post("http://localhost:8025/api/pregledi/getTerminiLekaraZaDatum", {datum: this.state.datumOperacije}, this.config)
+      //   .then(Response => {
+      //     console.log("Preuzeti termini: ");
+      //     console.log(Response.data);
+      //     this.setState({
+      //       terminiOperacije: Response.data,
+      //       // terminPregleda: Response.data[0]
+      //     },()=>{
+      //       console.log(this.state.terminiOperacije);
+      //       console.log(this.state.terminOperacije);
+      //       this.prikazTerminaOperacije();
+      //     }
+      //       );
+          
+      //   })
+  
+      //   .catch(error => {
+      //     console.log("Lista tipova nije preuzeta");
+      //   });
+      // }
+    );
+  };
   handleChange = e => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -88,6 +202,8 @@ class Pregled extends React.Component {
   };
  
   handleOdustani(){
+    //staviti i notifikac
+    this.props.handleClick("ODUSTALI STE OD PREGLEDA")
     this.setState({
       redirectToOdustani: true
     })
@@ -96,8 +212,10 @@ class Pregled extends React.Component {
   componentWillMount() {
     this.listaDijagnoza();
     this.listaLekova();
-
-    
+    this.ucitavanjeZKPacijenta();
+    this.ucitavanjePacijenta();
+    this.ucitavanjePregleda();
+    this.preuzimanjeTipovaPregleda();
 
 
     const url = "http://localhost:8025/api/lekari/getLekarByEmail";
@@ -453,6 +571,7 @@ class Pregled extends React.Component {
             .then(response => {
               console.log("ZAVRSEN PREGLED! ");
               console.log(response.data);
+              this.props.handleClick("PREGLED JE ZAVRSEN")
               this.setState({
                 redirectToOdustani: true
               })
@@ -477,92 +596,923 @@ class Pregled extends React.Component {
     
   }
 
+  izmenaZK(){
+    console.log("IZMENA ZK");
+    axios
+    .put("http://localhost:8025/api/pacijenti/izmenaZK",{
+        id: this.state.zdravstveniKarton.id,
+        pacijentID: this.state.emailPacijenta,
+        visina: this.state.visina,
+        tezina: this.state.tezina,
+        krvnaGrupa: this.state.krvnaGrupa
+        
+    }, this.config)
+    .then(Response => {
+      console.log("IZMENJEN ZDRAVSTVENI KARTON");
+      console.log(Response.data);
+      this.props.handleClick("ZDRAVSTVENI KARTON JE IZMENJEN")
+      this.setState({
+        zkOpen: false
+      }, ()=> {
+        
+        this.ucitavanjeZKPacijenta()
+      })
+      // this.setState({
+      //   zdravstveniKarton : Response.data,
+      //   zkOpen: false
+      // });
+      
+    })
+    .catch(error => {
+      console.log("NIJE USPELA IZMENA ZK");
+      console.log(error);
+    });
 
+    
+
+  }
+  ucitavanjeZKPacijenta(){
+    axios
+    .get("http://localhost:8025/api/pacijenti/findZKMS/" + this.state.emailPacijenta, this.config)
+
+    .then(Response => {
+      console.log("URL 111");
+      console.log(Response);
+      this.setState({
+        zdravstveniKarton : Response.data,
+        listaIzvestaja: Response.data.listaIzvestaja
+      });
+      console.log(this.state);
+    })
+    .catch(error => {
+      console.log("nije uspeo url1");
+      console.log(error);
+    });
+  }
+  ucitavanjePacijenta(){
+    console.log("OVO JE PACIJENT " + this.state.emailPacijenta)
+    axios
+    .get('http://localhost:8025/api/pacijenti/findPacijentLekar/' + this.state.emailPacijenta ,
+     this.config)
+      .then(Response => {
+        console.log("Ucitavanje pacijenta");
+        console.log(Response);
+        this.setState({
+          pacijent: Response.data,
+          emailPacijenta: Response.data.id,
+          ime: Response.data.ime,
+          prezime: Response.data.prezime,
+          telefon: Response.data.telefon,
+          adresa: Response.data.adresa,
+          grad: Response.data.grad,
+          drzava: Response.data.drzava,
+          lbo: Response.data.lbo,
+          jmbg: Response.data.jmbg
+        }, ()=> {
+          console.log("usaooo u proveru ");
+          console.log(this.state.token);
+          axios
+          .post('http://localhost:8025/api/lekari/mogucPrikazZKPacijenta' ,
+          { id: Response.data.id}, this.config)
+            .then(Response => {
+              console.log("Da li je odobren ili ne uvid u zk ");
+              console.log(Response.data);
+             if(Response.data == "MOZE"){
+               console.log("MOZE DA PRISTUPI");
+               this.setState({
+                prikaziZK: true
+               })
+               
+             }else{
+               console.log("NE MOZE DA PRISTUPI")
+               this.setState({
+                prikaziZK: false
+               })
+             }
+            })
+            .catch(error => {
+              console.log("nije uspeo url1");
+              console.log(error);
+            });
+            
+        });
+
+        
+        console.log(this.state);
+      })
+      .catch(error => {
+        console.log("nije uspeo url1");
+        console.log(error);
+      });
+  }
+
+  ucitavanjePregleda(){
+    console.log(this.state.idPregleda)
+    axios
+    .get("http://localhost:8025/api/pregledi/getPregledPac/" + this.state.idPregleda, this.config)
+
+    .then(Response => {
+      console.log("uspesno ucitan pregled");
+      console.log(Response);
+      this.setState({
+        pregled : Response.data
+      }, ()=> console.log("uspesno preuzet pregled"));
+      
+    })
+    .catch(error => {
+      console.log("nije ucitao pregled");
+      console.log(error);
+    });
+  }
+
+  zkOpenHendler(){
+    this.setState({
+      zkOpen: false
+    })
+  }
+  infPreOpenHendler(){
+    this.setState({infPreOpen: false})
+  }
+  zakNovPregHendler(){
+    this.setState({zakNovPreg: false})
+  }
+  zakNovOperHendler(){
+    this.setState({zakNovOper: false})
+  }
+
+  //za tip pregled
+  preuzimanjeTipovaPregleda(){
+    axios
+      .get("http://localhost:8025/api/tipPregleda/all", this.config)
+      .then(Response => {
+        console.log("Preuzeta lista tipova pregleda: ");
+        console.log(Response.data);
+        this.setState({
+          tipoviPregleda: Response.data,
+          tipPregleda: Response.data[0].id
+        });
+        console.log(this.state.tipPregleda);
+      })
+
+      .catch(error => {
+        console.log("Lista tipova nije preuzeta");
+      });
+  }
+
+  izaberiVrstuPregleda() {
+    let res = [];
+    let lista = this.state.tipoviPregleda;
+    for (var i = 0; i < lista.length; i++) {
+      res.push(<option value={lista[i].id}>{lista[i].naziv}</option>);
+    }
+    return res;
+  }
+
+  biranjeTipaPregleda(tip) {
+    console.log("prosledjen pregled");
+    console.log(tip.target.value);
+    this.setState({
+      tipPregleda: tip.target.value
+    }, ()=> {
+      console.log(this.state.tipPregleda);
+      
+    });
+
+    
+
+  }
+
+  //za termin
+  prikazTermina() {
+    var res = [];
+    console.log("/************************************************/");
+    console.log(this.state.terminiPregleda);
+    var lista = this.state.terminiPregleda;
+      // if(lista.length === 0){
+      //   res.push(
+      //     <option ></option>
+      //   );
+      // }
+      for(var i = 0; i < lista.length; i++){
+        var kraj = lista[i] + 2;
+        res.push(
+          <option value={lista[i]}>{lista[i] + ":00-" + kraj + ":00"}</option>
+        );
+      }
+      console.log("ucitanooooo")
+
+
+    return res;
+  }
+  prikazTerminaOperacije() {
+    var res = [];
+    console.log("/************************************************/");
+    console.log(this.state.terminiOperacije);
+    var lista = this.state.terminiOperacije;
+      
+      for(var i = 0; i < lista.length; i++){
+        var kraj = lista[i] + 2;
+        res.push(
+          <option value={lista[i]}>{lista[i] + ":00-" + kraj + ":00"}</option>
+        );
+      }
+      console.log("ucitanooooo")
+
+
+    return res;
+  }
+
+  biranjeTermina = e => {
+    console.log(e.target.value);
+    const termin = e.target.value;
+
+    this.setState(
+      {
+        terminPregleda: termin,
+        
+      },
+      () => {
+        console.log("/************************************************/");
+        console.log(this.state.terminiPregleda);
+        console.log(this.state.terminPregleda);
+      }
+    );
+  };
+  biranjeTerminaOP = e => {
+    console.log(e.target.value);
+    const termin = e.target.value;
+
+    this.setState(
+      {
+        terminOperacije: termin,
+        
+      },
+      () => {
+        console.log("/************************************************/");
+        console.log(this.state.terminiPregleda);
+        console.log(this.state.terminPregleda);
+      }
+    );
+  };
+
+  zakaziPregled(){
+    console.log(this.state.terminPregleda);
+    console.log(this.state.datumPregleda);
+    console.log(this.state.tipPregleda);
+    if(this.state.terminPregleda == null ){
+      this.props.handleClick("NISU SVA POLJA UNESENA")
+    }else{
+    axios
+        .post("http://localhost:8025/api/pregledi/zakazivanjePregledaLekar", {
+          datum: this.state.datumPregleda,
+          termin: this.state.terminPregleda,
+          tipPregledaID: this.state.tipPregleda,
+          pacijentEmail: this.state.pacijent.email
+        }, this.config)
+        .then(Response => {
+          console.log("Preuzeti termini: ");
+          console.log(Response.data);
+          this.props.handleClick("ZAKAZAN PREGLED")
+          this.setState({
+            zakNovPreg: false
+          })
+          
+        }) 
+        .catch(error => {
+          console.log("Lista tipova nije preuzeta");
+        });
+    }
+
+    
+    
+    
+
+
+  }
+
+  zakaziOperaciju(){
+    console.log(this.state.terminOperacije);
+    console.log(this.state.datumOperacije);
+    console.log(this.state.tipOperacije);
+    if(this.state.terminOperacije == null || this.state.tipOperacije == "" || this.state.tipOperacije == null ){
+      this.props.handleClick("NISU SVA POLJA UNESENA")
+    }else{
+    axios
+        .post("http://localhost:8025/api/operacije/zakazivanjeOperacijeLekar", {
+          datum: this.state.datumOperacije,
+          termin: this.state.terminOperacije,
+          tipOperacije: this.state.tipOperacije,
+          pacijentEmail: this.state.pacijent.email
+        }, this.config)
+        .then(Response => {
+          console.log("Preuzeti termini: ");
+          console.log(Response.data);
+          this.props.handleClick("ZAKAZANA OPERACIJA")
+          this.setState({
+            zakNovOper: false
+          })
+          
+        }) 
+        .catch(error => {
+          this.props.handleClick("MAIL NIJE POSLAT")
+          console.log("Lista tipova nije preuzeta");
+        });
+    }
+  }
 
   render() {
-    console.log(this.props);
+    
 
     if(this.state.redirectToOdustani === true){
       return (
         <BrowserRouter>
           <Switch>
             <Route
-              path="/pocetnaStranicaLekara"
+              path="/pocetnaStranica"
               render={props => <PocetnaStranicaLekara {...props}
                   token={this.state.token}
                   email={this.state.email} 
                   uloga={this.state.uloga}
+                  handleClick={this.props.handleClick}
                 //nije emailPacijenta vec je id al dobro
-                  emailPacijenta={this.state.emailPacijenta}  
+                 // emailPacijenta={this.state.emailPacijenta}  
                 />}
             />
-            <Redirect from="/" to="/pocetnaStranicaLekara" />
+            <Redirect from="/" to="/pocetnaStranica" />
           </Switch>
         </BrowserRouter>
       );
     }
 
     return (
-        <Grid>
-            <Row className="linkoviPregled">
-                <Col lg={3} sm={6}>
-                    {/* {this.renderRedirect()} */}
-                    <div 
-                    // onClick={this.handleListaPacijenata}
-                    >
-                        <StatsCard
-                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                            // statsText="Lista pacijenata"
-                            // statsValue="105GB"
-                            // statsIcon={<i className="fa fa-refresh" />}
-                            statsIconText="Zdravstveni karton"
-                        />
-                    </div>                    
+        <Grid className="pregled">
+            {
+              this.state.zkOpen ?
+              <Row>
+                <Col>
+                  <Button className="izadjiDugme" 
+                    onClick={this.izmenaZK}
+                  >Izmeni</Button>
+                  
+                  <Button className="izadjiDugme" onClick={this.zkOpenHendler}>Izadji</Button>
                 </Col>
-                <Col lg={3} sm={6}>
-                    {/* {this.renderRedirect()} */}
-                    <div 
-                    // onClick={this.handleListaPacijenata}
-                    >
-                        <StatsCard
-                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                            // statsText="Lista pacijenata"
-                            // statsValue="105GB"
-                            // statsIcon={<i className="fa fa-refresh" />}
-                            statsIconText="Informacije o pacijentu"
-                        />
-                    </div>                    
+                <Col md={8} >
+                  <Card
+                    title="Zdravstveni karton"
+                    ctTableFullWidth
+                    
+                    ctTableResponsive
+                    content={
+                      <div >
+                
+                        <Table striped hover>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label>Ime: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="ime"
+                                defaultValue={this.state.pacijent.ime}
+                                disabled="disabled"
+                                // placeholder={this.state.ime}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Prezime: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="prezime"
+                                defaultValue={this.state.pacijent.prezime}
+                                disabled="disabled"
+                                // placeholder={this.state.prezime}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Jedinstveni broj osiguranika: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="lbo"
+                                defaultValue={this.state.pacijent.lbo}
+                                disabled="disabled"
+                                // placeholder={this.state.lbo}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Visina: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="visina"
+                                defaultValue={this.state.zdravstveniKarton.visina}
+                                // disabled="disabled"
+                                // placeholder={this.state.visina}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Tezina: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="tezina"
+                                defaultValue={this.state.zdravstveniKarton.tezina}
+                                // disabled="disabled"
+                                // placeholder={this.state.tezina}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Krvna grupa: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="krvnaGrupa"
+                                defaultValue={this.state.zdravstveniKarton.krvnaGrupa}
+                                // disabled="disabled"
+                                // placeholder={this.state.krvnaGrupa}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
+
+                      </div>
+                    }
+                  
+                  />
+                </Col> 
+                <Col md={4}>
+              <Card
+                // statsIcon="fa fa-clock-o"
+                title="O pacijentu"
+                // category="Ime"
+                content={
+                  <div id="a">
+                    <div className="slikaKCdiv">
+                      <h2>
+                        <img
+                          className="slikaPacijent"
+                          src={slikaPacijent}
+                        ></img>
+                      </h2>
+                    </div>
+                    <Table striped hover>
+                      <thead className="thead-dark">
+                        
+                        <tr>
+                          <td>E-mail:</td>
+                          <td>{this.state.pacijent.email}</td>
+                        </tr>
+                        <tr>
+                          <td>LBO:</td>
+                          <td>{this.state.pacijent.lbo}</td>
+                        </tr>
+                        <tr>
+                          <td>JMBG:</td>
+                          <td>{this.state.pacijent.jmbg}</td>
+                        </tr>
+                        <tr>
+                          <td>Telefon:</td>
+                          <td>{this.state.pacijent.telefon}</td>
+                        </tr>
+                      </thead>
+                    </Table>
+
+                  </div>
+                }
+
+            
+                
+              />
+            </Col>
+                <Col md={8}>
+              <Card
+                title="Posete lekarima"
+                content={
+                  <div>
+                    <Table striped hover>
+                      <thead>
+                        <tr>
+                          <th>Datum</th>
+                          <th>Lekar</th>
+                          <th>Izvestaj</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.listaIzvestaja.map(izvestaj => {
+                          return (
+                            <tr>
+                              <td>
+                                {moment(izvestaj.datum).format("DD.MM.YYYY.")}
+                              </td>
+                              <td>
+                                {izvestaj.imeL} {izvestaj.prezimeL}
+                              </td>
+                              <td>{izvestaj.sadrzaj}</td>
+                              {/* <td>
+                                <Button>izmeni</Button>
+                              </td> */}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  </div>
+                }
+              />
+            </Col>
+                <Col md={4}>
+              <Card
+                // statsIcon="fa fa-clock-o"
+                title="Istorija bolesti"
+                // category="Ime"
+                content={
+                  <div id="a">
+                    <Table striped hover>
+                      <thead className="thead-dark">
+                        <tr>
+                          <th>Datum</th>
+                          <th>Bolest</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.listaIzvestaja.map(izvestaj => {
+                          return (
+                            <tr>
+                              <td>
+                                {moment(izvestaj.datum).format("DD.MM.YYYY.")}
+                              </td>
+                              <td>{izvestaj.dijagnozaN}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  </div>
+                }
+              />
+            </Col>
+
+              </Row>
+              :  null
+            }
+            {
+              this.state.infPreOpen ?
+              <Row>
+                <Col>
+                  
+                  <Button className="izadjiDugme" 
+                    onClick={this.infPreOpenHendler}
+                  >Izadji</Button>
+                  
+                  
                 </Col>
-                <Col lg={3} sm={6}>
-                    {/* {this.renderRedirect()} */}
-                    <div 
-                    // onClick={this.handleListaPacijenata}
-                    >
-                        <StatsCard
-                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                            // statsText="Lista pacijenata"
-                            // statsValue="105GB"
-                            // statsIcon={<i className="fa fa-refresh" />}
-                            statsIconText="Informacije o pregledu"
-                        />
-                    </div>                    
-                </Col>  
-                <Col lg={3} sm={6}>
-                    {/* {this.renderRedirect()} */}
-                    <div 
-                    // onClick={this.handleListaPacijenata}
-                    >
-                        <StatsCard
-                            bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
-                            // statsText="Lista pacijenata"
-                            // statsValue="105GB"
-                            // statsIcon={<i className="fa fa-refresh" />}
-                            statsIconText="Zakazi pregled"
-                        />
-                    </div>                    
-                </Col>                   
-            </Row>
-            <Row>
+                <Col md={12}>
+                  <Card
+                    title="Informacije o pregledu"
+                    
+                    content={
+                      <div className="ct-chart">
+                
+                        <Table striped hover>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label>TipPregleda: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="ime"
+                                defaultValue={this.state.pregled.nazivTP}
+                                disabled="disabled"
+                                // placeholder={this.state.ime}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Datum i vreme: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="prezime"
+                                defaultValue={moment(this.state.pregled.datum).format("DD.MM.YYYY. ") + this.state.pregled.termin + ":00" }
+                                disabled="disabled"
+                                // placeholder={this.state.prezime}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Sala: </label>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="lbo"
+                                defaultValue={this.state.pregled.salaBR + " " +  this.state.pregled.salaN}
+                                disabled="disabled"
+                                // placeholder={this.state.lbo}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                          
+                        </tbody>
+                      </Table>
+
+                      </div>
+                    }
+                  
+                  />
+                </Col> 
+              </Row>
+              : null
+            }
+            {
+              this.state.zakNovPreg ?
+              <Row>
+                <Col>
+                  <Button className="izadjiDugme" 
+                    onClick={this.zakNovPregHendler}
+                  >Izadji</Button>
+                  <Button className="izadjiDugme" 
+                    onClick={this.zakaziPregled}
+                  >Zakazi pregled</Button>
+                  
+                  
+                </Col>
+                <Col md={12}>
+                  <Card
+                    title="Zakazi novi pregled"
+                    
+                    content={
+                      <div className="ct-chart">
+                
+                        <Table striped hover>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label>Tip Pregleda: </label>
+                            </td>
+                            <td>
+                            <select
+                              name="tipPregleda"
+                              onChange={e => this.biranjeTipaPregleda(e)}
+                            >
+                              {this.izaberiVrstuPregleda()}
+                            </select>
+                              
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Datum: </label>
+                               
+                          
+                            </td>
+                            <td>
+                              <DatePicker
+                              placeholderText="Izaberi datum"
+                              selected={this.state.datumPregleda}
+                              onSelect={this.handleChangeDatePregleda}
+                              minDate={new Date()}
+
+                              />
+                              {/* <input
+                                type="text"
+                                name="prezime"
+                                // defaultValue={moment(this.state.pregled.datum).format("DD.MM.YYYY. ") + this.state.pregled.termin + ":00" }
+                                disabled="disabled"
+                                // placeholder={this.state.prezime}
+                                // noValidate
+                                // onChange={this.handleChange}
+                              /> */}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Termin: </label>
+                            </td>
+                            <td>
+                            
+                            <select name="odabirKlinike" 
+                              onChange={e => this.biranjeTermina(e)}
+                             >
+                              {this.prikazTermina()} 
+            
+                            </select>
+                              
+                            </td>
+                          </tr>
+                          
+                        </tbody>
+                      </Table>
+
+                      </div>
+                    }
+                  
+                  />
+                </Col> 
+              </Row>
+              : null
+            }
+            {
+              this.state.zakNovOper ?
+              <Row>
+                <Col>
+                  <Button className="izadjiDugme" 
+                    onClick={this.zakNovOperHendler}
+                  >Izadji</Button>
+                  <Button className="izadjiDugme" 
+                    onClick={this.zakaziOperaciju}
+                  >Zakazi operaciju</Button>
+                  
+                  
+                </Col>
+                <Col md={12}>
+                  <Card
+                    title="Zakazi novu operaciju"
+                    
+                    content={
+                      <div className="ct-chart">
+                
+                        <Table striped hover>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label>Tip operacije: </label>
+                            </td>
+                            <td>
+                            <input
+                                type="text"
+                                name="tipOperacije"
+                                // defaultValue={moment(this.state.pregled.datum).format("DD.MM.YYYY. ") + this.state.pregled.termin + ":00" }
+                                // disabled="disabled"
+                                // placeholder={this.state.prezime}
+                                // noValidate
+                                onChange={this.handleChange}
+                              />
+                           
+                              
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Datum: </label>
+                               
+                          
+                            </td>
+                            <td>
+                              <DatePicker
+                              placeholderText="Izaberi datum"
+                              selected={this.state.datumOperacije}
+                              onSelect={this.handleChangeDateOperacije}
+                              minDate={new Date()}
+
+                              />
+                              
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label>Termin: </label>
+                            </td>
+                            <td>
+                            
+                            <select name="odabirKlinike" 
+                              onChange={e => this.biranjeTerminaOP(e)}
+                             >
+                              <option value={9}>9:00-11:00</option>
+                              <option value={11}>11:00-13:00</option>
+                              <option value={13}>13:00-15:00</option>
+                              <option value={15}>15:00-17:00</option>
+                              {/* {this.prikazTerminaOperacije()}  */}
+            
+                            </select>
+                              
+                            </td>
+                          </tr>
+                          
+                        </tbody>
+                      </Table>
+
+                      </div>
+                    }
+                  
+                  />
+                </Col> 
+              </Row>
+              : null
+            }
+            { this.state.zkOpen === false && this.state.infPreOpen === false 
+              && this.state.zakNovPreg === false  && this.state.zakNovOper === false ?
+              <Col>
+                <Row className="linkoviPregled">
+                  <Col lg={3} sm={6}>
+                     
+                      <div 
+                      onClick={()=> this.setState({
+                        zkOpen : true 
+                      })}
+                      >
+                      <StatsCard
+                        //bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                        // statsText="Lista pacijenata"
+                              // statsValue="105GB"
+                        // statsIcon={<i className="fa fa-refresh" />}
+                        statsIconText="Zdravstveni karton"
+                      />
+                      </div>                    
+                  </Col>
+                  
+                  <Col lg={3} sm={6}>
+                      
+                      <div 
+                      onClick={()=> this.setState({
+                        infPreOpen : true 
+                      })}
+                      >
+                          <StatsCard
+                              //bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                              // statsText="Lista pacijenata"
+                              // statsValue="105GB"
+                              // statsIcon={<i className="fa fa-refresh" />}
+                              statsIconText="Informacije o pregledu"
+                          />
+                      </div>                    
+                  </Col>  
+                  <Col lg={3} sm={6}>
+                     
+                      <div 
+                      onClick={()=> this.setState({
+                        zakNovPreg : true 
+                      })}
+                      >
+                          <StatsCard
+                             // bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                              // statsText="Lista pacijenata"
+                              // statsValue="105GB"
+                              // statsIcon={<i className="fa fa-refresh" />}
+                              statsIconText="Zakazi pregled"
+                          />
+                      </div>                    
+                  </Col>
+                  <Col lg={3} sm={6}>
+                     
+                      <div 
+                      onClick={()=> this.setState({
+                        zakNovOper : true 
+                      })}
+                      >
+                          <StatsCard
+                             // bigIcon={<div> <img src = { kalendarSlika} width="30" height="20" /></div>}
+                              // statsText="Lista pacijenata"
+                              // statsValue="105GB"
+                              // statsIcon={<i className="fa fa-refresh" />}
+                              statsIconText="Zakazi operaciju"
+                          />
+                      </div>                    
+                  </Col>                    
+                </Row>
+                <Row>
                 <div className="formaPregleda">
 
                     <Card
@@ -659,8 +1609,12 @@ class Pregled extends React.Component {
                         }
                     />
                 </div>
-            </Row>
-            
+                </Row>
+              </Col>
+              : null 
+            }    
+            <Row></Row>
+           
         </Grid>
      
     );
