@@ -161,7 +161,7 @@ class ListaPregleda extends Component {
           });
           console.log("++++++++++++++++++ Id k: " + this.state.idKlinike);
 
-          console.log("Preuzmi mi sale za tu kliniku");
+        
           const urlKlinike =
             "http://localhost:8025/api/pregledi/preuzmiPregledeKlinike/" +
             this.state.idKlinike;
